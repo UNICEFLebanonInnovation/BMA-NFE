@@ -1,0 +1,207 @@
+{% extends "mscc/base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block module_name %}Makani - Attendance{% endblock %}
+{% block project_title %}Attendance{% endblock %}
+
+{% block content %}
+
+<style>
+
+.attendance_day_off label.active {
+    background-color: #3f6ad8 !important;
+    color: white !important;
+}
+.is-invalid {
+    border-color: red !important;
+    background-color: #ffe6e6 !important;
+    color: black !important;
+}
+
+</style>
+
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-child"></i>
+                                        </span>
+                                        <span class="d-inline-block">
+                                          Daily Attendance
+                                        </span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="{% url 'mscc:list' %}">Home</a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.governorate }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.caza }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.name }} - {{ request.user.center.type }}
+                                                </li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions"></div>
+
+
+                        </div>
+</div>
+
+<div class="row">
+{% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
+  <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
+{% endif %}
+</div>
+
+<div class="row">
+<div class="col-md-4">
+                                    <div class="main-card mb-3 card">
+                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
+
+                                        </div>
+                                        <div class="card-body">
+
+                                          <div class="form-group">
+                                              {% csrf_token %}
+                                              <input type="hidden" value="{{ request.user.center.id }}" name="center_id" id="center_id" />
+                                                  <div class="input-group">
+                                                      <div class="input-group-prepend datepicker-trigger">
+                                                          <div class="input-group-text">
+                                                              <i class="fa fa-calendar-alt"></i>
+                                                          </div>
+                                                      </div>
+                                                    <input type="text" class="form-control" data-toggle="datepicker" id="attendance_date" value="{{ attendance_date }}"/>
+                                                  </div>
+                                          </div>
+
+                                          <div class="form-row" style="padding-bottom: 20px;">
+                                                <div class="col-md-6 ">
+                                                    <div class="input-group">
+                                                                  <div class="input-group-prepend ">
+                                                                      <select id="education_program" class="btn-primary">
+                                                                          <option value="">Education Program</option>
+                                                                          {% for item in education_program %}
+                                                                            {% if item != '' %}
+                                                                              <option value="{{ item }}" {% if education_program == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                                                            {% endif %}
+                                                                          {% endfor %}
+                                                                      </select>
+                                                                  </div>
+                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                              </div>
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                    <div class="input-group">
+                                                                  <div class="input-group-prepend ">
+                                                                      <select id="round" class="btn-primary">
+                                                                          <option value="">Round</option>
+                                                                           {% for item in round %}
+                                                                              {% if item != '' %}
+                                                                                <option value="{{ item.id }}" {% if round == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                                                              {% endif %}
+                                                                            {% endfor %}
+                                                                      </select>
+                                                                  </div>
+                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                              </div>
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                    <div class="input-group">
+                                                                  <div class="input-group-prepend ">
+                                                                      <select id="class_section" class="btn-primary">
+                                                                          <option value="">Section</option>
+                                                                           {% for item in class_section %}
+                                                                              {% if item != '' %}
+                                                                                <option value="{{ item }}" {% if class_section == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                                                              {% endif %}
+                                                                            {% endfor %}
+                                                                      </select>
+                                                                  </div>
+                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                              </div>
+                                                  </div>
+                                              </div>
+                                          <div class="form-row">
+                                                  <div class="col-md-6">
+                                                            <div role="group" class="btn-group-sm btn-group">
+
+                                                              <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">
+                                                                <label class="btn btn-light {% if day_off == 'No' %}active{% endif %}">
+                                                                  <input type="radio" value="No" name="attendance_day_off" {% if day_off == 'No' %} checked{% endif %} /> Working day
+                                                                </label>
+                                                                <label class="btn btn-light {% if day_off == 'Yes' %}active{% endif %}">
+                                                                  <input type="radio" value="Yes" name="attendance_day_off" {% if day_off == 'Yes' %} checked{% endif %} /> Day Off
+                                                                </label>
+                                                              </div>
+                                                            </div>
+
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                    <div class="input-group">
+                                                                  <div class="input-group-prepend ">
+                                                                      <select id="close_reason" class="btn-primary {% if close_reason == '' %}hidden{% endif %}">
+                                                                          <option value="">Closing Reason</option>
+                                                                          <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>Public Holiday</option>
+                                                                          <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>School Holiday</option>
+                                                                          <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>Strike</option>
+                                                                          <option value="Weekly Holiday" {% if close_reason == 'Weekly Holiday' %}selected{% endif %}>Weekly Holiday</option>
+                                                                          <option value="Roads Closed" {% if close_reason == 'Roads Closed' %}selected{% endif %}>Roads Closed</option>
+                                                                          <option value="Other" {% if close_reason == 'Other' %}selected{% endif %}>Other</option>
+                                                                      </select>
+                                                                  </div>
+                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                              </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                        <div class="d-block text-right card-footer">
+                                            <a href="{% url 'mscc:attendance_report' %}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary"><i class="pe-7s-cloud-download btn-icon-wrapper"></i>Download</a>
+                                            <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
+{% if request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
+                                            <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
+{% endif %}
+                                        </div>
+                                      </div>
+                                    </div>
+
+
+            <div class="col-md-8">
+
+                <div class="main-card mb-3 card">
+                  <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>
+                    <p class="mb-0">Children Registered in Core-Package: <span id="children_count">0</span></p>
+                  </div>
+                  <div class="card-body" style="height: 400px; overflow: auto;">
+                      <div id="attendance_children"></div>
+                  </div>
+                  <div class="d-block text-center card-footer"></div>
+
+                </div>
+
+            </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=40"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+
+{% endblock %}

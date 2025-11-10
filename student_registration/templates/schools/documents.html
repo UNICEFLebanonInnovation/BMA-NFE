@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="main-content-wrapper">
+    <section id="main-content">
+        <div class="title_left">
+            <h3 style="color:#73879C;">{% trans 'Public documents' %}</h3>
+        </div>
+        <hr>
+
+        <div class="row">
+            {% for doc in documents %}
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">{{ doc.name }}</h3>
+                <p class="card-text">{{ doc.overview }}</p>
+                <p class="card-text">{{ doc.modified }}</p>
+                <a href="{{ doc.file_url }}" class="btn btn-primary" target="_blank">{% trans 'Download file' %}</a>
+              </div>
+            </div>
+          </div>
+            {% endfor %}
+
+        </div>
+
+    </section>
+</section>
+{% endblock %}

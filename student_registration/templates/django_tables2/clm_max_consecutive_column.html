@@ -1,0 +1,8 @@
+{% load static i18n %}
+{% load util_tags %}
+
+{% if record.more_than_ten_consecutive_absence %}
+<span class="label success warning" style = "color:black;font-size:12pt">{{record.max_consecutive_absence}}</span>
+{% else %}
+  <span class="label normal" style = "color:black;font-size:12pt">{{record.max_consecutive_absence}}</span>
+{% endif %}

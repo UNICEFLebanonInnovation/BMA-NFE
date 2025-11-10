@@ -1,0 +1,49 @@
+{% extends "account/base.html" %}
+{% load static i18n %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block inner %}
+
+<style>
+  .app-logo-home {
+    height: 250px;
+    width: 500px;
+}
+  .app-logo-home img {
+    width: 500px;
+}
+</style>
+
+<div class="mx-auto app-login-box col-md-8">
+                        <div class="app-logo-home mx-auto mb-3"><img src="{% static 'images/clm_plus_logo.png' %}"></div>
+                        <div class="modal-dialog mx-auto" style="width: 500px;">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="h5 modal-title text-center">
+                                        <h4 class="mt-2">
+                                          <div>Welcome to BMA</div>
+                                            <span>Please sign-in with your account.</span>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div class="modal-footer text-center">
+<form class="login" method="POST" action="{% url 'account_login' %}" style="width: 100%;">
+  {% csrf_token %}
+  {{ form|crispy }}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <!--<a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>-->
+  <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+</form>                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+{% endblock %}
+
+

@@ -1,0 +1,21 @@
+{% load static i18n %}
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+{% if record.is_justified %}
+   <button class="btn btn-success justify-button-stopped" itemscope="{{ record.id }}" id="justify_button_{{ record.id }}" translation="{% trans "Are you sure you want to un justify this student ?" %}">
+      <i class="fas fa-user-check icon-green"></i>&nbsp;&nbsp;
+       <small>
+         {% trans "Justified " %}
+       </small>
+
+   </button>
+{% else %}
+    <button class="btn btn-danger justify-button" itemscope="{{ record.id }}" id="justify_button_{{ record.id }}" translation="{% trans "Are you sure you want to justify this student ?" %}">
+      <i class="fas fa-user-alt-slash icon-red"></i>&nbsp;&nbsp;
+       <small>
+         {% trans "Not Justified " %}
+       </small>
+
+   </button>
+{% endif %}
+

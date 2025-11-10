@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load util_tags %}
+
+{% block content-full-page %}
+
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item active">
+        BLN Dashboard
+      </li>
+      <li class="breadcrumb-item active">
+        {{ request.user.partner }}
+      </li>
+      <li class="breadcrumb-item active">
+        {{ request.user }}
+      </li>
+    </ol>
+
+     <div class="row">
+
+         <div class="col-md-8 col-sm-6 col-xs-12">
+            <div class="x_panel">
+              <div class="x_content">
+                <div id="schools_by_governate" style="height:350px;">
+                    <select name="clm_round" id="clm_round">
+                        {% for round in clm_rounds %}
+                            <option value="{% url 'clm:bln_dashboard' %}?clm_round={{ round.id }}" {% if round.id == clm_round.id %}selected="selected"{% endif %}>{{ round }}</option>
+                        {% endfor %}
+                    </select>
+                      <button class="btn btn-info" id="export1">
+                        <i class="icon-export-sign icon-white"></i>&nbsp;
+                            Export
+                      </button>
+
+                    <table class="table table-striped table-bordered cell-border"
+                           data-tableName="BLN dashboard"
+                           data-height="500"
+                           data-pagination="true"
+                           data-search="true"
+                           cellspacing="0"
+                           width="100%"
+                           id="exporttable1">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Governorate</th>
+                                <th colspan="2">Completion Rate</th>
+                                <th colspan="2">Attendance < 5 absence days</th>
+                                <th colspan="2">Attendance 5 to 10 absence days</th>
+                                <th colspan="2">Attendance 10 to 15 absence days</th>
+                                <th colspan="2">Attendance > 15 absence days</th>
+                                <th colspan="2">Repetition</th>
+                            </tr>
+                            <tr>
+                                <th>Male</th>
+                                <th>Female</th>
+
+                                <th>Male</th>
+                                <th>Female</th>
+                                <th>Male</th>
+                                <th>Female</th>
+                                <th>Male</th>
+                                <th>Female</th>
+                                <th>Male</th>
+                                <th>Female</th>
+
+                                <th>Male</th>
+                                <th>Female</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in per_gov %}
+                                <tr>
+                                    <td>{{ item.governorate }}</td>
+
+                                    <td>{{ item.completion_male }}%</td>
+                                    <td>{{ item.completion_female }}%</td>
+
+                                    <td>{{ item.attendance_male_1 }}%</td>
+                                    <td>{{ item.attendance_female_1 }}%</td>
+
+                                    <td>{{ item.attendance_male_2 }}%</td>
+                                    <td>{{ item.attendance_female_2 }}%</td>
+
+                                    <td>{{ item.attendance_male_3 }}%</td>
+                                    <td>{{ item.attendance_female_3 }}%</td>
+
+                                    <td>{{ item.attendance_male_4 }}%</td>
+                                    <td>{{ item.attendance_female_4 }}%</td>
+
+                                    <td>{{ item.repetition_male }}%</td>
+                                    <td>{{ item.repetition_female }}%</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+         </div>
+
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
+    <script>
+    $(document).ready(function(){
+
+        $('#clm_round').change(function(){
+            if($(this).val()) {
+                window.location = $(this).val();
+            }
+        });
+
+        $('#export1').click(function(){
+            $("#exporttable1").table2excel({
+                exclude: ".noExl",
+                name: "Excel Document Name",
+                filename: $("#exporttable1").attr('data-tableName')+'.xls',
+                fileext: ".xlsx",
+                exclude_img: true,
+                exclude_links: true,
+                exclude_inputs: true
+            });
+        });
+    });
+    </script>
+{% endblock %}

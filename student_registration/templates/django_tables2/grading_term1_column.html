@@ -1,0 +1,10 @@
+{% load static i18n %}
+{% load util_tags %}
+{% if request.user|has_group:"ENROL_GRADING" and record.grading_term1 %}
+<a href="{% url 'enrollments:grading' record.grading_term1 1 %}" class="btn btn-info" target="_blank">
+    <i class="icon-edit-sign icon-white"></i>
+    {% trans "Term 1" %}
+</a>
+{% else %}
+    {% trans "Not allowed" %}
+{% endif %}

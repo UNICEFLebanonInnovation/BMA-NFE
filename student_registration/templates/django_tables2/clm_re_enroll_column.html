@@ -1,0 +1,10 @@
+{% load static i18n %}
+{% load util_tags %}
+{% if column.attrs.programme|is_allowed_create %}
+<a href="{{ column.attrs.url }}?enrollment_id={{ record.id }}&new_registry=no&student_outreached=no&have_barcode=no" class="btn btn-info">
+    <i class="icon-edit-sign icon-white"></i>
+    {% trans "Re-enroll" %}
+</a>
+{% else %}
+    {% trans "Not allowed" %}
+{% endif %}

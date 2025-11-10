@@ -1,0 +1,2 @@
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} />
+{% if widget.is_initial %}<a href="{% url 'serve_file' widget.value %}">{{ widget.value }}</a>{% endif %}

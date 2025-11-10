@@ -1,0 +1,10 @@
+{% load static i18n %}
+{% load util_tags %}
+{% if request.user|has_group:"ENROL_GRADING" and record.incomplete_grading  %}  <!--and record.cycle == "Cycle 1" -->
+    <a href="{% url 'enrollments:grading' record.incomplete_grading 4 %}" class="btn btn-info" target="_blank">
+        <i class="icon-edit-sign icon-white"></i>
+        {% trans "Incomplete" %}
+    </a>
+{% else %}
+    {% trans "Not allowed" %}
+{% endif %}

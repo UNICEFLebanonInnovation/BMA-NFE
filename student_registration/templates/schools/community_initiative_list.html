@@ -1,0 +1,126 @@
+{% extends "schools/base.html" %}
+{% load static i18n %}
+{% load static i18n %}
+{% load render_table from django_tables2 %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}School | Community Initiative List{% endblock %}
+
+{% block main_content %}
+
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                        <span class="d-inline-block">
+                                          {{ request.user.username }}
+                                          - {{ request.user.partner }}
+                                        </span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="/">
+                                                        Home
+                                                    </a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    <a href="{% url 'clm:bridging_page' %}">
+                                                        Dirasa
+                                                    </a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                  <a href="{% url 'schools:school_list' %}">Schools</a></li>
+                                                <li class="breadcrumb-item">
+                                                  <a href="{% url 'schools:community_initiative_list' school_id %}">Community Initiative List</a></li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions">
+                          <a href="{% url 'schools:community_initiative_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Community Initiative</a>
+                        </div>
+                        </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+<div id="accordion" class="accordion-wrapper mb-3 form-filters">
+    <div class="card">
+        <div id="headingOne" class="card-header">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+                <h5 class="m-0 p-0">
+                    <i class="pe-7s-filter text-primary"></i>
+                    Filters</h5>
+            </button>
+        </div>
+        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
+            <div class="card-body">
+            <form action="" method="get" class="form form-inline">
+                {% bootstrap_form filter.form layout='inline' %}
+
+                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
+                  <i style="font-weight:bolder" class="pe-7s-search"></i>
+                </button>
+
+                <button href="" title="Cancel"
+                 class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
+                </button>
+
+              {% if user|has_group:"EXPORT" %}
+                <a href="" title="Download" class="btn btn-outline-success download-report">
+                    <i class="lnr-download"></i>
+                </a>
+                <div class = "downloading-message" style = "display:none">
+                  Loading...
+                </div>
+              {% endif %}
+
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+<div class="row table-list">
+    <div class="col-lg-12">
+        <div class="card-hover-shadow-2x mb-3 card">
+            <div class="card-body">
+                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
+        {% csrf_token %}
+        {% render_table table 'django_tables2/bootstrap.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block modal %}
+
+{% endblock %}
+
+{% block extra_js %}
+    {% get_user_token request.user.id as user_token %}
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/school/community-initiative-list.js' %}?v=4"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script>
+        var user_token = '{{ user_token }}';
+        var href_full_path = '{{ request.build_absolute_uri }}';
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+    </script>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% load static i18n %}
+{% load util_tags %}
+{% if column.attrs.programme|is_allowed_edit %}
+   {% if record.total_absent_days >= 40 %}
+      <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-info"  style="opacity: 0.6; cursor: not-allowed;">
+   {% else %}
+      <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-info">
+    {% endif %}
+          <i class="icon-edit-sign icon-white"></i>
+    {% trans "Edit" %}
+      </a>
+{% else %}
+    {% trans "Not allowed" %}
+{% endif %}

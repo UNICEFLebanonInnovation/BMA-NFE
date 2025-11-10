@@ -1,0 +1,9 @@
+{% load static i18n %}
+{% if record.owner.id == request.user.id %}
+<button class="btn btn-danger delete-button" itemscope="{{ record.id }}" data-action="{{ column.attrs.url }}{{ record.id }}" translation="{% trans "Are you sure you want to delete this student?" %}">
+    <i class="icon-trash icon-white"></i>
+    {% trans "Delete" %}
+</button>
+{% else %}
+    {% trans "Not allowed" %}
+{% endif %}

@@ -1,0 +1,225 @@
+.app-page-title {
+      padding:  15px;
+}
+.form-wizard-content.sw-container.tab-content {
+    min-height: 485px !important;
+    overflow: scroll;
+}
+form .card-body {
+    padding-bottom: 0px;
+    padding-top: 0px;
+    margin-bottom: 0px;
+}
+form #step-2 {
+    display: none;
+}
+form #step-3 {
+    display: none;
+}
+form #step-4 {
+    display: none;
+}
+/*form .form-group label {
+    float: left;
+}*/
+form .multiple-choice .checkbox {
+    width: 400px;
+    height: 33px;
+    float: left;
+}
+form .disabled-input .textinput {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+form .radio {
+    float: left;
+    width: 400px;
+}
+.form-filters .form-group {
+    padding-right: 10px;
+    padding-bottom: 5px;
+}
+.form-filters .btn {
+    margin-right: 10px;
+}
+.form-filters .form-control {
+    width: 200px;
+}
+.w-100 {
+    width: 1500px !important;
+}
+
+.table-list .card-body .table-responsive table {
+    width: 1500px !important;
+}
+
+@media (width: 500px) {
+    .w-100 {
+        width: 500px !important;
+    }
+}
+
+@media (width: 700px) {
+.w-100 {
+    width: 700px !important;
+}
+}
+
+@media (width: 900px) {
+.w-100 {
+    width: 900px !important;
+}
+}
+
+@media (width: 1800px) {
+.w-100 {
+    width: 1600px !important;
+}
+}
+
+@media (width: 2000px) {
+.w-100 {
+    width: 1800px !important;
+}
+}
+.table-container th {
+    background: white;
+    position: sticky;
+    top: 0; /* Don't forget this, required for the stickiness */
+    box-shadow: 0 1px 2px -1px rgba(63,106,216,0.5);
+    z-index: 999;
+    vertical-align: middle !important;
+}
+.table-list .card-body {
+    padding-top: 0px;
+}
+.table-list .dropdown-menu.show {
+    position: absolute !important;
+}
+.form-wizard-content #step-1, .form-wizard-content #step-2, .form-wizard-content #step-3, .form-wizard-content #step-4 {
+    height: 400px;
+}
+.asteriskField {
+    color: red;
+}
+.help-block {
+    color: red;
+}
+.error-field {
+    border-color: red;
+}
+.hidden {
+    display: none !important;
+}
+label.form-control-label {
+    font-weight: 600;
+    color: #6e6e6e;
+}
+.badge-form-0 {
+    padding: 2px 7px;
+    min-width: 25px;
+    max-width: 25px;
+    height: 25px;
+    font-size: 13px;
+    color: #3f6ad8;
+    font-weight: bold;
+}
+.badge-form {
+    padding: 2px 7px;
+    min-width: 25px;
+    max-width: 25px;
+    height: 25px;
+    font-size: 13px;
+    border: 1px solid #3f6ad8;
+    background-color: white;
+    color: #3f6ad8;
+    font-weight: bold;
+}
+.badge-form-2 {
+    padding: 4px 6px;
+    min-width: 32px;
+    max-width: 32px;
+    height: 30px;
+    font-size: 13px;
+    border: 1px solid #3f6ad8;
+    background-color: white;
+    color: #3f6ad8;
+    font-weight: bold;
+}
+.badge-form-3 {
+    padding: 4px 6px;
+    min-width: 35px;
+    max-width: 35px;
+    height: 30px;
+    font-size: 11px;
+    border: 1px solid #3f6ad8;
+    background-color: white;
+    color: #3f6ad8;
+    font-weight: bold;
+}
+
+.badge-form-empty {
+    padding: 2px 7px;
+    min-width: 25px;
+    max-width: 25px;
+    height: 25px;
+    font-size: 13px;
+    border: 0px;
+    background-color: white;
+    color: #3f6ad8;
+    font-weight: bold;
+}
+
+.badge-form-2-empty {
+    padding: 4px 6px;
+    min-width: 32px;
+    max-width: 32px;
+    height: 30px;
+    font-size: 13px;
+    border: 0px;
+    background-color: white;
+    color: #3f6ad8;
+    font-weight: bold;
+}
+
+.tabs-lg-alternate.card-header>.nav .nav-link {
+    padding: 1rem 0 !important;
+}
+.tabs-lg-alternate.card-header .widget-number {
+    font-size: 2rem;
+    font-weight: 200;
+}
+#quick-search-result  {
+    position: absolute;
+    top: 20px;
+}
+ul.ui-widget-content.ui-autocomplete {
+    /*top: 32px !important;
+    left: 0px !important;*/
+    width: 315px !important;
+    z-index: 9999 !important;
+    overflow: scroll !important;
+    min-height: 50px;
+    max-height: 300px;
+}
+.multiple-choice-options {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px; /* Adds space between checkbox and label */
+}
+
+.checkbox {
+  margin: 0 10px 0 0; /* Space out checkboxes if needed */
+  width: auto; /* Ensures checkbox doesn’t take up too much space */
+}
+
+/* Ensures that checkbox elements are displayed inline */
+.checkbox input[type="checkbox"] {
+  margin-right: 5px; /* Space between checkbox and label text */
+}
+
+.card-body .multiple-choice-label {
+  padding-bottom: 5px; /* Adjust spacing between elements */
+}

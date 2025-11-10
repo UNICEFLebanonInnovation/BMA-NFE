@@ -1,0 +1,57 @@
+{% load static i18n %}
+{% if column.attrs.url %}
+<div style="width: 100px;">
+  <button onclick="checkSchoolBeforeExport(event, '{{ record.id }}')" class="btn btn-primary col-icon download-bridging-report-{{ record.id }}">
+    <i class="fa fa-download"></i>
+  </button>
+
+  <div class="downloading-bridging-message-{{ record.id }}" style="display:none">
+      Loading...
+  </div>
+</div>
+{% else %}
+    {% trans "Not allowed" %}
+{% endif %}
+
+{% block extra_js %}
+    <script>
+        function checkSchoolBeforeExport(event, schoolId) {
+            event.preventDefault();
+
+            var requestHeaders = getHeader();
+            var downloadingMessage = $(".downloading-bridging-message-" + schoolId);
+            var downloadReportBtn = $(".download-bridging-report-" + schoolId);
+
+            downloadingMessage.show();
+            downloadReportBtn.addClass('disabled');
+
+            if (schoolId) {
+
+                let url = `/clm/bridging-school-export-data/${encodeURIComponent(schoolId)}/`;
+
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    headers: requestHeaders,
+                    success: function (data) {
+                        downloadingMessage.hide();
+                        downloadReportBtn.removeClass('disabled');
+
+                        // Open the file in a new tab
+                        window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
+                    },
+                    error: function () {
+                        alert("Error downloading file. Please try again.");
+                        downloadingMessage.hide();
+                        downloadReportBtn.removeClass('disabled');
+                    }
+                });
+
+            } else {
+                alert("School ID is missing. Please try again.");
+                downloadingMessage.hide();
+                downloadReportBtn.removeClass('disabled');
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% load static i18n %}
+{% load util_tags %}
+
+{% if record.total_absent_days >= 40 %}
+  <span class="label success danger" style = "color:black;font-size:12pt">{{record.total_absent_days}}</span>
+{% else %}
+  <span class="label normal" style = "color:black;font-size:12pt">{{record.total_absent_days}}</span>
+{% endif %}

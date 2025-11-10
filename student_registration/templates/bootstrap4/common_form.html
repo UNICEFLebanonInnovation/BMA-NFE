@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Registration{% endblock %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-combobox.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+    <div id="resume" class="inner-content">
+
+        <section class="inner-section light bg-color01">
+            <div class="container-fluid nopadding">
+                {{ form.errors }}
+                {% crispy form %}
+            </div>
+        </section>
+
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
+    <script>
+        var current_school = '{{ request.user.school_id }}';
+        var eligibility_msg = '{% trans 'This student is not eligible to go into 2nd shift program, are you sure you want to register this student' %}';
+        var min_age_restriction_msg = '{% trans 'Registration can not be continued because age is not appropriate for the class' %}';
+        var min_age_limit_msg = '{% trans 'Age does not fit the grade - min age - continue registration?' %}';
+        var max_age_limit_msg = '{% trans 'Age does not fit the grade - max age - continue registration?' %}';
+    </script>
+{% endblock %}

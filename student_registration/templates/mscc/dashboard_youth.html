@@ -1,0 +1,204 @@
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<style>
+  .filter-package-type {
+    cursor: pointer;
+  }
+
+</style>
+
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="pe-7s-display1"></i>
+                                        </span>
+                                        <span class="d-inline-block">Dashboard</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+</div>
+
+<div class="row">
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-body">
+                  <h5 class="card-title">Select one or more center</h5>
+                  <select multiple="multiple" class="multiselect-dropdown form-control">
+                    {% for item in centers %}
+                      <option value="{{ item.id }}">{{ item }}</option>
+                    {% endfor %}
+                  </select>
+              </div>
+          </div>
+      </div>
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-body">
+                  <h5 class="card-title">Select one or more governorate</h5>
+                  <select multiple="multiple" class="multiselect-dropdown form-control">
+                    {% for item in governorates %}
+                      <option value="{{ item.id }}">{{ item }}</option>
+                    {% endfor %}
+                  </select>
+              </div>
+          </div>
+      </div>
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-body">
+                  <h5 class="card-title">Select one or more partner</h5>
+                  <select multiple="multiple" class="multiselect-dropdown form-control">
+                    {% for item in partners %}
+                      <option value="{{ item.id }}">{{ item }}</option>
+                    {% endfor %}
+                  </select>
+              </div>
+          </div>
+      </div>
+
+</div>
+
+<div class="row">
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Nationality</div>
+              <div class="card-body" id="children_per_nationality"></div>
+          </div>
+      </div>
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Gender</div>
+              <div class="card-body" id="children_per_gender"></div>
+          </div>
+      </div>
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Programme</div>
+              <div class="card-body" id="children_per_programme"></div>
+          </div>
+      </div>
+
+</div>
+
+<div class="row">
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Source of Identification</div>
+              <div class="card-body" id="children_per_source"></div>
+          </div>
+      </div>
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Family Status</div>
+              <div class="card-body" id="children_per_status"></div>
+          </div>
+      </div>
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Cash Support</div>
+              <div class="card-body" id="children_cash_support"></div>
+          </div>
+      </div>
+
+</div>
+
+<div class="row">
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Disability Type</div>
+              <div class="card-body" id="children_per_disability"></div>
+          </div>
+      </div>
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children Vulnerability</div>
+              <div class="card-body" id="children_per_vulnerability"></div>
+          </div>
+      </div>
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Volunteering</div>
+              <div class="card-body" id="children_volunteering"></div>
+          </div>
+      </div>
+
+</div>
+
+<div class="row">
+      <div class="col-md-12">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Attendance trends</div>
+              <div class="card-body" id="attendance"></div>
+          </div>
+      </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script type="text/javascript" src="{% static 'js/Highcharts.chart.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/mscc/dashboard_youth.js' %}"></script>
+
+<script>
+  <!--call ajax to get data-->
+  <!--create chart-->
+  <!--update chart on change / click-->
+  <!--add loader-->
+
+  function load_data(url, params) {
+
+        return $.ajax({
+            type: "GET",
+            url: url,
+            data: params,
+            cache: false,
+            async: true,
+            dataType: 'json',
+            success: function (response) {
+                console.log('ok');
+                return response;
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        });
+
+  }
+</script>
+
+
+{% endblock %}

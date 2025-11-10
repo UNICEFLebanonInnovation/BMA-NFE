@@ -1,0 +1,115 @@
+{% extends "schools/base.html" %}
+{% load crispy_forms_tags %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}School | Meeting form{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+    <!-- Load jQuery first -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Load jQuery UI CSS from the CDN for proper styles -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <!-- Load jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <style>
+        .ui-datepicker {
+            z-index: 9999 !important; /* Ensure datepicker appears on top */
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+
+<div class="app-page-title">
+      <div class="page-title-wrapper">
+          <div class="page-title-heading">
+              <div>
+                  <div class="page-title-head center-elem page-title-heading">
+                      <span class="d-inline-block pr-2">
+                          <i class="fa fa-id-card"></i>
+                      </span>
+                      <span class="d-inline-block">
+                        Meeting
+                      </span>
+                  </div>
+                  <div class="page-title-subheading opacity-10">
+                      <nav class="" aria-label="breadcrumb">
+                          <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="/">
+                                                        Home
+                                                    </a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    <a href="{% url 'clm:bridging_page' %}">
+                                                        Dirasa
+                                                    </a>
+                                                </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'schools:school_list' %}">School List</a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'schools:meeting_list' school_id %}">Meeting List</a>
+                              </li>
+                               <li class="breadcrumb-item">
+                                 Meeting
+                              </li>
+
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+          <div class="page-title-actions"></div>
+      </div>
+</div>
+
+        <!--{{ form.errors }}-->
+
+<div class="main-card mb-3 card">
+                                <div class="card-body">
+                                    <div id="smartwizard3" class="forms-wizard">
+                                        <div class="form-wizard-content">
+
+                                           {% crispy form 'bootstrap3' %}
+                                        </div>
+                                    </div>
+                                    <div class="divider"></div>
+
+                                    <div class="clearfix">
+                                        <a href="{% url 'schools:meeting_list' school_id %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                    </div>
+                                </div>
+                            </div>
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bridging/general.js' %}?v=7"></script>
+
+    <script>
+        $(document).ready(function() {
+            $(".datepicker").datepicker({
+                dateFormat: "yy-mm-dd"
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% endblock %}

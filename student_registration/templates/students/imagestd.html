@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load util_tags %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% load render_table from django_tables2 %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+
+{% block extra_head %}
+
+
+{% endblock %}
+{% block content-full-page %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  <style>
+.btn {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: RoyalBlue;
+}
+</script>
+      <form name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
+        <h2 align="center"><font color ="navy">{{ student_detail }} </font></h2>
+        <br>
+        <br>
+        <table border="0" width="40%">
+          <tr style="height:100px;">
+            <th  bgcolor=#BEE7FD> <font color ="navy">
+              &nbsp;&nbsp;{% trans 'Profile Picture' %}
+              </font>
+            </th>
+            <td  bgcolor=#BEE7FD>
+              <div style = "max-width:470px;">
+                <center>
+                  <input type = "file" style = "margin-left:10%;"
+                         placeholder = "Picture" name = "picture" />
+                </center>
+                <font size="1px" color="red">{% trans 'The name of file should not be in arabic' %}</font>
+              </div>
+            </td>
+            <td>
+              {% if student_detail.std_image %}
+              <img src="{{ student_detail.std_image.url }} " width="100" height="100" >
+
+              {% endif %}
+            </td>
+            <td hidden>
+              {% block bl_clearprofile %}
+              <button class="btn"><i class="fa fa-trash"></i>
+
+
+              </button>
+              {% endblock %}
+            </td>
+          </tr>
+
+          <tr style="height:100px;">
+            <th bgcolor=#E2F3FF><font color ="navy">
+
+
+              <font color ="navy">
+
+              <br><br>
+              <label for="birth_documenttype"> {% trans 'Document Type' %} </label>
+                 {{ form.birth_documenttype }}
+
+              </font>
+
+              </font>
+            </th>
+
+            <td bgcolor=#E2F3FF>
+              <div style = "max-width:470px;">
+                <center>
+                  <input type = "file" style = "margin-left:10%;"
+                         placeholder = "birthdoc_picture" name = "birthdoc_picture" />
+                </center>
+                <font size="1px" color="red">{% trans 'The name of file should not be in arabic' %}</font>
+              </div>
+            </td>
+            <td>
+
+              {% if student_detail.birthdoc_image %}
+              <img src="{{ student_detail.birthdoc_image.url }} " width="100" height="100" >
+              {% endif %}
+            </td>
+          </tr>
+
+          <tr style="height:100px;">
+            <th  bgcolor=#BEE7FD>
+               <font color ="navy">
+              &nbsp;&nbsp;{% trans 'UNHCR picture' %}
+              </font>
+            </th>
+            <td   bgcolor=#BEE7FD>
+              <div style = "max-width:470px;">
+                <center>
+                  <input type = "file" style = "margin-left:10%;"
+                         placeholder = "unhcr_picture" name = "unhcr_picture" />
+                </center>
+                <font size="1px" color="red">{% trans 'The name of file should not be in arabic' %}</font>
+              </div>
+            </td>
+            <td>
+              {% if student_detail.unhcr_image %}
+              <img src="{{ student_detail.unhcr_image.url }} " width="100" height="100" >
+              {% endif %}
+            </td>
+
+          </tr>
+
+
+        </table>
+
+        <div style = "max-width:470px;">
+          <center>
+            <button class="	glyphicon glyphicon-saved" style = "border:0px;background-color:#C4E1FE; margin-top:8%;
+                  height:35px; width:35%; margin-left:19%;" type = "submit" value = "upload" >
+              <strong>{% trans  'upload' %}&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+            </button>
+
+          </center>
+         </div>
+
+
+      </form>
+
+{% endblock %}

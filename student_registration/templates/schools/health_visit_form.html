@@ -1,0 +1,101 @@
+{% extends "schools/base.html" %}
+{% load crispy_forms_tags %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}School | Health Visit form{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <style>
+        .ui-datepicker {
+            z-index: 9999 !important; /* Ensure datepicker appears on top */
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+
+{% endblock %}
+
+{% block main_content %}
+
+<div class="app-page-title">
+      <div class="page-title-wrapper">
+          <div class="page-title-heading">
+              <div>
+                  <div class="page-title-head center-elem page-title-heading">
+                      <span class="d-inline-block pr-2">
+                          <i class="fa fa-id-card"></i>
+                      </span>
+                      <span class="d-inline-block">
+                        Health Visit
+                      </span>
+                  </div>
+                  <div class="page-title-subheading opacity-10">
+                      <nav class="" aria-label="breadcrumb">
+                          <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="/">
+                                                        Home
+                                                    </a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    <a href="{% url 'clm:bridging_page' %}">
+                                                        Dirasa
+                                                    </a>
+                                                </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'schools:school_list' %}">School List</a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'schools:health_visit_list' school_id %}">Health Visit List</a>
+                              </li>
+                               <li class="breadcrumb-item">
+                                 Health Visit
+                              </li>
+
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+          <div class="page-title-actions"></div>
+      </div>
+</div>
+
+        <!--{{ form.errors }}-->
+
+<div class="main-card mb-3 card">
+                                <div class="card-body">
+                                    <div id="smartwizard3" class="forms-wizard">
+                                        <div class="form-wizard-content">
+
+                                           {% crispy form 'bootstrap3' %}
+                                        </div>
+                                    </div>
+                                    <div class="divider"></div>
+
+                                    <div class="clearfix">
+                                        <a href="{% url 'schools:health_visit_list' school_id %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                    </div>
+                                </div>
+                            </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".datepicker").datepicker({
+                dateFormat: "yy-mm-dd"
+            });
+        });
+    </script>
+
+{% endblock %}

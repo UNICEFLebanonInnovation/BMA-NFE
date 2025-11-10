@@ -1,0 +1,24 @@
+{% load static i18n %}
+{% load util_tags %}
+
+<div class="mb-2 mr-2 btn-group dropdown" style="position: relative;">
+    <button class="btn btn-outline-primary">Actions</button>
+    <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="dropdown-toggle-split dropdown-toggle btn btn-outline-primary"><span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu" x-placement="bottom-start">
+
+       {% if column.attrs.url_edit %}
+        <a type="button" href="{{ column.attrs.url_edit }}{{ record.school_id }}/{{ record.id }}" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Edit" %}</a>
+      {% endif %}
+
+      {% if column.attrs.url_delete %}
+        <a type="button" href="{{ column.attrs.url_delete }}{{ record.id }}" tabindex="0" class="dropdown-item delete-student"  data-registration-id="{{ record.id }}">
+          <button id="delete-button-{{ record.id }}" class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-delete btn-icon-wrapper"> </i></button>
+          {% trans "Delete" %}</a>
+      {% endif %}
+
+    </div>
+</div>
+

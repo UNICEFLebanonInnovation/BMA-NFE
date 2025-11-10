@@ -1,0 +1,12 @@
+{% load static i18n %}
+{% load util_tags %}
+
+{% if record.total_absent_days >= 40 %}
+      <a class="btn btn-info" style="opacity: 0.6; cursor: not-allowed;">
+{% else %}
+      <a href="{{ column.attrs.url }}{{ record.id }}{{ '/1' }}" class="btn btn-primary">
+{% endif %}
+        <i class="icon-synch-sign icon-white"></i>
+        {% trans "Mid-Assessment" %}
+      </a>
+

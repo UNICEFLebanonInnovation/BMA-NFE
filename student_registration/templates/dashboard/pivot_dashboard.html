@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block project_title %}Pivot Dashboard{% endblock %}
+
+{% block content %}
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-head center-elem page-title-heading">
+        <span class="d-inline-block pr-2">
+          <i class="pe-7s-graph1"></i>
+        </span>
+        <span class="d-inline-block">Pivot Dashboard</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pivot" style="margin: 20px;"></div>
+{% endblock content %}
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.min.css">
+<script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.min.js"></script>
+<script type="text/javascript">
+  $(function(){
+    $.getJSON("{% url 'dashboard:pivot_data' %}", function(data){
+      $("#pivot").pivotUI(data);
+    });
+  });
+</script>
+{% endblock %}

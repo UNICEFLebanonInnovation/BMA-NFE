@@ -1,0 +1,179 @@
+{% extends "clm/base.html" %}
+{% load static i18n %}
+{% load render_table from django_tables2 %}
+{% load django_bootstrap5 %}
+{% load crispy_forms_tags %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}List{% endblock %}
+
+{% block main_content %}
+
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                        <span class="d-inline-block">
+                                          {{ request.user.username }}
+                                          - {{ request.user.partner }}
+                                        </span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="">
+                                                        Home
+                                                    </a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                  <a href="{% url 'clm:bridging_list' %}">List</a></li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions">
+
+{% if 'Bridging'|is_allowed_create %}
+
+<a href="{% url 'clm:bridging_add' %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
+
+{% endif %}
+                        </div>
+                        </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+<div id="accordion" class="accordion-wrapper mb-3 form-filters" style="width: 1620px;">
+    <div class="card">
+        <div id="headingOne" class="card-header">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+                <h5 class="m-0 p-0">
+                    <i class="pe-7s-filter text-primary"></i>
+                    Filters</h5>
+            </button>
+        </div>
+        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
+            <div class="card-body">
+            <form action="" method="get" class="form form-inline">
+               {% crispy filter.form 'bootstrap3' %}
+
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+<div class="row table-list" style="width: 1620px;">
+    <div class="col-lg-12">
+        <div class="card-hover-shadow-2x mb-3 card">
+            <div class="card-body">
+                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
+        {% csrf_token %}
+        {% render_table table 'django_tables2/bootstrap.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block modal %}
+
+{% endblock %}
+
+{% block extra_js %}
+
+{% get_user_token request.user.id as user_token %}
+
+    <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}?v=15"></script>
+
+    <script>
+        var user_token = '{{ user_token }}';
+        var href_full_path = '{{ request.build_absolute_uri }}';
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+        function checkRoundBeforeExport(event) {
+            event.preventDefault();
+
+            requestHeaders = getHeader();
+            var round = $("#id_round").val();
+
+            $(".downloading-message").show();
+            $('.download-report').addClass('disabled');
+
+            if (round) {
+                let url = `/clm/bridging-export/${encodeURIComponent(round)}/`;
+
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    headers: requestHeaders,
+                    success: function (data) {
+                        $(".downloading-message").hide();
+                        $('.download-report').removeClass('disabled');
+
+                        // Open the file in a new tab
+                        window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
+                    },
+                    error: function (error) {
+                        alert("Error downloading file. Please try again.");
+                        $(".downloading-message").hide();
+                        $('.download-report').removeClass('disabled');
+                    }
+                });
+
+            } else {
+                alert("Round is not selected. Please select a round before exporting data.");
+
+                $(".downloading-message").hide();
+                $('.download-report').removeClass('disabled');
+            }
+        }
+
+        $(document).ready(function() {
+            $(".delete-student").on("click", function(e) {
+
+                e.preventDefault();
+
+                var buttonId = $(this).attr("id");
+                var registrationId = $(this).data("registration-id");
+                var parentTR = $(this).closest('tr');
+
+                var confirmed = confirm("Are you sure you want to delete this student?");
+                requestHeaders = getHeader();
+                requestHeaders["content-type"] = 'application/json';
+
+                if (confirmed) {
+                    $.ajax({
+                        url: "/clm/bridging-delete/" + registrationId + "/",
+                        type: "GET",
+                        headers: requestHeaders,
+                        success: function(data) {
+                            console.log(parentTR.html());
+                            parentTR.remove();
+                        },
+                        error: function(error) {
+                            alert("Error occurred while deleting the student.");
+                        }
+                    });
+                } else {
+                    console.log("User canceled deleting for student with ID: " + registrationId);
+                }
+            });
+        });
+
+    </script>
+{% endblock %}

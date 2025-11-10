@@ -1,0 +1,7 @@
+{% load static i18n %}
+{% load util_tags %}
+
+<a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary">
+    <i class="icon-synch-sign icon-white"></i>
+    {% trans "Follow-up" %}
+</a>

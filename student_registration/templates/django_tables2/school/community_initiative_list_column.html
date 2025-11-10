@@ -1,0 +1,16 @@
+{% load static i18n %}
+{% if column.attrs.url %}
+<div style="width: 100px;">
+
+  <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary col-icon">
+    <i class="fa fa-list"></i>
+  </a>
+
+  <a href="{% url 'schools:community_initiative_add' record.id %}" class="btn btn-success col-icon">
+    <i class="fa fa-plus"></i>
+  </a>
+
+</div>
+{% else %}
+    {% trans "Not allowed" %}
+{% endif %}

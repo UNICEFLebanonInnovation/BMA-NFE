@@ -1,0 +1,48 @@
+
+                                                <div class="card">
+                                                    <div class="b-radius-0 card-header">
+                                                        <h5 class="m-0 p-0">{{ attendance_month }} Attendance</h5>
+                                            <div class="btn-actions-pane-right actions-icon-btn">
+                                              <button class="mb-2 mr-2 btn btn-success">Attendance<span class="badge badge-pill badge-light">{{ nbr_attended }}</span></button>
+                                              <button class="mb-2 mr-2 btn btn-danger">Absence<span class="badge badge-pill badge-light">{{ nbr_absent }}</span></button>
+                                              <!--<button class="mb-2 mr-2 btn btn-primary">Day Off<span class="badge badge-pill badge-light">1</span></button>-->
+                                            </div>
+
+                                                    </div>
+                                                    <div class="card-body">
+
+<div class="main-card mb-3 card">
+                                    <div class="card-body">
+                                        <ul class="list-group">
+                                          {% for item in instances %}
+                                            <li class="list-group-item">
+                                                <div class="widget-content p-0">
+                                                    <div class="widget-content-outer">
+                                                        <div class="widget-content-wrapper">
+                                                            <div class="widget-content-left">
+                                                                <div class="widget-heading">{{ item.attendance_date }}</div>
+                                                                <div class="widget-subheading">
+                                                                  {% if item.attended == 'No' %}
+                                                                    {{ item.absence_reason }}
+                                                                  {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="widget-content-right">
+                                                                {% if item.attended == 'Yes' %}
+                                                                  <div class="widget-numbers text-success">Attended</div>
+                                                                {% else %}
+                                                                  <div class="widget-numbers text-danger">Absent</div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                          {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                                    </div>
+                                                </div>
+

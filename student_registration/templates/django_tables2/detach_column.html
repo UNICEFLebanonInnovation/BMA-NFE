@@ -1,0 +1,9 @@
+{% load static i18n %}
+{% if record.registered_in_level %}
+<button class="btn btn-warning detach-button" itemscope="{{ record.id }}" data-action="{{ column.attrs.url }}{{ record.id }}" translation="{% trans "Are you sure you want to detach this student?" %}">
+{#    <i class="icon-trash icon-white"></i>#}
+    {% trans "Detach" %}
+</button>
+{% else %}
+    {% trans "Not allowed" %}
+{% endif %}

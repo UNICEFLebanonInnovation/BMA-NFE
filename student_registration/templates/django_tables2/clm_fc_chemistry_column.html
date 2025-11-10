@@ -1,0 +1,15 @@
+
+{% load static i18n %}
+{% load util_tags %}
+
+{% if record.grade_level %}
+    {% if record.grade_registration == '7' or record.grade_registration == '8' or record.grade_registration == '9' %}
+        <a href="{{ column.attrs.url }}{{ record.id }}{{ '/chemistry' }}" class="btn btn-info">
+            <i class="icon-synch-sign icon-white"></i>
+            {% trans "Chemistry" %}
+        </a>
+    {% else %}
+        {% trans "--" %}
+    {% endif %}
+{% endif %}
+

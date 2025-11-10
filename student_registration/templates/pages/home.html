@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load static i18n %}
+{% load render_table from django_tables2 %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block content %}
+
+<div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
+    Welcome
+  {% if request.user.is_authenticated %}
+  <i>{{ request.user }}</i>
+  {% endif %}
+  to CLM<sup>+</sup>
+    <div class="page-title-subheading">
+                                    </div>
+</div></div><div class="page-title-actions">
+</div></div></div>
+
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
+                                                <div>
+                                                    <span class="opacity-10 text-primary pr-2">
+                                                        <i class="fa fa-plus"></i>
+                                                    </span>
+                                                    Core Package
+                                                    <!--<small class="opacity-5 pl-1">%</small>-->
+                                                </div>
+                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
+                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
+                                                        <!--<small></small>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
+                                                <div>
+                                                    <span class="opacity-10 text-danger pr-2">
+                                                        <i class="fa fa-plus"></i>
+                                                    </span>
+                                                    Walk-in
+                                                    <!--<small class="opacity-5 pl-1">%</small>-->
+                                                </div>
+                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
+                                                    <!--<div class="circle-progress circle-progress-danger-sm d-inline-block">-->
+                                                        <!--<small></small>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                          <!--<div class="col-md-6 col-lg-3">-->
+                              <!--<div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">-->
+                                  <!--<div class="widget-chat-wrapper-outer">-->
+                                      <!--<div class="widget-chart-content">-->
+                                          <!--<div class="widget-title opacity-5 text-uppercase">Need RS support</div>-->
+                                          <!--<div class="widget-numbers mt-2 fsize-4 mb-0 w-100">-->
+                                              <!--<div class="widget-chart-flex align-items-center">-->
+                                                  <!--<div>-->
+                                                      <!--<small class="text-success pr-1">+</small>-->
+                                                      <!--34-->
+                                                      <!--<small class="opacity-5 pl-1">%</small>-->
+                                                  <!--</div>-->
+                                                  <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
+                                                      <!--<div class="circle-progress circle-progress-success-sm d-inline-block">-->
+                                                          <!--<small></small>-->
+                                                      <!--</div>-->
+                                                  <!--</div>-->
+                                              <!--</div>-->
+                                          <!--</div>-->
+                                      <!--</div>-->
+                                  <!--</div>-->
+                              <!--</div>-->
+                          <!--</div>-->
+                    </div>
+
+<!--<div class="row">-->
+<!--                            <div class="col-lg-12 col-xl-12">-->
+<!--                                <div class="main-card mb-3 card">-->
+<!--                                    <div class="grid-menu grid-menu-2col">-->
+<!--                                        <div class="no-gutters row">-->
+<!--                                            <div class="col-sm-6">-->
+<!--                                                <div class="widget-chart widget-chart-hover">-->
+<!--                                                    <div class="icon-wrapper rounded-circle">-->
+<!--                                                        <div class="icon-wrapper-bg bg-primary"></div>-->
+<!--                                                        <i class="lnr-book text-primary"></i></div>-->
+<!--                                                    <div class="widget-numbers"><a href="{% url 'mscc:list' %}" style="text-decoration: none;">Education</a></div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            -->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--</div>-->
+
+{% endblock %}
+
+{% block modal %}
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
+
+{% endblock %}

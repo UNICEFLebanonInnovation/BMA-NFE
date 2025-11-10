@@ -1,0 +1,15 @@
+{% load static i18n %}
+{% load util_tags %}
+<button
+    class="btn btn-danger delete-button dropdown-item delete-inclusion-student"
+    itemscope="{{ record.id }}"
+    data-action="{{ column.attrs.url }}{{ record.id }}"
+    data-registration-id="{{ record.id }}"
+    data-url="{{ column.attrs.url_delete }}{{ record.id }}"
+    translation="{% trans 'Are you sure you want to delete this student?' %}">
+
+    <i class="icon-trash icon-white"></i>
+    {% trans "Delete" %}
+</button>
+
+

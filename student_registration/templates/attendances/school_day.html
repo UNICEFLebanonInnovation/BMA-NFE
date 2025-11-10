@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-switch.min.css' %}">
+
+{% endblock %}
+
+{% block content-full-page %}
+
+         <section class="main-content-wrapper">
+            <section id="main-content">
+                 <div class="row">
+                    <div class="col-md-12">
+                        </br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="alert alert-success d-none" role="alert">
+                                {% trans 'Your data has been sent successfully to the server' %}
+                            </div>
+                            <div class="alert alert-danger d-none" role="alert">
+                                {% trans 'En error has been occurred please contact the admin or try later' %}
+                            </div>
+                          <div class="panel-heading">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <select name="dates" id="dates" class="form-control">
+                                        {% for date in dates %}
+                                            {% if school_type == 'ALP' %}
+                                            <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %} data-action="{% url "attendances:attendance_alp" %}?date={{ date.value }}">{{ date.label }}</option>
+                                            {% else %}
+                                            <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %} data-action="{% url "attendances:attendance" %}?date={{ date.value }}">{{ date.label }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </li>
+                                <li class="breadcrumb-item"><span style="margin-top: 5px;display: inline-block;">{{ school }}</span></li>
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'attendances:export' %}?date={{ selected_date }}&school_type={{ school_type }}" class="btn btn-success">{% trans "Export attendance" %}</a>
+                                </li>
+                                <li class="absolute-right-15 absolute-top-15" style="font-size: 20px"><span class="badge badge-primary">{{ total }}</span></li>
+                            </ol>
+                          </div>
+                          <div class="panel-heading">
+                          {% csrf_token %}
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    {% if attendance and attendance.close_reason %}
+                                        <button class="btn btn-default"><b>{% trans 'School is closed for: ' %}{{ attendance.close_reason }}</b></button>
+                                    {% else %}
+                                      <button type="button" class="closing-reason-b btn btn-primary" itemref="public_holiday" translation="{% trans 'Are you sure that the school is closed today for a public holiday?' %}" {% if attendance.validation_date %}disabled{% endif %}>{% trans "Public Holiday" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-warning" itemref="school_holiday" translation="{% trans 'Are you sure that the school is closed today for a school holiday?' %}" {% if attendance.validation_date %}disabled{% endif %}>{% trans "School Holiday" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-danger" itemref="strike" translation="{% trans 'Are you sure that the school is closed today for a strike?' %}" {% if attendance.validation_date %}disabled{% endif %}>{% trans "Strike" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-info" itemref="weekly_holiday" translation="{% trans 'Are you sure that the school is closed today for a weekly holiday?' %}" {% if attendance.validation_date %}disabled{% endif %}>{% trans "Weekly Holiday" %}</button>
+                                    {% endif %}
+                                    {% if attendance %}
+                                        {% if attendance.validation_date %}
+                                            <button class="btn btn-default absolute-right-15 absolute-top-15"><b>{% trans 'Attendances validated on' %}: {{ attendance.validation_date }}</b></button>
+                                        {% else %}
+                                            <button type="button" itemref="{{ attendance.id }}" class="btn btn-success absolute-right-15 absolute-top-15"
+                                                    id="attendance_validate" translation_ok="{% trans 'Are you sure you want to validate all attendances?' %}"
+                                                    translation_ko="{% trans 'Attendance not completed yet' %}">
+                                                {% trans "Validate all" %}
+                                            </button>
+                                        {% endif %}
+                                    {% endif %}
+                                </li>
+                            </ol>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div id="attendance-sheet" class="">
+                <input type="hidden" name="school" value="{{ request.user.school_id }}" id="school" />
+                <input type="hidden" name="owner" value="{{ request.user.id }}" id="owner" />
+                {% for row in levels_by_sections %}
+                    {% if school_type == 'ALP' %}
+                <a class="row row-class {% if row.attendance_taken or row.school_closed %}attendance_done{% else %}attendance_not_done{% endif %}"
+                   href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}&level={{ row.level }}&section={{ row.section }}">
+                    {% else %}
+                <a class="row row-class {% if row.attendance_taken or row.school_closed %}attendance_done{% else %}attendance_not_done{% endif %}"
+                   href="{% url "attendances:attendance" %}?date={{ selected_date }}&level={{ row.level }}&section={{ row.section }}">
+                {% endif %}
+                    <div class="col-xs-4 col-sm-4 col-md-4 s-lft s-col" style="border-left: 10px solid #2aabd2;">
+                        <div>{{ row.level_name }}</div>
+                        <div>{{ row.section_name }}</div>
+                    </div>
+                    <div class="col-xs-3 col-sm-3 col-md-3 s-col">
+                        {% if row.validation_date %}
+                            <span class="attendance-status icon-2-check"></span>
+                            {% if row.exam_day or row.not_attending %}
+                            <span class="attendance-status icon-exam-check"></span>
+                            {% endif %}
+                        {% elif row.exam_day or row.not_attending  %}
+                            <span class="attendance-status icon-exam-check"></span>
+                        {% elif row.total_attended or row.total_absences %}
+                            <span class="attendance-status icon-check"></span>
+                        {% else %}
+                            <span class="attendance-status icon-pending-check"></span>
+                        {% endif %}
+                    </div>
+                    <div class="col-xs-3 col-sm-3 col-md-3 s-progs s-col">
+                        <div class="progress progress-success">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attended }}"
+                                 aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attended|percentage_int:row.total }}%">
+                               {{ row.total_attended }} ({{ row.total_attended|percentage_int:row.total }})%
+                            </div>
+                         </div>
+                        <div class="progress progress-danger">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absences }}"
+                                 aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absences|percentage_int:row.total }}%">
+                               {{ row.total_absences }} ({{ row.total_absences|percentage_int:row.total }})%
+                            </div>
+                         </div>
+                    </div>
+                    <div class="col-xs-2 col-sm-2 col-md-2 s-rgt s-col">
+                        <span class="icon-students"></span>
+                        <span style="font-size: 30px; color: #fff; position: absolute; bottom: -5px; left: 22px; text-shadow: 1px 1px 1px;">{{ row.total }}</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+         </section>
+
+{% endblock %}
+
+{% block extra_js %}
+    {% get_user_token request.user.id as user_token %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap-switch.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/attendance.js' %}"></script>
+    <script>
+        var user_token = '{{ user_token }}';
+        var href_full_path = '{{ request.build_absolute_uri }}';
+        var school_type = '{{ school_type }}';
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+    </script>
+
+{% endblock %}

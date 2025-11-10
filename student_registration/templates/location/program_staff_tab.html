@@ -1,0 +1,85 @@
+{% load static i18n %}
+{% load util_tags %}
+{% load simple_tags %}
+ <style>
+    .right-align {
+        text-align: right;
+    }
+    .dropdown-item i {
+      margin-right: 5px;
+    }
+</style>
+
+<div class="row staff-profile">
+<!--Center Data-->
+<div class="col-md-12 col-lg-12 col-xl-12">
+    <div class="main-card mb-12 card">
+        <div class="card-body">
+            <h5 class="card-title" style="display: inline-block; margin-right: 10px;">Program Staff List</h5>
+              {% if request.user|has_group:"MSCC_CENTER" %}
+                  <th>
+                    <a href="{% url 'locations:program_staff_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Program Staff." style="display: inline-block;"><i class="pe-7s-plus"></i></a>
+                  </th>
+              {% endif %}
+
+            <table class="mb-0 table table-striped">
+                <thead>
+                <tr>
+                    {% if request.user|has_group:"MSCC_CENTER" %}
+                        <th>Actions</th>
+                    {% endif %}
+                    <th>Facilitator Name</th>
+                    <th>Gender</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Programs</th>
+                    <th>Weekly Hours Taught</th>
+                    <th>Attendance Training</th>
+                    <th>Training Topics</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for program_staff in program_staffs %}
+                    <tr>
+                        {% if request.user|has_group:"MSCC_CENTER" %}
+                          <th>
+                            <a href="{% url 'locations:program_staff_edit' program_staff.center.id program_staff.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Program Staff."><i class="pe-7s-pen"></i></a>
+                            <a href="" class="delete-program-staff" data-id="{{ program_staff.id }}" data-toggle="tooltip" data-placement="top" data-original-title="Delete Program Staff."><i class="pe-7s-trash" style="color: red;"></i></a>
+                          </th>
+                        {% endif %}
+                        <td> {{ program_staff.facilitator_name }} </td>
+                        <td> {{ program_staff.gender }} </td>
+                        <td> {{ program_staff.phone_number }} </td>
+                        <td> {{ program_staff.email }} </td>
+                        <td>
+                          {% for sub in program_staff.subject %}
+                              {{ sub }}<br>
+                          {% endfor %}
+                        </td>
+                        <td>
+                          {% for program in program_staff.programs %}
+                              {{ program }}<br>
+                          {% endfor %}
+                        </td>
+                        <td> {{ program_staff.weekly_hours_taught }} </td>
+                        <td> {{ program_staff.attendance_training }} </td>
+                        <td>
+                          {% for topic in program_staff.training_topics %}
+                              {{ topic }}<br>
+                          {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+
+
+

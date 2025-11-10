@@ -1,0 +1,18 @@
+{% load static i18n %}
+{% load util_tags %}
+
+{% if record.grade_level %}
+    {% if record.grade_registration == '1' or record.grade_registration == '2' or record.grade_registration == '3' or record.grade_registration == '4' or record.grade_registration == '5' or record.grade_registration == '6'%}
+        <a href="{{ column.attrs.url }}{{ record.id }}{{ '/science' }}" class="btn btn-primary">
+            <i class="icon-synch-sign icon-white"></i>
+            {% trans "Science" %}
+        </a>
+    {% elif record.grade_registration == '7' or record.grade_registration == '8' or record.grade_registration == '9' %}
+        <a href="{{ column.attrs.url }}{{ record.id }}{{ '/biology' }}" class="btn btn-primary">
+            <i class="icon-synch-sign icon-white"></i>
+            {%  trans "Biology" %}
+        </a>
+    {% else %}
+        {% trans "--" %}
+    {% endif %}
+{% endif %}

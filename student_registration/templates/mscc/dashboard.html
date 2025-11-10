@@ -1,0 +1,43 @@
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}Dashboard{% endblock %}
+{% block module_name %}Makani - Dashboard{% endblock %}
+
+{% block content %}
+
+<style>
+  .filter-package-type {
+    cursor: pointer;
+  }
+
+</style>
+
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="pe-7s-display1"></i>
+                                        </span>
+                                        <span class="d-inline-block">Dashboard</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+</div>
+
+<div class="row">
+
+  <iframe title="Makani - 2025 - V2" width="95%" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiYTlhYjRjYWItNGY2YS00YTU1LWEwNWQtNjE1MWUwMzgyNDVkIiwidCI6Ijc3NDEwMTk1LTE0ZTEtNGZiOC05MDRiLWFiMTg5MjAyMzY2NyIsImMiOjh9" frameborder="0" allowFullScreen="true"></iframe>
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,173 @@
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}Child Profile{% endblock %}
+
+{% block content %}
+
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-child"></i>
+                                        </span>
+                                        <span class="d-inline-block">Child Profile - {{ instance.child.full_name }}</span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a>Home</a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    <a href="{% url 'mscc:list' %}">List</a>
+                                                </li>
+                                                <li class="active breadcrumb-item" aria-current="page">
+                                                    Child Profile and Provided Services
+                                                </li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+
+      {% if request.user|has_group:"MSCC_FULL" %}
+                        <div class="page-title-actions">
+                                <a href="#" data-toggle="modal" data-target="#newRoundModal" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
+
+                                <!--<button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">-->
+                                    <!--{{ instance.type }}-->
+                                <!--</button>-->
+                            </div>
+    {% endif %}
+
+                        </div>
+</div>
+
+
+<div class="row">
+
+        <div class="col-md-12">
+                                    <div class="mb-3 card">
+                                        <div class="tabs-lg-alternate card-header">
+                                            <ul class="nav nav-justified">
+                                                <li class="nav-item">
+                                                    <a data-toggle="tab" href="#tab-eg9-0" class="nav-link show{% if current_tab == 'info' %} active{% endif %}">
+                                                        <div class="widget-number">Child Info.</div>
+                                                        <!--<div class="tab-subheading">-->
+                                                                <!--<span class="pr-2 opactiy-6">-->
+                                                                    <!--<i class="fa fa-comment-dots"></i>-->
+                                                                <!--</span>-->
+                                                            <!--Totals-->
+                                                        <!--</div>-->
+                                                    </a></li>
+                                                <li class="nav-item">
+                                                    <a data-toggle="tab" href="#tab-eg9-1" class="nav-link show{% if current_tab == 'services' %} active{% endif %}">
+                                                        <div class="widget-number">{{ instance.type }}</div>
+                                                        <!--<div class="tab-subheading">Products</div>-->
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a data-toggle="tab" href="#tab-eg9-2" class="nav-link show{% if current_tab == 'attendance' %} active{% endif %}">
+                                                        <div class="widget-number text-danger">Attendances</div>
+                                                        <!--<div class="tab-subheading">-->
+                                                            <!--<span class="pr-2 opactiy-6">-->
+                                                                <!--<i class="fa fa-bullhorn"></i>-->
+                                                            <!--</span>-->
+                                                            <!--Income-->
+                                                        <!--</div>-->
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane show{% if current_tab == 'info' %} active{% endif %}" id="tab-eg9-0" role="tabpanel">
+                                                <div class="card-body">
+                                                  {% include 'mscc/child_info_tab.html' %}
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane show{% if current_tab == 'services' %} active{% endif %}" id="tab-eg9-1" role="tabpanel">
+                                                <div class="card-body">
+                                                  {% include 'mscc/child_services_tab.html' %}
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane show{% if current_tab == 'attendance' %} active{% endif %}" id="tab-eg9-2" role="tabpanel">
+                                                <div class="card-body"><p class="mb-0">
+                                                  {% include 'mscc/child_attendance_tab.html' %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+</div>
+
+{% endblock %}
+
+{% block modal %}
+
+<div class="modal fade" id="newRoundModal" tabindex="-1" role="dialog" aria-labelledby="newRoundModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newRoundModalLabel">Register the Child in a new Round</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>To add this child to a new round, select the registration type (Core Package/Walk-In), and then click the "Confirm" button to create a new registration and start adding the education information.</p>
+        {% get_regitration_type instance.id as regitration_type %}
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="corePackage" name="registrationType" value="Core-Package" {% if regitration_type == "Core-Package" %}checked{% endif %}>
+          <label class="form-check-label" for="corePackage">Core Package</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="walkIn" name="registrationType" value="Walk-in" {% if regitration_type == "Walk-in" %}checked{% endif %}>
+          <label class="form-check-label" for="walkIn">Walk-In</label>
+        </div>
+        {% get_child_rounds instance.id as child_rounds %}
+        {% if child_rounds %}
+          <h5>Regitration History</h5>
+          {% for child_round in child_rounds %}
+            <p>{{ child_round }}</p>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <a id="new-round-confirm" href="{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=Core-Package" class="btn btn-success">Confirm</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" src="{% static 'js/mscc/mscc.js' %}?v=34"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const confirmButton = document.getElementById("new-round-confirm");
+            const radioButtons = document.querySelectorAll("input[name='registrationType']");
+            const updateHref = () => {
+                const selectedType = document.querySelector("input[name='registrationType']:checked").value;
+                confirmButton.href = "{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=" + selectedType;
+            };
+            updateHref();
+            radioButtons.forEach((radio) => {
+                radio.addEventListener("change", updateHref);
+            });
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,1070 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
+
+import json
+from collections import Counter
+
+from django.views.generic import (
+    DetailView,
+    ListView,
+    RedirectView,
+    UpdateView,
+    TemplateView,
+    FormView,
+)
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.db.models import Count, F
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db import connection
+import csv
+import io
+import zipfile
+import codecs
+from django.utils.encoding import smart_str
+import traceback
+
+from rest_framework import status
+from django.db.models import F, Q, OuterRef, Exists, Subquery, IntegerField
+from django.db.models.functions import Coalesce
+from django.urls import reverse, reverse_lazy
+from rest_framework import viewsets, mixins, permissions
+from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+
+from django_filters.views import FilterView
+from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
+from django_tables2.export.views import ExportMixin
+from fuzzywuzzy import fuzz
+from django.shortcuts import redirect, render
+import uuid
+from django.core.files.base import ContentFile
+from django.contrib.auth.decorators import login_required
+from student_registration.students.utils import generate_one_unique_id
+from student_registration.students.models import Nationality
+from student_registration.attendances.models import MSCCAttendanceChild
+from student_registration.backends.utils import (
+    ExportStorage,
+    download_file,
+    is_valid_filename,
+)
+
+from .filters import (
+    MainFilter,
+    FullFilter
+)
+from .tables import (
+    BootstrapTable,
+    MainTable,
+    YouthMainTable,
+    FullTable,
+    PartnerTable,
+)
+from .models import (
+    Round,
+    ProvidedServices,
+)
+from student_registration.backends.models import ExportHistory
+
+from .forms import (
+    MainForm,
+    ReferralForm
+)
+from .serializers import (
+    MainSerializer
+)
+
+from .utils import *
+
+from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
+from .tasks import queue_mscc_export, queue_filtered_mscc_export
+from student_registration.users.templatetags.custom_tags import has_group
+
+
+def chart_data(request):
+    """Return aggregated MSCC registration data for charts."""
+    metric = request.GET.get('chart', 'nationality')
+    qs = Registration.objects.filter(deleted=False)
+
+    package_type = request.GET.get('package_type')
+    if package_type:
+        qs = qs.filter(type=package_type)
+
+    partner = request.GET.get('partner')
+    if partner:
+        qs = qs.filter(partner_id=partner)
+
+    governorate = request.GET.get('governorate')
+    if governorate:
+        qs = qs.filter(center__governorate_id=governorate)
+
+    caza = request.GET.get('caza')
+    if caza:
+        qs = qs.filter(center__caza_id=caza)
+
+    cadaster = request.GET.get('cadaster')
+    if cadaster:
+        qs = qs.filter(center__cadaster_id=cadaster)
+
+    programme_type = request.GET.get('programme_type')
+    if programme_type:
+        qs = qs.filter(education_service__education_program=programme_type)
+
+    start = validate_date(request.GET.get('start'))
+    if start:
+        qs = qs.filter(created__date__gte=start)
+
+    end = validate_date(request.GET.get('end'))
+    if end:
+        qs = qs.filter(created__date__lte=end)
+
+    if metric == 'gender':
+        data = (
+            qs.values(label=F('child__gender'))
+            .exclude(child__gender__isnull=True)
+            .annotate(value=Count('id'))
+            .order_by('label')
+        )
+    else:
+        data = (
+            qs.values(label=F('child__nationality__name'))
+            .exclude(child__nationality__isnull=True)
+            .annotate(value=Count('id'))
+            .order_by('label')
+        )
+    return JsonResponse(list(data), safe=False)
+
+
+class ProfileView(LoginRequiredMixin,
+                  TemplateView):
+    template_name = 'mscc/profile.html'
+
+    def get_context_data(self, **kwargs):
+        instance = Registration.objects.get(id=self.kwargs['pk'])
+        generate_services(instance.child.age, instance)
+        current_tab = self.request.GET.get('current_tab', 'info')
+
+        rounds_registered = EducationService.objects.filter(
+            registration__child_id=instance.child.id,
+            registration__deleted=False
+        ).values_list('round_id', flat=True)
+
+        # Remove any None values
+        rounds_registered = [r for r in rounds_registered if r is not None]
+
+        # Query for available rounds
+        available_rounds = Round.objects.filter(current_year=True).exclude(id__in=rounds_registered)
+
+        # Check if any exist
+        new_round = available_rounds.exists()
+
+        services = ProvidedServices.objects.filter(registration=instance)
+        services_dict = {service.name: service for service in services}
+
+        return {
+            'instance': instance,
+            'new_round': new_round,
+            'current_tab': current_tab,
+            'provided_services': services_dict,
+        }
+
+
+class DashboardView(LoginRequiredMixin,
+                    TemplateView):
+    template_name = 'mscc/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+
+        return {}
+
+
+class DashboardCustomView(LoginRequiredMixin,
+                    TemplateView):
+    template_name = 'mscc/dashboard_d3.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.locations.models import Center, Location
+        from student_registration.clm.models import PartnerOrganization
+        from .models import Round
+
+        instances = Registration.objects.filter(deleted=False)
+        centers = Center.objects.all()
+        governorates = Location.objects.filter(type_id=1)
+        partners = PartnerOrganization.objects.all()
+        rounds = Round.objects.all()
+
+        # Children registered in more than one round
+        moved_qs = (
+            instances.values(
+                'child__first_name',
+                'child__father_name',
+                'child__last_name',
+            )
+            .annotate(
+                rounds=ArrayAgg('round__name', distinct=True),
+                programmes=ArrayAgg('education_service__education_program', distinct=True),
+                num_rounds=Count('round', distinct=True),
+            )
+            .filter(num_rounds__gt=1)
+        )
+
+        moved_children = [
+            {
+                'name': f"{row['child__first_name']} {row['child__father_name']} {row['child__last_name']}",
+                'rounds': [r for r in row['rounds'] if r],
+                'programmes': [p for p in row['programmes'] if p],
+            }
+            for row in moved_qs
+        ]
+
+        return {
+            'total': instances.count(),
+            'total_corepackage': instances.filter(type='Core-Package').count(),
+            'total_walkin': instances.filter(type='Walk-in').count(),
+            'centers': centers,
+            'governorates': governorates,
+            'partners': partners,
+            'rounds': rounds,
+            'moved_children': moved_children,
+        }
+
+
+class DashboardYouthView(LoginRequiredMixin,
+                         TemplateView):
+    template_name = 'mscc/dashboard_youth.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.locations.models import Center, Location
+        from student_registration.clm.models import PartnerOrganization
+
+        instances = Registration.objects.all()
+        centers = Center.objects.all()
+        governorates = Location.objects.filter(type_id=1)
+        partners = PartnerOrganization.objects.all()
+
+        return {
+            'total': instances.count(),
+            'total_corepackage': instances.filter(type='Core-Package').count(),
+            'centers': centers,
+            'governorates': governorates,
+            'partners': partners
+        }
+
+
+class DashboardDataView(LoginRequiredMixin, View):
+    """Return aggregated data for dashboard charts."""
+
+    def get(self, request):
+        from django.db.models import Count
+        from .models import (
+            Registration,
+            YouthKitService,
+            PSSService,
+        )
+        cash_support_programmes = Registration.CASH_SUPPORT_PROGRAMMES
+
+        qs = Registration.objects.filter(deleted=False)
+
+        centers = request.GET.getlist('centers')
+        if centers:
+            qs = qs.filter(center_id__in=centers)
+        rounds = request.GET.getlist('rounds')
+        if rounds:
+            qs = qs.filter(round_id__in=rounds)
+        governorates = request.GET.getlist('governorates')
+        if governorates:
+            qs = qs.filter(center__governorate_id__in=governorates)
+        partners = request.GET.getlist('partners')
+        if partners:
+            qs = qs.filter(partner_id__in=partners)
+
+        def aggregate(queryset, field):
+            results = queryset.values(field).annotate(total=Count('id')).order_by(field)
+            data = []
+            for row in results:
+                name = row.get(field) or 'N/A'
+                data.append({'name': name, 'y': row['total']})
+            return data
+
+        pss_qs = PSSService.objects.filter(registration__in=qs)
+        ys_qs = YouthKitService.objects.filter(registration__in=qs)
+
+        data = {
+            'children_per_gender': aggregate(qs, 'child__gender'),
+            'children_per_status': aggregate(qs, 'child__marital_status'),
+            'children_per_programme': aggregate(qs, 'type'),
+            'children_per_nationality': aggregate(qs, 'child__nationality__name'),
+            'children_per_source': aggregate(qs, 'source_of_identification'),
+            'children_per_disability': aggregate(qs, 'child__disability__name'),
+            'children_per_vulnerability': aggregate(pss_qs, 'child_vulnerability'),
+        }
+
+        programme_counts = Counter()
+        for programmes in qs.values_list('cash_support_programmes', flat=True):
+            if programmes:
+                programme_counts.update(programmes)
+
+        cash = []
+        for value, _ in cash_support_programmes:
+            if value:
+                cash.append({'name': value, 'y': programme_counts.get(value, 0)})
+        data['children_cash_support'] = cash
+
+        data['children_volunteering'] = aggregate(ys_qs, 'participate_volunteering')
+
+        # Number of unique children per round
+        per_round = (
+            qs.values('round__name')
+            .annotate(total=Count('child', distinct=True))
+            .order_by('round__name')
+        )
+        round_names = [row.get('round__name') or 'N/A' for row in per_round]
+        per_round_dict = {name: row['total'] for name, row in zip(round_names, per_round)}
+        data['children_per_round'] = [
+            {'name': name, 'y': per_round_dict[name]}
+            for name in round_names
+        ]
+
+        # Children registered in more than one round
+        multi_round_children = list(
+            qs.values('child')
+            .annotate(round_count=Count('round', distinct=True))
+            .filter(round_count__gt=1)
+            .values_list('child', flat=True)
+        )
+        moved_per_round = (
+            qs.filter(child__in=multi_round_children)
+            .values('round__name')
+            .annotate(total=Count('child', distinct=True))
+            .order_by('round__name')
+        )
+        moved_dict = {row.get('round__name') or 'N/A': row['total'] for row in moved_per_round}
+
+        data['children_moved_rounds'] = {
+            'categories': round_names,
+            'moved': [moved_dict.get(name, 0) for name in round_names],
+            'new': [per_round_dict[name] - moved_dict.get(name, 0) for name in round_names],
+        }
+
+        return JsonResponse(data, safe=False)
+
+
+class MainAddView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'mscc/main_form.html'
+    form_class = MainForm
+    success_url = reverse_lazy('mscc:list')
+    group_required = [u"MSCC", u"MSCC_CENTER"]
+
+    def get_success_url(self):
+        return reverse('mscc:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(MainAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(MainAddView, self).get_initial()
+        data = {
+            'type': self.request.GET.get('type', ''),
+        }
+        initial = data
+
+        return initial
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(MainAddView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return MainForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return MainForm(None, instance=None, request=self.request, initial=self.get_initial())
+
+
+class MainEditView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   FormView):
+    template_name = 'mscc/main_form.html'
+    form_class = MainForm
+    success_url = reverse_lazy('mscc:list')
+    group_required = [u"MSCC", u"MSCC_CENTER"]
+
+    def get_success_url(self):
+        return reverse('mscc:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(MainEditView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Registration.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return MainForm(self.request.POST, instance=instance, request=self.request)
+        else:
+            data = MainSerializer(instance).data
+            data['child_nationality'] = data['child_nationality_id'] if 'child_nationality_id' in data else ''
+            data['child_disability'] = data['child_disability_id'] if 'child_disability_id' in data else ''
+            data['main_caregiver_nationality'] = data['main_caregiver_nationality_id']if 'main_caregiver_nationality_id' in data else ''
+            data['father_educational_level'] = data['father_educational_level_id']if 'father_educational_level_id' in data else ''
+            data['mother_educational_level'] = data['mother_educational_level_id']if 'mother_educational_level_id' in data else ''
+            data['id_type'] = data['id_type_id']if 'id_type_id' in data else ''
+            return MainForm(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = Registration.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(MainEditView, self).form_valid(form)
+
+
+class NewRoundView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   TemplateView):
+
+    group_required = [u"MSCC", u"MSCC_CENTER"]
+    template_name = 'mscc/new_round.html'
+
+    def get_context_data(self, **kwargs):
+        registry = kwargs.get('pk')
+        return {
+            'registry': registry
+        }
+
+
+class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self):
+
+        registry = self.request.GET.get('registry')
+        type = self.request.GET.get('registrationType')
+
+        if self.request.GET.get('new_round_confirmation', None) == 'confirmed':
+            import copy
+            registration = Registration.objects.get(id=registry)
+            new_registration = copy.copy(registration)
+            new_registration.pk = None
+            new_registration.round = None
+            new_registration.owner = self.request.user
+            new_registration.modified_by = self.request.user
+            new_registration.type = type
+            if self.request.user.center:
+                new_registration.center = self.request.user.center
+            if self.request.user.partner:
+                new_registration.partner = self.request.user.partner
+            new_registration.save()
+
+            generate_services(new_registration.child.age, new_registration, self.request.user)
+            return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id, 'package_type': type})
+
+        return reverse('mscc:new_round', kwargs={'registry': registry})
+
+
+def main_mark_delete_view(request, pk):
+    if request.user.is_authenticated:
+        try:
+            registration = Registration.objects.get(id=pk)
+            registration.deleted = True
+            registration.deleted_by = request.user
+            registration.save()
+            result = {"isSuccessful": True}
+        except Registration.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
+
+
+class MainListView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   FilterView,
+                   ExportMixin,
+                   SingleTableView,
+                   RequestConfig):
+
+    table_class = MainTable
+    model = Registration
+    template_name = 'mscc/list.html'
+    table = BootstrapTable(Registration.objects.all(), order_by='id')
+    group_required = [u"MSCC"]
+
+    filterset_class = MainFilter
+
+    def get_queryset(self):
+        user = self.request.user
+        center_id = user.center_id
+        partner_id = user.partner_id
+
+        qs = (Registration.objects
+              .select_related(
+            'child',
+            'child__nationality',
+            'partner',
+            'center',
+            'center__governorate',
+            'center__caza',
+            'center__cadaster',
+            'owner',
+            'modified_by',
+            'round',
+        )
+              .prefetch_related('education_service')
+              .filter(deleted=False))
+
+        previous_registration = Registration.objects.filter(
+            child_id=OuterRef('child_id'),
+            created__lt=OuterRef('created'),
+        )
+
+        absent_days = (
+            MSCCAttendanceChild.objects
+                .filter(registration_id=OuterRef('pk'), attended='No')
+                .values('registration')
+                .annotate(count=Count('id'))
+                .values('count')
+        )
+
+        qs = qs.annotate(
+            has_previous=Exists(previous_registration),
+            _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
+        )
+
+        round_filter = Q(round__isnull=True) | Q(round__current_year=True)
+
+        if has_group(user, 'MSCC_UNICEF'):
+            return qs.filter(round_filter).order_by('-id')
+
+        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+            return qs.filter(round_filter, partner=partner_id).order_by('-id')
+
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            return qs.filter(round_filter, center=center_id).order_by('-id')
+
+        return Registration.objects.none()
+
+    def get_table_class(self):
+
+        """
+        Return the class to use for the table.
+        """
+        if has_group(self.request.user, 'MSCC_UNICEF'):
+            return FullTable
+        elif has_group(self.request.user, 'MSCC_PARTNER'):
+            return PartnerTable
+        elif has_group(self.request.user, 'MSCC_CENTER'):
+            return self.table_class
+
+        if not has_group(self.request.user, 'MSCC_FULL'):
+            return YouthMainTable
+        return self.table_class
+
+    def get_filterset_class(self):
+        if has_group(self.request.user, 'MSCC_UNICEF'):
+            return FullFilter
+        elif has_group(self.request.user, 'MSCC_PARTNER'):
+            return self.filterset_class
+        elif has_group(self.request.user, 'MSCC_CENTER'):
+            return self.filterset_class
+
+        return self.filterset_class
+
+
+class MainViewSet(mixins.RetrieveModelMixin,
+                  mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  mixins.UpdateModelMixin,
+                  viewsets.GenericViewSet):
+    model = Registration
+    queryset = Registration.objects.all()
+    serializer_class = MainSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        from datetime import datetime
+
+        qs = self.queryset
+        if self.request.GET.get('creation_date', None):
+            return self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
+                'created')
+
+        if self.request.GET.get('school', None):
+            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
+def main_registration_cancel_view(request, pk):
+    if request.user.is_authenticated:
+        try:
+            registration = Registration.objects.get(id=pk)
+            registration.deleted = True
+            registration.save()
+            return redirect('mscc:list')
+        except Registration.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
+
+
+def outreach_child_search(request):
+
+    birthday_year = request.GET.get('birthday_year')
+    birthday_month = request.GET.get('birthday_month')
+    birthday_day = request.GET.get('birthday_day')
+    first_name = request.GET.get('first_name')
+    father_name = request.GET.get('father_name')
+    last_name = request.GET.get('last_name')
+
+    form_str = '{} {} {}'.format(first_name, father_name, last_name)
+    filtered_results = OutreachChild.objects.filter(
+        birthday_year=birthday_year
+    )
+
+    if birthday_month:
+        filtered_results = filtered_results.filter(
+            birthday_month=birthday_month
+        )
+    if birthday_day:
+        filtered_results = filtered_results.filter(
+            birthday_day=birthday_day
+        )
+
+    filtered_results = filtered_results.values(
+        'id',
+        'first_name',
+        'outreach_caregiver__father_name',
+        'outreach_caregiver__last_name',
+        'outreach_caregiver__mother_full_name',
+        'gender',
+        'nationality',
+        'date_of_birth',
+        'birthday_year',
+        'birthday_month',
+        'birthday_day',
+    ).distinct()
+
+    result_match = []
+    for result in filtered_results:
+        result_str = '{} {} {}'.format(result['first_name'], result['outreach_caregiver__father_name'],
+                                       result['outreach_caregiver__last_name'])
+        fuzzy_match = fuzz.ratio(form_str, result_str)
+        if fuzzy_match > 80:
+            result['score'] = fuzzy_match
+            result_match.append(result)
+
+    if filtered_results != '':
+        return JsonResponse({'result': result_match})
+
+    return JsonResponse({'result': []})
+
+
+def outreach_child(request):
+
+    outreach_id = request.GET.get('outreach_id')
+    result = get_outreach_child(outreach_id)
+    return JsonResponse(result)
+
+
+class ReferralFormView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+    template_name = 'mscc/referral_form.html'
+    form_class = ReferralForm
+    success_url = reverse_lazy('mscc:list')
+    group_required = [u"MSCC", u"MSCC_CENTER"]
+
+    def get_success_url(self):
+        return reverse('mscc:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['registry'] = self.kwargs['registry']
+        return super(ReferralFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        pk = self.kwargs['pk'] if 'pk' in self.kwargs else None
+
+        if self.request.method == "POST":
+            return ReferralForm(self.request.POST, pk=pk, registry=registry, request=self.request)
+        else:
+            if pk:
+                instance = Referral.objects.get(id=pk)
+
+                return ReferralForm(instance=instance, registry=registry, pk=pk, request=self.request)
+            return ReferralForm(registry=registry, pk=pk, request=self.request)
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, instance=instance)
+        return super(ReferralFormView, self).form_valid(form)
+
+
+def old_child_search(request):
+
+    birthday_year = request.GET.get('birthday_year')
+    birthday_month = request.GET.get('birthday_month')
+    birthday_day = request.GET.get('birthday_day')
+    first_name = request.GET.get('first_name')
+    father_name = request.GET.get('father_name')
+    last_name = request.GET.get('last_name')
+
+    form_str = '{} {} {}'.format(first_name, father_name, last_name)
+
+    # filtered_results = Student.objects.filter(
+    #     birthday_year=birthday_year
+    # )
+    # if filtered_results.count() > 1000 and not birthday_month and not birthday_day:
+    #     return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
+    #                                              'month to get more accurate result'}})
+    #
+    # if birthday_month:
+    #     filtered_results = filtered_results.filter(
+    #         birthday_month=birthday_month
+    #     )
+    #
+    # if filtered_results.count() > 1000 and not birthday_day:
+    #     return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
+    #                                              'day to get more accurate result'}})
+    #
+    # if birthday_day:
+    #     filtered_results = filtered_results.filter(
+    #         birthday_day=birthday_day
+    #     )
+    #
+    # filtered_results = filtered_results.values(
+    #     'id',
+    #     'first_name',
+    #     'father_name',
+    #     'last_name',
+    #     'mother_fullname',
+    #     'sex',
+    #     'nationality__name',
+    #     'birthday_year',
+    #     'birthday_month',
+    #     'birthday_day',
+    # ).distinct()
+    #
+    # result_match = []
+    # for result in filtered_results:
+    #     result_str = '{} {} {}'.format(result['first_name'], result['father_name'],
+    #                                    result['last_name'])
+    #     fuzzy_match = fuzz.ratio(form_str, result_str)
+    #     if fuzzy_match > 70:
+    #         result['score'] = fuzzy_match
+    #         result['programmes'] = education_history_programmes(result['id'])
+    #         result_match.append(result)
+    #
+    # return JsonResponse({'result': result_match})
+
+    filtered_results = Student.objects.filter(
+        birthday_year=birthday_year
+    )
+
+    if birthday_month:
+        filtered_results = filtered_results.filter(
+            birthday_month=birthday_month
+        )
+
+    filtered_results = filtered_results.filter(
+        Q(first_name__contains=first_name, last_name__contains=last_name) |
+        Q(first_name__contains=first_name, father_name__contains=last_name)
+    ).values(
+        'id',
+        'first_name',
+        'father_name',
+        'last_name',
+        'mother_fullname',
+        'sex',
+        'nationality__name',
+        'birthday_year',
+        'birthday_month',
+        'birthday_day',
+    ).distinct()
+
+    result_match = []
+    for result in filtered_results:
+        result_str = '{} {} {}'.format(result['first_name'], result['father_name'],
+                                       result['last_name'])
+        fuzzy_match = fuzz.ratio(form_str, result_str)
+        if fuzzy_match > 70:
+            result['score'] = fuzzy_match
+            result['programmes'] = education_history_programmes(result['id'])
+            result_match.append(result)
+
+    return JsonResponse({'result': result_match})
+
+
+def old_child_data(request):
+
+    student_id = request.GET.get('student_id')
+    result = get_old_child(student_id)
+    return JsonResponse(result)
+
+
+def child_duplication_check(request):
+    body_unicode = request.body.decode('utf-8')
+    if body_unicode:
+        body = json.loads(body_unicode)
+
+        birthday_year = body.get('birthday_year')
+        birthday_month = body.get('birthday_month')
+        birthday_day = body.get('birthday_day')
+        first_name = body.get('first_name')
+        father_name = body.get('father_name')
+        last_name = body.get('last_name')
+        mother_fullname = body.get('mother_fullname')
+        sex = body.get('sex')
+        nationality_id = body.get('nationality')
+        registration_id = body.get('registration_id')
+
+        try:
+            nationality = Nationality.objects.get(id=nationality_id).name_en
+        except Nationality.DoesNotExist:
+            nationality = ''
+
+        birthdate = '{0}-{1}-{2}'.format(birthday_year, birthday_month, birthday_day)
+        unicef_id = generate_one_unique_id(
+            '0',
+            first_name,
+            father_name,
+            last_name,
+            mother_fullname,
+            birthdate,
+            nationality,
+            sex
+        )
+
+        if unicef_id:
+            qs = Registration.objects.filter(
+                child__unicef_id=unicef_id,
+                deleted=False
+            )
+            if registration_id:
+                qs = qs.exclude(pk=registration_id)
+            qs = qs.values('id', 'center__name')
+            return JsonResponse({'result': list(qs)})
+
+    return JsonResponse({'result': []})
+
+
+def quick_search(request):
+    from django.db.models.functions import Concat
+    from django.db.models import Value
+
+    term = request.GET.get('term', 0).strip()
+    terms = request.GET.get('term', 0).strip()
+    qs = {}
+
+    if terms:
+        user = request.user
+        if user.is_authenticated:
+            center_id = user.center_id
+            partner_id = user.partner_id
+
+            if has_group(user, 'MSCC_UNICEF'):
+                qs= Registration.objects.filter(
+                    Q(round__isnull=True) | Q(round__current_year=True),
+                    deleted=False
+                ).order_by('-id')
+            elif has_group(user, 'MSCC_PARTNER') and partner_id:
+                qs= Registration.objects.filter(
+                    Q(round__isnull=True) | Q(round__current_year=True),
+                    deleted=False, partner=partner_id
+                ).order_by('-id')
+            elif has_group(user, 'MSCC_CENTER') and center_id:
+                qs= Registration.objects.filter(
+                    Q(round__isnull=True) | Q(round__current_year=True),
+                    deleted=False, center=center_id
+                ).order_by('-id')
+            else:
+                qs = Registration.objects.none()
+
+            if len(terms.split()) > 1:
+                qs = qs.annotate(fullname=Concat('child__first_name', Value(' '), 'child__father_name',
+                                                 Value(' '), 'child__last_name')) \
+                    .filter(fullname__icontains=terms) \
+                    .values('id', 'child__first_name', 'child__last_name',
+                            'child__father_name', 'child__mother_fullname').distinct()
+
+            else:
+                # for term in terms:
+                qs = qs.filter(
+                    Q(child__first_name__icontains=term) |
+                    Q(child__last_name__icontains=term))\
+                    .values('id', 'child__first_name', 'child__last_name',
+                            'child__father_name', 'child__mother_fullname').distinct()
+        else:
+            return JsonResponse({'error': 'User not authenticated'}, status=401)
+
+    return JsonResponse({'result': json.dumps(list(qs))})
+
+
+class ProgrammeDetails(LoginRequiredMixin,
+                       TemplateView):
+
+    template_name = 'mscc/programme_details.html'
+
+    def get_context_data(self, **kwargs):
+
+        programme_id = self.request.GET.get('programme_id')
+        programme_type = self.request.GET.get('programme_type')
+
+        instance = education_history_model(programme_id, programme_type)
+
+        return {
+            'instance': instance,
+            'programme_type': programme_type
+        }
+
+
+class ChildProfilePreview(LoginRequiredMixin, TemplateView):
+    template_name = 'mscc/child_profile_preview.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ChildProfilePreview, self).get_context_data(**kwargs)
+
+        registry_id = self.request.GET.get('registry_id')
+
+        if not registry_id:
+            context['error'] = 'No id provided.'
+            return context
+
+        try:
+            instance = Registration.objects.get(id=registry_id)
+        except Registration.DoesNotExist:
+            context['error'] = 'Registration with id' + str(registry_id) + ' not found.'
+            return context
+        except ValueError:
+            context['error'] = 'Invalid registry_id ' + str(registry_id)
+            return context
+
+        context['instance'] = instance
+        return context
+
+
+@login_required(login_url='/users/login')
+def export_list_background(request):
+    user = request.user
+    nationality = request.GET.get('nationality', '')
+    first_name = request.GET.get('first_name', '')
+    last_name = request.GET.get('last_name', '')
+    father_name = request.GET.get('father_name', '')
+    mother_fullname = request.GET.get('mother_fullname', '')
+    round = request.GET.get('round', '')
+    if not round:
+        return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
+                            status=400)
+
+    export_record = ExportHistory.objects.create(
+        export_type='Makani List',
+        created_by=user,
+        partner_name=user.partner.name if user.partner else ''
+    )
+    queue_filtered_mscc_export(
+        export_record.id,
+        nationality,
+        first_name,
+        last_name,
+        father_name,
+        mother_fullname,
+        round,
+    )
+    return JsonResponse({'status': 'started'})
+
+
+def export_child_list_background(request):
+    try:
+        cursor = connection.cursor()
+
+        vw_mscc_data_str = "SELECT * FROM vw_mscc_child "
+        cursor.execute(vw_mscc_data_str)
+        mscc_data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
+
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            # Create CSV for vw_mscc_data
+            csv_mscc_output = io.StringIO()
+            csv_writer = csv.writer(csv_mscc_output)
+
+            # Add BOM to handle Arabic text correctly
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)  # Write headers
+
+            for row in mscc_data:
+                encoded_row = [smart_str(cell) for cell in row]
+                csv_writer.writerow(encoded_row)
+
+            # Add CSV to ZIP
+            zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
+
+        unique_id = str(uuid.uuid4())
+        file_name = "out_file_{}.zip".format(unique_id)
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
+
+        return HttpResponse(file_name)
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        return HttpResponse("An error occurred: " + str(e), status=500)
+
+
+@login_required(login_url='/users/login')
+def export_list_async(request):
+    fields = None
+    file_format = 'csv'
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body.decode('utf-8'))
+        except (ValueError, AttributeError):
+            payload = request.POST
+        if isinstance(payload, dict):
+            file_format = payload.get('format', 'csv')
+            fields = payload.get('fields') or None
+        else:
+            file_format = payload.get('format', 'csv') if payload else 'csv'
+    else:
+        file_format = request.GET.get('format', 'csv')
+    export_record = ExportHistory.objects.create(
+        export_type='Makani List',
+        created_by=request.user,
+        partner_name=request.user.partner.name if request.user.partner else '',
+        fields=fields,
+        file_format=file_format,
+    )
+    queue_mscc_export(export_record.id, fields, file_format)
+    return JsonResponse({'status': 'started'})
+
+
+@login_required(login_url='/users/login')
+def get_file(request, file_name):
+    if is_valid_filename(file_name, 'zip'):
+        return download_file(file_name, 'output_file.zip')
+    return HttpResponse("Invalid file.")
+
+
+@login_required(login_url='/users/login')
+def get_file_csv(request, file_name):
+    if is_valid_filename(file_name, 'csv'):
+        return download_file(file_name, 'exported_data.csv', content_type='text/csv')
+    return HttpResponse("Invalid file.", status=400)

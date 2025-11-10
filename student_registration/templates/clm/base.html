@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block module_name %}
+Dirasa
+{% if request.user.partner.is_Kayany %} - Kayany {% endif %}
+{% endblock %}

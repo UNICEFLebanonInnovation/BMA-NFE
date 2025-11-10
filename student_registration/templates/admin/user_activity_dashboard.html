@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block content %}
+<h1>User Activity Dashboard</h1>
+<p>Total records: {{ total }}</p>
+<h2>Requests by Method</h2>
+<table class="table">
+  <thead><tr><th>Method</th><th>Count</th></tr></thead>
+  <tbody>
+  {% for item in method_stats %}
+    <tr><td>{{ item.method }}</td><td>{{ item.count }}</td></tr>
+  {% empty %}
+    <tr><td colspan="2">No data</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<h2>Top Paths</h2>
+<table class="table">
+  <thead><tr><th>Path</th><th>Count</th></tr></thead>
+  <tbody>
+  {% for item in top_paths %}
+    <tr><td>{{ item.path }}</td><td>{{ item.count }}</td></tr>
+  {% empty %}
+    <tr><td colspan="2">No data</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% load static i18n %}
+{% load util_tags %}
+
+{% if record.grade_level %}
+    {% if record.grade_registration == '7' or record.grade_registration == '8' or record.grade_registration == '9' %}
+        <a href="{{ column.attrs.url }}{{ record.id }}{{ '/physics' }}" class="btn btn-success">
+            <i class="icon-synch-sign icon-white"></i>
+            {% trans "Physics" %}
+        </a>
+    {% else %}
+        {% trans "--" %}
+    {% endif %}
+{% endif %}

@@ -1,0 +1,26 @@
+# Local development dependencies go here
+-r base.txt
+
+# Sphinx for documentation
+Sphinx==7.3.7
+
+# Django Extensions for additional management commands
+django-extensions==4.1
+
+# Django Debug Toolbar for debugging
+django-debug-toolbar==5.2.0
+
+# Werkzeug (often a dependency, keeping an eye on it)
+# #Werkzeug==0.12.2 # Example if it were active, updated to 3.0.3
+
+# improved REPL
+ipdb==0.13.13
+
+# Note: Test-specific dependencies like coverage, pytest, factory-boy,
+# django-test-plus are managed in requirements/test.txt
+# and are included when running tests, typically via tox or a CI setup.
+# Including them here would be redundant if `test.txt` is also installed.
+# If this local environment is also used for running tests directly
+# without a separate test requirements installation, then uncommenting
+# the -r test.txt line below might be desired.
+# -r test.txt

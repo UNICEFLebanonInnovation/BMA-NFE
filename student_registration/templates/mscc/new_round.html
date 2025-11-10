@@ -1,0 +1,185 @@
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}New Round{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="app-page-title">
+      <div class="page-title-wrapper">
+          <div class="page-title-heading">
+              <div>
+                  <div class="page-title-head center-elem page-title-heading">
+                      <span class="d-inline-block pr-2">
+                          <i class="fa fa-id-card"></i>
+                      </span>
+                      <span class="d-inline-block">
+                        Register the Child in a new Round
+                      </span>
+                  </div>
+                  <div class="page-title-subheading opacity-10">
+                      <nav class="" aria-label="breadcrumb">
+                          <ol class="breadcrumb">
+                              <li class="breadcrumb-item">
+                                  <a href="{% url 'mscc:list' %}">Home</a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname registry %}</a>
+                              </li>
+                               <li class="breadcrumb-item">
+                                     New Round
+                              </li>
+
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+          <div class="page-title-actions"></div>
+      </div>
+</div>
+
+        <!--{{ form.errors }}-->
+
+<div class="main-card mb-3 card">
+                                <div class="card-body">
+                                    <div id="smartwizard3" class="forms-wizard">
+                                        <ul class="forms-wizard">
+                                            <li>
+                                                <a href="#step-1">
+                                                    <em>1</em><span>Register the Child in a new Round</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="form-wizard-content">
+                                          <form>
+                                            <div id="step-1">
+
+                                              <div class="row card-body">
+                                                <h2>To add this child to a new round, select the registration type (Core Package/Walk-In), and then click the "Confirm" button to create a new registration and start adding the education information.</h2>
+                                              </div>
+                                              <div class="row card-body">
+                                                        <h6></h6><br>
+                                              </div>
+                                              <br>
+                                              <div class="row card-body">
+                                                  <h5>Package type:  </h5>
+                                              </div>
+
+                                              {% get_regitration_type registry as regitration_type  %}
+                                              <div class="row card-body">
+                                                  <div class="form-check">
+                                                      <input
+                                                          type="radio"
+                                                          class="form-check-input"
+                                                          id="corePackage"
+                                                          name="registrationType"
+                                                          value="Core-Package"
+                                                          {% if regitration_type == "Core-Package" %}checked{% endif %}
+                                                      >
+                                                      <label class="form-check-label" for="corePackage">Core Package</label>
+                                                  </div>
+                                              </div>
+
+                                              <div class="row card-body">
+                                                  <div class="form-check">
+                                                      <input
+                                                          type="radio"
+                                                          class="form-check-input"
+                                                          id="walkIn"
+                                                          name="registrationType"
+                                                          value="Walk-in"
+                                                          {% if regitration_type == "Walk-in" %}checked{% endif %}
+                                                      >
+                                                      <label class="form-check-label" for="walkIn">Walk-In</label>
+                                                  </div>
+                                              </div>
+
+
+
+
+
+                                                <br>
+                                                {% get_child_rounds registry as child_rounds  %}
+                                                {% if child_rounds  %}
+                                                    <div class="row card-body">
+                                                        <h5>Regitration History</h5><br>
+                                                    </div>
+                                                    {% for child_round in child_rounds %}
+                                                      <div class="row card-body">
+                                                        <h6>{{ child_round }}</h6><br>
+                                                      </div>
+                                                    {% endfor %}
+                                                {% endif %}
+
+
+                                              <!--<div class="row card-body">-->
+                                                  <div class="form-group" style="padding-top: 100px;">
+                                                    <div class="">
+                                                      <a type="button" href="{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=Core-Package" name="new_round_confirmation" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save">Confirm</a>
+                                                      <a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="{% url 'mscc:list' %}">Cancel</a>
+                                                    </div>
+                                                  </div>
+                                              <!--</div>-->
+
+                                            </div>
+
+                                          </form>
+
+                                        </div>
+                                    </div>
+                                    <!--<div class="divider"></div>-->
+
+                                    <div class="clearfix">
+                                        <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
+                                        <!--<a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>-->
+
+                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
+                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
+
+                                        <!--<button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>-->
+                                        <!--<button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>-->
+                                    </div>
+                                </div>
+                            </div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/service_digital.js' %}?v=5"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const confirmButton = document.getElementById("submit-id-save");
+        const radioButtons = document.querySelectorAll("input[name='registrationType']");
+
+        // Function to update the href of the button based on the selected radio button
+        const updateHref = () => {
+            const selectedType = document.querySelector("input[name='registrationType']:checked").value;
+            confirmButton.href = `{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}`;
+        };
+
+        // Update the href when the page loads (in case a default is selected)
+        updateHref();
+
+        // Add event listeners to radio buttons to update the href dynamically
+        radioButtons.forEach((radio) => {
+            radio.addEventListener("change", updateHref);
+        });
+    });
+</script>
+
+{% endblock %}

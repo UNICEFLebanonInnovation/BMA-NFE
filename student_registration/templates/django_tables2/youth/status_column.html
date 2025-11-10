@@ -1,0 +1,10 @@
+{% load static i18n %}
+{% load util_tags %}
+{% load youth_tags %}
+
+{% get_completion_rate record as result %}
+
+
+<div class="progress" style="height: 25px;">
+  <div class="progress-bar" role="progressbar" aria-valuenow="{{ result }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ result }}%;">{{ result }}%</div>
+</div>

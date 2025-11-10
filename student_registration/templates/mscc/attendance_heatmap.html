@@ -1,0 +1,33 @@
+{% extends "mscc/base.html" %}
+{% load static %}
+
+{% block module_name %}Makani - Attendance{% endblock %}
+{% block project_title %}Attendance Heatmap{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Attendance Heatmap - {{ year }}</h2>
+  <label for="year-select" class="form-label">Year</label>
+  <select id="year-select" class="form-select w-auto d-inline-block mb-3">
+    {% for y in years %}
+      <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+    {% endfor %}
+  </select>
+  <div id="attendance-heatmap" class="mb-5 heatmap-container"></div>
+  <div id="programme-heatmaps"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+  window.attendanceData = {{ attendance_json|safe }};
+  window.programAttendanceData = {{ program_attendance_json|safe }};
+</script>
+<script src="{% static 'js/mscc/attendance-heatmap.js' %}"></script>
+<script>
+  document.getElementById('year-select').addEventListener('change', function() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('year', this.value);
+    window.location.href = url.toString();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% load static i18n %}
+<button class="btn btn-danger dropout-button" itemscope="{{ record.id }}" id="dropout_button_{{ record.id }}" translation="{% trans "Are you sure you want to tag this student as dropout?" %}">
+    {% trans "Dropout" %}
+</button>
+<div class="dropout-date-block d-none" id="dropout_date_block_{{ record.id }}">
+    <input class="form-control dropout-date-input" itemscope="{{ record.id }}" id="dropout_date_{{ record.id }}" type="text" placeholder="{% trans 'Enter dropout date' %}" />
+    <button class="btn btn-success save-dropout-button" itemscope="{{ record.id }}" id="save_dropout_button_{{ record.id }}">
+        {% trans "Save" %}
+    </button>
+    <button class="btn btn-warning cancel-dropout-button" itemscope="{{ record.id }}" id="cancel_dropout_button_{{ record.id }}">
+        {% trans "reset" %}
+    </button>
+</div>

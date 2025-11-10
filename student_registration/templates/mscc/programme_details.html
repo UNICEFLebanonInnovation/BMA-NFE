@@ -1,0 +1,130 @@
+
+                                    <div class="main-card card">
+                                        <div class="card-body" style="max-height: 300px;overflow: scroll;">
+                                          <h5 class="card-title">{{ programme_type }} - {{ instance.round }}</h5>
+                                            <div class="">
+                                                <div class="ps">
+                                                    <div class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+
+                                                        {% if instance.language %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Language</h4>
+                                                                    <p>{{ instance.language }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.school %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">School</h4>
+                                                                    <p>{{ instance.school }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.registered_in_school %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Registered in School</h4>
+                                                                    <p>{{ instance.registered_in_school }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.shift %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Shift</h4>
+                                                                    <p>{{ instance.shift }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.grade %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Grade</h4>
+                                                                    <p>{{ instance.grade }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.education_status %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Education Status</h4>
+                                                                    <p>{{ instance.education_status }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.type %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Programme Type</h4>
+                                                                    <p>{{ instance.type }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.cycle %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Cycle</h4>
+                                                                    <p>{{ instance.cycle }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.site %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Programme Site</h4>
+                                                                    <p>{{ instance.site }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.referral %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Where was the child referred?</h4>
+                                                                    <p>{{ instance.referral }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.child_muac %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child MUAC</h4>
+                                                                    <p>{{ instance.child_muac }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.learning_result %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Learning Result</h4>
+                                                                    <p>{{ instance.learning_result }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                        {% if instance.section %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><i class="badge badge-dot badge-dot-xl badge-success"> </i></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Section</h4>
+                                                                    <p>{{ instance.section }}</p><span class="vertical-timeline-element-date"></span></div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+
+                                                    </div>
+                                                <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+                                            </div>
+                                        </div>
+                                    </div>

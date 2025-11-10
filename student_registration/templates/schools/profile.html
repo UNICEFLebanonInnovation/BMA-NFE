@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load crispy_forms_tags %}
+{% load util_tags %}
+
+{% block head_title %}School profile{% endblock %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+{% endblock %}
+
+{% block content %}
+
+<style>
+  .block-notifications {
+      max-height: 320px;
+      overflow: scroll;
+      padding: 11px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      padding-top: 20px;
+      padding-bottom: 20px;
+  }
+  .row-notification {
+      border-right: 3px solid #0275d8;
+      padding-right: 15px;
+      border: 1px outset #0275d8;
+      border-radius: 5px;
+      box-shadow: 3px 3px 3px #0275D8;
+      margin-bottom: 15px;
+      min-height: 80px;
+      margin-right: 5px;
+      width: 99%;
+  }
+  .unread-notification {
+      border-right: 3px solid #0275d8;
+      border: 1px outset #0275d8;
+      box-shadow: 3px 3px 3px #0275D8;
+  }
+  .read-notification {
+      border-right: 3px solid #ccc;
+      border: 1px outset #ccc;
+      box-shadow: 3px 3px 3px #ccc;
+  }
+  .toggle-status {
+      cursor: pointer;
+  }
+</style>
+
+    <div id="resume" class="inner-content">
+
+        <section class="inner-section light bg-color01">
+            <div class="container-fluid nopadding">
+
+                <fieldset class="bd-callout bd-callout-warning'">
+                        <h4 id="alternatives-to-hidden-labels">{% trans "School" %}</h4>
+                        <div class="row">
+                            <div class="col-md-4">{{ request.user.school }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">{{ request.user.school.location.parent }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">{{ request.user.school.location }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">{% trans 'Total registered 2nd-shift' %}:
+                                <span class="badge badge-default">{{ request.user.school.total_registered_2ndshift }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">{% trans 'Total attendance days taken - 2nd-shift' %}:
+                                <span class="badge badge-default">{{ request.user.school.total_attendances_days_2ndshift }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">{% trans 'Total attendance days taken when school is open - 2nd-shift' %}:
+                                <span class="badge badge-default">{{ request.user.school.total_attendances_days_2ndshift_open }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">{% trans 'Total registered ALP' %}:
+                                <span class="badge badge-default">{{ request.user.school.total_registered_alp }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">{% trans 'Total attendance days taken - ALP' %}:
+                                <span class="badge badge-default">{{ request.user.school.total_attendances_days_alp }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">{% trans 'Total attendance days taken when school is open - ALP' %}:
+                                <span class="badge badge-default">{{ request.user.school.total_attendances_days_alp_open }}</span>
+                            </div>
+                        </div>
+                </fieldset>
+
+                <fieldset class="bd-callout bd-callout-warning'">
+                    <h5 id="alternatives-to-hidden-labels-1">
+                    <a class="" data-toggle="collapse" href="#collapse1" aria-expanded="false" aria-controls="collapse1">
+                      {% trans "General Notifications" %}
+                    </a>
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-4">{% trans "Number of unread messages" %}: <span class="badge badge-default">{{ unread_notifications }}</span></div>
+                    </div>
+
+                  <div class="collapse block-notifications" id="collapse1">
+                    {% for item in notifications %}
+                        <div class="row row-notification {% if item.status %}read-notification{% else %}unread-notification{% endif %}">
+                          {% if item.status %}
+                          <a class="toggle-status" itemid="{{ item.id }}" title="{% trans 'double click to mark this notification as unread' %}">
+                            <div class="icon-mail icon-mail-read"></div>
+                          </a>
+                          {% else %}
+                          <a class="toggle-status" itemid="{{ item.id }}" title="{% trans 'double click to mark this notification as read' %}">
+                            <div class="icon-mail icon-mail-unread"></div>
+                          </a>
+                          {% endif %}
+                          <div class="col-md-3">{{ item.created }}</div>
+                          <div class="col-md-8">{{ item.name }}</div>
+                          <div class="col-md-10" style="padding-right: 35px;">{{ item.description }}</div>
+                        </div>
+                    {% endfor %}
+                  </div>
+
+                </fieldset>
+
+                <fieldset class="bd-callout bd-callout-warning'">
+                    <h5 id="alternatives-to-hidden-labels-2">
+                      <a class="" data-toggle="collapse" href="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                        {% trans "Helpdesk Notifications" %}
+                      </a>
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-4">{% trans "Number of unread messages" %}: <span class="badge badge-default">{{ unread_tickets }}</span></div>
+                    </div>
+
+                  <div class="collapse block-notifications" id="collapse2">
+                    {% for item in tickets %}
+                        <div class="row row-notification {% if item.status %}read-notification{% else %}unread-notification{% endif %}">
+                          {% if item.status %}
+                          <a class="toggle-status" itemid="{{ item.id }}" title="{% trans 'double click to mark this notification as unread' %}">
+                            <div class="icon-mail icon-mail-read"></div>
+                          </a>
+                          {% else %}
+                          <a class="toggle-status" itemid="{{ item.id }}" title="{% trans 'double click to mark this notification as read' %}">
+                            <div class="icon-mail icon-mail-unread"></div>
+                          </a>
+                          {% endif %}
+                          <div class="col-md-3">{{ item.created }}</div>
+                          <div class="col-md-8">
+                            {% if item.ticket %}
+                              <a href="/helpdesk/tickets/{{ item.ticket }}/" target="_blank">{{ item.name }}</a>
+                            {% else %}
+                                {{ item.name }}
+                            {% endif %}
+                          </div>
+                          {% if item.description %}
+                          <div class="col-md-10" style="padding-right: 35px;"><strong>{% trans 'Description' %}:</strong> {{ item.description }}</div>
+                          {% endif %}
+                          {% if item.comments %}
+                          <div class="col-md-10" style="padding-right: 35px;"><strong>{% trans 'Last comment' %}:</strong> {{ item.comments }}</div>
+                          {% endif %}
+                        </div>
+                    {% endfor %}
+                  </div>
+
+                </fieldset>
+
+                {{ form.errors }}
+                {% crispy form %}
+            </div>
+        </section>
+
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+{% get_user_token request.user.id as user_token %}
+<script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+<script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+
+<script type="text/javascript">
+    $('#id_academic_year_start').datepicker({dateFormat: "yy-mm-dd"});
+    $('#id_academic_year_end').datepicker({dateFormat: "yy-mm-dd"});
+    $('#id_academic_year_exam_end').datepicker({dateFormat: "yy-mm-dd"});
+    var notification_url = '/api/notifications/';
+    var user_token = '{{ user_token }}';
+    var href_full_path = '{{ request.build_absolute_uri }}';
+    var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+    $(document).ready(function() {
+        $('.toggle-status').dblclick(function(){
+            var itemid = $(this).attr('itemid');
+            var icon = $(this).find('div.icon-mail');
+            var parent = $(this).parent();
+            var top_parent = parent.parent().parent();
+            var num = top_parent.find('span.badge-default');
+            var block_notif = top_parent.find('div.block-notifications');
+
+            if(icon.hasClass('icon-mail-unread')) {
+
+                var callback = function() {
+                    icon.removeClass('icon-mail-unread');
+                    icon.addClass('icon-mail-read');
+
+                    parent.removeClass('unread-notification');
+                    parent.addClass('read-notification');
+                    num.text(block_notif.find('.unread-notification').length);
+                }
+                toggle_notification_status(itemid, true, callback);
+            }else{
+                var callback = function() {
+                    icon.removeClass('icon-mail-read');
+                    icon.addClass('icon-mail-unread');
+
+                    parent.removeClass('read-notification');
+                    parent.addClass('unread-notification');
+                    num.text(block_notif.find('.unread-notification').length);
+                }
+                toggle_notification_status(itemid, false, callback);
+            }
+        });
+    });
+
+    function toggle_notification_status(itemid, status, callback)
+    {
+        var data = {status: status};
+
+        $.ajax({
+            type: "PUT",
+            url: notification_url+itemid+'/',
+            data: data,
+            cache: false,
+            headers: getHeader(),
+            dataType: 'json',
+            success: function (response, result, jqXHR) {
+                if(jqXHR.status == 200){
+                    if(callback){
+                        callback();
+                    }
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+</script>
+
+{% endblock %}

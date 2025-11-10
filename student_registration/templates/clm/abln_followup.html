@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Registration{% endblock %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-combobox.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+<style>
+  div#div_id_confirmation_date_1 label { width: 700px;}
+  div#div_id_confirmation_date_2 label { width: 700px;}
+  div#div_id_confirmation_date_3 label { width: 700px;}
+
+</style>
+
+    <div id="resume" class="inner-content">
+
+        <section class="inner-section light bg-color01">
+            <div class="container-fluid nopadding">
+                {{ form.errors }}
+                {% crispy form %}
+            </div>
+        </section>
+
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
+
+{% endblock %}

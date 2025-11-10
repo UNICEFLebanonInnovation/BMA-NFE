@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load crispy_forms_tags %}
+{% load util_tags %}
+
+{% block head_title %}School profile{% endblock %}
+
+
+{% block content %}
+<html>
+
+  {{ form.errors }}
+  <form method="POST">
+      {% csrf_token %}
+      {% crispy form %}
+  </form>
+
+</html>
+{% endblock %}
