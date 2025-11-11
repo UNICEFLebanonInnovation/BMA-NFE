@@ -12,52 +12,26 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
-from dal import autocomplete
 from student_registration.users.templatetags.custom_tags import has_group
 
 from student_registration.students.models import (
     Student,
     Person,
     Nationality,
-    IDType,
 )
 from student_registration.schools.models import (
     School,
-    ClassRoom,
     EducationalLevel,
     PartnerOrganization,
 )
 from student_registration.locations.models import Location
 from .models import (
     CLM,
-    BLN,
-    ABLN,
-    RS,
-    CBECE,
-    Cycle,
-    Disability,
-    Assessment,
     CLMRound,
-    ABLN_FC,
-    BLN_FC,
-    RS_FC,
-    CBECE_FC,
-    Center,
-    GeneralQuestionnaire,
-    Outreach,
+    Disability,
     Bridging
 )
 from .serializers import (
-    BLNSerializer,
-    RSSerializer,
-    CBECESerializer,
-    ABLNSerializer,
-    ABLN_FCSerializer,
-    BLN_FCSerializer,
-    RS_FCSerializer,
-    CBECE_FCSerializer,
-    GeneralQuestionnaireSerializer,
-    OutreachSerializer,
     BridgingSerializer,
 )
 
@@ -138,16 +112,6 @@ class CommonForm(forms.ModelForm):
         widget=forms.TextInput,
         required=False
     )
-    search_outreach_student = forms.CharField(
-        label=_("Search a student from old registration"),
-        widget=forms.TextInput,
-        required=False
-    )
-    search_Kobo_outreach_student = forms.CharField(
-        label=_("Search a student from Kobo data"),
-        widget=forms.TextInput,
-        required=False
-    )
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
         label=_('Governorate'),
@@ -176,10 +140,6 @@ class CommonForm(forms.ModelForm):
         required=True, to_field_name='id',
         initial=0
     )
-    # round_start_date = forms.DateField(
-    #     label=_("Round start date"),
-    #     required=True
-    # )
     language = forms.ChoiceField(
         label=_('The language supported in the program'),
         widget=forms.Select,
@@ -246,10 +206,6 @@ class CommonForm(forms.ModelForm):
         widget=forms.TextInput, required=False,
         max_length=50,
     )
-    # student_id_number = forms.CharField(
-    #     label=_('ID number'),
-    #     widget=forms.TextInput, required=False
-    # )
 
     disability = forms.ModelChoiceField(
         queryset=Disability.objects.filter(active=True), widget=forms.Select,
@@ -303,48 +259,8 @@ class CommonForm(forms.ModelForm):
         choices=DAYS
     )
 
-
-    # participation = forms.ChoiceField(
-    #     label=_('How was the level of child participation in the program?'),
-    #     widget=forms.Select, required=False,
-    #     choices=PARTICIPATION,
-    #     initial=''
-    # )
-    # barriers = forms.MultipleChoiceField(
-    #     label=_('The main barriers affecting the daily attendance and performance of the child or drop out of programme? (Select more than one if applicable)'),
-    #     choices=CLM.BARRIERS,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
-    # learning_result = forms.ChoiceField(
-    #     label=_('Based on the overall score, what is the recommended learning path?'),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('repeat_level', _('Repeat level')),
-    #         ('graduated_next_level', _('Referred to the next level')),
-    #         ('graduated_to_formal_kg', _('Referred to formal education - KG')),
-    #         ('graduated_to_formal_level1', _('Referred to formal education - Level 1')),
-    #         ('referred_to_another_program', _('Referred to another program')),
-    #         # ('dropout', _('Dropout from school'))
-    #     ),
-    #     initial=''
-    # )
-
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
-
-    # def clean(self):
-    #     from django.db.models import Q
-    #     cleaned_data = super(CommonForm, self).clean()
-    #     id_number = cleaned_data.get('student_id_number')
-    #     internal_number = cleaned_data.get('internal_number')
-    #     queryset = self.Meta.model.objects.all()
-    #
-    #     if queryset.filter(Q(student__id_number=id_number) | Q(internal_number=internal_number)).count():
-    #         raise forms.ValidationError(
-    #             _("Child already registered in your organization")
-    #         )
 
     def save(self, request=None, instance=None, serializer=None):
         if instance:
@@ -417,10 +333,6 @@ class CommonForm(forms.ModelForm):
 
     class Media:
         js = (
-            # 'js/jquery-3.3.1.min.js',
-            # 'js/jquery-ui-1.12.1.js',
-            # 'js/validator.js',
-            # 'js/registrations.js',
         )
 
 
@@ -898,7 +810,6 @@ class BridgingForm(CommonForm):
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
     )
-    child_outreach = forms.IntegerField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -969,7 +880,6 @@ class BridgingForm(CommonForm):
                     ),
                     Div(
                         Div('search_clm_student', css_class='col-md-3'),
-                        Div('search_Kobo_outreach_student', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     css_id='step-1',
@@ -1377,7 +1287,6 @@ class BridgingForm(CommonForm):
                     ),
                     Div(
                         Div('search_clm_student', css_class='col-md-3'),
-                        Div('search_Kobo_outreach_student', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     css_id='step-1',
@@ -2101,7 +2010,6 @@ class BridgingForm(CommonForm):
         model = Bridging
         fields = CommonForm.Meta.fields + (
             'first_attendance_date',
-            'child_outreach',
             'residence_type',
             'student_birthday_year',
             'have_labour_single_selection',
@@ -3549,19 +3457,3 @@ class BridgingFollowupForm(forms.ModelForm):
             # 'child_health_examed',
             # 'child_health_concern',
         )
-
-
-class InclusionAdminForm(forms.ModelForm):
-
-    student = forms.ModelChoiceField(
-        queryset=Student.objects.all(),
-        widget=autocomplete.ModelSelect2(url='student_autocomplete')
-    )
-
-    def __init__(self, *args, **kwargs):
-        super(InclusionAdminForm, self).__init__(*args, **kwargs)
-
-    class Meta:
-        model = BLN
-        fields = '__all__'
-

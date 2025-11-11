@@ -266,7 +266,6 @@ msgstr ""
 #: student_registration/enrollments/models.py:488
 #: student_registration/enrollments/models.py:495
 #: student_registration/enrollments/models.py:502
-#: student_registration/outreach/models.py:155
 #: student_registration/schools/models.py:676
 #: student_registration/schools/models.py:706
 #: student_registration/schools/models.py:736

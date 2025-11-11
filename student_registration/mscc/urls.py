@@ -219,16 +219,6 @@ urlpatterns = [
         name='service_youth_referral_edit'
     ),
     re_path(
-        'outreach-child-search/$',
-        views.outreach_child_search,
-        name='outreach_child_search'
-    ),
-    re_path(
-        'outreach-child/$',
-        views.outreach_child,
-        name='outreach_child'
-    ),
-    re_path(
         r'^referral-add/(?P<registry>[\w.@+-]+)/$',
         view=views.ReferralFormView.as_view(),
         name='referral_add'

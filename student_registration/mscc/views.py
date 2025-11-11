@@ -619,64 +619,6 @@ def main_registration_cancel_view(request, pk):
     return JsonResponse(result)
 
 
-def outreach_child_search(request):
-
-    birthday_year = request.GET.get('birthday_year')
-    birthday_month = request.GET.get('birthday_month')
-    birthday_day = request.GET.get('birthday_day')
-    first_name = request.GET.get('first_name')
-    father_name = request.GET.get('father_name')
-    last_name = request.GET.get('last_name')
-
-    form_str = '{} {} {}'.format(first_name, father_name, last_name)
-    filtered_results = OutreachChild.objects.filter(
-        birthday_year=birthday_year
-    )
-
-    if birthday_month:
-        filtered_results = filtered_results.filter(
-            birthday_month=birthday_month
-        )
-    if birthday_day:
-        filtered_results = filtered_results.filter(
-            birthday_day=birthday_day
-        )
-
-    filtered_results = filtered_results.values(
-        'id',
-        'first_name',
-        'outreach_caregiver__father_name',
-        'outreach_caregiver__last_name',
-        'outreach_caregiver__mother_full_name',
-        'gender',
-        'nationality',
-        'date_of_birth',
-        'birthday_year',
-        'birthday_month',
-        'birthday_day',
-    ).distinct()
-
-    result_match = []
-    for result in filtered_results:
-        result_str = '{} {} {}'.format(result['first_name'], result['outreach_caregiver__father_name'],
-                                       result['outreach_caregiver__last_name'])
-        fuzzy_match = fuzz.ratio(form_str, result_str)
-        if fuzzy_match > 80:
-            result['score'] = fuzzy_match
-            result_match.append(result)
-
-    if filtered_results != '':
-        return JsonResponse({'result': result_match})
-
-    return JsonResponse({'result': []})
-
-
-def outreach_child(request):
-
-    outreach_id = request.GET.get('outreach_id')
-    result = get_outreach_child(outreach_id)
-    return JsonResponse(result)
-
 
 class ReferralFormView(LoginRequiredMixin,
                        GroupRequiredMixin,
@@ -809,13 +751,6 @@ def old_child_search(request):
             result_match.append(result)
 
     return JsonResponse({'result': result_match})
-
-
-def old_child_data(request):
-
-    student_id = request.GET.get('student_id')
-    result = get_old_child(student_id)
-    return JsonResponse(result)
 
 
 def child_duplication_check(request):

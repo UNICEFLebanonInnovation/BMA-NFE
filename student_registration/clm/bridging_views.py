@@ -37,8 +37,6 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from student_registration.outreach.models import Child, OutreachChild
-from student_registration.outreach.serializers import ChildSerializer
 from student_registration.locations.models import Location
 from .filters import (
     BridgingFilter
@@ -47,14 +45,7 @@ from .tables import (
     BridgingTable
 )
 from .models import (
-    BLN,
-    ABLN,
-    RS,
-    CBECE,
-    Assessment,
-    Outreach,
     Bridging,
-    Inclusion
 )
 from student_registration.schools.models import (
     School,
@@ -69,74 +60,11 @@ from .bridging_forms import (
     BridgingForm
 )
 from .serializers import (
-    BLNSerializer,
-    ABLNSerializer,
-    CBECESerializer,
     BridgingSerializer
 )
-from .utils import is_allowed_create, is_allowed_edit,  get_outreach_child
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
-
-
-class CLMView(LoginRequiredMixin,
-              GroupRequiredMixin,
-              TemplateView):
-    template_name = 'pages/home.old.html'
-
-    group_required = [u"CLM"]
-
-
-def assessment_form(instance_id, stage, enrollment_model, assessment_slug, callback=''):
-    try:
-        assessment = Assessment.objects.get(slug=assessment_slug)
-        return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]={enrollment_model}&returnURL={callback}'.format(
-            form=assessment.assessment_form,
-            status=stage,
-            enrollment_model=enrollment_model,
-            enrollment_id=instance_id,
-            callback=callback
-        )
-    except Assessment.DoesNotExist:
-        return ''
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-class AssessmentSubmission(SingleObjectMixin, View):
-    model = RS
-    slug_url_kwarg = 'status'
-
-    def post(self, request, *args, **kwargs):
-
-        if 'status' not in request.body and \
-            'enrollment_id' not in request.body and \
-            'enrollment_model' not in request.body:
-            return HttpResponseBadRequest()
-
-        payload = json.loads(request.body.decode('utf-8'))
-        status = payload['status']
-        enrollment_id = payload['enrollment_id']
-        model = payload['enrollment_model']
-        static_model_value = payload['static_model_value'] if 'static_model_value' in payload else ''
-
-        if model == 'BLN' or 'BLN_ASSESSMENT/arabic' in payload:
-            enrollment = BLN.objects.get(id=int(enrollment_id))
-        elif model == 'ABLN' or 'ABLN_ASSESSMENT/arabic' in payload:
-            enrollment = ABLN.objects.get(id=int(enrollment_id))
-        elif model == 'CBECE':
-            enrollment = CBECE.objects.get(id=int(enrollment_id))
-        # elif model == 'RS':
-        #     enrollment = RS.objects.get(id=int(enrollment_id))
-        else:
-            enrollment = CBECE.objects.get(id=int(enrollment_id))
-
-        enrollment.status = status
-        setattr(enrollment, status, payload)
-        enrollment.calculate_score(status)
-        enrollment.save()
-
-        return HttpResponse()
 
 
 class BridgingPage(LoginRequiredMixin,
@@ -205,49 +133,29 @@ class BridgingAddView(LoginRequiredMixin,
         if self.request.POST.get('save_and_continue', None):
             return '/clm/bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
         if self.request.POST.get('save_and_pretest', None):
-            return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='Bridging',
-                assessment_slug='bridging_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:bridging_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+            # return assessment_form(
+            #     instance_id=self.request.session.get('instance_id'),
+            #     stage='pre_test',
+            #     enrollment_model='Bridging',
+            #     assessment_slug='bridging_pre_test',
+            #     callback=self.request.build_absolute_uri(reverse('clm:bridging_edit',
+            #                                                      kwargs={
+            #                                                          'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = is_allowed_create('Bridging')
+        # kwargs['is_allowed_create'] = is_allowed_create('Bridging')
         return super(BridgingAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(BridgingAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', ''),
-            'student_outreached': self.request.GET.get('student_outreached', ''),
-            'have_barcode': self.request.GET.get('have_barcode', '')
         }
 
         if self.request.GET.get('search_model') and self.request.GET.get('enrollment_id'):
-            search_model = self.request.GET.get('search_model')
-            if search_model == 'BLN':
-                instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
-                data = BLNSerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
-            elif search_model == 'ABLN':
-                instance = ABLN.objects.get(id=self.request.GET.get('enrollment_id'))
-                data = ABLNSerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
-            elif search_model == 'CBECE':
-                instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
-                data = CBECESerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
-            else:
                 instance = Bridging.objects.get(id=self.request.GET.get('enrollment_id'))
                 data = BridgingSerializer(instance).data
                 data['student_nationality'] = data['student_nationality_id']
@@ -259,20 +167,6 @@ class BridgingAddView(LoginRequiredMixin,
                 data['student_nationality'] = data['student_nationality_id']
                 data['learning_result'] = ''
 
-            if self.request.GET.get('child_id'):
-                instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
-                data = ChildSerializer(instance).data
-
-            if self.request.GET.get('outreach_id'):
-                instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
-                data = BridgingSerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
-
-        if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', '')
-            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -302,21 +196,21 @@ class BridgingEditView(LoginRequiredMixin,
         if self.request.POST.get('save_and_continue', None):
             return '/clm/bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
         if self.request.POST.get('save_and_pretest', None):
-            return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='Bridging',
-                assessment_slug='bridging_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:bridging_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+            # return assessment_form(
+            #     instance_id=self.request.session.get('instance_id'),
+            #     stage='pre_test',
+            #     enrollment_model='Bridging',
+            #     assessment_slug='bridging_pre_test',
+            #     callback=self.request.build_absolute_uri(reverse('clm:bridging_edit',
+            #                                                      kwargs={
+            #                                                          'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = is_allowed_edit('Bridging')
+        # kwargs['is_allowed_edit'] = is_allowed_edit('Bridging')
         return super(BridgingEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -860,36 +754,11 @@ def search_clm_child(request):
     term = request.GET.get('term', 0)
     terms = request.GET.get('term', 0)
     model = Bridging
-    if clm_type == 'RS':
-        model = RS
-    elif clm_type == 'ABLN':
-        model = ABLN
-    elif clm_type == 'CBECE':
-        model = CBECE
-    elif clm_type == 'Outreach':
-        model = Outreach
-    elif clm_type == 'Bridging':
-        model = Bridging
-    elif clm_type == 'Inclusion':
-        model = Inclusion
 
     search_model = clm_type
 
     qs = {}
     qs = clm_child_list(model, term, terms, search_model)
-
-    if clm_type == 'Bridging' and len(qs) == 0:
-        model = BLN
-        search_model = 'BLN'
-        qs = clm_child_list(model, term, terms, search_model)
-        if len(list(qs)) == 0:
-            model = ABLN
-            search_model = 'ABLN'
-            qs = clm_child_list(model, term, terms, search_model)
-            if len(qs) == 0:
-                model = CBECE
-                search_model = 'CBECE'
-                qs = clm_child_list(model, term, terms, search_model)
 
     return JsonResponse({'result': json.dumps(list(qs))})
 
@@ -930,49 +799,6 @@ def clm_child_list(model, term, terms, search_model):
                      'student__birthday_year', 'round__name', 'internal_number').distinct().annotate(search_model=Value(search_model, output_field=CharField()))
 
     return qs
-
-
-def search_kobo_outreach_child(request):
-    from django.db.models.functions import Concat
-    from django.db.models import Value
-
-    term = request.GET.get('term', 0)
-    terms = request.GET.get('term', 0)
-    qs = {}
-    if terms:
-        if len(terms.split()) > 1:
-
-            qs = OutreachChild.objects.annotate(fullname=Concat('first_name', Value(' '),
-                                                        'outreach_caregiver__father_name', Value(' '),
-                                                        'outreach_caregiver__last_name')) \
-                .filter(fullname__icontains=terms) \
-                .values('id', 'first_name', 'outreach_caregiver__father_name',
-                        'outreach_caregiver__last_name', 'outreach_caregiver__mother_full_name',
-                        'outreach_caregiver__caregiver_first_name','outreach_caregiver__caregiver_father_name',
-                        'outreach_caregiver__caregiver_last_name',
-                        'outreach_caregiver__caregiver_mother_name', 'outreach_caregiver__caregiver_dob',
-                        'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()
-
-        else:
-            qs = OutreachChild.objects \
-                .filter(
-                Q(first_name=term) |
-                Q(outreach_caregiver__father_name=term) |
-                Q(outreach_caregiver__last_name=term)
-            ).values('id', 'first_name', 'outreach_caregiver__father_name',
-                        'outreach_caregiver__last_name', 'outreach_caregiver__mother_full_name',
-                        'outreach_caregiver__caregiver_first_name','outreach_caregiver__caregiver_father_name',
-                        'outreach_caregiver__caregiver_last_name',
-                        'outreach_caregiver__caregiver_mother_name', 'outreach_caregiver__caregiver_dob',
-                        'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()
-
-    return JsonResponse({'result': json.dumps(list(qs))})
-
-
-def outreach_child(request):
-    outreach_id = request.GET.get('outreach_id')
-    result = get_outreach_child(outreach_id)
-    return JsonResponse(result)
 
 
 def search_clm_duplicate_unicef_id(request):

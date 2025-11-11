@@ -75,9 +75,6 @@ class MainTable(CommonTable):
     )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
-    outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
-                                       template_name='django_tables2/mscc/outreached_column.html')
-
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
                                        template_name='django_tables2/mscc/absence_column.html')
 
@@ -92,7 +89,6 @@ class MainTable(CommonTable):
         fields = (
             'action_column',
             'type_column',
-            'outreached',
             'absence_column',
             'round',
             'child.number',
@@ -128,8 +124,6 @@ class FullTable(CommonTable):
     )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
-    outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
-                                       template_name='django_tables2/mscc/outreached_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
                                        template_name='django_tables2/mscc/absence_column.html')
     center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
@@ -142,7 +136,6 @@ class FullTable(CommonTable):
         fields = (
             'action_column',
             'type_column',
-            'outreached',
             'absence_column',
             'round',
             'child.number',
@@ -179,8 +172,6 @@ class PartnerTable(CommonTable):
     )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
-    outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
-                                       template_name='django_tables2/mscc/outreached_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
                                        template_name='django_tables2/mscc/absence_column.html')
     center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
@@ -193,7 +184,6 @@ class PartnerTable(CommonTable):
         fields = (
             'action_column',
             'type_column',
-            'outreached',
             'absence_column',
             'round',
             'child.number',

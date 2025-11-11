@@ -167,7 +167,6 @@ class Registration(TimeStampedModel):
         on_delete=models.SET_NULL,
         verbose_name=_('Child')
     )
-    child_outreach = models.IntegerField(blank=True, null=True)
     student_old = models.IntegerField(blank=True, null=True)
     partner = models.ForeignKey(
         PartnerOrganization,

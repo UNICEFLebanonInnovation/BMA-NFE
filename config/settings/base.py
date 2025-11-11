@@ -90,22 +90,14 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     'student_registration.users',  # custom users app
     'student_registration.students',  # custom students app
-    'student_registration.outreach',  # custom alp app
-    'student_registration.alp',  # custom alp app
     'student_registration.clm',  # custom clm app
     'student_registration.attendances',  # custom attendances app
-    # 'student_registration.enrollments',  # custom enrollments app
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.dashboard',  # custom dashboard app
-    # 'student_registration.winterization',  # custom winterization app
     'student_registration.backends',  # custom storage app
-    'student_registration.staffenroll',
-    'student_registration.staffs',
     'student_registration.child',
     'student_registration.mscc',
-    'student_registration.youth',
-    'student_registration.adolescent',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -171,7 +163,7 @@ MANAGERS = ADMINS
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
     'default': env.db('DATABASE_URL',
-    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/bma_staging'),
+    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/bma_sector'),
 }
 DJANGO_READ_DOT_ENV_FILE = True
 

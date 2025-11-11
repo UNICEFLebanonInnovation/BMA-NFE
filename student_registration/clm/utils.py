@@ -212,7 +212,6 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc):
         'With who child and/or caregiver?',
         'Reason why not doing the Pre-test',
         'Reason why not doing the Post-test',
-        'Student outreached?',
         'owner',
         'modified_by',
     ]
@@ -454,7 +453,6 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc):
         'follow_up_done_with_who',
         'unsuccessful_pretest_reason',
         'unsuccessful_posttest_reason',
-        'student_outreached',
         'owner__username',
         'modified_by__username',
         # 'created',

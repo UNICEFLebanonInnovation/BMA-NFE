@@ -258,117 +258,6 @@ $(document).ready(function() {
 
 });
 
-function outreach_child_search() {
-
-    if (isAddPage()) {
-
-        var birthday_year = $('#id_child_birthday_year').val();
-        var birthday_month = $('#id_child_birthday_month').val();
-        var birthday_day = $('#id_child_birthday_day').val();
-        var first_name = $('#id_child_first_name').val();
-        var father_name = $('#id_child_father_name').val();
-        var last_name = $('#id_child_last_name').val();
-
-        var data = {
-            birthday_year: birthday_year,
-            birthday_month: birthday_month,
-            birthday_day: birthday_day,
-            first_name: first_name,
-            father_name: father_name,
-            last_name: last_name,
-        };
-
-        $.ajax({
-            url: '/mscc/outreach-child-search/',
-            dataType: "json",
-            data: data,
-            cache: false,
-            async: true,
-            success: function (response) {
-                append_new_result(response);
-            },
-            error: function (response) {
-                console.log(response);
-                $('#search_loader').addClass('hidden');
-            }
-        });
-    }
-}
-
-function append_new_result(data)
-{
-
-    var child_html = '';
-    $('#outreach_search_result').empty();
-    $('#search_loader').addClass('hidden');
-
-    $(data.result).each(function(i, item) {
-        var full_name = "";
-        full_name = full_name.concat(item.first_name, " ", item.outreach_caregiver__father_name, " ", item.outreach_caregiver__last_name);
-
-        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"><span class="text-success">'+ item.score +'%</span></div></div><div class="vertical-timeline-element-content bounce-in">';
-        var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_child_data('+ item.id +');">'+full_name+'</a></h4>';
-        var html_line3 = '<p>'+ item.date_of_birth + ' - '+ item.outreach_caregiver__mother_full_name +'</p>';
-        var html_line4 = '<p>'+ item.gender + ' - '+ item.nationality +'</p></div></div></div>';
-
-        child_html = html_line1 + html_line2 + html_line3 + html_line4;
-
-        $('#outreach_search_result').append(child_html);
-    });
-
-    if(data.result.length == 0) {
-        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-cross text-danger"></i></div></div><div class="vertical-timeline-element-content bounce-in">';
-        var html_line2 = '<h4 class="timeline-title text-danger">No result found</h4>';
-        var html_line3 = '<p></p>';
-        var html_line4 = '<p></p></div></div></div>';
-
-        child_html = html_line1 + html_line2 + html_line3 + html_line4;
-
-        $('#outreach_search_result').append(child_html);
-
-    }
-}
-
-function get_child_data(outreach_id)
-{
-    $('#search_loader').removeClass('hidden');
-
-    $.ajax({
-        url: '/mscc/outreach-child/',
-        data: { outreach_id: outreach_id},
-        cache: false,
-        async: true,
-        dataType: 'json',
-        success: function (response) {
-            fill_outreach_child_data(response);
-            var arabic_fields_array = arabic_fields.split(",");
-            arabic_fields_array.forEach(function(selector) {
-                $(selector.trim()).each(function() {
-                    checkArabicOnly($(this));
-                });
-            });
-            reorganizeForm();
-        },
-        error: function (response) {
-            console.log(response);
-        }
-    });
-}
-
-function fill_outreach_child_data(data)
-{
-    $('#search_loader').addClass('hidden');
-    $(data).each(function(i, item) {
-        console.log(item);
-        {
-            Object.keys(item).forEach(key => {
-                $('#id_'+ key).val(item[key]);
-            });
-        }
-    });
-    $('#search_loader').addClass('hidden');
-}
-
 
 //old student
 function old_child_search() {
@@ -407,6 +296,7 @@ function old_child_search() {
         });
     }
 }
+
 function child_duplication_check() {
 
     $('#child-duplication-error').hide();
@@ -551,15 +441,6 @@ function fill_old_child_data(data)
         }
     });
     $('#nfe_search_loader').addClass('hidden');
-}
-
-
-function isAddPage()
-{
-    if( $(document).find('#outreach-nfe-result').length == 1) {
-        return true;
-    }
-    return false;
 }
 
 function reorganizeForm()

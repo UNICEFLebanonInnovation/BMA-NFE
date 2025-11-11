@@ -450,7 +450,6 @@ class MainForm(forms.ModelForm):
     )
     child_id = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
-    child_outreach = forms.IntegerField(widget=forms.HiddenInput, required=False)
     student_old = forms.IntegerField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
     type = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -755,8 +754,6 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.center = request.user.center
-                if request.POST.get("child_outreach"):
-                    instance.child_outreach = request.POST.get("child_outreach")
                 if request.POST.get("student_old"):
                     instance.student_old = request.POST.get("student_old")
                 instance.save()
@@ -787,8 +784,6 @@ class MainForm(forms.ModelForm):
     class Meta:
         model = Registration
         fields = (
-            # 'center',
-            'child_outreach',
             'student_old',
             'child_first_name',
             'child_father_name',

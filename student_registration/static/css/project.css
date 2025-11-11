@@ -396,7 +396,6 @@ tr.odd {
   color: red;
 }
 
-#id_search_barcode, #id_outreach_barcode,
 #id_student_phone, #id_student_phone_prefix,
 #id_student_id_number {
   direction: ltr;
