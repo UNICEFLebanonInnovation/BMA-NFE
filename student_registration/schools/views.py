@@ -36,15 +36,10 @@ from django.contrib.auth.decorators import login_required
 import logging
 logging.basicConfig(level=logging.ERROR)
 from student_registration.backends.models import Notification
-from student_registration.users.utils import force_default_language
 from .models import (
-    EducationYear,
     School,
-    ClassRoom,
     Section,
-    PublicDocument,
     PartnerOrganization,
-    Evaluation,
     Club,
     Meeting,
     CommunityInitiative,
@@ -54,7 +49,6 @@ from student_registration.locations.models import Location
 
 from .serializers import (
     SchoolSerializer,
-    ClassRoomSerializer,
     SectionSerializer
 )
 from .tables import (
@@ -87,15 +81,6 @@ class SchoolViewSet(mixins.ListModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
     schema = AutoSchema()
 
-
-class ClassRoomViewSet(mixins.ListModelMixin,
-                       viewsets.GenericViewSet):
-
-    model = ClassRoom
-    queryset = ClassRoom.objects.all()
-    serializer_class = ClassRoomSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-    schema = AutoSchema()
 
 
 class SectionViewSet(mixins.ListModelMixin,
@@ -183,22 +168,6 @@ class PartnerView(LoginRequiredMixin,
         return super(PartnerView, self).form_valid(form)
 
 
-class PublicDocumentView(LoginRequiredMixin,
-                         GroupRequiredMixin,
-                         TemplateView):
-
-    model = PublicDocument
-    queryset = PublicDocument.objects.all()
-    template_name = 'schools/documents.html'
-    group_required = [u"SCHOOL", u"ALP_SCHOOL"]
-
-    def get_context_data(self, **kwargs):
-
-        return {
-            'documents': self.queryset
-        }
-
-
 class AutocompleteView(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
@@ -212,301 +181,6 @@ class AutocompleteView(autocomplete.Select2QuerySetView):
             )
 
         return qs
-
-
-class EvaluationView(FormView):
-    template_name = 'schools/evaluation.html'
-    form_class = EvaluationForm
-    success_url = '/schools/evaluation/'
-
-    def get_form(self, form_class=None):
-        education_year = EducationYear.objects.get(current_year=True)
-        if self.request:
-            if self.request.user:
-                if self.request.user.school_id:
-                    evaluation = Evaluation.objects.filter(school_id=self.request.user.school_id, education_year=education_year)
-                    instance = Evaluation.objects.get(id=evaluation)
-
-        if self.request.method == "POST":
-            return EvaluationForm(self.request.POST, instance=instance)
-        else:
-            return EvaluationForm(instance=instance)
-
-    def form_valid(self, form):
-        education_year = EducationYear.objects.get(current_year=True)
-        instance = Evaluation.objects.get(school_id=self.request.user.school_id, education_year=education_year)
-        form.save(request=self.request, instance=instance)
-        return super(EvaluationView, self).form_valid(form)
-
-
-class Update_Class(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form(instance=instance)
-
-
-class Update_Class_c1(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form_c1
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class_c1, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form_c1(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form_c1(instance=instance)
-
-
-class Update_Class_C3(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form_c3
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class_C3, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form_c3(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form_c3(instance=instance)
-
-
-class Update_Class_c4(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form_c4
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class_c4, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form_c4(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form_c4(instance=instance)
-
-
-class Update_Class_c5(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form_c5
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class_c5, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form_c5(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form_c5(instance=instance)
-
-
-class Update_Class_c6(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form_c6
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class_c6, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form_c6(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form_c6(instance=instance)
-
-
-class Update_Class_c7(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form_c7
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class_c7, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form_c7(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form_c7(instance=instance)
-
-
-class Update_Class_c8(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form_c8
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class_c8, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form_c8(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form_c8(instance=instance)
-
-
-class Update_Class_c9(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form_c9
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class_c9, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form_c9(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form_c9(instance=instance)
-
-
-class Update_Class_cprep(UpdateView):
-    model = Evaluation
-    form_class = Classroom_Form_cprep
-
-    template_name = 'schools/classform.html'
-    success_url = '/schools/evaluation/'
-    context_object_name = 'school_class'
-
-    def get_success_url(self):
-        return self.success_url
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Update_Class_cprep, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Evaluation.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            instance.save()
-            return Classroom_Form_cprep(self.request.POST, instance=instance)
-        else:
-            return Classroom_Form_cprep(instance=instance)
 
 
 def load_districts(request):
@@ -1002,9 +676,11 @@ def add_csv_to_zip(zipfile_obj, filename, queryset):
 
     zipfile_obj.writestr(filename, csv_output.getvalue())
 
+
 class ExportStorage(AzureStorage):
     """Azure storage backend dedicated for exported files."""
     location = "export"
+
 
 @login_required(login_url='/users/login')
 def export_school_background(request):

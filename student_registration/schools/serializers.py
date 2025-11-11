@@ -2,7 +2,6 @@
 from rest_framework import serializers
 from .models import (
     School,
-    ClassRoom,
     Section,
 )
 
@@ -49,23 +48,12 @@ class SchoolSerializer(serializers.ModelSerializer):
             'number_dirasa_children_disability',
             'number_total_children_disability',
             'type',
-            'benefit_wfp_service',
-            'wfp_service_type',
             'owner',
             'modified_by',
             'created',
             'modified',
         )
 
-
-class ClassRoomSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ClassRoom
-        fields = (
-            'id',
-            'name',
-        )
 
 
 class SectionSerializer(serializers.ModelSerializer):

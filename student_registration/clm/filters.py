@@ -11,12 +11,13 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
 from django import forms
 from student_registration.locations.models import Location
-from student_registration.schools.models import CLMRound, School, Section, ClassRoom
+from student_registration.schools.models import CLMRound, School, Section
 from student_registration.students.models import Nationality
 from .models import (
     Cycle,
     Disability,
-    Bridging)
+    Bridging
+)
 
 
 class CommonFilter(FilterSet):

@@ -597,46 +597,11 @@ class HealthVisit(TimeStampedModel):
     )
 
 
-class EducationLevel(models.Model):
-    name = models.CharField(max_length=45, unique=True)
-    note = models.IntegerField(blank=True, null=True)
-    with_math = models.BooleanField(blank=True, default=False)
-    with_science = models.BooleanField(blank=True, default=False)
-    with_arabic = models.BooleanField(blank=True, default=False)
-    with_language = models.BooleanField(blank=True, default=False)
-    coefficient_score = models.FloatField(blank=True, null=True)
-    new_calculation = models.BooleanField(blank=True, default=False)
-
-    @property
-    def sum_subjects(self):
-        sum_subject = 0
-        if self.with_math:
-            sum_subject += 1
-        if self.with_science:
-            sum_subject += 1
-        if self.with_arabic:
-            sum_subject += 1
-        if self.with_language:
-            sum_subject += 1
-        return sum_subject
+class EducationalLevel(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
         ordering = ['id']
-        verbose_name = "ALP Level"
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class ClassLevel(models.Model):
-    name = models.CharField(max_length=45, unique=True)
-
-    class Meta:
-        ordering = ['id']
-        verbose_name = "ALP Result"
 
     def __str__(self):
         return self.name
@@ -650,27 +615,6 @@ class Section(models.Model):
 
     class Meta:
         ordering = ['id']
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class ClassRoom(models.Model):
-    name = models.CharField(max_length=45, unique=True)
-    classroom_type = models.CharField(
-        blank=True, null=True, max_length=2,
-        choices=Choices(
-            ('PV', _('Private School')),
-            ('PU', _('Public School')),
-        ),
-    )
-
-    class Meta:
-        ordering = ['id']
-        verbose_name = "Formal Education Level"
 
     def __str__(self):
         return self.name

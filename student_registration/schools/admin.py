@@ -9,25 +9,17 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import (
     School,
-    EducationLevel,
-    ClassLevel,
     Section,
-    ClassRoom,
     PartnerOrganization,
-    ALPReferMatrix,
-    EducationYear,
-    ALPAssignmentMatrix,
     EducationalLevel,
     Holiday,
     CLMRound,
-    PublicDocument,
     Coordinator,
-    Evaluation,
     PublicHolidays,
-    Schl_Subject,
     ClubType
 )
 from student_registration.locations.models import Location
+
 
 class ClubTypeResource(resources.ModelResource):
     class Meta:
@@ -110,43 +102,6 @@ class SchoolTypeFilter(admin.SimpleListFilter):
             return queryset.filter(is_alp=True, is_2nd_shift=True)
 
 
-
-class EducationLevelResource(resources.ModelResource):
-    class Meta:
-        model = EducationLevel
-        fields = (
-            'id',
-            'name',
-            'note',
-        )
-        export_order = ('name',)
-
-
-class EducationLevelAdmin(ImportExportModelAdmin):
-    resource_class = EducationLevelResource
-
-    def get_export_formats(self):
-        from student_registration.users.utils import get_default_export_formats
-        return get_default_export_formats()
-
-
-class ClassLevelResource(resources.ModelResource):
-    class Meta:
-        model = ClassLevel
-        fields = (
-            'id',
-            'name'
-        )
-        export_order = ('name',)
-
-
-class ClassLevelAdmin(ImportExportModelAdmin):
-    resource_class = ClassLevelResource
-    def get_export_formats(self):
-        from student_registration.users.utils import get_default_export_formats
-        return get_default_export_formats()
-
-
 class SectionResource(resources.ModelResource):
     class Meta:
         model = Section
@@ -159,29 +114,6 @@ class SectionResource(resources.ModelResource):
 
 class SectionAdmin(ImportExportModelAdmin):
     resource_class = SectionResource
-
-    def get_export_formats(self):
-        from student_registration.users.utils import get_default_export_formats
-        return get_default_export_formats()
-
-
-class ClassRoomResource(resources.ModelResource):
-    class Meta:
-        model = ClassRoom
-        fields = (
-            'id',
-            'name',
-        )
-        export_order = fields
-
-
-class ClassRoomAdmin(ImportExportModelAdmin):
-    resource_class = ClassRoomResource
-    fields = (
-        'name',
-        'classroom_type',
-    )
-    list_display = fields
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
@@ -785,20 +717,9 @@ class SchoolAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(School, SchoolAdmin)
-# admin.site.register(EducationLevel, EducationLevelAdmin)
-# admin.site.register(ClassLevel, ClassLevelAdmin)
 admin.site.register(Section, SectionAdmin)
-# admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
-# admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
-# admin.site.register(EducationYear)
-# admin.site.register(Holiday)
 admin.site.register(CLMRound, CLMRoundAdmin)
-# admin.site.register(PublicDocument, PublicDocumentAdmin)
 admin.site.register(EducationalLevel, EducationalLevelAdmin)
-# admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
-# admin.site.register(Coordinator)
-# admin.site.register(Schl_Subject)
-# admin.site.register(Evaluation, EvaluationAdmin)
 admin.site.register(PublicHolidays)
 admin.site.register(ClubType, ClubTypeAdmin)

@@ -11,12 +11,9 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils import translation
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from student_registration.alp.templatetags.util_tags import has_group
-from student_registration.users.utils import force_default_language
 from django.shortcuts import redirect, render
 from .models import User, WebPushToken
 import json

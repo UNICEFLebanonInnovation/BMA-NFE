@@ -11,12 +11,10 @@ from django.contrib.postgres.fields import ArrayField
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
-from student_registration.students.models import Student, Labour, Nationality
+from student_registration.students.models import Student, Nationality
 from student_registration.locations.models import Location
 from student_registration.schools.models import (
     School,
-    Section,
-    ClassRoom,
     CLMRound,
     EducationalLevel,
     PartnerOrganization
@@ -50,51 +48,6 @@ class Cycle(models.Model):
         ordering = ['name']
         verbose_name = "Program cycle"
         verbose_name_plural = "Program cycles"
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class RSCycle(models.Model):
-    name = models.CharField(max_length=100)
-    current_cycle = models.BooleanField(blank=True, default=False)
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class Site(models.Model):
-    name = models.CharField(max_length=100)
-    current_cycle = models.BooleanField(blank=True, default=False)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Program site"
-        verbose_name_plural = "Program sites"
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class Referral(models.Model):
-    name = models.CharField(max_length=100)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Referral"
-        verbose_name_plural = "Referrals"
 
     def __str__(self):
         return self.name

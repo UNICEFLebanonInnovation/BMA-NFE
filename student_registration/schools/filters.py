@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet, ChoiceFilter, ModelChoiceFilter
 from student_registration.locations.models import Location
-from student_registration.schools.models import CLMRound, School, Section, ClassRoom
+from student_registration.schools.models import School
 from model_utils import Choices
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
