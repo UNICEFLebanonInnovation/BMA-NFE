@@ -42,19 +42,6 @@ class IDType(models.Model):
         return self.name
 
 
-class SpecialNeeds(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-
-    class Meta:
-        verbose_name_plural = 'Special Needs'
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
 class Labour(models.Model):
     name = models.CharField(max_length=45, unique=True)
 

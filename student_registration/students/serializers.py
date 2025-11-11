@@ -41,7 +41,6 @@ class StudentSerializer(serializers.ModelSerializer):
             'birthday_month',
             'birthday_day',
             'place_of_birth',
-            'recordnumber',
             'birthday',
             'phone',
             'phone_prefix',
@@ -55,14 +54,6 @@ class StudentSerializer(serializers.ModelSerializer):
             'number',
             'hh_barcode',
             'have_children',
-            'is_specialneeds',
-            'specialneeds',
-            'specialneedsdt',
-            'is_financialsupport',
-            'Financialsupport_number',
-            'financialsupport',
-            'unhcr_family',
-            'unhcr_personal',
             'p_code',
         )
 

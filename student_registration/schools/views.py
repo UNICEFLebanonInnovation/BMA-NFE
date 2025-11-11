@@ -35,7 +35,6 @@ from django.contrib.auth.decorators import login_required
 
 import logging
 logging.basicConfig(level=logging.ERROR)
-from student_registration.backends.models import Notification
 from .models import (
     School,
     Section,
@@ -65,10 +64,7 @@ from student_registration.backends.models import ExportHistory
 from .filters import (
     SchoolFilter
 )
-from .forms import ProfileForm,SchoolForm, ClubForm, MeetingForm, CommunityInitiativeForm , HealthVisitForm,  \
-    PartnerForm, EvaluationForm,Classroom_Form, Classroom_Form_c1, Classroom_Form_c3,\
-    Classroom_Form_c4, Classroom_Form_c5, Classroom_Form_c6, Classroom_Form_c7, Classroom_Form_c8, \
-    Classroom_Form_c9, Classroom_Form_cprep
+from .forms import SchoolForm, ClubForm, MeetingForm, CommunityInitiativeForm, HealthVisitForm
 from .utils import *
 
 
@@ -82,7 +78,6 @@ class SchoolViewSet(mixins.ListModelMixin,
     schema = AutoSchema()
 
 
-
 class SectionViewSet(mixins.ListModelMixin,
                      viewsets.GenericViewSet):
 
@@ -91,81 +86,6 @@ class SectionViewSet(mixins.ListModelMixin,
     serializer_class = SectionSerializer
     permission_classes = (permissions.IsAuthenticated,)
     schema = AutoSchema()
-
-
-class ProfileView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
-
-    template_name = 'schools/profile.html'
-    form_class = ProfileForm
-    success_url = '/schools/profile/'
-    group_required = [u"SCHOOL", u"ALP_SCHOOL"]
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-            school = self.request.user.school
-
-            notifications = Notification.objects.filter(type='general', schools=school)
-
-            if school.is_2nd_shift and not school.is_alp:
-                notifications = notifications.filter(school_type='2ndshift')
-            if school.is_alp and not school.is_2nd_shift:
-                notifications = notifications.filter(school_type='ALP')
-
-            kwargs['notifications'] = notifications[:50]
-            kwargs['unread_notifications'] = notifications.filter(status=False).count()
-            tickets = Notification.objects.filter(
-                type='helpdesk',
-                school_id=school.id
-            )
-            kwargs['tickets'] = tickets[:50]
-            kwargs['unread_tickets'] = tickets.filter(status=False).count()
-        return super(ProfileView, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = School.objects.get(id=self.request.user.school_id)
-        if self.request.method == "POST":
-            return ProfileForm(self.request.POST, instance=instance)
-        else:
-            return ProfileForm(instance=instance)
-
-    def form_valid(self, form):
-        instance = School.objects.get(id=self.request.user.school_id)
-        form.save(request=self.request, instance=instance)
-        return super(ProfileView, self).form_valid(form)
-
-
-class PartnerView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
-
-    template_name = 'schools/partner.html'
-    form_class = PartnerForm
-    success_url = '/schools/partner/'
-    group_required = [u"CLM"]
-
-    def get_context_data(self, **kwargs):
-
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(PartnerView, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = PartnerOrganization.objects.get(id=self.request.user.partner_id)
-        if self.request.method == "POST":
-            return PartnerForm(self.request.POST, instance=instance)
-        else:
-            return PartnerForm(instance=instance)
-
-    def form_valid(self, form):
-        instance = PartnerOrganization.objects.get(id=self.request.user.partner_id)
-        form.save(request=self.request, instance=instance)
-        return super(PartnerView, self).form_valid(form)
 
 
 class AutocompleteView(autocomplete.Select2QuerySetView):

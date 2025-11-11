@@ -139,19 +139,6 @@ def home(request):
         return redirect('/accounts/login/')
 
 
-class LoginRedirectView(LoginRequiredMixin, RedirectView):
-    permanent = True
-
-    def get_redirect_url(self):
-        if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'ALP_SCHOOL'):
-            return reverse('schools:profile', kwargs={})
-        if has_group(self.request.user, 'CLM'):
-            return reverse('clm:index', kwargs={})
-        if has_group(self.request.user, 'HELPDESK'):
-            return reverse('helpdesk_dashboard', kwargs={})
-        return reverse('home')
-
-
 def user_overview(request):
 
     args = {

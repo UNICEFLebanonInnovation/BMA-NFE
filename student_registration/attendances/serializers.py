@@ -10,8 +10,6 @@ class CLMAttendanceStudentSerializer(serializers.ModelSerializer):
     school_number = serializers.CharField(source='attendance_day.school.number', read_only=True)
     school_name = serializers.CharField(source='attendance_day.school.name', read_only=True)
     school_type = serializers.CharField(source='attendance_day.school.type', read_only=True)
-    education_year = serializers.CharField(source='attendance_day.education_year.name', read_only=True)
-    alp_round = serializers.CharField(source='attendance_day.alp_round.name', read_only=True)
     attendance_date = serializers.CharField(source='attendance_day.attendance_date', read_only=True)
     close_reason = serializers.CharField(source='attendance_day.close_reason', read_only=True)
     registration_level = serializers.CharField(source='attendance_day.registration_level', read_only=True)
@@ -29,7 +27,6 @@ class CLMAttendanceStudentSerializer(serializers.ModelSerializer):
             'school_number',
             'school_type',
             'education_year',
-            'alp_round',
             'governorate',
             'district',
             'attendance_date',
@@ -55,18 +52,18 @@ class MSCCAttendanceChildSerializer(serializers.ModelSerializer):
         )
 
 
-class AbsenteeSerializer(serializers.ModelSerializer):
-    student_id = serializers.IntegerField(source='student.id', read_only=True)
-
-    class Meta:
-        model = Absentee
-        fields = (
-            'student_id',
-            'absence_type',
-            'absent_days',
-            'last_attendance_date',
-            'last_absent_date',
-            'total_absent_days',
-            'total_attended_days',
-            'last_modification_date',
-        )
+# class AbsenteeSerializer(serializers.ModelSerializer):
+#     student_id = serializers.IntegerField(source='student.id', read_only=True)
+#
+#     class Meta:
+#         model = Absentee
+#         fields = (
+#             'student_id',
+#             'absence_type',
+#             'absent_days',
+#             'last_attendance_date',
+#             'last_absent_date',
+#             'total_absent_days',
+#             'total_attended_days',
+#             'last_modification_date',
+#         )

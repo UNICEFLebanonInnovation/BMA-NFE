@@ -73,27 +73,9 @@ class StudentEnrollmentForm(forms.ModelForm):
             'phone',
             'phone_prefix',
             'address',
-            'recordnumber',
             'number',
-            'unhcr_family',
-            'unhcr_personal',
-            'is_specialneeds',
-            'specialneeds',
-            'specialneedsdt',
-            'is_financialsupport',
-            'Financialsupport_number',
-            'financialsupport',
-           # 'id_image',
-            'unhcr_image',
-            'birthdoc_image',
-            'std_image',
             'unicef_id'
-          #  'std_image',
         )
-
-
-class ImageUploadForm(forms.Form):
-    image = forms.ImageField()
 
 
 class CustomClearableFileInput(ClearableFileInput):

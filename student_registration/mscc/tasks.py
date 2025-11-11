@@ -121,6 +121,7 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
                     str(e),
                     data={"type": "mscc_export_failed", "reason": str(e)},
                 )
+
 def _generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
                                    father_name="", mother_fullname="", round=""):
     """Generate an MSCC export with optional filtering and notify the user.

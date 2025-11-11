@@ -7,7 +7,6 @@ import io
 import csv
 import os
 import uuid
-from django.core.files.storage import default_storage
 from storages.backends.azure_storage import AzureStorage
 
 from django.core.files.base import ContentFile
@@ -68,9 +67,6 @@ class StudentViewSet(mixins.RetrieveModelMixin,
         'id_type',
         'nationality',
         'mother_nationality',
-        'specialneeds',
-        'specialneedsdt',
-        'financialsupport',
     ).all()
     serializer_class = StudentSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -125,9 +121,6 @@ class StudentSearchViewSet(mixins.RetrieveModelMixin,
         'id_type',
         'nationality',
         'mother_nationality',
-        'specialneeds',
-        'specialneedsdt',
-        'financialsupport',
     ).all()
     serializer_class = StudentSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -144,9 +137,6 @@ class StudentSearchViewSet(mixins.RetrieveModelMixin,
                 'id_type',
                 'nationality',
                 'mother_nationality',
-                'specialneeds',
-                'specialneedsdt',
-                'financialsupport',
             ).filter()
             for term in terms.split():
                 qs = qs.filter(
@@ -167,9 +157,6 @@ class StudentAutocomplete(autocomplete.Select2QuerySetView):
             'id_type',
             'nationality',
             'mother_nationality',
-            'specialneeds',
-            'specialneedsdt',
-            'financialsupport',
         )
 
         if self.q:
@@ -364,6 +351,7 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
         instance = self.model.objects.get(id=kwargs['pk'])
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
+
 
 class ExportStorage(AzureStorage):
     """Azure storage backend dedicated for exported files."""

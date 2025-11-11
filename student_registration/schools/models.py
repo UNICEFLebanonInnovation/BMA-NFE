@@ -234,13 +234,6 @@ class School(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Number of devices')
     )
-    is_first_shift = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('School is 1st shift?')
-    )
     weekend = models.CharField(
         max_length=100,
         blank=True, null=True,
@@ -270,21 +263,6 @@ class School(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('School year end date')
-    )
-    receive_supplies = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Did the school receive school supplies/stationery')
-    )
-    number_dirasa_children_disability = models.IntegerField(
-        blank=True, null=True,
-        verbose_name=_('Total number of Children With Disability (Dirasa only)')
-    )
-    number_total_children_disability = models.IntegerField(
-        blank=True, null=True,
-        verbose_name=_('Total number of Children With Disability (Excluding Dirasa)')
     )
     academic_year_exam_end = models.DateField(
         blank=True,
@@ -331,24 +309,6 @@ class School(TimeStampedModel):
         verbose_name=_('coordinator'),
         related_name='+',
         on_delete=models.SET_NULL,
-    )
-    is_2nd_shift = models.BooleanField(
-        blank=True,
-        default=False,
-        verbose_name=_('School is 2nd shift?')
-    )
-    number_students_2nd_shift = models.IntegerField(
-        blank=True, null=True,
-        verbose_name=_('Expected number of students in 2nd shift')
-    )
-    is_alp = models.BooleanField(
-        blank=True,
-        default=False,
-        verbose_name=_('School is ALP?')
-    )
-    number_students_alp = models.IntegerField(
-        blank=True, null=True,
-        verbose_name=_('Expected number of students in ALP')
     )
     attendance_range = models.IntegerField(
         blank=True, null=True,

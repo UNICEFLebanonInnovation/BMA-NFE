@@ -358,9 +358,6 @@ class BridgingForm(CommonForm):
         ('grade_seven', _('Grade seven')),
         ('grade_eight', _('Grade eight')),
         ('grade_nine', _('Grade nine')),
-        # ('level_four', _('Level four')),
-        # ('level_five', _('Level five')),
-        # ('level_six', _('Level six'))
     )
 
     YEARS_Bridging = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 5)))
@@ -529,32 +526,6 @@ class BridgingForm(CommonForm):
         ),
         initial=''
     )
-    # case_number = forms.RegexField(
-    #     regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
-    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
-    #     required=False,
-    #     label=_('UNHCR Case Number')
-    # )
-    # case_number_confirm = forms.RegexField(
-    #     regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
-    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
-    #     required=False,
-    #     label=_('Confirm UNHCR Case Number')
-    # )
-    # parent_individual_case_number = forms.RegexField(
-    #     regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
-    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
-    #     required=False,
-    #     label=_(
-    #         'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
-    # )
-    # parent_individual_case_number_confirm = forms.RegexField(
-    #     regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
-    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
-    #     required=False,
-    #     label=_(
-    #         'Confirm Caregiver Individual ID from the certificate')
-    # )
     individual_case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
@@ -612,47 +583,6 @@ class BridgingForm(CommonForm):
         required=False,
         label=_('Confirm Palestinian ID number of the child')
     )
-    # parent_national_number = forms.RegexField(
-    #     regex=r'^\d{12}$',
-    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
-    #     required=False,
-    #     label=_('Lebanese ID number of the Caregiver')
-    # )
-    # parent_national_number_confirm = forms.RegexField(
-    #     regex=r'^\d{12}$',
-    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
-    #     required=False,
-    #     label=_('Confirm Lebanese ID number of the Caregiver')
-    # )
-    # parent_syrian_national_number = forms.RegexField(
-    #     regex=r'^\d{11}$',
-    #     required=False,
-    #     label=_('National ID number of the Caregiver (Mandatory)')
-    # )
-    # parent_syrian_national_number_confirm = forms.RegexField(
-    #     regex=r'^\d{11}$',
-    #     required=False,
-    #     label=_('Confirm National ID number of the Caregiver (Mandatory)')
-    # )
-    # parent_sop_national_number = forms.CharField(
-    #     # regex=r'^\d{11}$',
-    #     required=False,
-    #     label=_('Palestinian ID number of the Caregiver (Mandatory)')
-    # )
-    # parent_sop_national_number_confirm = forms.CharField(
-    #     # regex=r'^\d{11}$',
-    #     required=False,
-    #     label=_('Confirm Palestinian ID number of the Caregiver (Mandatory)')
-    # )
-    #
-    # parent_other_number = forms.CharField(
-    #     required=False,
-    #     label=_('ID number of the Caregiver (Mandatory)')
-    # )
-    # parent_other_number_confirm = forms.CharField(
-    #     required=False,
-    #     label=_('Confirm ID number of the Caregiver (Mandatory)')
-    # )
     other_number = forms.CharField(
         required=False,
         label=_(' ID number of the child')
@@ -696,11 +626,6 @@ class BridgingForm(CommonForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
-    rims_case_number = forms.CharField(
-        required=False,
-        label=_('RIMS Case Number')
-    )
-
     arabic_alphabet_knowledge = forms.FloatField(
         label=_('Arabic Alphabet Knowledge'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
