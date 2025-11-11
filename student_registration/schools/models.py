@@ -5,7 +5,6 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django.utils.translation import gettext as _
 from django.contrib.postgres.fields import ArrayField
-from student_registration.staffs.models import Bank
 
 
 class Coordinator(models.Model):
@@ -377,44 +376,6 @@ class School(TimeStampedModel):
         blank=True,
         verbose_name=_('is closed')
     )
-    bank_Base1 = models.ForeignKey(
-        Bank,
-        blank=True, null=True,
-        related_name='+',
-        on_delete=models.SET_NULL,
-        verbose_name=_('Bank'),
-    )
-    branch_base1 = models.CharField(
-        max_length=60,
-        blank=True,
-        null=True,
-        verbose_name=_('Branch')
-    )
-    iban_base1 = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('IBAN LL')
-    )
-    bank_Base2 = models.ForeignKey(
-        Bank,
-        blank=True, null=True,
-        related_name='+',
-        on_delete=models.SET_NULL,
-        verbose_name=_('Bank'),
-    )
-    branch_base2 = models.CharField(
-        max_length=60,
-        blank=True,
-        null=True,
-        verbose_name=_('Branch')
-    )
-    iban_base2 = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('IBAN $')
-    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
@@ -428,60 +389,9 @@ class School(TimeStampedModel):
         on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
-    benefit_wfp_service = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Is the school benefiting from WFP services?')
-    )
-    wfp_service_type = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=WFP_SERVICE_TYPE,
-        verbose_name=_('Service Type?')
-    )
-    is_unrwa = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['number']
-
-    def attendances_2ndshift(self):
-        qs = self.attendances.filter(
-            education_year__current_year=True,
-            school_type='2nd-shift'
-        )
-        if self.academic_year_start:
-            qs = qs.filter(
-                attendance_date__gte=self.academic_year_start
-            )
-        return qs
-
-    def attendances_alp(self):
-        return self.attendances.filter(
-            alp_round__current_round=True,
-            school_type='ALP'
-        )
-
-    @property
-    def total_attendances_days_2ndshift(self):
-        qs = self.attendances_2ndshift()
-        return qs.count()
-
-    @property
-    def total_attendances_days_2ndshift_open(self):
-        qs = self.attendances_2ndshift()
-        return qs.exclude(close_reason__isnull=False).count()
-
-    @property
-    def total_attendances_days_alp(self):
-        return self.attendances_alp().count()
-
-    @property
-    def total_attendances_days_alp_open(self):
-        qs = self.attendances_alp()
-        return qs.exclude(close_reason__isnull=False).count()
 
     @property
     def location_name(self):
