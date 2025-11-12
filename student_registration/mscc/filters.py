@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.db.utils import OperationalError, ProgrammingError
 
 from django_filters import (
     FilterSet,
@@ -67,7 +68,6 @@ class MainFilter(PlaceholderFilterSet):
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                 .order_by('name').distinct(), empty_label='Nationality')
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.values_list('id', 'name').order_by('name').distinct()),
         empty_label='Round',
         method='filter_round'
     )
@@ -90,6 +90,10 @@ class MainFilter(PlaceholderFilterSet):
         model = Registration
         fields = []
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._populate_round_choices()
+
     def filter_round(self, queryset, name, value):
         if value == 'no_round':
             return queryset.filter(round__isnull=True)
@@ -97,6 +101,15 @@ class MainFilter(PlaceholderFilterSet):
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
+
+    def _populate_round_choices(self):
+        try:
+            round_choices = list(
+                Round.objects.values_list('id', 'name').order_by('name').distinct()
+            )
+        except (ProgrammingError, OperationalError):
+            round_choices = []
+        self.filters['round'].extra['choices'] = [self.NO_ROUND_OPTION] + round_choices
 
 
 class FullFilter(PlaceholderFilterSet):
@@ -107,7 +120,6 @@ class FullFilter(PlaceholderFilterSet):
                           .order_by('name').distinct(), empty_label='Partner')
 
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.values_list('id', 'name').order_by('name').distinct()),
         empty_label='Round',
         method='filter_round'
     )
@@ -142,6 +154,10 @@ class FullFilter(PlaceholderFilterSet):
         fields = [
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._populate_round_choices()
+
     def filter_round(self, queryset, name, value):
         if value == 'no_round':
             return queryset.filter(round__isnull=True)
@@ -149,3 +165,12 @@ class FullFilter(PlaceholderFilterSet):
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
+
+    def _populate_round_choices(self):
+        try:
+            round_choices = list(
+                Round.objects.values_list('id', 'name').order_by('name').distinct()
+            )
+        except (ProgrammingError, OperationalError):
+            round_choices = []
+        self.filters['round'].extra['choices'] = [self.NO_ROUND_OPTION] + round_choices
