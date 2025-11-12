@@ -7,81 +7,10 @@ from . import views
 app_name = 'schools'
 
 urlpatterns = [
-
-    re_path(
-        r'^profile/$',
-        view=views.ProfileView.as_view(),
-        name='profile'
-    ),
-    re_path(
-        r'^partner/$',
-        view=views.PartnerView.as_view(),
-        name='partner'
-    ),
-    re_path(
-        r'^documents/$',
-        view=views.PublicDocumentView.as_view(),
-        name='documents'
-    ),
     re_path(
         r'^autocomplete/$',
         view=views.AutocompleteView.as_view(),
         name='autocomplete'
-    ),
-    re_path(
-        r'^evaluation/$',
-        view=views.EvaluationView.as_view(),
-        name='evaluation'
-    ),
-    re_path(
-        r'^evaluation/update_classroom/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class.as_view(),
-        name='update_classroom'
-    ),
-    re_path(
-        r'^evaluation/update_classroom_c1/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class_c1.as_view(),
-        name='update_classroom_c1'
-    ),
-    re_path(
-        r'^evaluation/update_classroom_c3/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class_C3.as_view(),
-        name='update_classroom_c3'
-    ),
-    re_path(
-        r'^evaluation/update_classroom_c4/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class_c4.as_view(),
-        name='update_classroom_c4'
-    ),
-    re_path(
-        r'^evaluation/update_classroom_c5/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class_c5.as_view(),
-        name='update_classroom_c5'
-    ),
-    re_path(
-        r'^evaluation/update_classroom_c6/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class_c6.as_view(),
-        name='update_classroom_c6'
-    ),
-    re_path(
-        r'^evaluation/update_classroom_c7/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class_c7.as_view(),
-        name='update_classroom_c7'
-    ),
-    re_path(
-        r'^evaluation/update_classroom_c8/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class_c8.as_view(),
-        name='update_classroom_c8'
-    ),
-    re_path(
-        r'^evaluation/update_classroom_c9/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class_c9.as_view(),
-        name='update_classroom_c9'
-    ),
-    re_path(
-        r'^evaluation/update_classroom_cprep/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Class_cprep.as_view(),
-        name='update_classroom_cprep'
     ),
     re_path(
         r'^school-list/$',

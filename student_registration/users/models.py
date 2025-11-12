@@ -69,18 +69,10 @@ class User(AbstractUser):
 
 
 class Login(models.Model):
-    # from student_registration.schools.models import EducationYear
     user = models.ForeignKey(
         'User',
         blank=True, null=True,
         verbose_name=_('User'),
-        on_delete=models.SET_NULL
-    )
-    education_year = models.ForeignKey(
-        'schools.EducationYear',
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Education year'),
         on_delete=models.SET_NULL
     )
     active = models.BooleanField(default=True)

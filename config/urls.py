@@ -31,7 +31,6 @@ from student_registration.students.views import (
 )
 from student_registration.schools.views import (
     SchoolViewSet,
-    ClassRoomViewSet,
     SectionViewSet,
     SchoolAutocomplete
 )
@@ -42,7 +41,7 @@ from student_registration.locations.views import (
     ProgramStaffViewSet
 )
 
-from student_registration.users.views import LoginRedirectView, home, login_success, LandingPage, save_fcm_token
+from student_registration.users.views import home, login_success, LandingPage, save_fcm_token
 from student_registration.students.views import serve_file
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 
@@ -56,7 +55,6 @@ api.register(r'dirasa/attendances', AttendanceListViewSet, basename='dirasa-atte
 api.register(r'students', StudentViewSet, basename='students')
 api.register(r'students-search', StudentSearchViewSet, basename='students-search')
 api.register(r'schools', SchoolViewSet, basename='schools')
-api.register(r'classrooms', ClassRoomViewSet, basename='classrooms')
 api.register(r'sections', SectionViewSet, basename='sections')
 api.register(r'teacher', TeacherViewSet, basename='teacher')
 api.register(r'program-staff', ProgramStaffViewSet, basename='program-staff')
@@ -67,7 +65,6 @@ urlpatterns = [
     re_path(r'^$', home, name="home"),
     # re_path(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
     re_path(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
-    re_path(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
     re_path(r'^login-success/$', login_success, name='login_success'),
     re_path(r'^landing-page/$', LandingPage.as_view(), name='landing_page'),
     re_path(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),

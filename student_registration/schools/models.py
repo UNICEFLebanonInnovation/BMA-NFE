@@ -83,11 +83,6 @@ class School(TimeStampedModel):
         ('Saturday', _('Saturday')),
         ('Sunday', _('Sunday')),
     )
-    WFP_SERVICE_TYPE = Choices(
-        ('', '----------'),
-        ('Community Kitchen', _("Community Kitchen")),
-        ('School Snacks', _("School Snacks")),
-    )
     number = models.CharField(
         max_length=45,
         unique=True,

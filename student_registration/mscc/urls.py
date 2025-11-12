@@ -234,11 +234,6 @@ urlpatterns = [
         name='old_child_search'
     ),
     re_path(
-        'get-old-child-data/$',
-        views.old_child_data,
-        name='old_child_data'
-    ),
-    re_path(
         'child-duplication-check/$',
         views.child_duplication_check,
         name='child_duplication_check'
@@ -355,7 +350,6 @@ urlpatterns = [
         view=views.get_file_csv,
         name='export_download_csv'
     ),
-
     re_path(
         r'^services/lego-add/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/$',
         view=services_view.LegoServiceFormView.as_view(),

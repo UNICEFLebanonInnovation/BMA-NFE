@@ -10,7 +10,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, ButtonHolder, Reset
 
-from .models import School, PartnerOrganization, EducationYear, Evaluation, Club, ClubType,  Meeting, CommunityInitiative, HealthVisit
+from .models import School, PartnerOrganization, Club, ClubType,  Meeting, CommunityInitiative, HealthVisit
 from student_registration.locations.models import Location
 from .serializers import SchoolSerializer
 
@@ -331,13 +331,6 @@ class SchoolForm(forms.ModelForm):
                 css_id='step-3'
             ),
             Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('benefit_wfp_service', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill" id="span_wfp_service_type">2</span>'),
-                    Div('wfp_service_type', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -385,11 +378,6 @@ class SchoolForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(SchoolForm, self).clean()
 
-        benefit_wfp_service = cleaned_data.get('benefit_wfp_service')
-        wfp_service_type = cleaned_data.get("wfp_service_type")
-        if benefit_wfp_service == "yes" and not wfp_service_type:
-            self.add_error('wfp_service_type', 'This field is required')
-
         digital_learning_programme = cleaned_data.get("digital_learning_programme")
         school_digital_capacity = cleaned_data.get("school_digital_capacity")
         if digital_learning_programme == "yes" and not school_digital_capacity:
@@ -435,8 +423,6 @@ class SchoolForm(forms.ModelForm):
             'number_dirasa_children_disability',
             'number_total_children_disability',
             'type',
-            'benefit_wfp_service',
-            'wfp_service_type',
         )
 
 

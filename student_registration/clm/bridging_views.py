@@ -133,6 +133,7 @@ class BridgingAddView(LoginRequiredMixin,
         if self.request.POST.get('save_and_continue', None):
             return '/clm/bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
         if self.request.POST.get('save_and_pretest', None):
+            pass
             # return assessment_form(
             #     instance_id=self.request.session.get('instance_id'),
             #     stage='pre_test',
@@ -196,6 +197,7 @@ class BridgingEditView(LoginRequiredMixin,
         if self.request.POST.get('save_and_continue', None):
             return '/clm/bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
         if self.request.POST.get('save_and_pretest', None):
+            pass
             # return assessment_form(
             #     instance_id=self.request.session.get('instance_id'),
             #     stage='pre_test',
