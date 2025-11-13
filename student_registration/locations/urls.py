@@ -37,19 +37,4 @@ urlpatterns = [
         view=views.ProfileView.as_view(),
         name='center_profile'
     ),
-    re_path(
-        r'^program-staff-add/(?P<center_id>[\w.@+-]+)/$',
-        view=views.ProgramStaffFormView.as_view(),
-        name='program_staff_add'
-    ),
-    re_path(
-        r'^program-staff-edit/(?P<center_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
-        view=views.ProgramStaffFormView.as_view(),
-        name='program_staff_edit'
-    ),
-    re_path(
-        r'^program-staff-delete/(?P<pk>[\w.@+-]+)/$',
-        view=views.program_staff_delete,
-        name='program_staff_delete'
-    ),
 ]

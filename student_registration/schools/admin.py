@@ -12,9 +12,7 @@ from .models import (
     Section,
     PartnerOrganization,
     EducationalLevel,
-    Holiday,
     CLMRound,
-    Coordinator,
     PublicHolidays,
     ClubType
 )

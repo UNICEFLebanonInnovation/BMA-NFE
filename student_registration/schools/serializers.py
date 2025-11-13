@@ -55,7 +55,6 @@ class SchoolSerializer(serializers.ModelSerializer):
         )
 
 
-
 class SectionSerializer(serializers.ModelSerializer):
 
     class Meta:

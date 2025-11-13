@@ -34,37 +34,3 @@ class LocationSerializer(serializers.ModelSerializer):
             'parent_id',
 
         )
-
-
-class ProgramStaffSerializer(serializers.ModelSerializer):
-
-    def create(self, validated_data):
-
-        try:
-            instance = ProgramStaff.objects.create(**validated_data)
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'Program Staff instance': ex})
-
-        return instance
-
-    class Meta:
-        model = ProgramStaff
-        fields = (
-            'id',
-            'facilitator_name',
-            'gender',
-            'phone_number',
-            'email',
-            'subject',
-            'programs',
-            'weekly_hours_taught',
-            'attendance_training',
-            'training_topics',
-            'attach_cv',
-            'attach_diploma'
-        )
-
-
-

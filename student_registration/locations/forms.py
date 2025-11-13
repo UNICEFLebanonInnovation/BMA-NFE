@@ -1,33 +1,20 @@
 from __future__ import unicode_literals, absolute_import, division
-
-from student_registration.users.templatetags.custom_tags import has_group
 from django.utils.translation import gettext as _
 from django import forms
 from django.urls import reverse
 from django.contrib import messages
-
 from crispy_forms.helper import FormHelper
-
 from crispy_forms.bootstrap import (
     FormActions,
     InlineCheckboxes
 )
-
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
-
 from dal import autocomplete
-
-from django.forms.widgets import ClearableFileInput
 from student_registration.locations.models import Location
 from .models import (
-    Center,
-    ProgramStaff
+    Center
 )
 from student_registration.schools.models import PartnerOrganization
-
-
-class CustomClearableFileInput(ClearableFileInput):
-    template_name = 'staff/clearable_file_input.html'
 
 
 class CenterAdminForm(forms.ModelForm):
@@ -339,186 +326,4 @@ class CenterForm(forms.ModelForm):
             'offer_digital_learning',
             'have_digital_hub',
             'neaby_phcc'
-        )
-
-
-class ProgramStaffForm(forms.ModelForm):
-
-    facilitator_name = forms.CharField(
-        label=_("Facilitator Name"),
-        widget=forms.TextInput,
-        required=True
-    )
-    gender = forms.ChoiceField(
-        label=_('Gender'),
-        widget=forms.Select, required=True,
-        choices=ProgramStaff.GENDER,
-        initial=''
-    )
-    phone_number = forms.RegexField(
-        regex=r'^\d{2}-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=True,
-        label=_('Phone number')
-    )
-    email = forms.RegexField(
-        regex=r'^\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b',
-        required=False,
-        label=_('Email')
-    )
-    subject = forms.MultipleChoiceField(
-        label=_('Subject'),
-        required=True,
-        widget=forms.CheckboxSelectMultiple,
-        choices=ProgramStaff.SUBJECT
-    )
-    programs = forms.MultipleChoiceField(
-        label=_('Program'),
-        required=True,
-        widget=forms.CheckboxSelectMultiple,
-        choices=ProgramStaff.PROGRAM
-    )
-    weekly_hours_taught = forms.IntegerField(
-        label=_('Number of Hours Taught Per Week'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        required=False,
-        initial=0,
-        min_value=0
-    )
-    attendance_training = forms.ChoiceField(
-        label=_("Facilitator Attendance to training ?"),
-        widget=forms.Select, required=False,
-        choices=Center.YES_NO,
-    )
-    training_topics = forms.MultipleChoiceField(
-        label=_('Topics of facilitator training'),
-        required=True,
-        widget=forms.CheckboxSelectMultiple,
-        choices=ProgramStaff.TOPICS
-    )
-    attach_cv = forms.FileField(
-        label=_("CV"),
-        required=False,
-        widget=CustomClearableFileInput
-    )
-    attach_diploma = forms.FileField(
-        label=_("Diploma"),
-        required=False,
-        widget=CustomClearableFileInput
-    )
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        center_id = kwargs.pop('center_id', None)
-        pk = kwargs.pop('pk', None)
-        super(ProgramStaffForm, self).__init__(*args, **kwargs)
-        form_action = reverse('locations:program_staff_add',  kwargs={'center_id': center_id})
-
-        if pk:
-            form_action = reverse('locations:program_staff_edit',  kwargs={'center_id': center_id, 'pk': pk})
-
-        self.helper = FormHelper()
-        self.helper.form_show_labels = True
-        self.helper.form_action = form_action
-        self.helper.layout = Layout(
-            Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('facilitator_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('gender', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('email', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('subject', css_class='col-md-3  multiple-choice'),
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('programs', css_class='col-md-3  multiple-choice'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('weekly_hours_taught', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('attendance_training', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('training_topics', css_class='col-md-3  multiple-choice'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('attach_cv', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('attach_diploma', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-
-                ),
-                css_id='step-1',
-            ),
-        )
-
-    def save(self, request=None, instance=None, center_id=None):
-        validated_data = request.POST
-
-        data = request.POST.copy()
-        data.update(request.FILES)
-
-        if not instance:
-            instance = ProgramStaff.objects.create(center_id=center_id)
-            instance.owner = request.user
-        else:
-            instance = ProgramStaff.objects.get(id=instance)
-
-        instance.facilitator_name = validated_data.get('facilitator_name')
-        instance.gender = validated_data.get('gender')
-        instance.phone_number = validated_data.get('phone_number')
-        instance.email = validated_data.get('email')
-        instance.subject = validated_data.getlist('subject')
-        instance.programs = validated_data.getlist('programs')
-        weekly_hours = validated_data.get('weekly_hours_taught')
-        weekly_hours_str = (weekly_hours or '').strip()
-        instance.weekly_hours_taught = int(weekly_hours_str) if weekly_hours_str else 0
-        instance.attendance_training = validated_data.get('attendance_training')
-        instance.training_topics = validated_data.getlist('training_topics')
-        attach_cv = request.FILES.get('attach_cv', False)
-        if attach_cv:
-            instance.attach_cv = attach_cv
-        attach_diploma = request.FILES.get('attach_diploma', False)
-        if attach_diploma:
-            instance.attach_diploma = attach_diploma
-        instance.modified_by = request.user
-
-        instance.save()
-
-        messages.success(request, _('Your data has been sent successfully to the server'))
-        return instance
-
-    class Meta:
-        model = ProgramStaff
-        fields = (
-            'facilitator_name',
-            'gender',
-            'phone_number',
-            'email',
-            'subject',
-            'programs',
-            'weekly_hours_taught',
-            'attendance_training',
-            'training_topics',
-            'attach_cv',
-            'attach_diploma'
         )

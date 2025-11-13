@@ -7,25 +7,10 @@ from django.utils.translation import gettext as _
 from django.contrib.postgres.fields import ArrayField
 
 
-class Coordinator(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = 'Coordinator'
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-            return self.name
-
-
 class PublicHolidays(models.Model):
-    holiday = models.DateField(
-        unique=True,
-        verbose_name=_('Public holidays')
-    )
+    name = models.CharField(max_length=100, unique=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return self.holiday.strftime("%m/%d/%Y")
@@ -657,18 +642,4 @@ class PartnerOrganization(models.Model):
     def __unicode__(self):
         return self.name
 
-
-class Holiday(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
-
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
 

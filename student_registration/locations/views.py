@@ -172,83 +172,6 @@ class CenterListView(LoginRequiredMixin,
         return Center.objects.none()
 
 
-class ProgramStaffFormView(LoginRequiredMixin,
-                           GroupRequiredMixin,
-                           FormView):
-    template_name = 'location/program_staff_form.html'
-    form_class = ProgramStaffForm
-    success_url = ''
-    group_required = [u"MSCC", u"MSCC_CENTER"]
-
-    def get_success_url(self):
-        center_id = self.kwargs.get('center_id')
-        if center_id is not None:
-            return reverse('locations:center_profile', kwargs={'pk': center_id})
-        else:
-            return reverse('mscc:list')
-
-    def get_context_data(self, **kwargs):
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['center_id'] = self.kwargs['center_id']
-        return super(ProgramStaffFormView, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        try:
-            center_id = int(self.kwargs.get('center_id'))
-        except (TypeError, ValueError):
-            raise Http404("Center id must be an integer")
-        pk = self.kwargs.get('pk', None)
-        if self.request.method == "POST":
-            return ProgramStaffForm(self.request.POST, pk=pk, center_id=center_id, request=self.request)
-        else:
-            if pk:
-                instance = ProgramStaff.objects.get(id=pk)
-                return ProgramStaffForm(instance=instance, pk=pk, center_id=center_id, request=self.request)
-            return ProgramStaffForm(pk=pk, center_id=center_id, request=self.request)
-
-    def form_valid(self, form):
-        center_id = self.kwargs.get('center_id')
-        instance = self.kwargs.get('pk', None)
-        form.save(request=self.request, center_id=center_id, instance=instance)
-        return super(ProgramStaffFormView, self).form_valid(form)
-
-
-class ProgramStaffViewSet(mixins.RetrieveModelMixin,
-                 mixins.ListModelMixin,
-                 mixins.CreateModelMixin,
-                 mixins.UpdateModelMixin,
-                 viewsets.GenericViewSet):
-
-    model = ProgramStaff
-    queryset = ProgramStaff.objects.all()
-    serializer_class = ProgramStaffSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_queryset(self):
-        qs = self.queryset
-        return qs
-
-    def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
-        instance.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
-
-
-def program_staff_delete(request, pk):
-    if request.user.is_authenticated:
-        try:
-            program_staff = ProgramStaff.objects.get(id=pk)
-            program_staff.delete()
-            result = {"isSuccessful": True}
-        except ProgramStaff.DoesNotExist:
-            result = {"isSuccessful": False}
-    else:
-        result = {"isSuccessful": False}
-    return JsonResponse(result)
-
-
 def export_data(request):
     try:
         cursor = connection.cursor()
@@ -329,9 +252,11 @@ def export_data(request):
 
         return HttpResponse("An error occurred: " + str(e), status=500)
 
+
 class ExportStorage(AzureStorage):
     """Azure storage backend dedicated for exported files."""
     location = "export"
+
 
 @login_required(login_url='/users/login')
 def export_center_background(request):
