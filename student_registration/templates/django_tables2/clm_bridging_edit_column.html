@@ -1,4 +1,5 @@
 {% load static i18n %}
+{% load custom_tags %}
 
 {% if column.attrs.programme|is_allowed_edit %}
    {% if record.total_absent_days >= 40 %}

@@ -1,3 +1,4 @@
+{% load custom_tags %}
 <option value="">---------</option>
 {% for school in schools %}
 <option value="{{ school.pk }}">{{ school.number }}-{{ school.name }}</option>
