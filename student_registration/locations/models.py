@@ -285,10 +285,6 @@ class Center(TimeStampedModel):
         return self.admin_staff_number if self.admin_staff_number is not None else 0
 
     @property
-    def total_program_staff(self):
-        return ProgramStaff.objects.filter(center=self.id).count()
-
-    @property
     def total_staff(self):
         admin_staff = self.total_admin_staff
         program_staff = self.total_program_staff

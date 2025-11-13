@@ -283,13 +283,6 @@ class School(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('School IT phone number')
     )
-    coordinator = models.ForeignKey(
-        Coordinator,
-        blank=True, null=True,
-        verbose_name=_('coordinator'),
-        related_name='+',
-        on_delete=models.SET_NULL,
-    )
     attendance_range = models.IntegerField(
         blank=True, null=True,
         verbose_name=_('Attendance day range')

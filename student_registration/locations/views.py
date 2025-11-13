@@ -3,25 +3,16 @@ from __future__ import absolute_import, unicode_literals
 from student_registration.users.templatetags.custom_tags import has_group
 from rest_framework import viewsets, mixins, permissions
 
-import json
-
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
-from openpyxl import Workbook
 
-from rest_framework import status
 from django.db.models import F, Q
-from django.urls import reverse
 from django.shortcuts import render
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
-from fuzzywuzzy import fuzz
-
-from django.views.decorators.http import require_POST
 
 import io
 import zipfile
@@ -36,43 +27,29 @@ import traceback
 from .tables import (
     BootstrapTable,
     CenterTable
-
 )
 from .models import (
     Center,
-    Location,
-    ProgramStaff
+    Location
 )
 from student_registration.schools.models import PartnerOrganization, School
 from student_registration.backends.models import ExportHistory
 
 from .forms import (
-    CenterForm,
-    ProgramStaffForm
+    CenterForm
 )
 from .serializers import (
-    LocationSerializer,
-    ProgramStaffSerializer
+    LocationSerializer
 )
 from .filters import (
     CenterFilter
 )
-
-from .utils import *
-
 from dal import autocomplete
-# from django.conf import settings
 import os
-# from django.http import FileResponse
 import uuid
-# from storages.backends.azure_storage import AzureStorage
-from django.core.files.storage import default_storage
 from storages.backends.azure_storage import AzureStorage
-
 from django.core.files.base import ContentFile
-# import re
 from django.urls import reverse
-
 from django.contrib.auth.decorators import login_required
 
 
@@ -97,12 +74,10 @@ class ProfileView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         center_id = self.kwargs['pk']
         instance = Center.objects.get(id=center_id)
-        program_staffs = ProgramStaff.objects.filter(center__id=center_id).order_by('facilitator_name')
         current_tab = self.request.GET.get('current_tab', 'info')
 
         return {
             'instance': instance,
-            'program_staffs':program_staffs,
             'current_tab': current_tab
         }
 

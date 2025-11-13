@@ -2,7 +2,7 @@
 import json
 
 from rest_framework import serializers
-from .models import Location, Center, ProgramStaff
+from .models import Location, Center
 
 
 class LocationSerializer(serializers.ModelSerializer):

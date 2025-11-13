@@ -2,29 +2,130 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d5e9b9cf-846c-4255-89de-6b055dcc58e2" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/student_registration/mscc/management/commands/__init__.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/student_registration/students/management/commands/__init__.py" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/student_registration/locations/forms.py" afterPath="$PROJECT_DIR$/student_registration/locations/forms.py" />
+      <change beforePath="$PROJECT_DIR$/config/urls.py" afterPath="$PROJECT_DIR$/config/urls.py" />
       <change beforePath="$PROJECT_DIR$/student_registration/locations/models.py" afterPath="$PROJECT_DIR$/student_registration/locations/models.py" />
       <change beforePath="$PROJECT_DIR$/student_registration/locations/serializers.py" afterPath="$PROJECT_DIR$/student_registration/locations/serializers.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/locations/tasks.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/locations/templates/staff/clearable_file_input.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/locations/tests.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/locations/urls.py" afterPath="$PROJECT_DIR$/student_registration/locations/urls.py" />
       <change beforePath="$PROJECT_DIR$/student_registration/locations/views.py" afterPath="$PROJECT_DIR$/student_registration/locations/views.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/tests/test_attendance_api.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/tests/test_smoke.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/schools/admin.py" afterPath="$PROJECT_DIR$/student_registration/schools/admin.py" />
       <change beforePath="$PROJECT_DIR$/student_registration/schools/models.py" afterPath="$PROJECT_DIR$/student_registration/schools/models.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/schools/serializers.py" afterPath="$PROJECT_DIR$/student_registration/schools/serializers.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/students/templates/students/clearable_file_input.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/students/tests/__init__.py" afterPath="$PROJECT_DIR$/student_registration/mscc/management/__init__.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/students/tests/test_utils.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/taskapp/tests/test_smoke.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/users/management/commands/generate_passwords.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/users/models.py" afterPath="$PROJECT_DIR$/student_registration/users/models.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/users/tasks.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/attendances/attendance_Absence_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/attendances/attendance_Absence_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/attendances/attendance_students.html" afterPath="$PROJECT_DIR$/student_registration/templates/attendances/attendance_students.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/attendances/level_section.html" afterPath="$PROJECT_DIR$/student_registration/templates/attendances/level_section.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/attendances/main_attendance_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/attendances/main_attendance_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/attendances/school_day.html" afterPath="$PROJECT_DIR$/student_registration/templates/attendances/school_day.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/base.html" afterPath="$PROJECT_DIR$/student_registration/templates/base.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/clm/bridging_attendance_report.html" afterPath="$PROJECT_DIR$/student_registration/templates/clm/bridging_attendance_report.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/clm/bridging_followup.html" afterPath="$PROJECT_DIR$/student_registration/templates/clm/bridging_followup.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/clm/bridging_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/clm/bridging_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/clm/bridging_list.html" afterPath="$PROJECT_DIR$/student_registration/templates/clm/bridging_list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/clm/bridging_mid_assessment.html" afterPath="$PROJECT_DIR$/student_registration/templates/clm/bridging_mid_assessment.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/clm/bridging_post_assessment.html" afterPath="$PROJECT_DIR$/student_registration/templates/clm/bridging_post_assessment.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/clm/bridging_service.html" afterPath="$PROJECT_DIR$/student_registration/templates/clm/bridging_service.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/clm/dashboard.html" afterPath="$PROJECT_DIR$/student_registration/templates/clm/dashboard.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/clm/list.html" afterPath="$PROJECT_DIR$/student_registration/templates/clm/list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/dashboard/exporter.html" afterPath="$PROJECT_DIR$/student_registration/templates/dashboard/exporter.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_absence_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_absence_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_action_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_action_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_assessment_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_assessment_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_assessment_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_assessment_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_delete_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_delete_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_edit_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_edit_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_followup_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_followup_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_mid_assessment1_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_mid_assessment1_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_mid_assessment2_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_bridging_mid_assessment2_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_delete_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_delete_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_edit_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_edit_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_arabic_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_arabic_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_chemistry_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_chemistry_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_language_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_language_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_math_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_math_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_physics_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_physics_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_science_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_fc_science_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_followup_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_followup_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_inclusion_delete_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_inclusion_delete_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_max_consecutive_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_max_consecutive_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_mid_assessment_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_mid_assessment_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_monitoring_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_monitoring_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_referral_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/clm_referral_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/grading_final_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/grading_final_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/grading_incomplete_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/grading_incomplete_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/grading_term1_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/grading_term1_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/grading_term2_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/grading_term2_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/location/center_edit_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/location/center_edit_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/location/center_profile_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/location/center_profile_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/absence_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/absence_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/action_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/action_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/outreached_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/outreached_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/status_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/status_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/type_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/type_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/school/club_action_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/school/club_action_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/school/initiative_action_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/school/initiative_action_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/school/meeting_action_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/school/meeting_action_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/school_delete_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/school_delete_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/school_edit_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/school_edit_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/students/teacher_action_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/students/teacher_action_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/teacher_delete_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/teacher_delete_column.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/landing_page.html" afterPath="$PROJECT_DIR$/student_registration/templates/landing_page.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/location/center_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/location/center_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/location/center_info_tab.html" afterPath="$PROJECT_DIR$/student_registration/templates/location/center_info_tab.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/location/center_list.html" afterPath="$PROJECT_DIR$/student_registration/templates/location/center_list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/location/center_profile.html" afterPath="$PROJECT_DIR$/student_registration/templates/location/center_profile.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/location/program_staff_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/location/program_staff_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/location/program_staff_tab.html" afterPath="$PROJECT_DIR$/student_registration/templates/location/program_staff_tab.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/attendance.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/attendance.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/attendance_report.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/attendance_report.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/child_attendance_tab.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/child_attendance_tab.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/child_info_tab.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/child_info_tab.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/child_profile_preview.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/child_profile_preview.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/child_services_tab.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/child_services_tab.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/dashboard.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/dashboard.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/dashboard_d3.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/dashboard_d3.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/dashboard_youth.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/dashboard_youth.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/list.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/main_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/main_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/new_round.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/new_round.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/profile.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/profile.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/referral_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/referral_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_diagnostic_assessment_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_diagnostic_assessment_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_digital_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_digital_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_education_assessment_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_education_assessment_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_education_grading_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_education_grading_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_education_rs_service_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_education_rs_service_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_education_service_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_education_service_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_follow_up_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_follow_up_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_health_nutrition_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_health_nutrition_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_health_nutrition_referral_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_health_nutrition_referral_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_inclusion_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_inclusion_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_lego_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_lego_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_pss_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_pss_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_recreational_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_recreational_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_school_grading_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_school_grading_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_assessment_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_assessment_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_gil_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_gil_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_kit_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_kit_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_maharati_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_maharati_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_referral_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_referral_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_scoring_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/service_youth_scoring_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/pages/home.html" afterPath="$PROJECT_DIR$/student_registration/templates/pages/home.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/classform.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/classform.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/club_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/club_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/club_list.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/club_list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/community_initiative_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/community_initiative_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/community_initiative_list.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/community_initiative_list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/evaluation.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/evaluation.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/health_visit_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/health_visit_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/health_visit_list.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/health_visit_list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/meeting_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/meeting_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/meeting_list.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/meeting_list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/profile.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/profile.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/school_create_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/school_create_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/school_edit_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/school_edit_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/schools/school_list.html" afterPath="$PROJECT_DIR$/student_registration/templates/schools/school_list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/students/imagestd.html" afterPath="$PROJECT_DIR$/student_registration/templates/students/imagestd.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/students/program_staff_tab.html" afterPath="$PROJECT_DIR$/student_registration/templates/students/program_staff_tab.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/students/teacher_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/students/teacher_form.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/students/teacher_list.html" afterPath="$PROJECT_DIR$/student_registration/templates/students/teacher_list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/users/profile.html" afterPath="$PROJECT_DIR$/student_registration/templates/users/profile.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -35,95 +136,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/student_registration/users/urls.py">
+      <file leaf-file-name="base.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config/settings/base.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="15" column="6" lean-forward="false" selection-start-line="15" selection-start-column="6" selection-end-line="15" selection-end-column="6" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/student_registration/users/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/student_registration/users/views.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1544">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="export.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/student_registration/students/export.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#43#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="filters.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/student_registration/students/filters.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/student_registration/students/forms.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
-              <caret line="78" column="0" lean-forward="false" selection-start-line="78" selection-start-column="0" selection-end-line="78" selection-end-column="0" />
-              <folding>
-                <element signature="e#2310#24013#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="initial_data.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/student_registration/users/fixtures/initial_data.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/student_registration/users/admin.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/student_registration/users/models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="107">
-              <caret line="52" column="15" lean-forward="true" selection-start-line="52" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+            <state relative-caret-position="164">
+              <caret line="58" column="11" lean-forward="true" selection-start-line="58" selection-start-column="11" selection-end-line="58" selection-end-column="11" />
               <folding />
             </state>
           </provider>
@@ -133,13 +150,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Disability</find>
-      <find>Referral</find>
-      <find>ClassLevel</find>
-      <find>ClassRoom</find>
-      <find>EducationLevel</find>
-      <find>Partner(models.Model)</find>
-      <find>from student_registration.alp.templatetags.util_tags import has_group</find>
       <find>EducationalLevel</find>
       <find>ALPReferMatrix</find>
       <find>GovernorateFilter</find>
@@ -163,7 +173,17 @@
       <find>ActivityInfoLocation</find>
       <find>CustomClearableFileInput</find>
       <find>staff_password</find>
+      <find>Coordinator</find>
+      <find>ProgramStaff</find>
+      <find>util_tags</find>
+      <find>{% load util_tags %}</find>
+      <find>is_allowed_create</find>
+      <find>connection</find>
+      <find>cele</find>
     </findStrings>
+    <replaceStrings>
+      <replace />
+    </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
       <dir>$PROJECT_DIR$/student_registration</dir>
@@ -175,8 +195,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/student_registration/clm/admin.py" />
-        <option value="$PROJECT_DIR$/student_registration/clm/forms.py" />
         <option value="$PROJECT_DIR$/student_registration/clm/serializers.py" />
         <option value="$PROJECT_DIR$/student_registration/clm/utils.py" />
         <option value="$PROJECT_DIR$/student_registration/mscc/forms.py" />
@@ -202,7 +220,6 @@
         <option value="$PROJECT_DIR$/student_registration/backends/file.py" />
         <option value="$PROJECT_DIR$/student_registration/backends/views.py" />
         <option value="$PROJECT_DIR$/student_registration/backends/urls.py" />
-        <option value="$PROJECT_DIR$/student_registration/schools/views.py" />
         <option value="$PROJECT_DIR$/student_registration/mscc/tasks.py" />
         <option value="$PROJECT_DIR$/student_registration/students/forms.py" />
         <option value="$PROJECT_DIR$/student_registration/students/admin.py" />
@@ -210,7 +227,6 @@
         <option value="$PROJECT_DIR$/student_registration/students/serializers.py" />
         <option value="$PROJECT_DIR$/student_registration/students/models.py" />
         <option value="$PROJECT_DIR$/student_registration/schools/forms.py" />
-        <option value="$PROJECT_DIR$/config/urls.py" />
         <option value="$PROJECT_DIR$/student_registration/users/urls.py" />
         <option value="$PROJECT_DIR$/student_registration/clm/bridging_views.py" />
         <option value="$PROJECT_DIR$/student_registration/mscc/urls.py" />
@@ -218,14 +234,18 @@
         <option value="$PROJECT_DIR$/student_registration/attendances/urls.py" />
         <option value="$PROJECT_DIR$/student_registration/schools/urls.py" />
         <option value="$PROJECT_DIR$/student_registration/schools/admin.py" />
-        <option value="$PROJECT_DIR$/student_registration/schools/models.py" />
-        <option value="$PROJECT_DIR$/student_registration/locations/models.py" />
-        <option value="$PROJECT_DIR$/student_registration/locations/serializers.py" />
         <option value="$PROJECT_DIR$/student_registration/locations/urls.py" />
-        <option value="$PROJECT_DIR$/student_registration/locations/views.py" />
         <option value="$PROJECT_DIR$/student_registration/locations/forms.py" />
         <option value="$PROJECT_DIR$/student_registration/schools/serializers.py" />
         <option value="$PROJECT_DIR$/student_registration/users/models.py" />
+        <option value="$PROJECT_DIR$/student_registration/schools/models.py" />
+        <option value="$PROJECT_DIR$/student_registration/locations/models.py" />
+        <option value="$PROJECT_DIR$/student_registration/locations/serializers.py" />
+        <option value="$PROJECT_DIR$/student_registration/locations/views.py" />
+        <option value="$PROJECT_DIR$/config/urls.py" />
+        <option value="$PROJECT_DIR$/student_registration/schools/views.py" />
+        <option value="$PROJECT_DIR$/student_registration/templates/landing_page.html" />
+        <option value="$PROJECT_DIR$/config/settings/base.py" />
       </list>
     </option>
   </component>
@@ -273,34 +293,6 @@
               <item name="BMA-NFE" type="b2602c69:ProjectViewProjectNode" />
               <item name="BMA-NFE" type="462c0819:PsiDirectoryNode" />
               <item name="student_registration" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BMA-NFE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BMA-NFE" type="462c0819:PsiDirectoryNode" />
-              <item name="student_registration" type="462c0819:PsiDirectoryNode" />
-              <item name="locations" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BMA-NFE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BMA-NFE" type="462c0819:PsiDirectoryNode" />
-              <item name="student_registration" type="462c0819:PsiDirectoryNode" />
-              <item name="locations" type="462c0819:PsiDirectoryNode" />
-              <item name="fixtures" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BMA-NFE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BMA-NFE" type="462c0819:PsiDirectoryNode" />
-              <item name="student_registration" type="462c0819:PsiDirectoryNode" />
-              <item name="locations" type="462c0819:PsiDirectoryNode" />
-              <item name="management" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BMA-NFE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BMA-NFE" type="462c0819:PsiDirectoryNode" />
-              <item name="student_registration" type="462c0819:PsiDirectoryNode" />
-              <item name="locations" type="462c0819:PsiDirectoryNode" />
-              <item name="management" type="462c0819:PsiDirectoryNode" />
-              <item name="commands" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BMA-NFE" type="b2602c69:ProjectViewProjectNode" />
@@ -398,6 +390,12 @@
               <item name="BMA-NFE" type="b2602c69:ProjectViewProjectNode" />
               <item name="BMA-NFE" type="462c0819:PsiDirectoryNode" />
               <item name="student_registration" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BMA-NFE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BMA-NFE" type="462c0819:PsiDirectoryNode" />
+              <item name="student_registration" type="462c0819:PsiDirectoryNode" />
               <item name="users" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -478,6 +476,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="975" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Issue Summary" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -488,9 +487,9 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Audit Summary" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Analysis Trace" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18809524" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3211517" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2912514" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -513,48 +512,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/config/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="930">
-          <caret line="67" column="0" lean-forward="false" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/clm/bridging_views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2820">
-          <caret line="199" column="16" lean-forward="false" selection-start-line="199" selection-start-column="16" selection-end-line="199" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/mscc/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5205">
-          <caret line="351" column="6" lean-forward="false" selection-start-line="351" selection-start-column="6" selection-end-line="351" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/attendances/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7200">
-          <caret line="480" column="69" lean-forward="false" selection-start-line="480" selection-start-column="69" selection-end-line="480" selection-end-column="69" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/attendances/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#56#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/student_registration/schools/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="553">
@@ -575,42 +532,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/schools/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#66#0" expanded="true" />
-            <element signature="e#708#11044#0" expanded="false" />
-            <element signature="e#11081#11302#0" expanded="false" />
-            <element signature="e#11339#12425#0" expanded="false" />
-            <element signature="e#12465#13373#0" expanded="false" />
-            <element signature="e#13425#14227#0" expanded="false" />
-            <element signature="e#14271#15434#0" expanded="false" />
-            <element signature="e#15479#15676#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/locations/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="945">
-          <caret line="306" column="0" lean-forward="false" selection-start-line="306" selection-start-column="0" selection-end-line="306" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#66#0" expanded="true" />
-            <element signature="e#1713#8879#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/locations/serializers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -641,18 +562,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/locations/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1605">
-          <caret line="259" column="0" lean-forward="false" selection-start-line="259" selection-start-column="0" selection-end-line="259" selection-end-column="0" />
-          <folding>
-            <element signature="e#5513#8715#0" expanded="false" />
-            <element signature="e#8926#12710#0" expanded="false" />
-            <element signature="e#13018#13292#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/student_registration/locations/templates/staff/clearable_file_input.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -674,7 +583,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#54#0" expanded="true" />
+            <element signature="e#0#54#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -719,7 +628,7 @@
         <state relative-caret-position="-5234">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#0#27#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -773,7 +682,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#30#0" expanded="true" />
+            <element signature="e#0#30#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -817,7 +726,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#39#0" expanded="true" />
+            <element signature="e#0#39#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -826,14 +735,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="586">
           <caret line="55" column="0" lean-forward="false" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/schools/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="89" column="0" lean-forward="false" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -857,7 +758,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#39#0" expanded="true" />
+            <element signature="e#0#39#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -867,7 +768,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#43#0" expanded="true" />
+            <element signature="e#0#43#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -964,8 +865,96 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/student_registration/users/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1544">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="241">
+          <caret line="136" column="42" lean-forward="true" selection-start-line="136" selection-start-column="42" selection-end-line="136" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/schools/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="300" column="5" lean-forward="false" selection-start-line="300" selection-start-column="5" selection-end-line="300" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/locations/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="206">
+          <caret line="286" column="0" lean-forward="false" selection-start-line="286" selection-start-column="0" selection-end-line="286" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#66#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/locations/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="36" lean-forward="false" selection-start-line="4" selection-start-column="36" selection-end-line="4" selection-end-column="36" />
+          <folding>
+            <element signature="e#1#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/locations/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1713">
+          <caret line="51" column="31" lean-forward="false" selection-start-line="51" selection-start-column="31" selection-end-line="51" selection-end-column="31" />
+          <folding>
+            <element signature="e#4772#7974#0" expanded="false" />
+            <element signature="e#8016#8097#0" expanded="false" />
+            <element signature="e#8185#11969#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="795">
+          <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/schools/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="208" column="46" lean-forward="true" selection-start-line="208" selection-start-column="46" selection-end-line="208" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/schools/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="20" column="4" lean-forward="false" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/clm/bridging_list.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="42" column="17" lean-forward="false" selection-start-line="42" selection-start-column="17" selection-end-line="42" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/landing_page.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="317">
+          <caret line="49" column="67" lean-forward="true" selection-start-line="49" selection-start-column="67" selection-end-line="49" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/settings/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="58" column="11" lean-forward="true" selection-start-line="58" selection-start-column="11" selection-end-line="58" selection-end-column="11" />
           <folding />
         </state>
       </provider>

@@ -37,8 +37,7 @@ from student_registration.schools.views import (
 
 from student_registration.locations.views import (
     LocationViewSet,
-    LocationAutocomplete,
-    ProgramStaffViewSet
+    LocationAutocomplete
 )
 
 from student_registration.users.views import home, login_success, LandingPage, save_fcm_token
@@ -57,7 +56,6 @@ api.register(r'students-search', StudentSearchViewSet, basename='students-search
 api.register(r'schools', SchoolViewSet, basename='schools')
 api.register(r'sections', SectionViewSet, basename='sections')
 api.register(r'teacher', TeacherViewSet, basename='teacher')
-api.register(r'program-staff', ProgramStaffViewSet, basename='program-staff')
 api.register(r'attendance-heatmap-data', AttendanceHeatmapViewSet, basename='attendance-heatmap-data')
 api.register(r'locations', LocationViewSet, basename='locations')
 
