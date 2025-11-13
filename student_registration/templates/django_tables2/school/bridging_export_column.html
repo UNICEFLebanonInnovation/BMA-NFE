@@ -1,4 +1,5 @@
 {% load static i18n %}
+{% load custom_tags %}
 {% if column.attrs.url %}
 <div style="width: 100px;">
   <button onclick="checkSchoolBeforeExport(event, '{{ record.id }}')" class="btn btn-primary col-icon download-bridging-report-{{ record.id }}">

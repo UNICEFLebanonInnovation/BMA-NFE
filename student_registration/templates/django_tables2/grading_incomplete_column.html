@@ -1,4 +1,5 @@
 {% load static i18n %}
+{% load custom_tags %}
 
 {% if request.user|has_group:"ENROL_GRADING" and record.incomplete_grading  %}  <!--and record.cycle == "Cycle 1" -->
     <a href="{% url 'enrollments:grading' record.incomplete_grading 4 %}" class="btn btn-info" target="_blank">

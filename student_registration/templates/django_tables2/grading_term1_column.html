@@ -1,4 +1,5 @@
 {% load static i18n %}
+{% load custom_tags %}
 
 {% if request.user|has_group:"ENROL_GRADING" and record.grading_term1 %}
 <a href="{% url 'enrollments:grading' record.grading_term1 1 %}" class="btn btn-info" target="_blank">
