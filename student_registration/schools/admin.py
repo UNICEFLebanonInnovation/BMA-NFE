@@ -85,21 +85,15 @@ class SectionAdmin(ImportExportModelAdmin):
 class PartnerOrganizationAdmin(ImportExportModelAdmin):
     filter_horizontal = ('schools', )
     search_fields = ('name', 'short_name')
-    list_filter = ('is_Kayany', 'is_unrwa', 'is_youth', 'active')
+    list_filter = ('active',)
     list_display = (
         'name',
         'short_name',
-        'is_Kayany',
-        'is_unrwa',
-        'is_youth',
         'active',
     )
     fields = (
         'name',
         'short_name',
-        'is_Kayany',
-        'is_unrwa',
-        'is_youth',
         'active',
         'schools'
     )
@@ -135,20 +129,12 @@ class CLMRoundAdmin(ImportExportModelAdmin):
         'end_date_bridging',
         'start_date_bridging_edit',
         'end_date_bridging_edit',
-        'current_year_inclusion',
-        'current_round_inclusion',
-        'start_date_inclusion',
-        'end_date_inclusion',
-        'start_date_inclusion_edit',
-        'end_date_inclusion_edit',
     )
 
     list_display = (
         'name',
         'current_year',
         'current_round_bridging',
-        'current_year_inclusion',
-        'current_round_inclusion',
     )
 
 
@@ -220,7 +206,6 @@ class SchoolAdmin(ImportExportModelAdmin):
             'name',
             'is_closed',
             'is_bma',
-            'is_unrwa',
             'director_name',
             'land_phone_number',
             'email',
@@ -264,13 +249,12 @@ class SchoolAdmin(ImportExportModelAdmin):
         'district',
         'is_closed',
         'is_bma',
-        'is_unrwa',
     )
     search_fields = (
         'name',
         'number',
     )
-    list_filter = ('is_closed', 'is_bma','is_unrwa',)
+    list_filter = ('is_closed', 'is_bma',)
 
     def has_delete_permission(self, request, obj=None):
         return False
