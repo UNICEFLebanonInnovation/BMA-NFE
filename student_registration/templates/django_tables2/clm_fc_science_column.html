@@ -2,6 +2,7 @@
 {% load custom_tags %}
 
 
+{% load util_tags %}
 {% if record.grade_level %}
     {% if record.grade_registration == '1' or record.grade_registration == '2' or record.grade_registration == '3' or record.grade_registration == '4' or record.grade_registration == '5' or record.grade_registration == '6'%}
         <a href="{{ column.attrs.url }}{{ record.id }}{{ '/science' }}" class="btn btn-primary">
