@@ -1,5 +1,6 @@
 {% load static i18n %}
 {% load custom_tags %}
+{% load util_tags %}
 <button class="btn btn-danger moved-button" itemscope="{{ record.id }}" id="moved_button_{{ record.id }}" translation="{% trans "Are you sure you want to tag this student as moved?" %}">
     {% trans "Moved?" %}
 </button>

@@ -2,6 +2,7 @@
 {% load custom_tags %}
 
 
+{% load util_tags %}
 {% if record.total_absent_days >= 40 %}
   <span class="label success danger" style = "color:black;font-size:12pt">{{record.total_absent_days}}</span>
 {% else %}

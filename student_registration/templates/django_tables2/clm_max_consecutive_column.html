@@ -2,6 +2,7 @@
 {% load custom_tags %}
 
 
+{% load util_tags %}
 {% if record.more_than_ten_consecutive_absence %}
 <span class="label success warning" style = "color:black;font-size:12pt">{{record.max_consecutive_absence}}</span>
 {% else %}

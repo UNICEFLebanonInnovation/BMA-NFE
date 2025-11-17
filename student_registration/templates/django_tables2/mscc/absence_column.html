@@ -3,6 +3,7 @@
 {% load custom_tags %}
 
 
+{% load util_tags %}
 {% if record.total_absent_days >= 40 %}
     <span class="badge badge-danger align-text-bottom ml-1" style="padding: 10px 10px;">{{ record.total_absent_days }}</span>
 {% else %}
