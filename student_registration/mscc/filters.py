@@ -67,6 +67,11 @@ class MainFilter(PlaceholderFilterSet):
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                 .order_by('name').distinct(), empty_label='Nationality')
+    partner = ChoiceFilter(
+        choices=PartnerOrganization.objects.values_list('id', 'name')
+        .order_by('name').distinct(),
+        empty_label='Partner',
+    )
     round = ChoiceFilter(
         empty_label='Round',
         method='filter_round'
