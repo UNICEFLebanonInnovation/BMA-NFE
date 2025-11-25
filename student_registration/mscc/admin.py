@@ -436,13 +436,21 @@ class RecreationalAdmin(admin.ModelAdmin):
     )
 
 
+class RoundPartnerInline(admin.TabularInline):
+    model = RoundPartner
+    extra = 1
+    fields = (
+        'partner',
+        'start_date',
+        'end_date',
+    )
+
+
 class RoundAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'current_year',
         'year',
-        'start_date',
-        'end_date',
     )
 
     search_fields = (
@@ -453,6 +461,8 @@ class RoundAdmin(admin.ModelAdmin):
         'current_year',
         'year',
     )
+
+    inlines = (RoundPartnerInline,)
 
 
 admin.site.register(Registration, RegistrationAdmin)

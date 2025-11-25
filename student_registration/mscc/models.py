@@ -57,8 +57,6 @@ class Round(models.Model):
         null=True,
         verbose_name=_('Year'),
     )
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
 
     class Meta:
         ordering = ['name']
@@ -69,6 +67,33 @@ class Round(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class RoundPartner(TimeStampedModel):
+    round = models.ForeignKey(
+        Round,
+        related_name='partner_rounds',
+        on_delete=models.CASCADE,
+    )
+    partner = models.ForeignKey(
+        PartnerOrganization,
+        related_name='rounds',
+        on_delete=models.CASCADE,
+    )
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['round__name', 'partner__name']
+        unique_together = ('round', 'partner')
+        verbose_name = "Round Partner"
+        verbose_name_plural = "Round Partners"
+
+    def __str__(self):
+        return f"{self.round} - {self.partner}"
+
+    def __unicode__(self):
+        return self.__str__()
 
 
 class Registration(TimeStampedModel):
