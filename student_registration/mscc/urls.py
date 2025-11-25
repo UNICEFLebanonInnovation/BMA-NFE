@@ -14,6 +14,26 @@ urlpatterns = [
         name='child_add'
     ),
     re_path(
+        r'^teacher-list/$',
+        view=views.TeacherListView.as_view(),
+        name='teacher_list'
+    ),
+    re_path(
+        r'^teacher-add/$',
+        view=views.TeacherAddView.as_view(),
+        name='teacher_add'
+    ),
+    re_path(
+        r'^teacher-edit/(?P<pk>[\w.@+-]+)/$',
+        view=views.TeacherEditView.as_view(),
+        name='teacher_edit'
+    ),
+    re_path(
+        r'^teacher-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.TeacherDeleteView.as_view(),
+        name='teacher_delete'
+    ),
+    re_path(
         r'^child-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.MainEditView.as_view(),
         name='child_edit'

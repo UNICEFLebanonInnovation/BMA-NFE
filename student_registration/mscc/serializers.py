@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import (
-    Registration
+    Registration,
+    Teacher,
 )
 
 
@@ -263,4 +264,45 @@ class MainSerializer(serializers.ModelSerializer):
             'other_number',
             'other_number_confirm',
             'type'
+        )
+
+
+class TeacherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Teacher
+        fields = (
+            'id',
+            'round',
+            'center',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'sex',
+            'birthdate',
+            'id_type',
+            'id_number',
+            'nationality',
+            'unicef_id',
+            'primary_phone_number',
+            'email',
+            'subjects_provided',
+            'registration_level',
+            'teacher_assignment',
+            'teaching_hours_private_school',
+            'teaching_hours_mscc',
+            'trainings',
+            'training_sessions_attended',
+            'extra_coaching',
+            'extra_coaching_specify',
+            'attach_short_description_1',
+            'attach_type_1',
+            'attach_short_description_2',
+            'attach_type_2',
+            'attach_short_description_3',
+            'attach_type_3',
+            'attach_short_description_4',
+            'attach_type_4',
+            'attach_short_description_5',
+            'attach_type_5',
         )

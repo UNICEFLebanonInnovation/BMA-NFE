@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 from django import forms
 from django.urls import reverse
 from django.contrib import messages
+from django.forms.widgets import ClearableFileInput
 
 from crispy_forms.helper import FormHelper
 
@@ -25,7 +26,9 @@ from student_registration.child.models import Child
 from .models import (
     Registration,
     Referral,
-    YES_NO
+    YES_NO,
+    Round,
+    Teacher,
 )
 from student_registration.schools.models import (
     School
@@ -1081,4 +1084,380 @@ class ReferralForm(forms.ModelForm):
             'referred_service_other',
             'recommended_learning_path',
             'dropout_date',
+        )
+
+
+class CustomClearableFileInput(ClearableFileInput):
+    template_name = 'students/clearable_file_input.html'
+
+
+class TeacherForm(forms.ModelForm):
+    round = forms.ModelChoiceField(
+        queryset=Round.objects.filter(current_year=True),
+        widget=forms.Select,
+        label=_('Academic year'),
+        empty_label='-------',
+        required=True,
+        to_field_name='id',
+    )
+    center = forms.ModelChoiceField(
+        queryset=Center.objects.all(),
+        widget=forms.Select,
+        label=_('Center'),
+        empty_label='-------',
+        required=True,
+        to_field_name='id',
+    )
+    first_name = forms.CharField(label=_('First name'), widget=forms.TextInput, required=True)
+    father_name = forms.CharField(label=_('Father name'), widget=forms.TextInput, required=True)
+    last_name = forms.CharField(label=_('Last name'), widget=forms.TextInput, required=True)
+    mother_fullname = forms.CharField(label=_('Mother full name'), widget=forms.TextInput, required=False)
+    sex = forms.ChoiceField(
+        label=_('Gender'),
+        widget=forms.Select,
+        required=False,
+        choices=(
+            ('', '----------'),
+            ('Male', _('Male')),
+            ('Female', _('Female')),
+        ),
+    )
+    birthdate = forms.DateField(label=_('Birth date'), widget=forms.TextInput, required=False)
+    id_type = forms.ModelChoiceField(
+        queryset=IDType.objects.all(),
+        widget=forms.Select,
+        label=_('ID type'),
+        empty_label='-------',
+        required=False,
+        to_field_name='id',
+    )
+    id_number = forms.CharField(label=_('ID number'), widget=forms.TextInput, required=False)
+    nationality = forms.ModelChoiceField(
+        queryset=Nationality.objects.all(),
+        widget=forms.Select,
+        label=_('Nationality'),
+        empty_label='-------',
+        required=False,
+        to_field_name='id',
+    )
+    primary_phone_number = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Main Phone number'),
+    )
+    email = forms.RegexField(
+        regex=r'^\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b',
+        required=False,
+        label=_('Email'),
+    )
+    subjects_provided = forms.MultipleChoiceField(
+        label=_('Subjects provided'),
+        choices=Teacher.SUBJECT_PROVIDED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+    )
+    registration_level = forms.MultipleChoiceField(
+        label=_('Grade level'),
+        choices=Teacher.REGISTRATION_LEVEL,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+    )
+    teacher_assignment = forms.ChoiceField(
+        label=_('Teacher Assignment'),
+        widget=forms.Select,
+        required=False,
+        choices=Teacher.TEACHER_ASSIGNMENT,
+    )
+    teaching_hours_private_school = forms.IntegerField(
+        label=_('Number of teaching hours in private school'),
+        widget=forms.TextInput,
+        required=False,
+    )
+    teaching_hours_mscc = forms.IntegerField(
+        label=_('Number of teaching hours in MSCC'),
+        widget=forms.TextInput,
+        required=False,
+    )
+    trainings = forms.ModelMultipleChoiceField(
+        queryset=Training.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+        label=_('Topics of teacher training'),
+    )
+    training_sessions_attended = forms.IntegerField(
+        label=_('Number of teacher training sessions (attended)'),
+        widget=forms.TextInput,
+        required=False,
+    )
+    extra_coaching = forms.ChoiceField(
+        label=_('Extra coaching'),
+        widget=forms.Select,
+        required=True,
+        choices=Teacher.YES_NO,
+    )
+    extra_coaching_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput,
+        required=False,
+    )
+    attach_short_description_1 = forms.CharField(label=_('Description'), widget=forms.TextInput, required=False)
+    attach_file_1 = forms.FileField(label=_('Attachment'), required=False, widget=CustomClearableFileInput)
+    attach_type_1 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(),
+        widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False,
+        to_field_name='id',
+        initial=0,
+    )
+    attach_short_description_2 = forms.CharField(label=_('Description'), widget=forms.TextInput, required=False)
+    attach_file_2 = forms.FileField(label=_('Attachment'), required=False, widget=CustomClearableFileInput)
+    attach_type_2 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(),
+        widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False,
+        to_field_name='id',
+        initial=0,
+    )
+    attach_short_description_3 = forms.CharField(label=_('Description'), widget=forms.TextInput, required=False)
+    attach_file_3 = forms.FileField(label=_('Attachment'), required=False, widget=CustomClearableFileInput)
+    attach_type_3 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(),
+        widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False,
+        to_field_name='id',
+        initial=0,
+    )
+    attach_short_description_4 = forms.CharField(label=_('Description'), widget=forms.TextInput, required=False)
+    attach_file_4 = forms.FileField(label=_('Attachment'), required=False, widget=CustomClearableFileInput)
+    attach_type_4 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(),
+        widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False,
+        to_field_name='id',
+        initial=0,
+    )
+    attach_short_description_5 = forms.CharField(label=_('Description'), widget=forms.TextInput, required=False)
+    attach_file_5 = forms.FileField(label=_('Attachment'), required=False, widget=CustomClearableFileInput)
+    attach_type_5 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(),
+        widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False,
+        to_field_name='id',
+        initial=0,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(TeacherForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:teacher_add')
+        instance = kwargs.get('instance')
+        if instance:
+            form_action = reverse('mscc:teacher_edit', kwargs={'pk': instance.id})
+
+        center_queryset = Center.objects.all()
+        if self.request and self.request.user.center_id:
+            center_queryset = Center.objects.filter(id=self.request.user.center_id)
+
+        self.fields['center'] = forms.ModelChoiceField(
+            queryset=center_queryset,
+            widget=forms.Select,
+            label=_('Center'),
+            empty_label='-------',
+            required=True,
+            to_field_name='id',
+        )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+
+        self.helper.layout = Layout(
+            Div(
+                Div(HTML('<span class="badge-form badge-pill">1</span>'), Div('center', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">2</span>'), Div('round', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">3</span>'), Div('birthdate', css_class='col-md-3'),
+                    css_class='row card-body'),
+                Div(HTML('<span class="badge-form badge-pill">4</span>'), Div('first_name', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">5</span>'), Div('father_name', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">6</span>'), Div('last_name', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">7</span>'), Div('mother_fullname', css_class='col-md-3'),
+                    css_class='row card-body'),
+                Div(HTML('<span class="badge-form badge-pill">8</span>'), Div('sex', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">9</span>'), Div('nationality', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">10</span>'), Div('id_type', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">11</span>'), Div('id_number', css_class='col-md-3'),
+                    css_class='row card-body'),
+                Div(HTML('<span class="badge-form badge-pill">12</span>'),
+                    Div('primary_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">13</span>'),
+                    Div('email', css_class='col-md-3'),
+                    css_class='row card-body'),
+                Div(HTML('<span class="badge-form badge-pill">14</span>'),
+                    Div('subjects_provided', css_class='col-md-3 multiple-choice'),
+                    HTML('<span class="badge-form badge-pill">15</span>'),
+                    Div('registration_level', css_class='col-md-3 multiple-choice'),
+                    css_class='row card-body'),
+                Div(HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    Div('teacher_assignment', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_teaching_hours_private_school">17</span>'),
+                    Div('teaching_hours_private_school', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_teaching_hours_mscc">18</span>'),
+                    Div('teaching_hours_mscc', css_class='col-md-3'),
+                    css_class='row card-body'),
+                Div(HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                    Div('trainings', css_class='col-md-3 multiple-choice'),
+                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    Div('training_sessions_attended', css_class='col-md-3'),
+                    css_class='row card-body'),
+                Div(HTML('<span class="badge-form-2 badge-pill">21</span>'),
+                    Div('extra_coaching', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_extra_coaching_specify">22</span>'),
+                    Div('extra_coaching_specify', css_class='col-md-3'),
+                    css_class='row card-body'),
+                css_id='step-1',
+            ),
+            Div(
+                Div(HTML('<span class="badge-form badge-pill">1</span>'), Div('attach_file_1', css_class='col-md-4'),
+                    HTML('<span class="badge-form badge-pill">2</span>'), Div('attach_type_1', css_class='col-md-2'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('attach_short_description_1', css_class='col-md-4'), css_class='row card-body'),
+                Div(HTML('<span class="badge-form badge-pill">4</span>'), Div('attach_file_2', css_class='col-md-4'),
+                    HTML('<span class="badge-form badge-pill">5</span>'), Div('attach_type_2', css_class='col-md-2'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
+                    Div('attach_short_description_2', css_class='col-md-4'), css_class='row card-body'),
+                Div(HTML('<span class="badge-form badge-pill">7</span>'), Div('attach_file_3', css_class='col-md-4'),
+                    HTML('<span class="badge-form badge-pill">8</span>'), Div('attach_type_3', css_class='col-md-2'),
+                    HTML('<span class="badge-form badge-pill">9</span>'),
+                    Div('attach_short_description_3', css_class='col-md-4'), css_class='row card-body'),
+                Div(HTML('<span class="badge-form-2 badge-pill">10</span>'), Div('attach_file_4', css_class='col-md-4'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'), Div('attach_type_4', css_class='col-md-2'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                    Div('attach_short_description_4', css_class='col-md-4'), css_class='row card-body'),
+                Div(HTML('<span class="badge-form-2 badge-pill">13</span>'), Div('attach_file_5', css_class='col-md-4'),
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'), Div('attach_type_5', css_class='col-md-2'),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('attach_short_description_5', css_class='col-md-4'), css_class='row card-body'),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-2',
+            ),
+        )
+
+    def save(self, request, instance=None):
+        from student_registration.mscc.serializers import TeacherSerializer
+        from student_registration.students.utils import generate_one_unique_id
+
+        if instance:
+            serializer = TeacherSerializer(instance=instance, data=request.POST, partial=True)
+        else:
+            serializer = TeacherSerializer(data=request.POST)
+
+        if serializer.is_valid():
+            instance = serializer.save()
+
+            for file_index in range(1, 6):
+                new_file = request.FILES.get(f'attach_file_{file_index}', False)
+                if new_file:
+                    setattr(instance, f'attach_file_{file_index}', new_file)
+
+            instance.modified_by = request.user
+            if not instance.owner:
+                instance.owner = request.user
+
+            mother_name = instance.mother_fullname or ''
+            nationality = instance.nationality.name if instance.nationality else ''
+            birthdate = instance.birthdate.isoformat() if instance.birthdate else ''
+
+            instance.unicef_id = generate_one_unique_id(
+                str(instance.pk),
+                instance.first_name or '',
+                instance.father_name or '',
+                instance.last_name or '',
+                mother_name,
+                birthdate,
+                nationality,
+                instance.sex or '',
+            )
+            instance.save()
+        else:
+            messages.warning(request, serializer.errors)
+
+        if instance:
+            request.session['instance_id'] = instance.id
+
+    def clean(self):
+        cleaned_data = super(TeacherForm, self).clean()
+        teacher_assignment = cleaned_data.get('teacher_assignment')
+        teaching_hours_private_school = cleaned_data.get('teaching_hours_private_school')
+        teaching_hours_mscc = cleaned_data.get('teaching_hours_mscc')
+
+        if teacher_assignment == 'Private and Dirasa':
+            if not teaching_hours_private_school:
+                self.add_error('teaching_hours_private_school', _('This field is required'))
+            if not teaching_hours_mscc:
+                self.add_error('teaching_hours_mscc', _('This field is required'))
+
+        extra_coaching = cleaned_data.get('extra_coaching')
+        extra_coaching_specify = cleaned_data.get('extra_coaching_specify')
+
+        if extra_coaching == 'yes' and not extra_coaching_specify:
+            self.add_error('extra_coaching_specify', _('This field is required'))
+
+    class Meta:
+        model = Teacher
+        fields = (
+            'id',
+            'round',
+            'center',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'sex',
+            'birthdate',
+            'id_type',
+            'id_number',
+            'nationality',
+            'primary_phone_number',
+            'email',
+            'subjects_provided',
+            'registration_level',
+            'teacher_assignment',
+            'teaching_hours_private_school',
+            'teaching_hours_mscc',
+            'trainings',
+            'training_sessions_attended',
+            'extra_coaching',
+            'extra_coaching_specify',
+            'attach_short_description_1',
+            'attach_file_1',
+            'attach_type_1',
+            'attach_short_description_2',
+            'attach_file_2',
+            'attach_type_2',
+            'attach_short_description_3',
+            'attach_file_3',
+            'attach_type_3',
+            'attach_short_description_4',
+            'attach_file_4',
+            'attach_type_4',
+            'attach_short_description_5',
+            'attach_file_5',
+            'attach_type_5',
         )

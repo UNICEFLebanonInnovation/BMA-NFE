@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Registration
+from .models import Registration, Teacher
 
 
 class BootstrapTable(tables.Table):
@@ -122,6 +122,35 @@ class FullTable(CommonTable):
         orderable=False,
         template_name='django_tables2/mscc/action_column.html'
     )
+
+
+class TeacherTable(tables.Table):
+    action_column = tables.TemplateColumn(
+        verbose_name=_('Actions'),
+        orderable=False,
+        template_name='django_tables2/mscc/teacher_action_column.html',
+        attrs={'url_edit': '/mscc/teacher-edit/', 'url_delete': '/mscc/teacher-delete/'},
+    )
+
+    class Meta:
+        model = Teacher
+        template = 'django_tables2/bootstrap.html'
+        fields = (
+            'action_column',
+            'first_name',
+            'father_name',
+            'last_name',
+            'sex',
+            'unicef_id',
+            'primary_phone_number',
+            'center',
+            'round',
+            'email',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
+        )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,

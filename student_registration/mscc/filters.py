@@ -8,6 +8,7 @@ from django_filters import (
     CharFilter,
     BooleanFilter,
 )
+from collections import OrderedDict
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
 from django import forms
@@ -18,7 +19,8 @@ from .models import (
     Registration,
     EducationService,
     Round,
-    PACKAGE_TYPES
+    PACKAGE_TYPES,
+    Teacher,
 )
 from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
@@ -158,6 +160,22 @@ class FullFilter(PlaceholderFilterSet):
         model = Registration
         fields = [
         ]
+
+
+class TeacherFilter(PlaceholderFilterSet):
+    round = ModelChoiceFilter(queryset=Round.objects.filter(current_year=True).all(), empty_label=_('Round'))
+    center = ModelChoiceFilter(queryset=Center.objects.all(), empty_label=_('Center'))
+
+    class Meta:
+        model = Teacher
+        fields = OrderedDict((
+            ('first_name', ['contains']),
+            ('father_name', ['contains']),
+            ('last_name', ['contains']),
+            ('unicef_id', ['contains']),
+            ('center', ['exact']),
+            ('round', ['exact']),
+        ))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
