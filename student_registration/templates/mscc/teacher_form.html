@@ -1,0 +1,87 @@
+{% extends "mscc/base.html" %}
+{% load util_tags %}
+{% load custom_tags %}
+{% load static i18n %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+
+{% bootstrap_css %}
+
+{% block project_title %}Teacher | {% if form.instance.id %}Edit{% else %}New{% endif %} {% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+{% endblock %}
+
+{% block main_content %}
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            <div>
+                <div class="page-title-head center-elem page-title-heading">
+                    <span class="d-inline-block pr-2">
+                        <i class="fa fa-id-card"></i>
+                    </span>
+                    <span class="d-inline-block">
+                        Teacher
+                    </span>
+                </div>
+                <div class="page-title-subheading opacity-10">
+                    <nav class="" aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="/">
+                                    Home
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'mscc:teacher_list' %}">Teacher List</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                {% if form.instance.id %}Edit{% else %}New{% endif %}
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="page-title-actions"></div>
+    </div>
+</div>
+
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <div id="smartwizard3" class="forms-wizard">
+            <ul class="forms-wizard">
+                <li>
+                    <a href="#step-1">
+                        <em>1</em><span>Teacher General Information</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#step-2">
+                        <em>2</em><span>Attachments</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="form-wizard-content">
+                {% crispy form 'bootstrap3' %}
+            </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="clearfix">
+            <a href="{% url 'mscc:teacher_list' %}" type="button" class="btn-shadow float-left btn btn-link">Back to list</a>
+            <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
+            <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/teacher.js' %}?v=1"></script>
+{% endblock %}

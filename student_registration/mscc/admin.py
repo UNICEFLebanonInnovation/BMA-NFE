@@ -79,6 +79,46 @@ class ProvidedServicesAdmin(ImportExportModelAdmin):
     )
 
 
+class TeacherResource(resources.ModelResource):
+    class Meta:
+        model = Teacher
+        fields = (
+            'id',
+            'first_name',
+            'father_name',
+            'last_name',
+            'sex',
+            'unicef_id',
+            'center',
+            'round',
+        )
+        export_order = ('first_name', 'father_name', 'last_name')
+
+
+class TeacherAdmin(ImportExportModelAdmin):
+    resource_class = TeacherResource
+    list_display = (
+        'first_name',
+        'father_name',
+        'last_name',
+        'sex',
+        'unicef_id',
+        'center',
+        'round',
+    )
+    list_filter = (
+        'sex',
+        'center',
+        'round',
+    )
+    search_fields = (
+        'first_name',
+        'father_name',
+        'last_name',
+        'unicef_id',
+    )
+
+
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = (
         'child',
@@ -483,4 +523,5 @@ admin.site.register(Referral, ReferralAdmin)
 admin.site.register(YouthAssessment, YouthAssessmentAdmin)
 admin.site.register(YouthReferral, YouthReferralAdmin)
 admin.site.register(Recreational, RecreationalAdmin)
+admin.site.register(Teacher, TeacherAdmin)
 admin.site.register(Round, RoundAdmin)

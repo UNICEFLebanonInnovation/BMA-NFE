@@ -11,10 +11,11 @@ from django.views.generic import (
     UpdateView,
     TemplateView,
     FormView,
+    DeleteView,
 )
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db import connection
@@ -51,7 +52,8 @@ from student_registration.backends.utils import (
 
 from .filters import (
     MainFilter,
-    FullFilter
+    FullFilter,
+    TeacherFilter,
 )
 from .tables import (
     BootstrapTable,
@@ -59,19 +61,23 @@ from .tables import (
     YouthMainTable,
     FullTable,
     PartnerTable,
+    TeacherTable,
 )
 from .models import (
     Round,
     ProvidedServices,
+    Teacher,
 )
 from student_registration.backends.models import ExportHistory
 
 from .forms import (
     MainForm,
-    ReferralForm
+    ReferralForm,
+    TeacherForm,
 )
 from .serializers import (
-    MainSerializer
+    MainSerializer,
+    TeacherSerializer,
 )
 
 from .utils import *
@@ -849,6 +855,143 @@ def quick_search(request):
             return JsonResponse({'error': 'User not authenticated'}, status=401)
 
     return JsonResponse({'result': json.dumps(list(qs))})
+
+
+class TeacherListView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+    table_class = TeacherTable
+    model = Teacher
+    template_name = 'mscc/teacher_list.html'
+    table = BootstrapTable(Teacher.objects.none(), order_by='id')
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
+    filterset_class = TeacherFilter
+
+    def get_queryset(self):
+        base_queryset = Teacher.objects.select_related('round', 'center')
+        user = self.request.user
+
+        if has_group(user, 'MSCC_UNICEF') or user.is_staff:
+            return base_queryset
+
+        center_id = user.center_id if user.center_id else 0
+        partner_id = user.partner_id if user.partner_id else 0
+
+        if center_id:
+            return base_queryset.filter(center_id=center_id)
+        if partner_id:
+            return base_queryset.filter(center__partner_id=partner_id)
+
+        return base_queryset.none()
+
+
+class TeacherAddView(LoginRequiredMixin,
+                 GroupRequiredMixin,
+                 FormView):
+    template_name = 'mscc/teacher_form.html'
+    form_class = TeacherForm
+    success_url = '/mscc/teacher-list/'
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/mscc/teacher-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/mscc/teacher-edit/' + str(self.request.session.get('instance_id')) + '/'
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(TeacherAddView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(TeacherAddView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return TeacherForm(self.request.POST, self.request.FILES, instance=None, request=self.request)
+        return TeacherForm(None, instance=None, request=self.request)
+
+
+class TeacherEditView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'mscc/teacher_form.html'
+    form_class = TeacherForm
+    success_url = '/mscc/teacher-list/'
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/mscc/teacher-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/mscc/teacher-edit/' + str(self.request.session.get('instance_id')) + '/'
+        return self.success_url
+
+    def get_form(self, form_class=None):
+        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return TeacherForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
+        data = TeacherSerializer(instance).data
+        return TeacherForm(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(TeacherEditView, self).form_valid(form)
+
+
+class TeacherDeleteView(LoginRequiredMixin, GroupRequiredMixin, DeleteView):
+    model = Teacher
+    success_url = '/mscc/teacher-list/'
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
+
+    def get_object(self):
+        from django.shortcuts import get_object_or_404
+        return get_object_or_404(Teacher, pk=self.kwargs['pk'])
+
+    def get(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.delete()
+        return HttpResponseRedirect(self.success_url)
+
+
+class TeacherViewSet(mixins.RetrieveModelMixin,
+                 mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 mixins.UpdateModelMixin,
+                 viewsets.GenericViewSet):
+    model = Teacher
+    queryset = Teacher.objects.all()
+    serializer_class = TeacherSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Teacher.objects.all()
+
+        if has_group(user, 'MSCC_UNICEF') or user.is_staff:
+            return queryset
+
+        center_id = user.center_id if user.center_id else 0
+        partner_id = user.partner_id if user.partner_id else 0
+
+        if center_id:
+            return queryset.filter(center_id=center_id)
+        if partner_id:
+            return queryset.filter(center__partner_id=partner_id)
+
+        return queryset.none()
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
 
 
 class ProgrammeDetails(LoginRequiredMixin,
