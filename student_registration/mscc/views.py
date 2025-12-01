@@ -88,7 +88,16 @@ from student_registration.users.templatetags.custom_tags import has_group
 
 
 def chart_data(request):
-    """Return aggregated MSCC registration data for charts."""
+    """Return aggregated MSCC registration data for charts.
+
+    Args:
+        request (HttpRequest): Incoming request containing optional filters such
+            as ``chart``, ``package_type``, ``partner`` and date bounds.
+
+    Returns:
+        JsonResponse: A list of label/value pairs representing the grouped
+        registration counts.
+    """
     metric = request.GET.get('chart', 'nationality')
     qs = Registration.objects.filter(deleted=False)
 
@@ -146,6 +155,15 @@ class ProfileView(LoginRequiredMixin,
     template_name = 'mscc/profile.html'
 
     def get_context_data(self, **kwargs):
+        """Build the profile context for the requested registration.
+
+        Args:
+            **kwargs: Keyword arguments passed by :class:`TemplateView`.
+
+        Returns:
+            dict: Context containing the registration, service metadata and
+            whether the child can be enrolled in a new round.
+        """
         instance = Registration.objects.get(id=self.kwargs['pk'])
         generate_services(instance.child.age, instance)
         current_tab = self.request.GET.get('current_tab', 'info')
@@ -180,6 +198,14 @@ class DashboardView(LoginRequiredMixin,
     template_name = 'mscc/dashboard.html'
 
     def get_context_data(self, **kwargs):
+        """Return an empty context for the dashboard shell.
+
+        Args:
+            **kwargs: Keyword arguments passed by :class:`TemplateView`.
+
+        Returns:
+            dict: An empty context dictionary used by the template.
+        """
 
         return {}
 
@@ -189,6 +215,15 @@ class DashboardCustomView(LoginRequiredMixin,
     template_name = 'mscc/dashboard_d3.html'
 
     def get_context_data(self, **kwargs):
+        """Collect contextual data for the D3 dashboard view.
+
+        Args:
+            **kwargs: Keyword arguments passed by :class:`TemplateView`.
+
+        Returns:
+            dict: Context containing registration, center, partner and round
+            collections for dashboard rendering.
+        """
         from student_registration.locations.models import Center, Location
         from student_registration.clm.models import PartnerOrganization
         from .models import Round

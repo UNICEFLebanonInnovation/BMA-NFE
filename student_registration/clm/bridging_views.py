@@ -268,6 +268,15 @@ class ExportStorage(AzureStorage):
 
 @login_required(login_url='/users/login')
 def bridging_export_data(request, **kwargs):
+    """Export Bridging enrollment data to CSV with optional filtering.
+
+    Args:
+        request (HttpRequest): Incoming request containing optional ``round`` query parameter.
+        **kwargs: Unused keyword arguments provided by URL configuration.
+
+    Returns:
+        StreamingHttpResponse: CSV file download containing bridging data filtered by user scope.
+    """
     try:
         cursor = connection.cursor()
         user = request.user
@@ -360,6 +369,15 @@ def bridging_export_data(request, **kwargs):
 
 @login_required(login_url='/users/login')
 def bridging_school_export(request, **kwargs):
+    """Export bridging data restricted to a single school.
+
+    Args:
+        request (HttpRequest): Request including ``school`` and optional ``round`` query parameters.
+        **kwargs: Additional URL parameters (unused).
+
+    Returns:
+        StreamingHttpResponse: CSV download containing school-specific bridging data.
+    """
     try:
         cursor = connection.cursor()
         user = request.user
@@ -711,6 +729,15 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
 
 
 def bridging_mark_delete_view(request, pk):
+    """Mark a Bridging enrollment as deleted and return the result as JSON.
+
+    Args:
+        request (HttpRequest): Authenticated request initiating the deletion.
+        pk (int): Primary key of the :class:`Bridging` record to mark deleted.
+
+    Returns:
+        JsonResponse: Flag indicating whether the deletion mark succeeded.
+    """
     if request.user.is_authenticated:
         try:
             registration = Bridging.objects.get(id=pk)
@@ -725,6 +752,7 @@ def bridging_mark_delete_view(request, pk):
 
 
 def load_districts(request):
+    """Return district options for a selected governorate."""
     cities = []
     if request.GET.get('id_governorate'):
         id_governorate = request.GET.get('id_governorate')
@@ -733,6 +761,7 @@ def load_districts(request):
 
 
 def load_cadasters(request):
+    """Return cadaster options for a selected district."""
     cities = []
     if request.GET.get('id_district'):
         id_district = request.GET.get('id_district')
@@ -741,6 +770,7 @@ def load_cadasters(request):
 
 
 def load_schools(request):
+    """Return school options filtered by governorate selection."""
     schools = []
     if request.GET.get('id_governorate'):
         id_governorate = request.GET.get('id_governorate')
@@ -749,6 +779,7 @@ def load_schools(request):
 
 
 def search_clm_child(request):
+    """Render the child search dialog for CLM registrations."""
     # from django.db.models.functions import Concat
     # from django.db.models import Value
 
@@ -766,6 +797,17 @@ def search_clm_child(request):
 
 
 def clm_child_list(model, term, terms, search_model):
+    """Build a list of children matching search terms.
+
+    Args:
+        model (Model): Base model used to filter records.
+        term (str): Raw search term provided by the user.
+        terms (str): Space-separated search terms for flexible matching.
+        search_model (Model | str): Concrete model or identifier used to label the result rows.
+
+    Returns:
+        list[dict]: Serialized child results containing identifiers and names.
+    """
     from django.db.models.functions import Concat
     from django.db.models import Value
     from django.db.models import CharField
@@ -804,6 +846,7 @@ def clm_child_list(model, term, terms, search_model):
 
 
 def search_clm_duplicate_unicef_id(request):
+    """Search for duplicate UNICEF IDs in CLM registrations."""
     body_unicode = request.body.decode('utf-8')
     if body_unicode:
         body = json.loads(body_unicode)
@@ -859,6 +902,7 @@ if sys.version_info[0] >= 3:
 
 @login_required(login_url='/users/login')
 def bridging_export_all(request, **kwargs):
+    """Export all bridging data honoring user partner filters."""
     try:
         cursor = connection.cursor()
         query = 'SELECT * FROM vw_bridging_extract WHERE id > 0'

@@ -26,6 +26,14 @@ class AttendanceView(LoginRequiredMixin,
     template_name = 'clm/attendance.html'
 
     def get_context_data(self, **kwargs):
+        """Build the context for the attendance landing page.
+
+        Args:
+            **kwargs: Optional template context overrides.
+
+        Returns:
+            dict: Context containing dates, school options, registration levels, and defaults for the attendance form.
+        """
         from datetime import datetime
         from collections import OrderedDict
         clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
@@ -86,6 +94,14 @@ class AttendanceView(LoginRequiredMixin,
 
 
 def save_attendance_children(request):
+    """Persist attendance submissions coming from the client UI.
+
+    Args:
+        request (HttpRequest): Request carrying a JSON body with attendance payload.
+
+    Returns:
+        JsonResponse: Success flag or error details when validation fails.
+    """
 
     body_unicode = request.body.decode('utf-8')
 
@@ -106,6 +122,14 @@ class LoadAttendanceChildren(LoginRequiredMixin, TemplateView):
     template_name = 'clm/attendance_children.html'
 
     def get_context_data(self, **kwargs):
+        """Load attendance records for the provided date and filters.
+
+        Args:
+            **kwargs: Additional template context values passed by Django.
+
+        Returns:
+            dict: Context including attendance instances or validation error messages.
+        """
         from datetime import datetime
         current_date = datetime.today().date()
 
@@ -145,6 +169,14 @@ class LoadAttendanceChild(LoginRequiredMixin,
     template_name = 'mscc/child_attendance_month.html'
 
     def get_context_data(self, **kwargs):
+        """Return monthly attendance totals for a single child.
+
+        Args:
+            **kwargs: Expected to include ``child`` path parameter representing the child ID.
+
+        Returns:
+            dict: Attendance records along with counts of attended and absent days for the month.
+        """
         import calendar
 
         child_id = kwargs["child"]

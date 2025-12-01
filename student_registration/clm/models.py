@@ -1449,18 +1449,34 @@ class CLM(TimeStampedModel):
 
     @property
     def student_fullname(self):
+        """Return the student's full name for display.
+
+        Returns:
+            str: Full name composed by the related ``Student`` instance or an empty string when missing.
+        """
         if self.student:
             return self.student.full_name
         return ''
 
     @property
     def student_age(self):
+        """Return the student's current age.
+
+        Returns:
+            int: Age pulled from the related ``Student`` instance, or ``0`` if unavailable.
+        """
         if self.student:
             return self.student.age
         return 0
 
     @property
     def assessment_improvement(self):
+        """Calculate percentage improvement between pre and post assessments.
+
+        Returns:
+            float | str: Percentage change between ``pre_test_score`` and ``post_test_score`` or ``0.0`` when data is missing
+            or invalid.
+        """
         if self.pre_test and self.post_test:
             try:
                 return '{}{}'.format(
@@ -1471,6 +1487,11 @@ class CLM(TimeStampedModel):
         return 0.0
 
     def get_absolute_url(self):
+        """Resolve the edit URL for this enrollment.
+
+        Returns:
+            str: Absolute URL path pointing to the edit view for this instance.
+        """
         return '/clm/edit/%d/' % self.pk
 
     def __str__(self):
@@ -1484,6 +1505,15 @@ class CLM(TimeStampedModel):
         return str(self.id)
 
     def score(self, keys, stage):
+        """Aggregate assessment answers into a total score.
+
+        Args:
+            keys (Iterable[str]): Question keys to extract from the assessment payload.
+            stage (str): Assessment stage name (e.g., ``pre_test`` or ``post_test``) used to select the stored answers.
+
+        Returns:
+            None: Updates the ``<stage>_score`` attribute in place.
+        """
         assessment = getattr(self, stage, 'pre_test')
         score = stage + '_score'
         marks = {key: float(assessment.get(key, 0)) for key in keys}
@@ -1491,6 +1521,15 @@ class CLM(TimeStampedModel):
         setattr(self, score, total)
 
     def get_score_value(self, key, stage):
+        """Fetch a numeric score for a single assessment key.
+
+        Args:
+            key (str): Question identifier to read from the assessment data.
+            stage (str): Assessment stage name used to select the stored answers.
+
+        Returns:
+            float: Score value for the question; returns ``0`` when data is unavailable.
+        """
         assessment = getattr(self, stage, 'pre_test')
         if assessment:
             return float(assessment.get(key, 0))
@@ -1838,6 +1877,14 @@ class Bridging(CLM):
         verbose_name=_('Was this child enrolled in Formal Education last year and dropped out due to lack of documentation?')
     )
     def calculate_sore(self, stage):
+        """Compute aggregate scores for the bridging assessment.
+
+        Args:
+            stage (str): Assessment stage label (``pre_test`` or ``post_test``).
+
+        Returns:
+            None: Delegates to :py:meth:`score` to set the ``<stage>_score`` field.
+        """
         keys = [
             'Bridging_ASSESSMENT/arabic',
             'Bridging_ASSESSMENT/math',
@@ -1848,6 +1895,16 @@ class Bridging(CLM):
         super(Bridging, self).score(keys, stage)
 
     def assessment_form(self, stage, assessment_slug, callback=''):
+        """Generate an assessment link for a given stage.
+
+        Args:
+            stage (str): Assessment status to embed in the URL (e.g., ``pre_test``).
+            assessment_slug (str): Slug of the :class:`Assessment` record to fetch the form URL.
+            callback (str, optional): URL to return to after submission. Defaults to an empty string.
+
+        Returns:
+            str: Fully formed URL to launch the assessment form, or an empty string when the assessment is missing.
+        """
         try:
             assessment = Assessment.objects.get(slug=assessment_slug)
             return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=Bridging&returnURL={callback}'.format(
@@ -1860,6 +1917,14 @@ class Bridging(CLM):
             return ''
 
     def domain_improvement(self, domain_mame):
+        """Calculate improvement percentage for a specific learning domain.
+
+        Args:
+            domain_mame (str): Key suffix representing the domain (e.g., ``arabic`` or ``math``).
+
+        Returns:
+            float: Percentage improvement between pre- and post-test values for the domain, or ``0.0`` when unavailable.
+        """
         key = '{}/{}'.format(
             'Bridging_ASSESSMENT',
             domain_mame,
@@ -1873,6 +1938,15 @@ class Bridging(CLM):
         return 0.0
 
     def get_assessment_value(self, key, stage):
+        """Return the stored assessment value for a given key.
+
+        Args:
+            key (str): Domain or question key without the ``Bridging_ASSESSMENT/`` prefix.
+            stage (str): Assessment stage label used to select the dataset.
+
+        Returns:
+            Any: Raw value from the assessment payload, or ``0`` if not found.
+        """
         assessment = getattr(self, stage)
         if assessment:
             key = 'Bridging_ASSESSMENT/' + key
@@ -1908,17 +1982,38 @@ class Bridging(CLM):
         return str(self.domain_improvement('artistic')) + '%'
 
     def pre_assessment_form(self):
+        """Build the pre-assessment form URL for the enrollment.
+
+        Returns:
+            str: URL string targeting the pre-test form.
+        """
         return self.assessment_form(stage='pre_test', assessment_slug='Bridging_pre_test')
 
     def post_assessment_form(self):
+        """Build the post-assessment form URL for the enrollment.
+
+        Returns:
+            str: URL string targeting the post-test form.
+        """
         return self.assessment_form(stage='post_test', assessment_slug='Bridging_post_test')
 
     @property
     def attendance_days(self):
+        """Count attended days for the enrollment during the round."""
         return Bridging.get_attendance_days(self.student, self.round.start_date_bridging, self.round.end_date_bridging)
 
     @staticmethod
     def get_attendance_days(student_id, start_date, end_date):
+        """Return attended days for a student within a date range.
+
+        Args:
+            student_id (int | Student): Target student identifier or instance.
+            start_date (date): Start of the attendance window.
+            end_date (date): End of the attendance window.
+
+        Returns:
+            int: Number of days where the student was marked as attended.
+        """
         from student_registration.attendances.models import CLMAttendanceStudent
         if student_id and start_date and end_date:
             return CLMAttendanceStudent.objects.filter(student=student_id,
@@ -1929,10 +2024,20 @@ class Bridging(CLM):
 
     @property
     def total_absent_days(self):
+        """Return total absence days recorded for the enrollment."""
         return Bridging.get_total_absent_days(self.student.id, self.round.id)
 
     @staticmethod
     def get_total_absent_days(student_id, round_id):
+        """Fetch total absence days for a student and round combination.
+
+        Args:
+            student_id (int): Identifier of the student to query.
+            round_id (int): Identifier of the round to scope results.
+
+        Returns:
+            int: Total absence day count or ``0`` when no record exists.
+        """
         result = 0
         from student_registration.attendances.models import CLMStudentTotalAttendance
         if student_id and round_id:
@@ -1943,10 +2048,20 @@ class Bridging(CLM):
 
     @property
     def max_consecutive_absence(self):
+        """Return the maximum consecutive absence days."""
         return Bridging.get_max_consecutive_absence(self.student.id, self.round.id)
 
     @staticmethod
     def get_max_consecutive_absence(student_id, round_id):
+        """Determine the highest consecutive absence streak for a student.
+
+        Args:
+            student_id (int): Identifier of the student to evaluate.
+            round_id (int): Identifier of the round that holds attendance records.
+
+        Returns:
+            int: Maximum number of consecutive absent days or ``0`` when none are found.
+        """
         result = 0
         from django.db.models import Max
         from student_registration.attendances.models import CLMStudentAbsences
@@ -1964,10 +2079,20 @@ class Bridging(CLM):
 
     @property
     def more_than_ten_consecutive_absence(self):
+        """Indicate if the enrollment exceeded ten consecutive absence days."""
         return Bridging.get_more_than_ten_consecutive_absence(self.student.id, self.round.id)
 
     @staticmethod
     def get_more_than_ten_consecutive_absence(student_id, round_id):
+        """Check whether a student has ten or more consecutive absences in a round.
+
+        Args:
+            student_id (int): Identifier of the student to evaluate.
+            round_id (int): Identifier of the round to scope attendance.
+
+        Returns:
+            bool: ``True`` when a streak of at least ten absences exists; otherwise ``False``.
+        """
         result = False
         from student_registration.attendances.models import CLMStudentAbsences
         if student_id and round_id:
@@ -1978,10 +2103,21 @@ class Bridging(CLM):
 
     @property
     def period_out_school(self):
+        """Return the number of days the student was out of school before the round start."""
         return Bridging.get_period_out_school(self.student, self.miss_school_date, self.round.start_date_bridging)
 
     @staticmethod
     def get_period_out_school(student_id, miss_school_date, round_start_date):
+        """Calculate the duration out of school before enrollment.
+
+        Args:
+            student_id (int | Student): Student to measure.
+            miss_school_date (date): Date when the student stopped attending school.
+            round_start_date (date): Start date of the current CLM round.
+
+        Returns:
+            int: Number of days between ``miss_school_date`` and ``round_start_date`` or ``0`` when inputs are missing.
+        """
         if student_id and miss_school_date and round_start_date:
             return (miss_school_date - round_start_date).days
         return 0

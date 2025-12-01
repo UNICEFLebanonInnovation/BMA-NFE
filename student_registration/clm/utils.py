@@ -631,6 +631,17 @@ class MemorySavingQuerysetIterator(object):
 
 
 def load_child_attendance(round_id, attendance_date, school_id, registration_level):
+    """Load attendance details for children on a specific day.
+
+    Args:
+        round_id (int): Identifier of the CLM round to filter attendance records.
+        attendance_date (str): Date string in ``%m/%d/%Y`` format representing the attendance day.
+        school_id (int): School identifier where attendance was captured.
+        registration_level (str): Level to narrow which registrations to include.
+
+    Returns:
+        list[dict]: Serialized attendance data for each child, or an empty list when no matches are found.
+    """
     from datetime import datetime
 
     result = []
@@ -692,6 +703,14 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
 
 
 def create_attendance(data):
+    """Create or update an attendance record and its related students.
+
+    Args:
+        data (dict): Payload containing attendance metadata and a ``children_attendance`` list with student details.
+
+    Returns:
+        bool: ``True`` when the operation succeeds; otherwise ``False``.
+    """
     from datetime import datetime
     attendance_date = datetime.strptime(data["attendance_date"], '%m/%d/%Y')
     day_off = data["attendance_day_off"]
@@ -748,6 +767,17 @@ def create_attendance(data):
 
 
 def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
+    """Move a child's attendance records to a new class section.
+
+    Args:
+        registration_id (int): Registration identifier for the child being moved.
+        education_program (str): Education program label used to find existing attendance entries.
+        old_class_section (str): Previous class section identifier.
+        new_class_section (str): Target class section identifier.
+
+    Returns:
+        bool: ``True`` when the transfer completes without errors; ``False`` on failure.
+    """
 
     child_attendances = CLMAttendanceStudent.objects.filter(
         registration_id=registration_id,
@@ -796,6 +826,20 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
 
 
 def update_total_attendance(registration_id, student_id, round_id, school_id, first_name,father_name, last_name):
+    """Update aggregate attendance counts for a student in a round.
+
+    Args:
+        registration_id (int): Registration record identifier for the student.
+        student_id (int): Unique identifier of the student.
+        round_id (int): Round identifier to scope attendance totals.
+        school_id (int): School identifier used when creating the summary record.
+        first_name (str): Student's first name for display.
+        father_name (str): Student's father's name for display.
+        last_name (str): Student's last name for display.
+
+    Returns:
+        None: Persists totals to ``CLMStudentTotalAttendance``.
+    """
 
     total_absence_days = CLMAttendanceStudent.objects.filter(
         attended='No',
@@ -831,17 +875,35 @@ def update_total_attendance(registration_id, student_id, round_id, school_id, fi
 
 def update_consecutive_absence(registration_id, student_id, first_name, father_name, last_name, attendance_date,
                                round_id, school_id, registration):
+    """Track consecutive absences for a student and update streaks.
+
+    Args:
+        registration_id (int): Registration identifier tied to the attendance.
+        student_id (int): Identifier of the student being updated.
+        first_name (str): Student first name for reporting.
+        father_name (str): Student father's name for reporting.
+        last_name (str): Student last name for reporting.
+        attendance_date (date | datetime): Attendance day being processed.
+        round_id (int): Current round identifier.
+        school_id (int): School identifier for the attendance entry.
+        registration (Bridging): Enrollment object used to update linked fields.
+
+    Returns:
+        None: Creates or updates ``CLMStudentAbsences`` records to reflect absence streaks.
+    """
 
     working_day_names = School.objects.filter(id=school_id).values_list('working_days', flat=True).first()
     working_days_set = set(working_day_names)
 
     def get_previous_working_day(current_date):
+        """Return the previous working day relative to ``current_date`` based on school schedule."""
         previous_day = current_date - timedelta(days=1)
         while previous_day.strftime('%A') not in working_days_set:
             previous_day -= timedelta(days=1)
         return previous_day
 
     def get_next_working_day(current_date):
+        """Return the next working day relative to ``current_date`` based on school schedule."""
         next_day = current_date + timedelta(days=1)
         while next_day.strftime('%A') not in working_days_set:
             next_day += timedelta(days=1)
