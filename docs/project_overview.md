@@ -43,6 +43,15 @@
 2. The Django app will be available on port 8000, backed by the PostgreSQL service defined in `local.yml`.
 3. Use `docker-compose -f local.yml exec django python manage.py migrate` for migrations and similar commands inside the container.
 
+### Common Django management commands
+- `python manage.py makemigrations` — generate new migration files based on model changes.
+- `python manage.py migrate` — apply pending migrations to the configured database.
+- `python manage.py createsuperuser` — create an administrative user for accessing the Django admin site.
+- `python manage.py shell` — open a Django-aware Python shell for debugging or ad-hoc tasks.
+- `python manage.py collectstatic` — gather static assets into the configured `STATIC_ROOT` for production serving.
+- `python manage.py showmigrations` — list migrations and their applied status across installed apps.
+- `python manage.py check` — run Django’s system checks to validate configuration and catch common issues.
+
 ## Testing
 - Run the Django test suite with `pytest` or `py.test` using the configuration in `pytest.ini`.
 - Alternatively, use `coverage run manage.py test` to generate coverage data and `coverage html` to build the HTML report.
