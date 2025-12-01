@@ -8,18 +8,32 @@ from django.contrib.postgres.fields import ArrayField
 
 
 class PublicHolidays(models.Model):
+    """Calendar entry representing an observed public holiday period."""
+
     name = models.CharField(max_length=100, unique=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
+        """Return a readable label for the holiday window.
+
+        Returns:
+            str: Date range for the holiday formatted as ``"%m/%d/%Y"``.
+        """
         return self.holiday.strftime("%m/%d/%Y")
 
     def __unicode__(self):
+        """Return the unicode representation of the holiday period.
+
+        Returns:
+            str: Same formatted date range as :meth:`__str__`.
+        """
         return self.holiday.strftime("%m/%d/%Y")
 
 
 class School(TimeStampedModel):
+    """School profile including location, contact, and capacity details."""
+
     from student_registration.locations.models import Location
     REGISTRATION_LEVEL = (
         ('Level one', _('Level one')),
@@ -328,23 +342,43 @@ class School(TimeStampedModel):
 
     @property
     def location_name(self):
+        """Get the cadaster name linked to the school.
+
+        Returns:
+            str: Location name or empty string when no location exists.
+        """
         if self.location:
             return self.location.name
         return ''
 
     @property
     def location_parent_name(self):
+        """Get the district/governorate name for the school location.
+
+        Returns:
+            str: Parent location name or empty string if absent.
+        """
         if self.location and self.location.parent:
             return self.location.parent.name
         return ''
 
     @property
     def total_registered_bridging(self):
+        """Count registered bridging learners associated to the school.
+
+        Returns:
+            int: Total number of bridging records across all schools.
+        """
         from student_registration.clm.models import Bridging
         return Bridging.objects.all().count()
 
     @property
     def have_academic_year_dates(self):
+        """Check whether academic year dates are fully specified.
+
+        Returns:
+            bool: ``True`` when start, end, and exam end dates are present.
+        """
         if not self.academic_year_start \
            or not self.academic_year_end \
            or not self.academic_year_exam_end:
@@ -352,13 +386,25 @@ class School(TimeStampedModel):
         return True
 
     def __unicode__(self):
+        """Return the unicode representation combining number and name.
+
+        Returns:
+            str: Formatted string ``"<number> - <name>"``.
+        """
         return u'{} - {}'.format(self.number, self.name)
 
     def __str__(self):
+        """Return the display name for the school.
+
+        Returns:
+            str: The configured ``name`` value.
+        """
         return self.name
 
 
 class ClubType(models.Model):
+    """Lookup for classifying school clubs by topic or focus."""
+
     name = models.CharField(max_length=100)
 
     class Meta:
@@ -366,13 +412,25 @@ class ClubType(models.Model):
         verbose_name = "Club Type"
 
     def __unicode__(self):
+        """Return the unicode representation of the club type name.
+
+        Returns:
+            str: The configured ``name`` value.
+        """
         return self.name
 
     def __str__(self):
+        """Return the display label for the club type.
+
+        Returns:
+            str: The configured ``name`` value.
+        """
         return self.name
 
 
 class Club(TimeStampedModel):
+    """Club information associated with a specific school."""
+
     school = models.ForeignKey(
         'School',
         verbose_name=_('school'),
@@ -415,6 +473,8 @@ class Club(TimeStampedModel):
 
 
 class Meeting(TimeStampedModel):
+    """Record of meetings held at a school including attendance counts."""
+
     school = models.ForeignKey(
         'School',
         verbose_name=_('school'),
@@ -452,6 +512,8 @@ class Meeting(TimeStampedModel):
 
 
 class CommunityInitiative(TimeStampedModel):
+    """Community engagement initiatives run through the school."""
+
     school = models.ForeignKey(
         'School',
         verbose_name=_('school'),
@@ -484,6 +546,8 @@ class CommunityInitiative(TimeStampedModel):
 
 
 class HealthVisit(TimeStampedModel):
+    """Documentation of health visits and focal points for a school."""
+
     school = models.ForeignKey(
         'School',
         verbose_name=_('school'),
@@ -531,32 +595,57 @@ class HealthVisit(TimeStampedModel):
 
 
 class EducationalLevel(models.Model):
+    """Lookup model listing educational levels offered in schools."""
+
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
         ordering = ['id']
 
     def __str__(self):
+        """Return the display label for the educational level.
+
+        Returns:
+            str: The configured ``name`` value.
+        """
         return self.name
 
     def __unicode__(self):
+        """Return the unicode representation for the level name.
+
+        Returns:
+            str: Same value as :meth:`__str__`.
+        """
         return self.name
 
 
 class Section(models.Model):
+    """School section identifier used for grouping students."""
+
     name = models.CharField(max_length=45, unique=True)
 
     class Meta:
         ordering = ['id']
 
     def __str__(self):
+        """Return the section name for display.
+
+        Returns:
+            str: The configured ``name`` value.
+        """
         return self.name
 
     def __unicode__(self):
+        """Return the unicode representation of the section name.
+
+        Returns:
+            str: Same value as :meth:`__str__`.
+        """
         return self.name
 
 
 class CLMRound(models.Model):
+    """Tracking rounds for CLM activities with active year flags."""
 
     name = models.CharField(max_length=45, unique=True)
     current_year = models.BooleanField(blank=True, default=False)
@@ -572,13 +661,24 @@ class CLMRound(models.Model):
         verbose_name = "CLM Round"
 
     def __str__(self):
+        """Return the round name for display.
+
+        Returns:
+            str: The configured ``name`` value.
+        """
         return self.name
 
     def __unicode__(self):
+        """Return the unicode representation of the round name.
+
+        Returns:
+            str: Same value as :meth:`__str__`.
+        """
         return self.name
 
 
 class PartnerOrganization(models.Model):
+    """Implementing partner organization and associated schools."""
 
     name = models.CharField(max_length=100, unique=True)
     schools = models.ManyToManyField('School', related_name='partner_schools', blank=True)
@@ -630,9 +730,19 @@ class PartnerOrganization(models.Model):
         ordering = ['name']
 
     def __str__(self):
+        """Return the partner organization's display name.
+
+        Returns:
+            str: The configured ``name`` value.
+        """
         return self.name
 
     def __unicode__(self):
+        """Return the unicode representation of the partner name.
+
+        Returns:
+            str: Same value as :meth:`__str__`.
+        """
         return self.name
 
 

@@ -19,6 +19,14 @@ logger = logging.getLogger(__name__)
 
 
 def is_allowed_create(programme):
+    """Check whether creation actions are allowed for the given programme.
+
+    Args:
+        programme (str): Programme name such as ``"Bridging"``.
+
+    Returns:
+        bool: ``True`` when within the configured creation window, otherwise ``False``.
+    """
     from .models import CLMRound
     try:
         current = date.today()
@@ -36,6 +44,14 @@ def is_allowed_create(programme):
 
 
 def is_allowed_edit(programme):
+    """Check whether edit actions are allowed for the given programme.
+
+    Args:
+        programme (str): Programme name such as ``"Bridging"``.
+
+    Returns:
+        bool: ``True`` when current date falls in the edit window, otherwise ``False``.
+    """
     from .models import CLMRound
 
     try:
@@ -54,28 +70,45 @@ def is_allowed_edit(programme):
 
 
 def listToString(s):
-    # initialize an empty string
+    """Join a list of strings with comma separators.
+
+    Args:
+        s (list[str]): Strings to concatenate.
+
+    Returns:
+        str: Comma-delimited string of all elements.
+    """
     str1 = ""
 
-    # traverse in the string
     for ele in s:
         if str1 == "":
             str1 += ele
         else:
             str1 += "," + ele
 
-        # return string
     return str1
 
 
 class MemorySavingQuerysetIterator(object):
+    """Iterate through a queryset in smaller batches to reduce memory usage."""
 
     def __init__(self, queryset, max_obj_num=1000):
+        """Initialize the iterator with the queryset and chunk size.
+
+        Args:
+            queryset (QuerySet): Django queryset to iterate through.
+            max_obj_num (int, optional): Number of objects to fetch per batch.
+        """
         self._base_queryset = queryset
         self._generator = self._setup()
         self.max_obj_num = max_obj_num
 
     def _setup(self):
+        """Yield objects from the queryset in configured chunk sizes.
+
+        Yields:
+            Model: Instances from the underlying queryset.
+        """
         for i in xrange(0, self._base_queryset.count(), self.max_obj_num):
             # By making a copy of the queryset and using that to actually access
             # the objects we ensure that there are only `max_obj_num` objects in
@@ -86,7 +119,13 @@ class MemorySavingQuerysetIterator(object):
                 yield obj
 
     def __iter__(self):
+        """Return the iterator instance."""
         return self
 
     def next(self):
+        """Return the next object from the generator.
+
+        Returns:
+            Model: Next instance in the queryset iteration.
+        """
         return self._generator.next()
