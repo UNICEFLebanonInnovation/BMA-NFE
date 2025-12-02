@@ -72,3 +72,7 @@
 - `Procfile` supplies process commands for platforms that read process declarations (e.g., Heroku-like environments).
 - `web.config` provides IIS configuration when hosting on Windows-based servers.
 - For non-container deployments, you can run `gunicorn student_registration.wsgi:application` behind a reverse proxy like Nginx, using the same environment variables and static/media file settings outlined above.
+
+## Handover package
+- See `docs/ministry_handover.md` for a detailed runbook that Ministry operators can follow to deploy, maintain, and recover the system.
+- Use `docs/handover_checklist.md` to confirm all operational, security, and ownership prerequisites are satisfied before go-live.
