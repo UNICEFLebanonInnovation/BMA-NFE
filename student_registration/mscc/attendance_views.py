@@ -93,6 +93,14 @@ CATEGORY_ORDER_LOOKUP = {
 def _aggregate_attendance(queryset, *group_fields):
     """Aggregate attendance counts for the provided ``group_fields``.
 
+    Args:
+        queryset (QuerySet): Base attendance queryset to aggregate.
+        *group_fields (str): Fields to group by when annotating counts.
+
+    Returns:
+        QuerySet: Aggregated queryset with ``total`` and ``absent`` counts for
+        each grouping.
+
     This mirrors the logic used by the heatmap view to ensure the API is
     using the exact same calculations as the user-facing dashboard.
     """
@@ -116,6 +124,16 @@ class AttendanceView(LoginRequiredMixin,
     template_name = 'mscc/attendance.html'
 
     def get_context_data(self, **kwargs):
+        """Prepare attendance context for the current center and date.
+
+        Args:
+            **kwargs: Additional keyword arguments forwarded by
+                :class:`TemplateView`.
+
+        Returns:
+            dict: Context containing attendance metadata, available programs and
+            sections, and any existing attendance record for today.
+        """
         from datetime import datetime
         from collections import OrderedDict
 
@@ -156,6 +174,14 @@ class AttendanceView(LoginRequiredMixin,
 
 def save_attendance_children(request):
     """Persist attendance for MSCC children.
+
+    Args:
+        request (HttpRequest): Request carrying JSON-encoded attendance data
+            and an optional ``center_id`` query string parameter.
+
+    Returns:
+        JsonResponse | HttpResponseBadRequest: Success response containing the
+        creation result or a 400 response when validation fails.
 
     Similar to the CLM view, this now validates the request body and ensures an
     ``HttpResponse`` is always returned even when errors occur.

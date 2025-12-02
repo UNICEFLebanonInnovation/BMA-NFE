@@ -90,6 +90,12 @@ class SectionViewSet(mixins.ListModelMixin,
 
 class AutocompleteView(autocomplete.Select2QuerySetView):
     def get_queryset(self):
+        """Return school options filtered by user authentication and query string.
+
+        Returns:
+            QuerySet: Schools matching the search term or an empty queryset when
+            the user is not authenticated.
+        """
         if not self.request.user.is_authenticated:
             return School.objects.none()
 
@@ -104,6 +110,14 @@ class AutocompleteView(autocomplete.Select2QuerySetView):
 
 
 def load_districts(request):
+    """Load district choices for a governorate selection.
+
+    Args:
+        request (HttpRequest): Incoming request containing ``id_governorate``.
+
+    Returns:
+        HttpResponse: Rendered template with district options.
+    """
     cities = []
     if request.GET.get('id_governorate'):
         id_governorate = request.GET.get('id_governorate')
@@ -112,6 +126,14 @@ def load_districts(request):
 
 
 def load_cadasters(request):
+    """Load cadaster choices for a district selection.
+
+    Args:
+        request (HttpRequest): Incoming request containing ``id_district``.
+
+    Returns:
+        HttpResponse: Rendered template with cadaster options.
+    """
     cities = []
     if request.GET.get('id_district'):
         id_district = request.GET.get('id_district')
@@ -120,6 +142,14 @@ def load_cadasters(request):
 
 
 def load_schools(request):
+    """Load school choices for a governorate selection.
+
+    Args:
+        request (HttpRequest): Incoming request containing ``id_governorate``.
+
+    Returns:
+        HttpResponse: Rendered template with school options.
+    """
     schools = []
     if request.GET.get('id_governorate'):
         id_governorate = request.GET.get('id_governorate')
@@ -141,7 +171,11 @@ class SchoolListView(LoginRequiredMixin,
     filterset_class = SchoolFilter
 
     def get_queryset(self):
+        """Filter schools by user permissions and associations.
 
+        Returns:
+            QuerySet: Schools the current user is allowed to view.
+        """
         clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
@@ -174,9 +208,10 @@ class SchoolListView(LoginRequiredMixin,
         return queryset
 
     def get_table_class(self):
+        """Return the table class depending on export permissions.
 
-        """
-        Return the class to use for the table.
+        Returns:
+            Table: ``SchoolExportTable`` for exporters, else ``SchoolTable``.
         """
         if has_group(self.request.user, 'EXPORT'):
             return SchoolExportTable
@@ -195,6 +230,11 @@ class SchoolAddView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_success_url(self):
+        """Choose redirect target based on submitted action buttons.
+
+        Returns:
+            str: URL for continuing, adding another, or returning to the list.
+        """
         if self.request.POST.get('save_add_another', None):
             return '/clm/school-add/'
         if self.request.POST.get('save_and_continue', None):
@@ -203,13 +243,25 @@ class SchoolAddView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
 
-        """Insert the form into the context dict."""
+        """Insert the form and creation flag into the context.
+
+        Args:
+            **kwargs: Existing context keyword arguments.
+
+        Returns:
+            dict: Context including form and permission flags.
+        """
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         kwargs['is_allowed_create'] = is_allowed_create('Bridging')
         return super(SchoolAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
+        """Populate initial form data from request query parameters.
+
+        Returns:
+            dict: Initial values for the school form.
+        """
         initial = super(SchoolAddView, self).get_initial()
         data = {
             'new_school': self.request.GET.get('new_school', ''),
@@ -225,10 +277,26 @@ class SchoolAddView(LoginRequiredMixin,
         return initial
 
     def form_valid(self, form):
+        """Save the school and proceed with the default valid workflow.
+
+        Args:
+            form (SchoolForm): Validated form instance.
+
+        Returns:
+            HttpResponse: Redirect response from the parent handler.
+        """
         form.save(self.request)
         return super(SchoolAddView, self).form_valid(form)
 
     def get_form(self, form_class=None):
+        """Build the form with request context and initial data.
+
+        Args:
+            form_class (type, optional): Unused custom form class override.
+
+        Returns:
+            SchoolForm: Instantiated form ready for rendering or validation.
+        """
         if self.request.method == "POST":
             return SchoolForm(self.request.POST, instance=None, request=self.request)
         else:
@@ -244,6 +312,11 @@ class SchoolEditView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_success_url(self):
+        """Select redirect URL based on which action button was used.
+
+        Returns:
+            str: Target URL for navigation after editing.
+        """
         if self.request.POST.get('save_add_another', None):
             return '/clm/school-add/'
         if self.request.POST.get('save_and_continue', None):
@@ -251,14 +324,28 @@ class SchoolEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
+        """Insert the form and edit permissions into the context.
 
-        """Insert the form into the context dict."""
+        Args:
+            **kwargs: Existing context keyword arguments.
+
+        Returns:
+            dict: Context including the school form and edit flag.
+        """
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         kwargs['is_allowed_edit'] = is_allowed_edit('Bridging')
         return super(SchoolEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
+        """Instantiate the school form for editing.
+
+        Args:
+            form_class (type, optional): Unused custom form class override.
+
+        Returns:
+            SchoolForm: Form populated with existing instance data.
+        """
         instance = School.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
             return SchoolForm(self.request.POST, instance=instance, request=self.request)
@@ -267,6 +354,14 @@ class SchoolEditView(LoginRequiredMixin,
             return SchoolForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
+        """Persist school edits then proceed with default processing.
+
+        Args:
+            form (SchoolForm): Validated form instance.
+
+        Returns:
+            HttpResponse: Redirect response from the parent handler.
+        """
         instance = School.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(SchoolEditView, self).form_valid(form)

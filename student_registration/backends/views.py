@@ -11,6 +11,21 @@ from .models import ExportHistory
 
 @login_required
 def export_history_list(request):
+    """
+    Return the five most recent exports for the authenticated user.
+
+    Parameters
+    ----------
+    request : HttpRequest
+        Incoming request containing the authenticated user context.
+
+    Returns
+    -------
+    JsonResponse
+        A JSON payload with an ``exports`` list, each item containing ``url`` and
+        ``text`` keys describing the export entry.
+    """
+
     exports = (
         ExportHistory.objects.filter(created_by=request.user)
         .order_by('-created')[:5]

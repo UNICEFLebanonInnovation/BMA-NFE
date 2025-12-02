@@ -48,6 +48,7 @@ AGREE_DISAGREE = Choices(
 
 
 class Round(models.Model):
+    """Program round metadata used to scope registrations for a given year."""
     YEAR_CHOICES = [(year, year) for year in range(2020, 2051)]
 
     name = models.CharField(max_length=45, unique=True)
@@ -64,13 +65,24 @@ class Round(models.Model):
         verbose_name = "Round"
 
     def __str__(self):
+        """Return the round display name for admin lists.
+
+        Returns:
+            str: The configured ``name`` for this round.
+        """
         return self.name
 
     def __unicode__(self):
+        """Return the unicode representation of the round name.
+
+        Returns:
+            str: Same value as :meth:`__str__` for legacy contexts.
+        """
         return self.name
 
 
 class RoundPartner(TimeStampedModel):
+    """Association between a round and a partner organization."""
     round = models.ForeignKey(
         Round,
         related_name='partner_rounds',
@@ -91,13 +103,24 @@ class RoundPartner(TimeStampedModel):
         verbose_name_plural = "Round Partners"
 
     def __str__(self):
+        """Return the combined round and partner label.
+
+        Returns:
+            str: The round-partner tuple formatted as ``"<round> - <partner>"``.
+        """
         return f"{self.round} - {self.partner}"
 
     def __unicode__(self):
+        """Return the unicode representation of the round-partner mapping.
+
+        Returns:
+            str: Same value as :meth:`__str__` for legacy contexts.
+        """
         return self.__str__()
 
 
 class Teacher(TimeStampedModel):
+    """Basic teacher profile stored for MSCC registrations."""
 
     GENDER = Choices(
         ('Male', _('Male')),
@@ -651,24 +674,44 @@ class Registration(TimeStampedModel):
 
     @property
     def child_fullname(self):
+        """Return the child's full name linked to the registration.
+
+        Returns:
+            str: Child full name when available, otherwise an empty string.
+        """
         if self.child:
             return self.child.full_name
         return ''
 
     @property
     def child_age(self):
+        """Return the child's age for reporting.
+
+        Returns:
+            int: Age from the related ``Child`` record or ``0`` if missing.
+        """
         if self.child:
             return self.child.age
         return 0
 
     @property
     def child_birthday(self):
+        """Expose the child's birthday for downstream consumers.
+
+        Returns:
+            date: Birthday from the related ``Child`` or ``0`` if unknown.
+        """
         if self.child:
             return self.child.birthday
         return 0
 
     @property
     def education_program(self):
+        """Fetch the most recent education program assigned to the child.
+
+        Returns:
+            str: Program code for the latest education service, otherwise ``''``.
+        """
         result = ''
         program = self.education_service.all().last()
         if program:
@@ -677,6 +720,11 @@ class Registration(TimeStampedModel):
 
     @property
     def class_section(self):
+        """Fetch the class section for the latest education service.
+
+        Returns:
+            str: Section name from the most recent service, otherwise ``''``.
+        """
         result = ''
         program = self.education_service.all().last()
         if program:
@@ -685,6 +733,11 @@ class Registration(TimeStampedModel):
 
     @property
     def has_previous_registration(self):
+        """Indicate if the child has an older MSCC registration.
+
+        Returns:
+            str: ``"Yes"`` when a previous registration exists, otherwise ``"No"``.
+        """
         if hasattr(self, 'has_previous'):
             return "Yes" if self.has_previous else "No"
         previous_registration_exists = Registration.objects.filter(
@@ -695,12 +748,25 @@ class Registration(TimeStampedModel):
 
     @property
     def total_absent_days(self):
+        """Return the number of recorded absences for this registration.
+
+        Returns:
+            int: Cached ``_total_absent_days`` or the computed absence count.
+        """
         if hasattr(self, '_total_absent_days'):
             return self._total_absent_days or 0
         return Registration.get_total_absent_days(self.id)
 
     @staticmethod
     def get_total_absent_days(registration_id):
+        """Compute the total absences for the provided registration id.
+
+        Args:
+            registration_id (int): Registration identifier to check.
+
+        Returns:
+            int: Number of attendance records marked "No" for the registration.
+        """
         result = 0
         from student_registration.attendances.models import MSCCAttendanceChild
         attendance_days = MSCCAttendanceChild.objects.filter(registration_id=registration_id, attended='No').count()
@@ -709,14 +775,29 @@ class Registration(TimeStampedModel):
         return result
 
     def get_absolute_url(self):
+        """Build the profile URL for this registration.
+
+        Returns:
+            str: URL for the child's profile view.
+        """
         return reverse('mscc:child_profile', kwargs={'pk': self.pk})
 
     def __str__(self):
+        """Return the child display name or registration id.
+
+        Returns:
+            str: Child string representation when linked, otherwise the id.
+        """
         if self.child:
             return self.child.__str__()
         return str(self.id)
 
     def __unicode__(self):
+        """Return the unicode representation of the child or id.
+
+        Returns:
+            str: Child unicode string when present, otherwise the id.
+        """
         if self.child:
             return self.child.__unicode__()
         return str(self.id)
