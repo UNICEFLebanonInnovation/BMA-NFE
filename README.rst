@@ -25,6 +25,8 @@ For Ministry operations teams, two documents provide explicit deployment and sup
 * ``docs/handover_checklist.md`` — checklist to confirm the platform is production-ready (environment, monitoring, backups, and ownership).
 * ``docs/developer_handover.md`` — technical overview for maintainers that explains key Django apps, Celery usage, background exports, and how to set up a development environment.
 
+A third document, ``docs/deployment.md``, has been added to provide a more detailed guide for deploying and maintaining the project. This includes comprehensive instructions on environment setup, database configuration, and running the application in a production environment. This new document consolidates and clarifies the deployment process, making it easier for new developers to get started.
+
 Settings
 --------
 

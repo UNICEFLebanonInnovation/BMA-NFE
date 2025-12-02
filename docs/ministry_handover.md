@@ -18,45 +18,10 @@ This document explains how to run, operate, and support the Student Registration
 - **Accounts**: Non-root Linux user with permission to run Docker, and access to project repository.
 
 ## 3. Environment configuration
-All required environment variables live in an `.env` file. Start from `env.example` and fill in production values before running the stack.
-
-### Core settings
-- `DJANGO_SECRET_KEY`: Long random string; keep private.
-- `DJANGO_ALLOWED_HOSTS`: Comma-separated list of hostnames (e.g., `portal.gov.lb,www.portal.gov.lb`).
-- `DJANGO_SETTINGS_MODULE`: Use `config.settings.production` for production deployments.
-- `DJANGO_ADMIN_URL`: URL path segment for the admin (e.g., `admin/`).
-- `DJANGO_SECURE_SSL_REDIRECT`: Set to `True` when HTTPS is enabled.
-
-### Database and cache
-- `POSTGRES_USER` / `POSTGRES_PASSWORD`: PostgreSQL credentials (also referenced by Docker Compose). Use strong passwords.
-- `POSTGRES_DB`: Optional custom database name; defaults to the service name if unset.
-- `REDIS_URL` (if needed): Override to point to external Redis if not using the bundled container.
-
-### Email and notifications
-- `DJANGO_SERVER_EMAIL`, `DJANGO_MAILGUN_API_KEY`, `MAILGUN_SENDER_DOMAIN`: Outbound email configuration.
-- `FCM_SERVER_KEY`: Firebase Cloud Messaging server key for push notifications.
-- `FIREBASE_*` variables: Client configuration values for frontend Firebase initialization (API key, auth domain, project ID, storage bucket, messaging sender ID, app ID, measurement ID).
-
-### Monitoring and logging
-- `DJANGO_SENTRY_DSN`: Sentry DSN for error reporting (optional but recommended).
-- `COMPRESS_ENABLED`: Set to `True` to enable Django Compressor in production.
-
-Store the final `.env` file alongside the production server. Backup this file securely because it is required for redeployment.
+For a detailed guide on setting up the environment, please refer to the `docs/deployment.md` file. This document provides comprehensive instructions on how to configure the project, including the database and other sensitive information.
 
 ## 4. Deployment steps (production)
-1. **Copy code and environment file**
-   - Clone the repository to the server and place the `.env` file in the repository root.
-2. **Build and start services**
-   - Run `docker compose -f production.yml up --build -d` from the repository root. This starts PostgreSQL, Redis, Gunicorn-backed Django, Nginx, Celery worker, and Celery beat.
-3. **Run migrations and collect static files**
-   - `docker compose -f production.yml exec django python manage.py migrate`
-   - `docker compose -f production.yml exec django python manage.py collectstatic --noinput`
-4. **Create an admin account** (once per environment)
-   - `docker compose -f production.yml exec django python manage.py createsuperuser`
-5. **Verify health**
-   - Open `https://<your-domain>/` to confirm the site loads.
-   - Check `https://<your-domain>/<DJANGO_ADMIN_URL>` for admin access.
-   - Review logs with `docker compose -f production.yml logs -f nginx django celeryworker celerybeat`.
+The `docs/deployment.md` file contains a detailed, step-by-step guide for deploying the application to a production environment. Please refer to this document for the most up-to-date instructions.
 
 ## 5. Routine operations (runbook)
 - **Start/stop services**: `docker compose -f production.yml up -d` to start; `docker compose -f production.yml down` to stop.
