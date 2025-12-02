@@ -1,4 +1,12 @@
 
+"""Celery application bootstrap for the Student Registration project.
+
+This module configures a shared Celery instance, wires it to Django settings,
+and autodiscovers tasks across installed apps. It also registers optional
+monitoring hooks (e.g., Opbeat) when the corresponding settings are present so
+background jobs emit the same telemetry as the web process.
+"""
+
 from __future__ import absolute_import
 import os
 from celery import Celery

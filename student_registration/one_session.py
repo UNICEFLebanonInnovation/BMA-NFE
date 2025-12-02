@@ -2,6 +2,7 @@
 from django.contrib.sessions.models import Session
 
 class OneSessionPerUserMiddleware:
+    """Ensure a user keeps only one active session at a time."""
     # Called only once when the web server starts
     def __init__(self, get_response):
         self.get_response = get_response
