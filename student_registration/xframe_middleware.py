@@ -1,11 +1,16 @@
+from django.http import HttpRequest, HttpResponse
+
+
 class XFrameMiddleware:
+    """Set an X-Frame-Options header on secure requests."""
+
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         response = self.get_response(request)
 
         if request.is_secure:
-            response['X-Frame-Options'] = 'DENY'
+            response["X-Frame-Options"] = "DENY"
 
         return response

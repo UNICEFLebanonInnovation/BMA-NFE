@@ -1,74 +1,64 @@
-# from datetime import datetime, timedelta
-# from django.conf import settings
-# from django.contrib import auth
-#
-#
-# class AutoLogout(object):
-#
-#   def __init__(self, get_response=None):
-#     self.get_response = get_response
-#     super(AutoLogout, self).__init__()
-#
-#   def __call__(self, request):
-#     response = None
-#     if hasattr(self, 'process_request'):
-#         response = self.process_request(request)
-#     if not response:
-#         response = self.get_response(request)
-#     if hasattr(self, 'process_response'):
-#         response = self.process_response(request, response)
-#     return response
-#
-#   def process_request(self, request):
-#     if not request.user.is_authenticated:
-#       return
-#
-#     try:
-#       if datetime.now().isoformat() - request.session['last_touch'] > timedelta(0, settings.AUTO_LOGOUT_DELAY * 60, 0):
-#         auth.logout(request)
-#         del request.session['last_touch']
-#         return
-#     except KeyError:
-#       pass
-#
-#     request.session['last_touch'] = datetime.now().isoformat()
-
-
 from datetime import datetime, timedelta
+from typing import Optional
+
 from django.conf import settings
 from django.contrib import auth
-from django.shortcuts import redirect
+from django.http import HttpRequest, HttpResponse
 
 
 class AutoLogout:
+    """Expire authenticated sessions that have been idle for too long."""
+
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def __call__(self, request):
-        response = self.process_request(request)
-        if response is not None:
-            return response
-        response = self.get_response(request)
-        return self.process_response(request, response)
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Refresh or expire the session before handing off to the view."""
 
-    def process_request(self, request):
+        self._enforce_session_timeout(request)
+        return self.get_response(request)
+
+    def _enforce_session_timeout(self, request: HttpRequest) -> None:
+        """Logout authenticated users whose session has exceeded the idle limit."""
+
         if not request.user.is_authenticated:
             return
 
-        last_touch_str = request.session.get('last_touch')
-        if last_touch_str:
-            try:
-                last_touch = datetime.fromisoformat(last_touch_str)
-                if datetime.now() - last_touch > timedelta(minutes=settings.AUTO_LOGOUT_DELAY):
-                    auth.logout(request)
-                    request.session.flush()  # Clears the session completely
-                    return
-            except ValueError:
-                # Invalid date format — reset session
-                request.session.flush()
-                return
+        last_touch = self._get_last_touch(request)
+        if last_touch is None:
+            # No usable timestamp was found; start tracking from now.
+            self._set_last_touch(request)
+            return
 
-        request.session['last_touch'] = datetime.now().isoformat()
+        if self._is_inactive(last_touch):
+            auth.logout(request)
+            request.session.flush()
+            return
 
-    def process_response(self, request, response):
-        return response
+        self._set_last_touch(request)
+
+    def _get_last_touch(self, request: HttpRequest) -> Optional[datetime]:
+        """Return the stored timestamp of the user's last activity, if valid."""
+
+        last_touch_str = request.session.get("last_touch")
+        if not last_touch_str:
+            return None
+
+        try:
+            return datetime.fromisoformat(last_touch_str)
+        except ValueError:
+            # Invalid date format — remove it so tracking can restart cleanly.
+            request.session.pop("last_touch", None)
+            return None
+
+    def _is_inactive(self, last_touch: datetime) -> bool:
+        """Check whether the stored timestamp exceeds the configured idle limit."""
+
+        idle_duration = datetime.now() - last_touch
+        allowed_idle_time = timedelta(minutes=settings.AUTO_LOGOUT_DELAY)
+        return idle_duration > allowed_idle_time
+
+    def _set_last_touch(self, request: HttpRequest) -> None:
+        """Persist the current timestamp to track future inactivity."""
+
+        request.session["last_touch"] = datetime.now().isoformat()
