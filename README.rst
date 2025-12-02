@@ -23,6 +23,7 @@ For Ministry operations teams, two documents provide explicit deployment and sup
 
 * ``docs/ministry_handover.md`` — end-to-end runbook covering prerequisites, configuration, production deployment, routine operations, backup/restore, and disaster recovery.
 * ``docs/handover_checklist.md`` — checklist to confirm the platform is production-ready (environment, monitoring, backups, and ownership).
+* ``docs/developer_handover.md`` — technical overview for maintainers that explains key Django apps, Celery usage, background exports, and how to set up a development environment.
 
 Settings
 --------

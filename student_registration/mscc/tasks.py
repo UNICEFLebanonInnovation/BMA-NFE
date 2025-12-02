@@ -1,3 +1,17 @@
+"""Background tasks responsible for exporting MSCC data.
+
+The exporters in this module run inside Celery workers but rely on a
+thread pool so that multiple export jobs can run concurrently without
+blocking other tasks. Because Django database connections are not
+thread-safe across threads, helpers such as :func:`_run_with_new_db_connection`
+ensure each worker thread opens and closes its own connection safely.
+
+Exports pull from database views (``vw_mscc_child`` and ``vw_mscc_data``),
+write either CSV or XLSX payloads, wrap them in a ZIP archive, store the
+result via :class:`~student_registration.backends.utils.ExportStorage`, and
+notify the requesting user through Firebase push notifications.
+"""
+
 from __future__ import absolute_import
 import io
 import uuid
@@ -27,7 +41,13 @@ _export_executor = None
 
 
 def _get_executor():
-    """Return a lazily instantiated thread pool for export jobs."""
+    """Return a lazily instantiated thread pool for export jobs.
+
+    A shared ``ThreadPoolExecutor`` keeps export throughput high while
+    preventing the creation of unbounded worker threads. The pool size is
+    configurable through the ``MSCC_EXPORT_MAX_WORKERS`` Django setting
+    (default: ``4``).
+    """
     global _export_executor
     if _export_executor is None:
         with _executor_lock:
@@ -50,6 +70,15 @@ def _run_with_new_db_connection(fn, *args, **kwargs):
 
 
 def _generate_mscc_export(export_id, fields=None, file_format='csv'):
+    """Produce a full MSCC export and attach it to ``ExportHistory``.
+
+    Parameters mirror those accepted by the synchronous export view: a
+    required ``export_id`` that references :class:`ExportHistory`, an optional
+    list of ``fields`` to include, and a ``file_format`` indicating CSV or
+    XLSX output. The export is wrapped in a ZIP archive before being saved
+    and the requesting user (if any) receives a push notification with a
+    download link.
+    """
     try:
         export = ExportHistory.objects.get(id=export_id)
     except ExportHistory.DoesNotExist:

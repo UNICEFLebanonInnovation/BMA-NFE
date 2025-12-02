@@ -1,4 +1,5 @@
 class CacheControlMiddleware:
+    """Prevents caching of secure pages to reduce risk of stale auth data."""
     def __init__(self, get_response):
         self.get_response = get_response
 
