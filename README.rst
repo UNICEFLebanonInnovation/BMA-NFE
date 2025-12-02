@@ -16,6 +16,14 @@ Simple, interactive and online student registration.
 :License: GPLv3
 
 
+Handover documentation
+-----------------------
+
+For Ministry operations teams, two documents provide explicit deployment and support steps:
+
+* ``docs/ministry_handover.md`` — end-to-end runbook covering prerequisites, configuration, production deployment, routine operations, backup/restore, and disaster recovery.
+* ``docs/handover_checklist.md`` — checklist to confirm the platform is production-ready (environment, monitoring, backups, and ownership).
+
 Settings
 --------
 
