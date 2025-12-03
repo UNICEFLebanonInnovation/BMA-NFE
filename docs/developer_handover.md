@@ -12,13 +12,7 @@ This document orients new maintainers to the core components of the Student Regi
 - **Views and templates**: Server-rendered pages live under `student_registration/templates/`; client assets live under `student_registration/static/`.
 
 ## Local development quickstart
-1. **Environment**: Copy `env.example` to `.env` and fill in Django, database, Redis, email, FCM, and Sentry settings. Use `DJANGO_SETTINGS_MODULE=config.settings.local` during local work.
-2. **Dependencies**: Install Python packages with `pip install -r requirements/local.txt`. Node/Gulp assets are optional for backend-only changes.
-3. **Database**: Run `python manage.py migrate` and create a superuser with `python manage.py createsuperuser`.
-4. **Run the stack**:
-   - **Native**: `python manage.py runserver 0.0.0.0:8000`.
-   - **Docker**: `docker compose -f local.yml up --build` (web app on port 8000). Use `docker compose -f local.yml exec django <command>` for management commands.
-5. **Testing**: Run `pytest` or `coverage run manage.py test`; see `pytest.ini` for defaults.
+For a detailed guide on setting up a local development environment, please refer to the `docs/deployment.md` file. This document provides comprehensive instructions on how to configure the project, including the database and other sensitive information.
 
 ## Background processing
 - **Celery bootstrap**: `student_registration/taskapp/celery.py` loads Django settings, autodiscovers tasks across installed apps, and registers logging/monitoring hooks (Opbeat where enabled).
