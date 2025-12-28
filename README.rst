@@ -27,6 +27,11 @@ For Ministry operations teams, two documents provide explicit deployment and sup
 
 A third document, ``docs/deployment.md``, has been added to provide a more detailed guide for deploying and maintaining the project. This includes comprehensive instructions on environment setup, database configuration, and running the application in a production environment. This new document consolidates and clarifies the deployment process, making it easier for new developers to get started.
 
+Architecture documentation
+--------------------------
+
+For a detailed map of the project structure, technology stack, core models, relationships, and request/response flows, see ``docs/system_documentation.md``.
+
 Settings
 --------
 
