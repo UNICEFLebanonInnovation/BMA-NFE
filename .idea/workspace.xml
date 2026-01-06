@@ -2,37 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d5e9b9cf-846c-4255-89de-6b055dcc58e2" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/student_registration/clm/templatetags/__init__.py" />
-      <change beforePath="$PROJECT_DIR$/.idea/BMA-NFE.iml" afterPath="$PROJECT_DIR$/.idea/BMA-NFE.iml" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/student_registration/clm/templates/util_tags.py" afterPath="$PROJECT_DIR$/student_registration/clm/templatetags/util_tags.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/clm/utils.py" afterPath="$PROJECT_DIR$/student_registration/clm/utils.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/base.html" afterPath="$PROJECT_DIR$/student_registration/templates/base.html" />
-      <change beforePath="$PROJECT_DIR$/../Compiler/student_registration/clm/utils.py" afterPath="$PROJECT_DIR$/../Compiler/student_registration/clm/utils.py" />
-      <change beforePath="$PROJECT_DIR$/../Compiler/student_registration/templates/base.html" afterPath="$PROJECT_DIR$/../Compiler/student_registration/templates/base.html" />
+      <change afterPath="$PROJECT_DIR$/student_registration/clm/templatetags/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/BMA-NFE.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BMA-NFE.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/settings/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/settings/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/student_registration/clm/templates/util_tags.py" beforeDir="false" afterPath="$PROJECT_DIR$/student_registration/clm/templatetags/util_tags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/student_registration/clm/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/student_registration/clm/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/student_registration/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Compiler/student_registration/clm/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Compiler/student_registration/clm/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Compiler/student_registration/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/../Compiler/student_registration/templates/base.html" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/../AI-Agent/ai_agent_project/ai_agent_project/settings.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="785">
-              <caret line="175" column="34" lean-forward="false" selection-start-line="175" selection-start-column="34" selection-end-line="175" selection-end-column="34" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -85,7 +70,7 @@
     </dirStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../AI-Agent" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -201,21 +186,6 @@
       <recent name="$PROJECT_DIR$/student_registration/mscc/management/commands" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="ShelveChangesManager" show_recycled="false">
-    <option name="remove_strategy" value="false" />
-  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -256,15 +226,6 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <option name="time" value="25" />
-    </breakpoint-manager>
-    <watches-manager />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/student_registration/schools/admin.py">
