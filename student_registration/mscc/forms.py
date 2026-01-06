@@ -18,6 +18,8 @@ from dal import autocomplete
 from student_registration.students.models import (
     Nationality,
     IDType,
+    Training,
+    AttachmentType,
 )
 
 from student_registration.locations.models import Center

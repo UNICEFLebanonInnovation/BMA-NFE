@@ -12,6 +12,7 @@ from collections import OrderedDict
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from student_registration.locations.models import Center, Location
 from student_registration.students.models import Nationality

@@ -10,7 +10,7 @@ from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from .models import User, WebPushToken
 from .forms import UserAdminForm
 from django.contrib.admin import SimpleListFilter
-
+from student_registration.users.templatetags.custom_tags import has_group
 
 class UserCategoryFilter(SimpleListFilter):
     title = 'User Category'
