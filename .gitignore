@@ -1,9 +1,13 @@
+# macOS
+.DS_Store
+
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
 .Python
+
+# Virtual environments
+nfe/
 env/
 venv/
 
@@ -13,7 +17,6 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# Other
-.env
+# IDEs
 .idea/
 .vscode/
