@@ -1,15 +1,15 @@
 {% load static i18n %}
 {% load custom_tags %}
 {% load util_tags %}
-<button class="btn btn-danger moved-button" itemscope="{{ record.id }}" id="moved_button_{{ record.id }}" translation="{% trans "Are you sure you want to tag this student as moved?" %}">
+<button class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-red-600 text-white hover:bg-red-700 moved-button" itemscope="{{ record.id }}" id="moved_button_{{ record.id }}" translation="{% trans "Are you sure you want to tag this student as moved?" %}">
     {% trans "Moved?" %}
 </button>
 <div class="moving-date-block d-none" id="moving_date_block_{{ record.id }}">
-    <input class="form-control moving-date-input" itemscope="{{ record.id }}" id="moving_date_{{ record.id }}" type="text" placeholder="{% trans 'Enter moved date' %}" />
-    <button class="btn btn-success save-moved-button" itemscope="{{ record.id }}" id="save_moved_button_{{ record.id }}">
+    <input class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 moving-date-input" itemscope="{{ record.id }}" id="moving_date_{{ record.id }}" type="text" placeholder="{% trans 'Enter moved date' %}" />
+    <button class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-green-600 text-white hover:bg-green-700 save-moved-button" itemscope="{{ record.id }}" id="save_moved_button_{{ record.id }}">
         {% trans "Save" %}
     </button>
-    <button class="btn btn-warning cancel-moved-button" itemscope="{{ record.id }}" id="cancel_moved_button_{{ record.id }}">
+    <button class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors btn-warning cancel-moved-button" itemscope="{{ record.id }}" id="cancel_moved_button_{{ record.id }}">
         {% trans "reset" %}
     </button>
 </div>

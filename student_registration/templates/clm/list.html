@@ -3,10 +3,6 @@
 {% load custom_tags %}
 {% load static i18n %}
 {% load render_table from django_tables2 %}
-{% load django_bootstrap5 %}
-
-{% bootstrap_css %}
-
 {% block extra_head %}
     <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
 {% endblock %}
@@ -15,7 +11,7 @@
 <section>
 
     <section id="page-title" class="inline-form inner-section ui-menu-color02">
-        <div class="container-fluid nopadding">
+        <div class="w-full px-4 nopadding">
             <h3 class="font-accident-two-light color01 uppercase"
                 data-animation-origin="right"
                 data-animation-duration="400"
@@ -26,7 +22,7 @@
     </section>
 
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
+      <li class="breadcrumb-item"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-primary">{{ table.rows|length }}</span></li>
       <li class="breadcrumb-item active">{{ request.user.partner }}</li>
       <li class="breadcrumb-item active">{{ request.user }}</li>
 
@@ -34,7 +30,7 @@
           {% if request.user.is_beneficiary %}
 
             <li class="breadcrumb-item active">
-              <a href="{% url 'registrations:add' %}" class="btn btn-success">
+              <a href="{% url 'registrations:add' %}" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-green-600 text-white hover:bg-green-700">
                   <i class="icon-plus-sign icon-white"></i>
                   {% trans "Add new beneficiary" %}
               </a>
@@ -43,14 +39,14 @@
           {% else %}
 
                <li class="breadcrumb-item active">
-              <a href="{% url 'registrations:add' %}" class="btn btn-success">
+              <a href="{% url 'registrations:add' %}" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-green-600 text-white hover:bg-green-700">
                   <i class="icon-plus-sign icon-white"></i>
                   {% trans "Add new beneficiary" %}
               </a>
             </li>
 
              <!--<li class="breadcrumb-item active">-->
-              <!--<a href="{% url 'initiatives:add-initiative' %}" class="btn btn-success">-->
+              <!--<a href="{% url 'initiatives:add-initiative' %}" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-green-600 text-white hover:bg-green-700">-->
                   <!--<i class="icon-plus-sign icon-white"></i>-->
                   <!--{% trans "Add Initiatives" %}-->
               <!--</a>-->
@@ -58,8 +54,8 @@
 
               <li>
                 <div class="btn-group">
-                  <button type="button" class="btn btn-primary">{% trans "Export data" %}</button>
-                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button type="button" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700">{% trans "Export data" %}</button>
+                  <button type="button" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                   </button>
@@ -77,14 +73,14 @@
 
     <div class="pb-5 pr-5 list-filter">
         <form action="" method="get" class="form form-inline">
-            {% bootstrap_form filter.form layout='inline' %}
-            {% bootstrap_button _('filter') button_class="btn-primary" %}
-            {% bootstrap_button _('reset') button_type="link" button_class="btn-warning" href='/registrations/list/' %}
+            {{ filter.form.as_p }}
+            <button type="submit" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">{% trans 'filter' %}</button>
+            <a href="/registrations/list/" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-amber-500 text-white hover:bg-amber-600">{% trans 'reset' %}</a>
         </form>
     </div>
     <div class="">
         {% csrf_token %}
-        {% render_table table 'django_tables2/bootstrap.html' %}
+        {% render_table table 'django_tables2/table.html' %}
     </div>
 </section>
 

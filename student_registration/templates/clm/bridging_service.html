@@ -4,11 +4,7 @@
 {% load static i18n %}
 {% load crispy_forms_tags %}
 {% load static i18n %}
-{% load django_bootstrap5 %}
-
 {% load simple_tags %}
-{% bootstrap_css %}
-
 {% block project_title %}Services{% endblock %}
 
 {% block extra_head %}
@@ -55,8 +51,8 @@
 
         <!--{{ form.errors }}-->
 
-<div class="main-card mb-3 card">
-                                <div class="card-body">
+<div class="main-card mb-3 rounded-xl border border-gray-200 bg-white shadow-sm">
+                                <div class="p-6">
                                     <div id="smartwizard3" class="forms-wizard">
                                         <div class="form-wizard-content">
                                            {% crispy form 'bootstrap3' %}
@@ -65,7 +61,7 @@
                                     <div class="divider"></div>
 
                                     <div class="clearfix">
-                                        <a href="{% url 'clm:bridging_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <a href="{% url 'clm:bridging_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-transparent text-blue-600 hover:text-blue-700 px-0 py-0">Back to list</a>
                                     </div>
                                 </div>
                             </div>

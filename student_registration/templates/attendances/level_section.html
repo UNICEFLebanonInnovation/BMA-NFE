@@ -28,18 +28,18 @@ div.row-student.disabled {
 
          <section class="main-content-wrapper">
             <section id="main-content">
-                 <div class="row">
-                    <div class="col-md-12">
+                 <div class="flex flex-wrap -mx-3">
+                    <div class="w-full px-3">
                         </br>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full px-3">
                         <div class="panel panel-default">
-                            <div class="alert alert-success d-none" role="alert">
+                            <div class="rounded-md p-4 border border-green-200 bg-green-50 text-green-700 d-none" role="alert">
                                 {% trans 'Your data has been sent successfully to the server' %}
                             </div>
-                            <div class="alert alert-danger d-none" role="alert">
+                            <div class="rounded-md p-4 border border-red-200 bg-red-50 text-red-700 d-none" role="alert">
                                 {% trans 'En error has been occurred please contact the admin or try later' %}
                             </div>
                           <div class="panel-heading">
@@ -49,12 +49,12 @@ div.row-student.disabled {
                                 </li>
                                 <li class="breadcrumb-item">
                                     {% if school_type == 'ALP' %}
-                                    <a class="btn btn-info" href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
+                                    <a class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-cyan-600 text-white hover:bg-cyan-700" href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
                                     {% else %}
-                                    <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
+                                    <a class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-cyan-600 text-white hover:bg-cyan-700" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
                                     {% endif %}
-                                    <button type="button" class="btn btn-warning absolute-right-15 absolute-top-15" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a exam reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Exam day" %}</button>
-                                    <button type="button" class="btn btn-warning absolute-right-310 absolute-top-15" id="not_attending" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Not attending" %}</button>
+                                    <button type="button" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors btn-warning absolute-right-15 absolute-top-15" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a exam reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Exam day" %}</button>
+                                    <button type="button" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors btn-warning absolute-right-310 absolute-top-15" id="not_attending" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Not attending" %}</button>
                                 </li>
                             </ol>
                             <ol class="breadcrumb">
@@ -62,12 +62,12 @@ div.row-student.disabled {
                                     {{ level.name }} - {{ section.name }}
                                 </li>
                                 <li class="breadcrumb-item">
-                                    <span class="badge badge-primary">{{ current_level_section.total }}: {% trans "Total students" %}</span> -
-                                    <span class="badge badge-success">{{ current_level_section.total_attended }}: {% trans "Total attended" %}</span> -
-                                    <span class="badge badge-danger">{{ current_level_section.total_absences }}: {% trans "Total absences" %}</span>
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-primary">{{ current_level_section.total }}: {% trans "Total students" %}</span> -
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-success">{{ current_level_section.total_attended }}: {% trans "Total attended" %}</span> -
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-danger">{{ current_level_section.total_absences }}: {% trans "Total absences" %}</span>
                                     {% if disable_attendance %}
                                     {% else %}
-                                    <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 save_attendances" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                                    <a href="#" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-green-600 text-white hover:bg-green-700 absolute-right-15 absolute-top-7 save_attendances" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
                                     {% endif %}
                                 </li>
                             </ol>
@@ -86,7 +86,7 @@ div.row-student.disabled {
                     <input type="hidden" name="section" value="{{ section.id }}" id="section" />
                     <input type="hidden" name="level" value="{{ level.id }}" id="level" />
                 {% for line in students %}
-                    <div class="row row-student {% if line.disabled or line.dropout_status %}disabled{% endif %}">
+                    <div class="flex flex-wrap -mx-3 row-student {% if line.disabled or line.dropout_status %}disabled{% endif %}">
                         <input type="hidden" name="enrollment_id[]" value="{{ line.id }}" class="enrollment_id"
                                itemref="{{ line.id }}" student_id="{{ line.student.id }}" student_fullname="{{ line.student }}"
                                student_sex="{{ line.student.sex }}"  student_age="{{ line.student.age }}"
@@ -105,26 +105,26 @@ div.row-student.disabled {
                         <input type="hidden" name="section[]" id="section_{{ line.id }}" value="{{ section.id }}" />
                         <input type="hidden" name="section_name[]" id="section_name_{{ line.id }}" value="{{ section.name }}" />
 
-                        <div class="col-xs-6 col-sm-2 icon-student-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>
-                        <div class="col-xs-3 col-sm-3 s-col">
+                        <div class="col-xs-6 px-3 sm:w-2/12 icon-student-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>
+                        <div class="col-xs-3 px-3 sm:w-1/4 s-col">
                             <span>{{ line.student }}</span>
                         </div>
-                        <div class="col-xs-3 col-sm-3 s-col">
+                        <div class="col-xs-3 px-3 sm:w-1/4 s-col">
                             <span class="icon-mother"></span>
                             <span>{{ line.student.mother_fullname }}</span>
                         </div>
-                        <div class="col-xs-2 col-sm-2 col-md-2 s-col">
+                        <div class="col-xs-2 px-3 sm:w-2/12 md:w-2/12 s-col">
                             <span class="icon-age"></span>
                             <span>{{ line.student.age }}</span>
                         </div>
-                        <div class="col-xs-6 col-sm-2 col-md-2 s-col">
+                        <div class="col-xs-6 px-3 sm:w-2/12 md:w-2/12 s-col">
                           {% if line.disabled or line.dropout_status %}
                               <input type="checkbox" name="status[]" id="status_{{ line.id }}" {% if line.attendance_status == 'True' %} checked="checked" value="True"{% else %}value="False"{% endif %} itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" {% if disable_attendance %}disabled{% endif %}/>
                           {% else %}
                             <input type="checkbox" name="status[]" id="status_{{ line.id }}" {% if line.attendance_status == 'True' or line.attendance_status == None %}checked="checked" value="True"{% else %} value="False"{% endif %} itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" {% if disable_attendance %}disabled{% endif %}/>
                           {% endif %}
                         </div>
-                        <div class="col-sm-8 absence-reasons {% if line.attendance_status == 'True' or line.attendance_status == None %}d-none{% endif %}" id="reasons-{{ line.id }}">
+                        <div class="px-3 sm:w-2/3 absence-reasons {% if line.attendance_status == 'True' or None %}d-none{% endif %}" id="reasons-{{ line.id }}">
                             <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'sick' %}checked="checked"{% endif %} value="sick" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "Sick" %}</label>
 {#                            <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'no_reason' %}checked="checked"{% endif %} value="no_reason" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "No reason" %}</label>#}
                             <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'no_transport' %}checked="checked"{% endif %} value="no_transport" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "No transport" %}</label>
@@ -139,13 +139,13 @@ div.row-student.disabled {
                         </li>
                         <li class="breadcrumb-item">
                             {% if school_type == 'ALP' %}
-                            <a class="btn btn-info" href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
+                            <a class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-cyan-600 text-white hover:bg-cyan-700" href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
                             {% else %}
-                            <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
+                            <a class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-cyan-600 text-white hover:bg-cyan-700" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
                             {% endif %}
                             {% if disable_attendance %}
                             {% else %}
-                            <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 save_attendances" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                            <a href="#" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-green-600 text-white hover:bg-green-700 absolute-right-15 absolute-top-7 save_attendances" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
                             {% endif %}
                         </li>
                     </ol>

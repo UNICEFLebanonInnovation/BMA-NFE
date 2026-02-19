@@ -4,11 +4,11 @@
 {% if column.attrs.url %}
 <div style="width: 100px;">
 
-  <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary col-icon">
+  <a href="{{ column.attrs.url }}{{ record.id }}" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700 col-icon">
     <i class="fa fa-list"></i>
   </a>
 
-  <a href="{% url 'schools:meeting_add' record.id %}" class="btn btn-success col-icon">
+  <a href="{% url 'schools:meeting_add' record.id %}" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-green-600 text-white hover:bg-green-700 col-icon">
     <i class="fa fa-plus"></i>
   </a>
 

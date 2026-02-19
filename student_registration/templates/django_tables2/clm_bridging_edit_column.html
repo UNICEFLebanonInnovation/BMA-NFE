@@ -4,9 +4,9 @@
 {% load util_tags %}
 {% if column.attrs.programme|is_allowed_edit %}
    {% if record.total_absent_days >= 40 %}
-      <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-info"  style="opacity: 0.6; cursor: not-allowed;">
+      <a href="{{ column.attrs.url }}{{ record.id }}" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-cyan-600 text-white hover:bg-cyan-700"  style="opacity: 0.6; cursor: not-allowed;">
    {% else %}
-      <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-info">
+      <a href="{{ column.attrs.url }}{{ record.id }}" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-cyan-600 text-white hover:bg-cyan-700">
     {% endif %}
           <i class="icon-edit-sign icon-white"></i>
     {% trans "Edit" %}

@@ -20,7 +20,7 @@
 }
 </style>
 
-<div class="mx-auto app-login-box col-md-8">
+<div class="mx-auto app-login-box px-3 md:w-2/3">
                         <div class="app-logo-home mx-auto mb-3"><img src="{% static 'images/clm_plus_logo.png' %}"></div>
                         <div class="modal-dialog mx-auto" style="width: 500px;">
                             <div class="modal-content">
@@ -40,7 +40,7 @@
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
   <!--<a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>-->
-  <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+  <button class="primaryAction inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700" type="submit">{% trans "Sign In" %}</button>
 </form>                                </div>
                             </div>
                         </div>

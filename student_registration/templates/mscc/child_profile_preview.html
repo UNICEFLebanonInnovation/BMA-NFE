@@ -4,14 +4,14 @@
 {% load simple_tags %}
 
 {% load util_tags %}
-<div class="row">
+<div class="flex flex-wrap -mx-3">
 
-        <div class="col-md-12">
-                                    <div class="mb-3 card">
+        <div class="w-full px-3">
+                                    <div class="mb-3 rounded-xl border border-gray-200 bg-white shadow-sm">
 
-                                        <!--<div class="tabs-lg-alternate card-header">-->
+                                        <!--<div class="tabs-lg-alternate px-6 py-4 border-b border-gray-200">-->
                                             <!--<ul class="nav nav-justified">-->
-                                                <!--<li class="nav-item">-->
+                                                <!--<li class="list-none">-->
                                                     <!--<a data-toggle="tab" href="#tab-eg9-0" class="nav-link active show">-->
                                                         <!--<div class="widget-number">Child Info.</div>-->
                                                     <!--</a></li>-->
@@ -20,14 +20,14 @@
 
                                         <div class="tab-content">
                                             <div class="tab-pane active show" id="tab-eg9-0" role="tabpanel">
-                                                <div class="card-body">
+                                                <div class="p-6">
 
 
-<div class="row staff-profile">
+<div class="flex flex-wrap -mx-3 staff-profile">
 
 <!--Child Bio Data-->
-<div class="col-md-12 col-lg-6 col-xl-4">
-                            <div class="card-shadow-primary profile-responsive card-border mb-3 card">
+<div class="w-full px-3 lg:w-1/2 xl:w-1/3">
+                            <div class="card-shadow-primary profile-responsive card-border mb-3 rounded-xl border border-gray-200 bg-white shadow-sm">
 <div class="dropdown-menu-header">
                                     <div class="dropdown-menu-header-inner bg-info">
                                         <div class="menu-header-image opacity-3"></div>
@@ -221,15 +221,15 @@
                         </div>
 
 <!--General Info-->
-<div class="col-md-12 col-lg-6 col-xl-4">
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+<div class="w-full px-3 lg:w-1/2 xl:w-1/3">
+                                <div class="mb-3 rounded-xl border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-6 py-4 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-6">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -244,17 +244,17 @@
                                             </div>
                                         </div>
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
+                                            <li class="list-none">
                                                 <a role="tab" class="nav-link active show" id="tab-c-1" data-toggle="tab" href="#tab-animated-1" aria-selected="true">
                                                     <span>Address</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
+                                            <li class="list-none">
                                                 <a role="tab" class="nav-link" id="tab-c-0" data-toggle="tab" href="#tab-animated-0">
                                                     <span>Household</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
+                                            <li class="list-none">
                                                 <a role="tab" class="nav-link" id="tab-c-2" data-toggle="tab" href="#tab-animated-2">
                                                     <span>Social/Economic</span>
                                                 </a>
@@ -379,7 +379,7 @@
 
                                                                 </h4>
                                                                     <p>
-                                                                        <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
+                                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-dot badge-dot-lg badge-dot-inside"></span>
                                                                     </p>
                                                                     <p>{{ instance.child.p_code }}</p>
                                                                 </div>
@@ -393,7 +393,7 @@
 
                                                                 </h4>
                                                                     <p>
-                                                                        <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
+                                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-dot badge-dot-lg badge-dot-inside"></span>
                                                                     </p>
                                                                     <p> {{ instance.child.address }}</p>
                                                                 </div>
@@ -462,9 +462,9 @@
                                             </div>
                                         </div>
                                         <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors btn-dark">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -474,16 +474,16 @@
                             </div>
 
   <!--Education history and current stituation-->
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-3 lg:w-1/2 xl:w-1/3">
   {% service_data 'EducationService' instance as result %}
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-xl border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-6 py-4 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-6">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -499,12 +499,12 @@
                                             </div>
                                         </div>
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
+                                            <li class="list-none">
                                                 <a role="tab" class="nav-link active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">
                                                     <span>Situation</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
+                                            <li class="list-none">
                                                   <a role="tab" class="nav-link" id="tab-c-4" data-toggle="tab" href="#tab-animated-4">
                                                       <span>Education History</span>
                                                   </a>
@@ -607,9 +607,9 @@
 
                                         </div>
                                         <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors btn-dark">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>

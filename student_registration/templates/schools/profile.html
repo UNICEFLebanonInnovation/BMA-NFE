@@ -55,47 +55,47 @@
     <div id="resume" class="inner-content">
 
         <section class="inner-section light bg-color01">
-            <div class="container-fluid nopadding">
+            <div class="w-full px-4 nopadding">
 
                 <fieldset class="bd-callout bd-callout-warning'">
                         <h4 id="alternatives-to-hidden-labels">{% trans "School" %}</h4>
-                        <div class="row">
-                            <div class="col-md-4">{{ request.user.school }}</div>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="px-3 md:w-1/3">{{ request.user.school }}</div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4">{{ request.user.school.location.parent }}</div>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="px-3 md:w-1/3">{{ request.user.school.location.parent }}</div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4">{{ request.user.school.location }}</div>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="px-3 md:w-1/3">{{ request.user.school.location }}</div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">{% trans 'Total registered 2nd-shift' %}:
-                                <span class="badge badge-default">{{ request.user.school.total_registered_2ndshift }}</span>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="w-full md:w-1/2 px-3">{% trans 'Total registered 2nd-shift' %}:
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-default">{{ request.user.school.total_registered_2ndshift }}</span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-8">{% trans 'Total attendance days taken - 2nd-shift' %}:
-                                <span class="badge badge-default">{{ request.user.school.total_attendances_days_2ndshift }}</span>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="px-3 md:w-2/3">{% trans 'Total attendance days taken - 2nd-shift' %}:
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-default">{{ request.user.school.total_attendances_days_2ndshift }}</span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-8">{% trans 'Total attendance days taken when school is open - 2nd-shift' %}:
-                                <span class="badge badge-default">{{ request.user.school.total_attendances_days_2ndshift_open }}</span>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="px-3 md:w-2/3">{% trans 'Total attendance days taken when school is open - 2nd-shift' %}:
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-default">{{ request.user.school.total_attendances_days_2ndshift_open }}</span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">{% trans 'Total registered ALP' %}:
-                                <span class="badge badge-default">{{ request.user.school.total_registered_alp }}</span>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="w-full md:w-1/2 px-3">{% trans 'Total registered ALP' %}:
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-default">{{ request.user.school.total_registered_alp }}</span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-8">{% trans 'Total attendance days taken - ALP' %}:
-                                <span class="badge badge-default">{{ request.user.school.total_attendances_days_alp }}</span>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="px-3 md:w-2/3">{% trans 'Total attendance days taken - ALP' %}:
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-default">{{ request.user.school.total_attendances_days_alp }}</span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-8">{% trans 'Total attendance days taken when school is open - ALP' %}:
-                                <span class="badge badge-default">{{ request.user.school.total_attendances_days_alp_open }}</span>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="px-3 md:w-2/3">{% trans 'Total attendance days taken when school is open - ALP' %}:
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-default">{{ request.user.school.total_attendances_days_alp_open }}</span>
                             </div>
                         </div>
                 </fieldset>
@@ -107,13 +107,13 @@
                     </a>
                     </h5>
 
-                    <div class="row">
-                        <div class="col-md-4">{% trans "Number of unread messages" %}: <span class="badge badge-default">{{ unread_notifications }}</span></div>
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="px-3 md:w-1/3">{% trans "Number of unread messages" %}: <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-default">{{ unread_notifications }}</span></div>
                     </div>
 
                   <div class="collapse block-notifications" id="collapse1">
                     {% for item in notifications %}
-                        <div class="row row-notification {% if item.status %}read-notification{% else %}unread-notification{% endif %}">
+                        <div class="flex flex-wrap -mx-3 row-notification {% if item.status %}read-notification{% else %}unread-notification{% endif %}">
                           {% if item.status %}
                           <a class="toggle-status" itemid="{{ item.id }}" title="{% trans 'double click to mark this notification as unread' %}">
                             <div class="icon-mail icon-mail-read"></div>
@@ -123,9 +123,9 @@
                             <div class="icon-mail icon-mail-unread"></div>
                           </a>
                           {% endif %}
-                          <div class="col-md-3">{{ item.created }}</div>
-                          <div class="col-md-8">{{ item.name }}</div>
-                          <div class="col-md-10" style="padding-right: 35px;">{{ item.description }}</div>
+                          <div class="px-3 md:w-1/4">{{ item.created }}</div>
+                          <div class="px-3 md:w-2/3">{{ item.name }}</div>
+                          <div class="px-3 md:w-10/12" style="padding-right: 35px;">{{ item.description }}</div>
                         </div>
                     {% endfor %}
                   </div>
@@ -139,13 +139,13 @@
                       </a>
                     </h5>
 
-                    <div class="row">
-                        <div class="col-md-4">{% trans "Number of unread messages" %}: <span class="badge badge-default">{{ unread_tickets }}</span></div>
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="px-3 md:w-1/3">{% trans "Number of unread messages" %}: <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-default">{{ unread_tickets }}</span></div>
                     </div>
 
                   <div class="collapse block-notifications" id="collapse2">
                     {% for item in tickets %}
-                        <div class="row row-notification {% if item.status %}read-notification{% else %}unread-notification{% endif %}">
+                        <div class="flex flex-wrap -mx-3 row-notification {% if item.status %}read-notification{% else %}unread-notification{% endif %}">
                           {% if item.status %}
                           <a class="toggle-status" itemid="{{ item.id }}" title="{% trans 'double click to mark this notification as unread' %}">
                             <div class="icon-mail icon-mail-read"></div>
@@ -155,8 +155,8 @@
                             <div class="icon-mail icon-mail-unread"></div>
                           </a>
                           {% endif %}
-                          <div class="col-md-3">{{ item.created }}</div>
-                          <div class="col-md-8">
+                          <div class="px-3 md:w-1/4">{{ item.created }}</div>
+                          <div class="px-3 md:w-2/3">
                             {% if item.ticket %}
                               <a href="/helpdesk/tickets/{{ item.ticket }}/" target="_blank">{{ item.name }}</a>
                             {% else %}
@@ -164,10 +164,10 @@
                             {% endif %}
                           </div>
                           {% if item.description %}
-                          <div class="col-md-10" style="padding-right: 35px;"><strong>{% trans 'Description' %}:</strong> {{ item.description }}</div>
+                          <div class="px-3 md:w-10/12" style="padding-right: 35px;"><strong>{% trans 'Description' %}:</strong> {{ item.description }}</div>
                           {% endif %}
                           {% if item.comments %}
-                          <div class="col-md-10" style="padding-right: 35px;"><strong>{% trans 'Last comment' %}:</strong> {{ item.comments }}</div>
+                          <div class="px-3 md:w-10/12" style="padding-right: 35px;"><strong>{% trans 'Last comment' %}:</strong> {{ item.comments }}</div>
                           {% endif %}
                         </div>
                     {% endfor %}

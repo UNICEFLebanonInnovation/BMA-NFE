@@ -2,9 +2,6 @@
 {% load util_tags %}
 {% load custom_tags %}
 {% load static i18n %}
-{% load django_bootstrap5 %}
-
-{% bootstrap_css %}
 {% block project_title %}Attendance Export{% endblock %}
 
 {% block content %}
@@ -44,13 +41,13 @@
                         </div>
 </div>
 
-<section class="container-fluid" data-section="home">
-    <div class="row flex-row">
+<section class="w-full px-4" data-section="home">
+    <div class="flex flex-wrap -mx-3 flex-row">
         <!-- Filters Section -->
-        <div id="filters-section" class="col-md-12 flex-column ui-block-color01 light nopadding">
-            <div class="row flex-panel nopadding">
+        <div id="filters-section" class="w-full px-3 flex-column ui-block-color01 light nopadding">
+            <div class="flex flex-wrap -mx-3 flex-panel nopadding">
                 <!-- Filter Panel Left -->
-                <div class="col-md-6 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-green">
+                <div class="w-full md:w-1/2 px-3 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-green">
                     <div class="flex-panel padding-44">
                         <div class="p-icon green"></div>
                         <span class="uppercase">Filters</span>
@@ -61,7 +58,7 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                                 </div>
-                                <select id="dirasa-month" class="form-control">
+                                <select id="dirasa-month" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200">
                                     <option value="">Select Month</option>
                                     <option value="01">January</option>
                                     <option value="02">February</option>
@@ -85,7 +82,7 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                                 </div>
-                                <select id="dirasa-year" class="form-control">
+                                <select id="dirasa-year" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200">
                                     <option value="">Select Year</option>
                                     <option value="2023">2023</option>
                                     <option value="2024">2024</option>
@@ -99,7 +96,7 @@
                             </div>
                         </div>
 
-                        <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3 download-report" onclick="generateAndOpenURL()">
+                        <button id="generate-url" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700 btn-block btn-icon mt-3 download-report" onclick="generateAndOpenURL()">
                             <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Raw Attendance
                         </button>
                         <div class="downloading-message" style="display:none">
@@ -109,7 +106,7 @@
                 </div>
 
                 <!-- Filter Panel Right -->
-                <div class="col-md-6 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-blue">
+                <div class="w-full md:w-1/2 px-3 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-blue">
                     <div class="flex-panel padding-44">
                         <div class="p-icon green"></div>
                         <span class="uppercase">Filters</span>
@@ -119,7 +116,7 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
                                 </div>
-                                <select id="dirasa-round" class="form-control">
+                                <select id="dirasa-round" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200">
                                     <option value="">Select Round</option>
                                     {% for round in rounds %}
                                         <option value="{{ round.id }}">{{ round.name }}</option>
@@ -128,13 +125,13 @@
                             </div>
                         </div>
 
-                        <button id="generate-total-url" class="btn btn-primary btn-block btn-icon mt-3 download-total-report" onclick="generateAndOpenTotalURL()">
+                        <button id="generate-total-url" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700 btn-block btn-icon mt-3 download-total-report" onclick="generateAndOpenTotalURL()">
                             <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Total Attendances
                         </button>
                         <div class="downloading-total-message" style="display:none">
                             Loading...
                         </div>
-                        <button id="generate-round-url" class="btn btn-primary btn-block btn-icon mt-3 download-consecutive-report" onclick="generateAndOpenConsecutiveURL(event)">
+                        <button id="generate-round-url" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700 btn-block btn-icon mt-3 download-consecutive-report" onclick="generateAndOpenConsecutiveURL(event)">
                             <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Consecutive Absence
                         </button>
                         <div class="downloading-consecutive-message" style="display:none">

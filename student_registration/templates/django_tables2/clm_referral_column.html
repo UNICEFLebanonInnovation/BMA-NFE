@@ -3,7 +3,7 @@
 
 
 {% load util_tags %}
-<a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-success">
+<a href="{{ column.attrs.url }}{{ record.id }}" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-green-600 text-white hover:bg-green-700">
     <i class="icon-synch-sign icon-white"></i>
     {% trans "Refer" %}
 </a>
