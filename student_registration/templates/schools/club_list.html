@@ -4,9 +4,7 @@
 {% load static i18n %}
 {% load static i18n %}
 {% load render_table from django_tables2 %}
-{% load django_bootstrap5 %}
 
-{% bootstrap_css %}
 
 {% block project_title %}School | Club List{% endblock %}
 
@@ -17,10 +15,10 @@
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
+                                        <span class="inline-block pr-2">
                                             <i class="fa fa-user"></i>
                                         </span>
-                                        <span class="d-inline-block">
+                                        <span class="inline-block">
                                           {{ request.user.username }}
                                           - {{ request.user.partner }}
                                         </span>
@@ -48,38 +46,38 @@
                                 </div>
                             </div>
                         <div class="page-title-actions">
-<a href="{% url 'schools:club_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Club</a>
+<a href="{% url 'schools:club_add' school_id %}" class="mr-3 btn-icon inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-cyan-600 text-white hover:bg-cyan-700"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Club</a>
 
                         </div>
                         </div>
 </div>
 
-<div class="row">
+<div class="flex flex-wrap -mx-3">
     <div class="col-lg-12">
 <div id="accordion" class="accordion-wrapper mb-3 form-filters">
-    <div class="card">
-        <div id="headingOne" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+    <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div id="headingOne" class="px-4 py-3 border-b border-gray-200">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors text-blue-600 hover:text-blue-700 underline btn-block collapsed">
                 <h5 class="m-0 p-0">
                     <i class="pe-7s-filter text-primary"></i>
                     Filters</h5>
             </button>
         </div>
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
-            <div class="card-body">
+            <div class="p-4">
             <form action="" method="get" class="form form-inline">
                 {% bootstrap_form filter.form layout='inline' %}
 
-                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
+                <button class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors btn-outline-primary mr-left-5 filter-report" title="Search">
                   <i style="font-weight:bolder" class="pe-7s-search"></i>
                 </button>
 
                 <button href="" title="Cancel"
-                 class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
+                 class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
                 </button>
 
               {% if user|has_group:"EXPORT" %}
-                <a href="" title="Download" class="btn btn-outline-success download-report">
+                <a href="" title="Download" class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors btn-outline-success download-report">
                     <i class="lnr-download"></i>
                 </a>
                 <div class = "downloading-message" style = "display:none">
@@ -95,11 +93,11 @@
     </div>
 </div>
 
-<div class="row table-list">
+<div class="flex flex-wrap -mx-3 table-list">
     <div class="col-lg-12">
-        <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body">
-                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
+        <div class="card-hover-shadow-2x mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div class="p-4">
+                <div class="overflow-x-auto dataTables_wrapper dt-bootstrap5">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}
                 </div>

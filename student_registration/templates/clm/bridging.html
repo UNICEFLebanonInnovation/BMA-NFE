@@ -3,8 +3,6 @@
 {% load custom_tags %}
 {% load static i18n %}
 {% load static i18n %}
-{% load django_bootstrap5 %}
-{% bootstrap_css %}
 
 {% block project_title %}Main{% endblock %}
 
@@ -15,10 +13,10 @@
                             <!--<div class="page-title-heading">-->
                                 <!--<div>-->
                                     <!--<div class="page-title-head center-elem page-title-heading">-->
-                                        <!--<span class="d-inline-block pr-2">-->
+                                        <!--<span class="inline-block pr-2">-->
                                             <!--<i class="pe-7s-display1"></i>-->
                                         <!--</span>-->
-                                        <!--<span class="d-inline-block">Dirasa</span>-->
+                                        <!--<span class="inline-block">Dirasa</span>-->
                                     <!--</div>-->
                                 <!--</div>-->
                             <!--</div>-->
@@ -26,26 +24,26 @@
                         <!--</div>-->
 <!--</div>-->
 
-<div class="row">
+<div class="flex flex-wrap -mx-3">
                             <div class="col-lg-12 col-xl-12">
-                                <div class="main-card mb-3 card">
+                                <div class="main-card mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
                                     <div class="grid-menu grid-menu-2col">
-                                        <div class="no-gutters row">
-                                            <div class="col-sm-6">
+                                        <div class="no-gutters flex flex-wrap -mx-3">
+                                            <div class="sm:w-1/2 px-3">
                                                 <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-primary"></div>
+                                                    <div class="icon-wrapper rounded-full">
+                                                        <div class="icon-wrapper-bg bg-blue-600"></div>
                                                         <i class="lnr-cog text-primary"></i></div>
                                                   <div class="widget-numbers"><a href="{% url 'clm:bridging_list' %}">Dirasa Registration</a></div>
                                                     <div class="widget-subheading"> </div>
-                                                    <div class="widget-description text-success">
+                                                    <div class="widget-description text-green-600">
                                                         <!--<i class="fa fa-angle-up"></i>-->
                                                         <span class="pl-1"> </span></div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="sm:w-1/2 px-3">
                                                 <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
+                                                    <div class="icon-wrapper rounded-full">
                                                         <div class="icon-wrapper-bg bg-info"></div>
                                                         <i class="lnr-laptop-phone text-info"></i>
                                                     </div>
@@ -56,11 +54,11 @@
                                                         <span class="pl-1"></span></div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="sm:w-1/2 px-3">
                                                 <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-danger"></div>
-                                                        <i class="lnr-apartment text-danger"></i>
+                                                    <div class="icon-wrapper rounded-full">
+                                                        <div class="icon-wrapper-bg bg-red-600"></div>
+                                                        <i class="lnr-apartment text-red-600"></i>
                                                     </div>
                                                   <div class="widget-numbers"> <a href="{% url 'schools:school_list' %}">Schools</a></div>
                                                     <div class="widget-subheading"></div>
@@ -69,10 +67,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="sm:w-1/2 px-3">
                                                 <div class="widget-chart widget-chart-hover br-br">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-success"></div>
+                                                    <div class="icon-wrapper rounded-full">
+                                                        <div class="icon-wrapper-bg bg-green-600"></div>
                                                         <i class="lnr-graduation-hat"></i></div>
                                                   <div class="widget-numbers"><a href="{% url 'students:teacher_list' %}">Teachers</a></div>
                                                     <div class="widget-subheading"></div>

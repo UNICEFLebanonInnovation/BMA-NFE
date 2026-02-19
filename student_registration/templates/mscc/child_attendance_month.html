@@ -1,20 +1,20 @@
 
 {% load custom_tags %}
 {% load util_tags %}
-                                                <div class="card">
-                                                    <div class="b-radius-0 card-header">
+                                                <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
+                                                    <div class="b-radius-0 px-4 py-3 border-b border-gray-200">
                                                         <h5 class="m-0 p-0">{{ attendance_month }} Attendance</h5>
                                             <div class="btn-actions-pane-right actions-icon-btn">
-                                              <button class="mb-2 mr-2 btn btn-success">Attendance<span class="badge badge-pill badge-light">{{ nbr_attended }}</span></button>
-                                              <button class="mb-2 mr-2 btn btn-danger">Absence<span class="badge badge-pill badge-light">{{ nbr_absent }}</span></button>
-                                              <!--<button class="mb-2 mr-2 btn btn-primary">Day Off<span class="badge badge-pill badge-light">1</span></button>-->
+                                              <button class="mb-2 mr-2 inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-green-600 text-white hover:bg-green-700">Attendance<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-pill badge-light">{{ nbr_attended }}</span></button>
+                                              <button class="mb-2 mr-2 inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-red-600 text-white hover:bg-red-700">Absence<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-pill badge-light">{{ nbr_absent }}</span></button>
+                                              <!--<button class="mb-2 mr-2 inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700">Day Off<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-pill badge-light">1</span></button>-->
                                             </div>
 
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="p-4">
 
-<div class="main-card mb-3 card">
-                                    <div class="card-body">
+<div class="main-card mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <div class="p-4">
                                         <ul class="list-group">
                                           {% for item in instances %}
                                             <li class="list-group-item">
@@ -31,9 +31,9 @@
                                                             </div>
                                                             <div class="widget-content-right">
                                                                 {% if item.attended == 'Yes' %}
-                                                                  <div class="widget-numbers text-success">Attended</div>
+                                                                  <div class="widget-numbers text-green-600">Attended</div>
                                                                 {% else %}
-                                                                  <div class="widget-numbers text-danger">Absent</div>
+                                                                  <div class="widget-numbers text-red-600">Absent</div>
                                                                 {% endif %}
                                                             </div>
                                                         </div>

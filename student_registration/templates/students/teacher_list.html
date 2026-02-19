@@ -3,10 +3,8 @@
 {% load custom_tags %}
 {% load static i18n %}
 {% load render_table from django_tables2 %}
-{% load django_bootstrap5 %}
-{% load crispy_forms_tags %}
 
-{% bootstrap_css %}
+{% load crispy_forms_tags %}
 
 {% block project_title %}Teacher List{% endblock %}
 
@@ -17,10 +15,10 @@
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
+                                        <span class="inline-block pr-2">
                                             <i class="fa fa-user"></i>
                                         </span>
-                                        <span class="d-inline-block">
+                                        <span class="inline-block">
                                           {{ request.user.username }}
                                           - {{ request.user.partner }}
                                         </span>
@@ -47,26 +45,26 @@
                             </div>
                         <div class="page-title-actions">
      {% if 'Bridging'|is_allowed_create %}
-<a href="{% url 'students:teacher_add' %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add new Teacher</a>
+<a href="{% url 'students:teacher_add' %}" class="mr-3 btn-icon inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-cyan-600 text-white hover:bg-cyan-700"><i class="fa fa-plus btn-icon-wrapper"> </i>Add new Teacher</a>
 {% endif %}
 
                         </div>
                         </div>
 </div>
 
-<div class="row">
+<div class="flex flex-wrap -mx-3">
     <div class="col-lg-12">
 <div id="accordion" class="accordion-wrapper mb-3 form-filters">
-    <div class="card">
-        <div id="headingOne" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+    <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div id="headingOne" class="px-4 py-3 border-b border-gray-200">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors text-blue-600 hover:text-blue-700 underline btn-block collapsed">
                 <h5 class="m-0 p-0">
                     <i class="pe-7s-filter text-primary"></i>
                     Filters</h5>
             </button>
         </div>
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
-            <div class="card-body">
+            <div class="p-4">
               <form action="" method="get" class="form form-inline">
                {% crispy filter.form 'bootstrap3' %}
 
@@ -78,11 +76,11 @@
     </div>
 </div>
 
-<div class="row table-list">
+<div class="flex flex-wrap -mx-3 table-list">
     <div class="col-lg-12">
-        <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body">
-                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
+        <div class="card-hover-shadow-2x mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div class="p-4">
+                <div class="overflow-x-auto dataTables_wrapper dt-bootstrap5">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}
                 </div>

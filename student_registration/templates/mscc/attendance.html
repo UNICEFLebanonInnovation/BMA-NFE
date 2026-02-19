@@ -2,9 +2,7 @@
 {% load util_tags %}
 {% load custom_tags %}
 {% load static %}
-{% load django_bootstrap5 %}
 
-{% bootstrap_css %}
 
 {% block module_name %}Makani - Attendance{% endblock %}
 {% block project_title %}Attendance{% endblock %}
@@ -30,10 +28,10 @@
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
+                                        <span class="inline-block pr-2">
                                             <i class="fa fa-child"></i>
                                         </span>
-                                        <span class="d-inline-block">
+                                        <span class="inline-block">
                                           Daily Attendance
                                         </span>
                                     </div>
@@ -66,19 +64,19 @@
                         </div>
 </div>
 
-<div class="row">
+<div class="flex flex-wrap -mx-3">
 {% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
   <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
 {% endif %}
 </div>
 
-<div class="row">
-<div class="col-md-4">
-                                    <div class="main-card mb-3 card">
-                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
+<div class="flex flex-wrap -mx-3">
+<div class="md:w-1/3 px-3">
+                                    <div class="main-card mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                         <div class="px-4 py-3 border-b border-gray-200"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
 
                                         </div>
-                                        <div class="card-body">
+                                        <div class="p-4">
 
                                           <div class="form-group">
                                               {% csrf_token %}
@@ -89,15 +87,15 @@
                                                               <i class="fa fa-calendar-alt"></i>
                                                           </div>
                                                       </div>
-                                                    <input type="text" class="form-control" data-toggle="datepicker" id="attendance_date" value="{{ attendance_date }}"/>
+                                                    <input type="text" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500" data-toggle="datepicker" id="attendance_date" value="{{ attendance_date }}"/>
                                                   </div>
                                           </div>
 
                                           <div class="form-row" style="padding-bottom: 20px;">
-                                                <div class="col-md-6 ">
+                                                <div class="md:w-1/2 px-3">
                                                     <div class="input-group">
-                                                                  <div class="input-group-prepend ">
-                                                                      <select id="education_program" class="btn-primary">
+                                                                  <div class="input-group-prepend">
+                                                                      <select id="education_program" class="bg-blue-600 text-white hover:bg-blue-700">
                                                                           <option value="">Education Program</option>
                                                                           {% for item in education_program %}
                                                                             {% if item != '' %}
@@ -106,13 +104,13 @@
                                                                           {% endfor %}
                                                                       </select>
                                                                   </div>
-                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                        <input type="text" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500" style="border: 0px;background-color: white;" disabled>
                                                               </div>
                                                   </div>
-                                                  <div class="col-md-6">
+                                                  <div class="md:w-1/2 px-3">
                                                     <div class="input-group">
-                                                                  <div class="input-group-prepend ">
-                                                                      <select id="round" class="btn-primary">
+                                                                  <div class="input-group-prepend">
+                                                                      <select id="round" class="bg-blue-600 text-white hover:bg-blue-700">
                                                                           <option value="">Round</option>
                                                                            {% for item in round %}
                                                                               {% if item != '' %}
@@ -121,13 +119,13 @@
                                                                             {% endfor %}
                                                                       </select>
                                                                   </div>
-                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                        <input type="text" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500" style="border: 0px;background-color: white;" disabled>
                                                               </div>
                                                   </div>
-                                                  <div class="col-md-6">
+                                                  <div class="md:w-1/2 px-3">
                                                     <div class="input-group">
-                                                                  <div class="input-group-prepend ">
-                                                                      <select id="class_section" class="btn-primary">
+                                                                  <div class="input-group-prepend">
+                                                                      <select id="class_section" class="bg-blue-600 text-white hover:bg-blue-700">
                                                                           <option value="">Section</option>
                                                                            {% for item in class_section %}
                                                                               {% if item != '' %}
@@ -136,29 +134,29 @@
                                                                             {% endfor %}
                                                                       </select>
                                                                   </div>
-                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                        <input type="text" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500" style="border: 0px;background-color: white;" disabled>
                                                               </div>
                                                   </div>
                                               </div>
                                           <div class="form-row">
-                                                  <div class="col-md-6">
+                                                  <div class="md:w-1/2 px-3">
                                                             <div role="group" class="btn-group-sm btn-group">
 
                                                               <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">
-                                                                <label class="btn btn-light {% if day_off == 'No' %}active{% endif %}">
+                                                                <label class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-100 text-gray-900 hover:bg-gray-200 {% if day_off == 'No' %}active{% endif %}">
                                                                   <input type="radio" value="No" name="attendance_day_off" {% if day_off == 'No' %} checked{% endif %} /> Working day
                                                                 </label>
-                                                                <label class="btn btn-light {% if day_off == 'Yes' %}active{% endif %}">
+                                                                <label class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-100 text-gray-900 hover:bg-gray-200 {% if day_off == 'Yes' %}active{% endif %}">
                                                                   <input type="radio" value="Yes" name="attendance_day_off" {% if day_off == 'Yes' %} checked{% endif %} /> Day Off
                                                                 </label>
                                                               </div>
                                                             </div>
 
                                                   </div>
-                                                  <div class="col-md-6">
+                                                  <div class="md:w-1/2 px-3">
                                                     <div class="input-group">
-                                                                  <div class="input-group-prepend ">
-                                                                      <select id="close_reason" class="btn-primary {% if close_reason == '' %}hidden{% endif %}">
+                                                                  <div class="input-group-prepend">
+                                                                      <select id="close_reason" class="bg-blue-600 text-white hover:bg-blue-700 {% if close_reason == '' %}hidden{% endif %}">
                                                                           <option value="">Closing Reason</option>
                                                                           <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>Public Holiday</option>
                                                                           <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>School Holiday</option>
@@ -168,17 +166,17 @@
                                                                           <option value="Other" {% if close_reason == 'Other' %}selected{% endif %}>Other</option>
                                                                       </select>
                                                                   </div>
-                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                        <input type="text" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500" style="border: 0px;background-color: white;" disabled>
                                                               </div>
                                                   </div>
                                               </div>
                                           </div>
 
-                                        <div class="d-block text-right card-footer">
-                                            <a href="{% url 'mscc:attendance_report' %}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary"><i class="pe-7s-cloud-download btn-icon-wrapper"></i>Download</a>
-                                            <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
+                                        <div class="block text-right px-4 py-3 border-t border-gray-200">
+                                            <a href="{% url 'mscc:attendance_report' %}" class="btn-wide mb-2 mr-2 btn-icon inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700"><i class="pe-7s-cloud-download btn-icon-wrapper"></i>Download</a>
+                                            <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
 {% if request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
-                                            <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
+                                            <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-green-600 text-white hover:bg-green-700 disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
 {% endif %}
                                         </div>
                                       </div>
@@ -187,14 +185,14 @@
 
             <div class="col-md-8">
 
-                <div class="main-card mb-3 card">
-                  <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>
+                <div class="main-card mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                  <div class="px-4 py-3 border-b border-gray-200"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>
                     <p class="mb-0">Children Registered in Core-Package: <span id="children_count">0</span></p>
                   </div>
-                  <div class="card-body" style="height: 400px; overflow: auto;">
+                  <div class="p-4" style="height: 400px; overflow: auto;">
                       <div id="attendance_children"></div>
                   </div>
-                  <div class="d-block text-center card-footer"></div>
+                  <div class="block text-center px-4 py-3 border-t border-gray-200"></div>
 
                 </div>
 

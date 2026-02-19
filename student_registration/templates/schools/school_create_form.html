@@ -4,11 +4,9 @@
 {% load static i18n %}
 {% load crispy_forms_tags %}
 {% load static i18n %}
-{% load django_bootstrap5 %}
+
 
 {% load simple_tags %}
-{% bootstrap_css %}
-
 {% block project_title %}School | New{% endblock %}
 
 {% block extra_head %}
@@ -22,10 +20,10 @@
           <div class="page-title-heading">
               <div>
                   <div class="page-title-head center-elem page-title-heading">
-                      <span class="d-inline-block pr-2">
+                      <span class="inline-block pr-2">
                           <i class="fa fa-id-card"></i>
                       </span>
-                      <span class="d-inline-block">
+                      <span class="inline-block">
                         School
                       </span>
                   </div>
@@ -60,8 +58,8 @@
 
         <!--{{ form.errors }}-->
 
-<div class="main-card mb-3 card">
-                                <div class="card-body">
+<div class="main-card mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                <div class="p-4">
                                     <div id="smartwizard3" class="forms-wizard">
                                         <ul class="forms-wizard">
                                             <li>
@@ -94,11 +92,11 @@
                                     <div class="divider"></div>
 
                                     <div class="clearfix">
-                                        <a href="{% url 'schools:school_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <a href="{% url 'schools:school_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors text-blue-600 hover:text-blue-700 underline">Back to list</a>
 
-                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary" style="display: none;">Next</button>
-                                        <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
-                                        <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
+                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700" style="display: none;">Next</button>
+                                        <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700">Next</button>
+                                        <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors btn-outline-secondary">Previous</button>
 
                                     </div>
                                 </div>

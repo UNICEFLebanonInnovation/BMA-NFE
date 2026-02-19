@@ -18,15 +18,15 @@
         </div>
         <hr>
 
-        <div class="row">
+        <div class="flex flex-wrap -mx-3">
             {% for doc in documents %}
           <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-gray-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">{{ doc.name }}</h3>
                 <p class="card-text">{{ doc.overview }}</p>
                 <p class="card-text">{{ doc.modified }}</p>
-                <a href="{{ doc.file_url }}" class="btn btn-primary" target="_blank">{% trans 'Download file' %}</a>
+                <a href="{{ doc.file_url }}" class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700" target="_blank">{% trans 'Download file' %}</a>
               </div>
             </div>
           </div>

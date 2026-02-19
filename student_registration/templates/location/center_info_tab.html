@@ -10,16 +10,16 @@
     }
 </style>
 
-<div class="row staff-profile">
+<div class="flex flex-wrap -mx-3 staff-profile">
 <!--Center Data-->
 <div class="col-md-12 col-lg-6 col-xl-6">
-                            <div class="card-shadow-primary profile-responsive card-border mb-3 card">
+                            <div class="card-shadow-primary profile-responsive card-border mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
 <div class="dropdown-menu-header">
 
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Center Info.
                                                       {% if request.user|has_group:"MSCC_CENTER" and  request.user.center %}
                                                           <div style="float:right;">
@@ -223,12 +223,12 @@
 
 <!--Calculated Info-->
 <div class="col-md-12 col-lg-6 col-xl-6">
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Center Figures</h5>
                                                 </div>
                                             </div>
@@ -244,8 +244,8 @@
                                                       </div>
                                                       <div class="widget-content-right">
                                                           <div class="widget-numbers widget-numbers-sm text-primary right-align"><span>{{ instance.total_children }}</span></div>
-                                                          <div class="widget-numbers  text-warning font-size-xlg right-align"><span>{{ instance.total_male }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_female }}</span></div>
+                                                          <div class="widget-numbers text-warning font-size-xlg right-align"><span>{{ instance.total_male }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-green-600 font-size-xlg right-align"><span>{{ instance.total_female }}</span></div>
                                                       </div>
                                                   </div>
                                               </div>
@@ -260,8 +260,8 @@
                                                       </div>
                                                       <div class="widget-content-right">
                                                           <div class="widget-numbers widget-numbers-sm text-info right-align"><span>{{ instance.total_disability }}</span></div>
-                                                          <div class="widget-numbers  text-warning o font-size-xlg right-align"><span>{{ instance.total_disability_male }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_disability_female }}</span></div>
+                                                          <div class="widget-numbers text-warning o font-size-xlg right-align"><span>{{ instance.total_disability_male }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-green-600 font-size-xlg right-align"><span>{{ instance.total_disability_female }}</span></div>
                                                       </div>
                                                   </div>
                                               </div>
@@ -275,9 +275,9 @@
                                                           <div class="widget-subheading">Non-Lebanese:</div>
                                                       </div>
                                                       <div class="widget-content-right">
-                                                          <div class="widget-numbers widget-numbers-sm text-danger right-align"><span>{{ instance.total_children }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-red-600 right-align"><span>{{ instance.total_children }}</span></div>
                                                           <div class="widget-numbers widget-numbers-sm text-warning font-size-xlg right-align"><span>{{ instance.total_lebanese }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_non_lebanese }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-green-600 font-size-xlg right-align"><span>{{ instance.total_non_lebanese }}</span></div>
                                                       </div>
                                                   </div>
                                               </div>
@@ -294,7 +294,7 @@
                                                       <div class="widget-content-right">
                                                           <div class="widget-numbers widget-numbers-sm text-primary right-align"><span>{{ instance.total_staff }}</span></div>
                                                           <div class="widget-numbers widget-numbers-sm text-warning font-size-xlg right-align"><span>{{ instance.total_admin_staff }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_program_staff }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-green-600 font-size-xlg right-align"><span>{{ instance.total_program_staff }}</span></div>
                                                       </div>
                                                   </div>
                                               </div>

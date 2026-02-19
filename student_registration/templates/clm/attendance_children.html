@@ -18,11 +18,11 @@
 <ul class="list-group">
 {% for item in instances %}
                                             <li class="list-group-item">
-                                                <div class="todo-indicator bg-warning"></div>
+                                                <div class="todo-indicator bg-yellow-500"></div>
                                                 <div class="widget-content p-0">
                                                     <div class="widget-content-wrapper">
                                                         <div class="widget-content-left mr-3">
-                                                          <img width="42" class="rounded-circle" src="{% static 'images/avatars/male.png' %}">
+                                                          <img width="42" class="rounded-full" src="{% static 'images/avatars/male.png' %}">
                                                         </div>
                                                         <div class="widget-content-left" style="width: 200px !important;">
                                                             <input type="hidden" class="registration_id" name="registry_id[]" value="{{ item.registration_id }}" />
@@ -39,10 +39,10 @@
                                                             <div role="group" class="btn-group-sm btn-group">
 
                                                                 <div class="btn-group btn-group-toggle attendance_status" data-toggle="buttons">
-                                                                  <label class="btn btn-light {% if item.attended == 'Yes' or item.attended == ''  %} active {% endif %} " itemscope="#reason_block_{{ item.registration_id }}">
+                                                                  <label class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-100 text-gray-900 hover:bg-gray-200 {% if item.attended == 'Yes' or '' %} active endif" itemscope="#reason_block_{{ item.registration_id }}">
                                                                     <input type="radio" class="status" name="attendance_status_{{ item.registration_id }}" value="Yes" {% if item.attended == 'Yes'  %} checked {% endif %} /> Attended
                                                                   </label>
-                                                                  <label class="btn btn-light {% if item.attended == 'No'  %} active {% endif %} " itemscope="#reason_block_{{ item.registration_id }}" >
+                                                                  <label class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-100 text-gray-900 hover:bg-gray-200 {% if item.attended == 'No' %} active endif" itemscope="#reason_block_{{ item.registration_id }}" >
                                                                     <input type="radio" class="status" name="attendance_status_{{ item.registration_id }}" value="No" {% if item.attended == 'No'  %} checked {% endif %} /> Absent
                                                                   </label>
                                                                 </div>
@@ -52,15 +52,15 @@
                                                     </div>
                                                         <div class="widget-content-wrapper">
                                                             <div class="widget-content-right">
-                                                              <div class="input-group  {% if item.attended == 'Yes' or item.attended == ''  %} hidden {% endif %} " id="reason_block_{{ item.registration_id }}">
+                                                              <div class="input-group {% if item.attended == 'Yes' or '' %} hidden endif" id="reason_block_{{ item.registration_id }}">
                                                                   <div class="input-group-prepend">
-                                                                      <select id="absence_reason_{{ item.registration_id }}" class="btn-primary absence_reason">
+                                                                      <select id="absence_reason_{{ item.registration_id }}" class="bg-blue-600 text-white hover:bg-blue-700 absence_reason">
                                                                           <option value="">Select Reason</option>
                                                                           <option value="Sick" {% if item.absence_reason == 'Sick'  %} selected {% endif %} >Sick</option>
                                                                           <option value="Transportation" {% if item.absence_reason == 'Transportation'  %} selected {% endif %} >Transportation</option>
                                                                           <option value="Other" {% if item.absence_reason == 'Other'  %}  selected {% endif %} >Other</option>
                                                                       </select>
-                                                                  <input id="absence_reason_other_{{ item.registration_id }}" type="text" class="form-control absence_reason_other" placeholder="Absence Other reasons" value="{{ item.absence_reason_other }}">
+                                                                  <input id="absence_reason_other_{{ item.registration_id }}" type="text" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 absence_reason_other" placeholder="Absence Other reasons" value="{{ item.absence_reason_other }}">
                                                                 </div>
                                                               </div>
                                                             </div>

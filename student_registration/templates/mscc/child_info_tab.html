@@ -5,11 +5,11 @@
 {% load simple_tags %}
 
 {% load util_tags %}
-<div class="row staff-profile">
+<div class="flex flex-wrap -mx-3 staff-profile">
 
 <!--Child Bio Data-->
 <div class="col-md-12 col-lg-6 col-xl-4">
-                            <div class="card-shadow-primary profile-responsive card-border mb-3 card">
+                            <div class="card-shadow-primary profile-responsive card-border mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
 <div class="dropdown-menu-header">
                                     <div class="dropdown-menu-header-inner bg-info">
                                         <div class="menu-header-image opacity-3"></div>
@@ -29,7 +29,7 @@
                                                 <h6 class="menu-header-subtitle">Mother: {{ instance.child.mother_fullname  }}</h6>
                                             </div>
                                             <!--<div class="menu-header-btn-pane">-->
-                                                <!--<button class="button btn btn-pill btn-dark" data-style="slide-right"><a href="{% url 'mscc:child_edit' instance.id %}" style="color: white;"><i class="pe-7s-pen"></i></a></button>-->
+                                                <!--<button class="button inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors btn-pill bg-gray-900 text-white hover:bg-black" data-style="slide-right"><a href="{% url 'mscc:child_edit' instance.id %}" style="color: white;"><i class="pe-7s-pen"></i></a></button>-->
                                             <!--</div>-->
                                         </div>
                                     </div>
@@ -208,18 +208,18 @@
 
 <!--General Info-->
 <div class="col-md-12 col-lg-6 col-xl-4">
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">General info.
                                                       <div style="float:right;">
                                                             <a href="{% url 'mscc:child_edit' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Child Infos.">Edit</a>
@@ -233,19 +233,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-1" data-toggle="tab" href="#tab-animated-1" aria-selected="true">
+                                        <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-1" data-toggle="tab" href="#tab-animated-1" aria-selected="true">
                                                     <span>Address</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-0" data-toggle="tab" href="#tab-animated-0">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-0" data-toggle="tab" href="#tab-animated-0">
                                                     <span>Household</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-2" data-toggle="tab" href="#tab-animated-2">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-2" data-toggle="tab" href="#tab-animated-2">
                                                     <span>Social/Economic</span>
                                                 </a>
                                             </li>
@@ -258,7 +258,7 @@
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Father’s educational level</h4>
                                                                             <p> {{instance.child.father_educational_level}}</p></div>
                                                                     </div>
@@ -266,20 +266,20 @@
 
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mother’s educational level</h4>
                                                                             <p> {{instance.child.mother_educational_level}}</p></div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Primary phone number</h4>
                                                                             <p> {{instance.child.first_phone_number}}</p></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-info text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-info text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who will be answering the phone</h4>
                                                                             <p> {{instance.child.first_phone_owner}}</p></div>
                                                                     </div>
@@ -287,26 +287,26 @@
 
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone-handset text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone-handset text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Secondary phone number</h4>
                                                                             <p> {{instance.child.second_phone_number}}</p></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who will be answering the phone</h4>
                                                                             <p> {{instance.child.second_phone_owner}}</p></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of children under 18</h4>
                                                                               <p> {{instance.child.children_number_under18}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
                                                                           {% if instance.child.main_caregiver == 'Other'  %}
                                                                               <p> {{instance.child.main_caregiver}} - {{instance.child.main_caregiver_other}}</p>
@@ -318,20 +318,20 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-cloud text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-cloud text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caretaker's Full Name</h4>
                                                                             <p> {{instance.child.caregiver_full_name}}</p></div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="pe-7s-user-female text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="pe-7s-user-female text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caretaker's Mother Full Name</h4>
                                                                             <p> {{instance.child.caregiver_mother_name}}</p></div>
                                                                     </div>
                                                                 </div>
                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
                                                                           {% if instance.child.main_caregiver_nationality.id == 6 %}
                                                                               <p> {{instance.child.main_caregiver_nationality}} - {{instance.child.main_caregiver_other}}</p>
@@ -343,7 +343,7 @@
                                                                     </div>
                                                                </div>
                                                               <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's ID Type</h4>
                                                                           {% if instance.type == 'Core-Package' %}
                                                                           {% if instance.child.id_type and instance.child.id_type.id != 7 %}
@@ -356,7 +356,7 @@
                                                                     </div>
                                                                </div>
                                                               <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Have siblings?</h4>
                                                                           {{ instance.child.have_sibling }}
                                                                           <br>
@@ -368,7 +368,7 @@
                                                                </div>
 
                                                               <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-gray-900"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the mother pregnant or expecting?</h4>
                                                                           {{ instance.child.mother_pregnant_expecting }}
                                                                         </div>
@@ -394,7 +394,7 @@
 
                                                                 </h4>
                                                                     <p>
-                                                                        <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
+                                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-dot-inside"></span>
                                                                     </p>
                                                                     <p>{{ instance.child.p_code }}</p>
                                                                 </div>
@@ -408,7 +408,7 @@
 
                                                                 </h4>
                                                                     <p>
-                                                                        <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
+                                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-dot-inside"></span>
                                                                     </p>
                                                                     <p> {{ instance.child.address }}</p>
                                                                 </div>
@@ -497,10 +497,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -512,18 +512,18 @@
   <!--Education history and current situation -->
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'EducationService' instance as result %}
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Education
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -541,14 +541,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">
+                                        <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">
                                                     <span>Situation</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
-                                                  <a role="tab" class="nav-link" id="tab-c-4" data-toggle="tab" href="#tab-animated-4">
+                                            <li class="list-none">
+                                                  <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-4" data-toggle="tab" href="#tab-animated-4">
                                                       <span>Education History</span>
                                                   </a>
                                               </li>
@@ -658,10 +658,10 @@
 
 
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>

@@ -5,12 +5,12 @@
 {% load simple_tags %}
 
 {% load util_tags %}
-<div class="card no-shadow bg-transparent no-border rm-borders mb-3">
+<div class="rounded-lg border border-gray-200 bg-white shadow-sm no-shadow bg-transparent no-border rm-borders mb-3">
   {% child_attendance_history instance.child_id as result %}
-                            <div class="card">
-                                <div class="no-gutters row">
+                            <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
+                                <div class="no-gutters flex flex-wrap -mx-3">
                                     <div class="col-md-12 col-lg-6 col-xl-3">
-                                        <div class="pt-0 pb-0 card-body">
+                                        <div class="pt-0 pb-0 p-4">
                                             <ul class="list-group list-group-flush">
                                                 <li class="list-group-item">
                                                     <div class="widget-content p-0">
@@ -40,7 +40,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-6 col-xl-3">
-                                        <div class="pt-0 pb-0 card-body">
+                                        <div class="pt-0 pb-0 p-4">
                                             <ul class="list-group list-group-flush">
                                                 <li class="list-group-item">
                                                     <div class="widget-content p-0">
@@ -56,7 +56,7 @@
                                                             </div>
                                                             <div class="widget-progress-wrapper">
                                                                 <div class="progress-bar-sm progress-bar-animated-alt progress">
-                                                                    <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="{{ result.total_attended }}" aria-valuemin="0" aria-valuemax="100" style="width: 56%;"></div>
+                                                                    <div class="progress-bar bg-blue-600" role="progressbar" aria-valuenow="{{ result.total_attended }}" aria-valuemin="0" aria-valuemax="100" style="width: 56%;"></div>
                                                                 </div>
                                                                 <!--<div class="progress-sub-label">-->
                                                                     <!--<div class="sub-label-left">YoY Growth</div>-->
@@ -70,7 +70,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-6 col-xl-3">
-                                        <div class="pt-0 pb-0 card-body">
+                                        <div class="pt-0 pb-0 p-4">
                                             <ul class="list-group list-group-flush">
                                                 <li class="list-group-item">
                                                     <div class="widget-content p-0">
@@ -81,12 +81,12 @@
                                                                     <!--<div class="widget-subheading">People interested</div>-->
                                                                 </div>
                                                                 <div class="widget-content-right">
-                                                                    <div class="widget-numbers text-success">{{ result.ttl_absence }}</div>
+                                                                    <div class="widget-numbers text-green-600">{{ result.ttl_absence }}</div>
                                                                 </div>
                                                             </div>
                                                             <div class="widget-progress-wrapper">
                                                                 <div class="progress-bar-sm progress-bar-animated-alt progress">
-                                                                    <div class="progress-bar bg-success" role="progressbar" aria-valuenow="{{ result.ttl_absence }}" aria-valuemin="0" aria-valuemax="100" style="width: 22%;"></div>
+                                                                    <div class="progress-bar bg-green-600" role="progressbar" aria-valuenow="{{ result.ttl_absence }}" aria-valuemin="0" aria-valuemax="100" style="width: 22%;"></div>
                                                                 </div>
                                                                 <!--<div class="progress-sub-label">-->
                                                                     <!--<div class="sub-label-left">YoY Growth</div>-->
@@ -100,7 +100,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-6 col-xl-3">
-                                        <div class="pt-0 pb-0 card-body">
+                                        <div class="pt-0 pb-0 p-4">
                                             <ul class="list-group list-group-flush">
                                                 <li class="list-group-item">
                                                     <div class="widget-content p-0">
@@ -111,12 +111,12 @@
                                                                     <!--<div class="widget-subheading">Total</div>-->
                                                                 </div>
                                                                 <div class="widget-content-right">
-                                                                    <div class="widget-numbers text-danger">{{ result.ttl_absence_month }}</div>
+                                                                    <div class="widget-numbers text-red-600">{{ result.ttl_absence_month }}</div>
                                                                 </div>
                                                             </div>
                                                             <div class="widget-progress-wrapper">
                                                                 <div class="progress-bar-sm progress-bar-animated-alt progress">
-                                                                    <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="{{ result.ttl_absence_month }}" aria-valuemin="0" aria-valuemax="100" style="width: 14%;"></div>
+                                                                    <div class="progress-bar bg-red-600" role="progressbar" aria-valuenow="{{ result.ttl_absence_month }}" aria-valuemin="0" aria-valuemax="100" style="width: 14%;"></div>
                                                                 </div>
                                                                 <!--<div class="progress-sub-label">-->
                                                                     <!--<div class="sub-label-left">YoY Growth</div>-->
@@ -135,26 +135,26 @@
 
 <div class="app-inner-layout chat-layout">
                         <div class="app-inner-layout__wrapper row-fluid no-gutters">
-                            <div class="app-inner-layout__sidebar bg-transparent card">
+                            <div class="app-inner-layout__sidebar bg-transparent rounded-lg border border-gray-200 bg-white shadow-sm">
                                 <div class="p-3">
-                                    <div class="dropdown-menu nav p-0 dropdown-menu-inline dropdown-menu-rounded dropdown-menu-hover-primary">
+                                    <div class="z-50 mt-2 min-w-[12rem] rounded-md border border-gray-200 bg-white py-1 shadow-lg flex flex-wrap p-0 dropdown-menu-inline dropdown-menu-rounded dropdown-menu-hover-primary">
                                         <h6 tabindex="-1" class="pt-0 dropdown-header">Months</h6>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=1" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">January</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=2" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">February</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=3" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">March</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=4" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">April</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=5" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">May</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=6" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">June</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=7" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">July</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=8" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">August</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=9" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">September</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=10" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">October</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=11" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">November</a>
-                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=12" data-toggle="tab" tabindex="0" class="mb-1 attendance_month dropdown-item">December</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=1" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">January</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=2" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">February</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=3" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">March</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=4" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">April</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=5" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">May</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=6" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">June</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=7" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">July</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=8" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">August</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=9" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">September</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=10" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">October</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=11" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">November</a>
+                                        <a href="#tab-faq-1" data-href="{% url 'mscc:attendance_child' instance.child_id %}?month=12" data-toggle="tab" tabindex="0" class="mb-1 attendance_month block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">December</a>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 app-inner-layout__content card">
+                            <div class="col-md-12 app-inner-layout__content rounded-lg border border-gray-200 bg-white shadow-sm">
                                 <div class="pb-5 pl-5 pr-5 pt-3">
                                     <div class="mobile-app-menu-btn mb-3">
                                         <button type="button" class="hamburger hamburger--elastic"><span class="hamburger-box"><span class="hamburger-inner"></span></span></button>
@@ -163,11 +163,11 @@
 
                                         <div class="tab-pane active show" id="tab-faq-1">
 
-                                                <div class="card">
-                                                    <div class="b-radius-0 card-header">
+                                                <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
+                                                    <div class="b-radius-0 px-4 py-3 border-b border-gray-200">
                                                         <h5 class="m-0 p-0">Attendances</h5>
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="p-4">
 
                                                       <div class="alert alert-warning fade show" role="alert">Please select a month to display the attendance details!</div>
 

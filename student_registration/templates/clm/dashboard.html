@@ -2,11 +2,9 @@
 {% load util_tags %}
 {% load custom_tags %}
 {% load static %}
-{% load django_bootstrap5 %}
+
 
 {% load simple_tags %}
-{% bootstrap_css %}
-
 {% block project_title %}Dashboard{% endblock %}
 {% block module_name %}Dirasa - Dashboard{% endblock %}
 
@@ -24,10 +22,10 @@
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
+                                        <span class="inline-block pr-2">
                                             <i class="pe-7s-display1"></i>
                                         </span>
-                                        <span class="d-inline-block">Dashboard</span>
+                                        <span class="inline-block">Dashboard</span>
                                     </div>
                                 </div>
                             </div>
@@ -35,7 +33,7 @@
                         </div>
 </div>
 
-<div class="row">
+<div class="flex flex-wrap -mx-3">
 
   <iframe title="Makani - 2025 - V2" width="95%" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiOTExNDAyZjUtN2NhNS00MTBiLWE2MWMtMzVmMDBiYTE4NTQ1IiwidCI6Ijc3NDEwMTk1LTE0ZTEtNGZiOC05MDRiLWFiMTg5MjAyMzY2NyIsImMiOjh9" frameborder="0" allowFullScreen="true"></iframe>
 

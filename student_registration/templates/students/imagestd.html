@@ -3,8 +3,7 @@
 {% load custom_tags %}
 
 {% load static i18n %}
-{% load django_bootstrap5 %}
-{% bootstrap_css %}
+
 {% load render_table from django_tables2 %}
 
 {% get_current_language as LANGUAGE_CODE %}
@@ -62,7 +61,7 @@
             </td>
             <td hidden>
               {% block bl_clearprofile %}
-              <button class="btn"><i class="fa fa-trash"></i>
+              <button class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors"><i class="fa fa-trash"></i>
 
 
               </button>
@@ -130,7 +129,7 @@
 
         <div style = "max-width:470px;">
           <center>
-            <button class="	glyphicon glyphicon-saved" style = "border:0px;background-color:#C4E1FE; margin-top:8%;
+            <button class="glyphicon glyphicon-saved" style = "border:0px;background-color:#C4E1FE; margin-top:8%;
                   height:35px; width:35%; margin-left:19%;" type = "submit" value = "upload" >
               <strong>{% trans  'upload' %}&nbsp;&nbsp;&nbsp;&nbsp;</strong>
             </button>

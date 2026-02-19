@@ -4,7 +4,7 @@
 {% load simple_tags %}
 
 {% load util_tags %}
-<div class="row staff-profile">
+<div class="flex flex-wrap -mx-3 staff-profile">
 
   <!--RS-->
 {% get_service instance 'RS' as result %}
@@ -13,12 +13,12 @@
 
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'EducationRSService' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Retention Support
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -31,9 +31,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--<ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">-->
-                                            <!--<li class="nav-item">-->
-                                                <!--<a role="tab" class="nav-link active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">-->
+                                        <!--<ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">-->
+                                            <!--<li class="list-none">-->
+                                                <!--<a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">-->
                                                     <!--<span>Situation</span>-->
                                                 <!--</a>-->
                                             <!--</li>-->
@@ -74,8 +74,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
                                             </li>
                                         </ul>
                                     </div>
@@ -92,18 +92,18 @@
   {% service_data 'EducationProgrammeAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                   {% if result and es_result.education_program  in 'YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
                                                     <h5 class="menu-header-title">RS Grade 9 - Grading</h5>
                                                   {% else %}
@@ -117,37 +117,37 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link mb-2 mr-2 active show" id="tab-c-11" data-toggle="tab" href="#tab-animated-11" aria-selected="true">
+                                        <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 mb-2 mr-2 active show" id="tab-c-11" data-toggle="tab" href="#tab-animated-11" aria-selected="true">
                                                   <span>Pre Grading</span>
                                                 </a>
                                             </li>
                                           {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9' and instance.type == 'Walk-in' %}
                                           {% else %}
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-12" data-toggle="tab" href="#tab-animated-12">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-12" data-toggle="tab" href="#tab-animated-12">
                                                     <span>Post Grading </span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-15" data-toggle="tab" href="#tab-animated-15">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-15" data-toggle="tab" href="#tab-animated-15">
                                                     <span>Improvement</span>
                                                 </a>
                                             </li>
 
                                             {% endif %}
                                           {% if result1.education_program in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-16" data-toggle="tab" href="#tab-animated-16">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-16" data-toggle="tab" href="#tab-animated-16">
                                                     <span>School Grading</span>
                                                 </a>
                                             </li>
                                             {% endif %}
 
                                           {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-17" data-toggle="tab" href="#tab-animated-17">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-17" data-toggle="tab" href="#tab-animated-17">
                                                     <span>School Grading</span>
                                                 </a>
                                             </li>
@@ -1647,10 +1647,10 @@
 
 
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -1670,18 +1670,18 @@
   {% service_data 'EducationProgrammeAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                   {% if result1.education_program == 'YFS Level 1 - RS Grade 9' %}
                                                       <h5 class="menu-header-title">YFS Level 1 - Scoring</h5>
                                                   {% elif result1.education_program == 'YFS Level 2 - RS Grade 9' %}
@@ -1697,19 +1697,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link mb-2 mr-2 active show" id="tab-c-111" data-toggle="tab" href="#tab-animated-111" aria-selected="true">
+                                        <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 mb-2 mr-2 active show" id="tab-c-111" data-toggle="tab" href="#tab-animated-111" aria-selected="true">
                                                   <span>Pre Scoring</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-121" data-toggle="tab" href="#tab-animated-121">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-121" data-toggle="tab" href="#tab-animated-121">
                                                     <span>Post Scoring</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-151" data-toggle="tab" href="#tab-animated-151">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-151" data-toggle="tab" href="#tab-animated-151">
                                                     <span>Improvement</span>
                                                 </a>
                                             </li>
@@ -2100,10 +2100,10 @@
                                           </div>
 
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -2118,12 +2118,12 @@
   {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'DigitalService' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Digital Component
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -2137,15 +2137,15 @@
                                             </div>
 
                                         </div>
-                                      <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-20" data-toggle="tab" href="#tab-animated-20" aria-selected="true">
+                                      <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-20" data-toggle="tab" href="#tab-animated-20" aria-selected="true">
                                                     <span>Akelius</span>
                                                 </a>
                                             </li>
 
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-21" data-toggle="tab" href="#tab-animated-21" aria-selected="true">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-21" data-toggle="tab" href="#tab-animated-21" aria-selected="true">
                                                     <span>Learning Passport</span>
                                                 </a>
                                             </li>
@@ -2257,8 +2257,8 @@
                                             </div>
                                         </div>
 
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
                                             </li>
                                         </ul>
                                     </div>
@@ -2271,18 +2271,18 @@
   {% if result %}
 
 <div class="col-md-12 col-lg-6 col-xl-4">
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Health & Nutrition
 
                                                     </h5>
@@ -2294,20 +2294,20 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-22" data-toggle="tab" href="#tab-animated-22" aria-selected="true">
+                                        <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-22" data-toggle="tab" href="#tab-animated-22" aria-selected="true">
                                                     <span>Assessment</span>
                                                 </a>
                                             </li>
-                                           <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-23" data-toggle="tab" href="#tab-animated-23" aria-selected="true">
+                                           <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-23" data-toggle="tab" href="#tab-animated-23" aria-selected="true">
                                                     <span>Session</span>
                                                 </a>
                                             </li>
 
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-24" data-toggle="tab" href="#tab-animated-29" aria-selected="true">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-24" data-toggle="tab" href="#tab-animated-29" aria-selected="true">
                                                     <span>Referral</span>
                                                 </a>
                                             </li>
@@ -2629,10 +2629,10 @@
                                             </div>
                                         </div>
 
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -2651,18 +2651,18 @@
       {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'YouthKitService' instance as result %}
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Adolescents Kit
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -2680,21 +2680,21 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-6" data-toggle="tab" href="#tab-animated-6" aria-selected="true">
+                                        <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-6" data-toggle="tab" href="#tab-animated-6" aria-selected="true">
                                                     <span>Basic</span>
                                                 </a>
                                             </li>
 
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-7" data-toggle="tab" href="#tab-animated-7" aria-selected="true">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-7" data-toggle="tab" href="#tab-animated-7" aria-selected="true">
                                                     <span>Assessment</span>
                                                 </a>
                                             </li>
 
-                                            <!--<li class="nav-item">-->
-                                                <!--<a role="tab" class="nav-link" id="tab-c-8" data-toggle="tab" href="#tab-animated-8" aria-selected="true">-->
+                                            <!--<li class="list-none">-->
+                                                <!--<a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-8" data-toggle="tab" href="#tab-animated-8" aria-selected="true">-->
                                                     <!--<span>Referral</span>-->
                                                 <!--</a>-->
                                             <!--</li>-->
@@ -2862,10 +2862,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -2882,18 +2882,18 @@
   {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|BLN Catch-up|ABLN Level 1|ABLN Level 2|ABLN Catch-up|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2|YFS Level 1 - RS Grade 9|YFS Level 2 - RS Grade 9|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_youth_data 'YouthService' instance  'Maharati' as result %}
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Maharati
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -2970,10 +2970,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -2991,18 +2991,18 @@
   {% if service in 'YBLN Level 1|YBLN Level 2|YBLN Catch-up|YFS Level 1|YFS Level 2|YFS Level 1 - RS Grade 9|YFS Level 2 - RS Grade 9|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
   <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_youth_data 'YouthService' instance  'GIL' as result %}
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">GIL
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -3093,10 +3093,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -3113,12 +3113,12 @@
 
 {% service_data 'LegoService' instance as result %}
 
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">LEGO
                                                       <div style="float:right;">
                                                         {% if result %}
@@ -3171,8 +3171,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
                                             </li>
                                         </ul>
                                     </div>
@@ -3185,18 +3185,18 @@
   {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'PSSService' instance as result %}
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">PSS
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -3214,15 +3214,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-9" data-toggle="tab" href="#tab-animated-9" aria-selected="true">
+                                        <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-9" data-toggle="tab" href="#tab-animated-9" aria-selected="true">
                                                     <span>Psychosocial Support</span>
                                                 </a>
                                             </li>
 
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-10" data-toggle="tab" href="#tab-animated-10" aria-selected="true">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-10" data-toggle="tab" href="#tab-animated-10" aria-selected="true">
                                                     <span>Assessment</span>
                                                 </a>
                                             </li>
@@ -3337,10 +3337,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
+                                                <!--<button class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black">-->
+                                                    <!--<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -3357,18 +3357,18 @@
   {% if result and result1 %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'FollowUpService' instance as result %}
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <!--<div class="card-header-tab px-4 py-3 border-b border-gray-200">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Caregivers Package
                                                       <div style="float:right;">
                                                                                                                         <a href="{% url 'mscc:service_follow_up_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Caregivers Package Data">Add</a>
@@ -3382,15 +3382,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
+                                        <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
 
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-13" data-toggle="tab" href="#tab-animated-13" aria-selected="true">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-13" data-toggle="tab" href="#tab-animated-13" aria-selected="true">
                                                     <span>{% if results|length > 1 %}Last {% endif %}Follow-up</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-14" data-toggle="tab" href="#tab-animated-14" aria-selected="true">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-14" data-toggle="tab" href="#tab-animated-14" aria-selected="true">
                                                     <span>{% if results|length > 1 %}Last {% endif %}Parents meeting</span>
                                                 </a>
                                             </li>
@@ -3516,11 +3516,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
                                                 {% if results|length > 1 %}
-                                                <a href="{% url 'mscc:service_follow_up_view_all' instance.id %}" class="btn-shadow btn-wide btn-pill btn btn-dark show-view-all" data-toggle="modal" data-target=".bd-example-modal-lg">
-                                                    <span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>
+                                                <a href="{% url 'mscc:service_follow_up_view_all' instance.id %}" class="btn-shadow btn-wide btn-pill inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-gray-900 text-white hover:bg-black show-view-all" data-toggle="modal" data-target=".bd-example-modal-lg">
+                                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>
                                                     View All
                                                 </a>
                                                 {% endif %}
@@ -3536,12 +3536,12 @@
   {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'InclusionService' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Inclusion
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -3554,9 +3554,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--<ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">-->
-                                            <!--<li class="nav-item">-->
-                                                <!--<a role="tab" class="nav-link active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">-->
+                                        <!--<ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">-->
+                                            <!--<li class="list-none">-->
+                                                <!--<a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">-->
                                                     <!--<span>Situation</span>-->
                                                 <!--</a>-->
                                             <!--</li>-->
@@ -3590,8 +3590,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
                                             </li>
                                         </ul>
                                     </div>
@@ -3602,12 +3602,12 @@
   <!--Referral-->
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'Referral' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Referral
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -3620,9 +3620,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--<ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">-->
-                                            <!--<li class="nav-item">-->
-                                                <!--<a role="tab" class="nav-link active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">-->
+                                        <!--<ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">-->
+                                            <!--<li class="list-none">-->
+                                                <!--<a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">-->
                                                     <!--<span>Situation</span>-->
                                                 <!--</a>-->
                                             <!--</li>-->
@@ -3676,8 +3676,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
                                             </li>
                                         </ul>
                                     </div>
@@ -3692,27 +3692,27 @@
 {% service_data 'YouthReferral' instance as result1 %}
   <!--Youth Assessment-->
 <div class="col-md-12 col-lg-6 col-xl-4">
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Youth
 
                                                     </h5>
                                                 </div>
                                             </div>
                                         </div>
-                                       <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
+                                       <ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">
 
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-25" data-toggle="tab" href="#tab-animated-25" aria-selected="true">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-25" data-toggle="tab" href="#tab-animated-25" aria-selected="true">
                                                     <span>Assessment</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-28" data-toggle="tab" href="#tab-animated-28" aria-selected="true">
+                                            <li class="list-none">
+                                                <a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" id="tab-c-28" data-toggle="tab" href="#tab-animated-28" aria-selected="true">
                                                     <span>Referral</span>
                                                 </a>
                                             </li>
@@ -3854,8 +3854,8 @@
 
                                         </div>
                                        </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
                                             </li>
                                         </ul>
                                 </div>
@@ -3867,12 +3867,12 @@
   {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'Recreational' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-gray-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
+                                                <div class="menu-header-content text-gray-900">
                                                     <h5 class="menu-header-title">Recreational
                                                       <div style="float:right;">
                                                             {% if result %}
@@ -3885,9 +3885,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--<ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">-->
-                                            <!--<li class="nav-item">-->
-                                                <!--<a role="tab" class="nav-link active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">-->
+                                        <!--<ul class="tabs-animated-shadow tabs-animated flex flex-wrap nav-justified tabs-shadow-bordered p-3">-->
+                                            <!--<li class="list-none">-->
+                                                <!--<a role="tab" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">-->
                                                     <!--<span>Situation</span>-->
                                                 <!--</a>-->
                                             <!--</li>-->
@@ -3932,8 +3932,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                        <ul class="flex flex-wrap flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 list-none">
                                             </li>
                                         </ul>
                                     </div>

@@ -6,7 +6,7 @@
 <h1>Export History Dashboard</h1>
 <p>Total records: {{ total }}</p>
 <h2>Exports by Type</h2>
-<table class="table">
+<table class="min-w-full divide-y divide-gray-200">
   <thead><tr><th>Type</th><th>Count</th></tr></thead>
   <tbody>
   {% for item in export_stats %}
@@ -17,7 +17,7 @@
   </tbody>
 </table>
 <h2>Exports by Partner</h2>
-<table class="table">
+<table class="min-w-full divide-y divide-gray-200">
   <thead><tr><th>Partner</th><th>Count</th></tr></thead>
   <tbody>
   {% for item in partner_stats %}

@@ -2,7 +2,7 @@
 {% load custom_tags %}
 {% load util_tags %}
 {% if record.registered_in_level %}
-<button class="btn btn-warning detach-button" itemscope="{{ record.id }}" data-action="{{ column.attrs.url }}{{ record.id }}" translation="{% trans "Are you sure you want to detach this student?" %}">
+<button class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-yellow-500 text-gray-900 hover:bg-yellow-600 detach-button" itemscope="{{ record.id }}" data-action="{{ column.attrs.url }}{{ record.id }}" translation="{% trans "Are you sure you want to detach this student?" %}">
 {#    <i class="icon-trash icon-white"></i>#}
     {% trans "Detach" %}
 </button>

@@ -3,7 +3,7 @@
 
 {% load util_tags %}
 {% if request.user|has_group:"ENROL_GRADING" and record.incomplete_grading  %}  <!--and record.cycle == "Cycle 1" -->
-    <a href="{% url 'enrollments:grading' record.incomplete_grading 4 %}" class="btn btn-info" target="_blank">
+    <a href="{% url 'enrollments:grading' record.incomplete_grading 4 %}" class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-cyan-600 text-white hover:bg-cyan-700" target="_blank">
         <i class="icon-edit-sign icon-white"></i>
         {% trans "Incomplete" %}
     </a>

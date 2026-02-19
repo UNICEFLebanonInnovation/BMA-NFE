@@ -4,7 +4,7 @@
 {% load util_tags %}
 {#{% if record.owner.id == request.user.id and column.attrs.programme|is_allowed_edit %}#}
 <!--{% if record.owner.id == request.user.id %}-->
-<button class="btn btn-danger delete-button" itemscope="{{ record.id }}" data-action="{{ column.attrs.url }}{{ record.id }}" translation="{% trans "Are you sure you want to delete this student?" %}">
+<button class="inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-red-600 text-white hover:bg-red-700 delete-button" itemscope="{{ record.id }}" data-action="{{ column.attrs.url }}{{ record.id }}" translation="{% trans "Are you sure you want to delete this student?" %}">
     <i class="icon-trash icon-white"></i>
     {% trans "Delete" %}
 </button>
