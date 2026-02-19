@@ -58,4 +58,4 @@ The following templates still include Bootstrap JS-driven patterns (`data-toggle
 3. Replace `django_tables2` bootstrap templates with Tailwind-specific table partials.
 4. Move crispy forms from `bootstrap3` pack to a Tailwind-compatible rendering strategy (custom crispy templates or plain Django form rendering).
 5. Once JS replacements are complete, remove Bootstrap JS/CDN includes from base and remaining templates.
-6. Run `scripts/build_tailwind.sh` (runs `tailwind install` then `tailwind build`) to bootstrap npm dependencies and generate production CSS. The theme currently uses `tailwindcss@1.9.6` and `./node_modules/.bin/tailwindcss` for compatibility with older npm/node environments where `npx` is unavailable.
+6. Run `scripts/build_tailwind.sh` (runs `tailwind install` then `tailwind build`) to bootstrap npm dependencies and generate production CSS. The theme currently uses `tailwindcss@1.9.6` and invokes `./node_modules/.bin/tailwindcss build ...` (v1 CLI syntax) for compatibility with older npm/node environments where `npx` is unavailable.
