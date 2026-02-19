@@ -75,7 +75,6 @@ THIRD_PARTY_APPS = [
     'rest_framework.authtoken',
     'django_makemessages_xgettext',
 
-    'django_bootstrap5',
     # 'bootstrap4',
     'bootstrap3_datetime',
     'import_export',

@@ -5,9 +5,7 @@
 {% load crispy_forms_tags %}
 {% load static i18n %}
 {% load render_table from django_tables2 %}
-{% load django_bootstrap5 %}
 
-{% bootstrap_css %}
 
 {% block head_title %}Absence{% endblock %}
 
@@ -15,7 +13,6 @@
 
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
-    <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
     <link href="{% static 'css/bridging/attendance-list.css' %}" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-combobox.css' %}">
 

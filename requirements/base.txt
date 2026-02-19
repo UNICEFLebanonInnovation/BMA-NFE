@@ -14,7 +14,6 @@ whitenoise==6.9.0
 # Forms
 django-braces==1.17.0
 django-crispy-forms==2.4
-crispy-bootstrap5==2025.6
 #crispy-bootstrap4==2025.6
 crispy-bootstrap3==2024.1
 
@@ -76,8 +75,6 @@ django-jazzmin==3.0.1
 django-autocomplete-light==3.9.7
 #mongoengine==0.11.0
 django-admin-rangefilter==0.3.0
-#django-bootstrap5==25.1
-django-bootstrap5==25.1
 #django-bootstrap4==25.1
 bootstrap3-datetime==2.4
 django-tables2==2.7.5
