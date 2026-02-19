@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "prebuild": "npm install",
     "build": "node ./node_modules/tailwindcss/lib/cli.js build ./src/styles.css -o ../css/dist/styles.css",
+    "predev": "npm install",
     "dev": "node ./node_modules/tailwindcss/lib/cli.js build ./src/styles.css -o ../css/dist/styles.css --watch"
   },
   "devDependencies": {
