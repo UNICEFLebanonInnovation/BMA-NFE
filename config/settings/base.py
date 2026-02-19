@@ -238,7 +238,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap3"
 
 
 # Tailwind (django-tailwind)
-TAILWIND_APP_NAME = 'student_registration_theme'
+TAILWIND_APP_NAME = 'theme'
 NPM_BIN_PATH = 'npm'
 
 # STATIC FILE CONFIGURATION
