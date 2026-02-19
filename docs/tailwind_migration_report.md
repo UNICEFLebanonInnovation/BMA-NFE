@@ -1,8 +1,8 @@
 # Tailwind Migration Report
 
 ## What was converted
-- Added Tailwind build scaffolding (`tailwind.config.js`, `postcss.config.js`, Tailwind input/output files, and build helper script).
-- Added Tailwind stylesheet include to the main Django base layout.
+- Implemented `django-tailwind` integration (dependency + Django settings + dedicated `student_registration.theme` app with Tailwind sources/output and build script).
+- Updated base layout to use `{% tailwind_css %}` from `django-tailwind`.
 - Ran an automated Bootstrap-to-Tailwind codemod over all `*.html` files (recursive) to replace common Bootstrap utility/component classes with Tailwind utility classes.
 - Removed `{% load django_bootstrap5 %}`, `{% bootstrap_css %}`, and `{% bootstrap_javascript %}` template tags from templates.
 
@@ -58,4 +58,4 @@ The following templates still include Bootstrap JS-driven patterns (`data-toggle
 3. Replace `django_tables2` bootstrap templates with Tailwind-specific table partials.
 4. Move crispy forms from `bootstrap3` pack to a Tailwind-compatible rendering strategy (custom crispy templates or plain Django form rendering).
 5. Once JS replacements are complete, remove Bootstrap JS/CDN includes from base and remaining templates.
-6. Install Tailwind CLI in CI/dev environment and run `scripts/build_tailwind.sh` to generate actual production Tailwind output.
+6. Run `python manage.py tailwind install` (once per environment), then `scripts/build_tailwind.sh` (or `python manage.py tailwind build`) to generate production CSS.

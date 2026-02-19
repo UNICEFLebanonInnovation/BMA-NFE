@@ -83,6 +83,7 @@ THIRD_PARTY_APPS = [
     'django_celery_beat',
     'django_celery_results',
     'six',
+    'tailwind',
 ]
 
 
@@ -98,6 +99,7 @@ LOCAL_APPS = [
     'student_registration.backends',  # custom storage app
     'student_registration.child',
     'student_registration.mscc',
+    'student_registration.theme.apps.ThemeConfig',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -233,6 +235,11 @@ TEMPLATES = [
 CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap3", "bootstrap5"]
 # CRISPY_TEMPLATE_PACK = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap3"
+
+
+# Tailwind (django-tailwind)
+TAILWIND_APP_NAME = 'student_registration_theme'
+NPM_BIN_PATH = 'npm'
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------
