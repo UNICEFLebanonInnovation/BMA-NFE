@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "./node_modules/.bin/tailwindcss build ./src/styles.css -o ../css/dist/styles.css",
-    "dev": "./node_modules/.bin/tailwindcss build ./src/styles.css -o ../css/dist/styles.css --watch"
+    "build": "node ./node_modules/tailwindcss/lib/cli.js build ./src/styles.css -o ../css/dist/styles.css",
+    "dev": "node ./node_modules/tailwindcss/lib/cli.js build ./src/styles.css -o ../css/dist/styles.css --watch"
   },
   "devDependencies": {
     "tailwindcss": "1.9.6"
