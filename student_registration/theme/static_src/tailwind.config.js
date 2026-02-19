@@ -1,10 +1,11 @@
 module.exports = {
-  content: [
+  purge: [
     '../../templates/**/*.html',
     '../../**/*.py'
   ],
   theme: {
     extend: {},
   },
+  variants: {},
   plugins: [],
 };

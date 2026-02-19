@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "npx tailwindcss -i ./src/styles.css -o ../css/dist/styles.css --minify",
-    "dev": "npx tailwindcss -i ./src/styles.css -o ../css/dist/styles.css --watch"
+    "build": "./node_modules/.bin/tailwindcss -i ./src/styles.css -o ../css/dist/styles.css --minify",
+    "dev": "./node_modules/.bin/tailwindcss -i ./src/styles.css -o ../css/dist/styles.css --watch"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "1.9.6"
   }
 }
