@@ -101,7 +101,7 @@
                         <a href="javascript:void(0);" data-placement="bottom" rel="popover-focus" data-offset="300" data-toggle="popover-custom" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600" style="color: white;">
                             <i class="nav-link-icon pe-7s-settings" style="color: white !important;"> </i>
                             BMA Modules
-                            <i class="fa fa-angle-down ml-2 opacity-5"></i>
+                            <i class="fa fa-angle-down ml-2 opacity-50"></i>
                         </a>
                         <div class="rm-max-width">
                             <div class="hidden popover-custom-content">
@@ -109,8 +109,8 @@
                                     <div class="grid-menu grid-menu-3col">
                                         <div class="no-gutters flex flex-wrap -mx-3">
                                             {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
-                                            <div class="sm:w-1/2 px-3 col-xl-4">
-                                                <ul class="flex flex-wrap flex-column">
+                                            <div class="sm:w-1/2 px-3 xl:w-1/3">
+                                                <ul class="flex flex-wrap flex-col">
                                                     <li class="nav-item-header list-none">Makani</li>
                                                     <li class="list-none">
                                                         <a href="{% url 'mscc:list' %}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
@@ -147,8 +147,8 @@
                                             </div>
                                             {% endif %}
                                             {% if request.user|has_group:"CLM_Bridging" %}
-                                            <div class="sm:w-1/2 px-3 col-xl-4">
-                                                <ul class="flex flex-wrap flex-column">
+                                            <div class="sm:w-1/2 px-3 xl:w-1/3">
+                                                <ul class="flex flex-wrap flex-col">
                                                     <li class="nav-item-header list-none">Dirasa</li>
                                                     <li class="list-none">
                                                         <a href="{% url 'clm:bridging_list' %}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
@@ -162,13 +162,13 @@
                                                             <span>Student Attendance</span>
                                                         </a>
                                                     </li>
-                                                    <li>
+                                                    <li class="list-none">
                                                         <a href="{% url 'schools:school_list' %}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                                                             <i class="nav-link-icon lnr-picture"></i>
                                                             <span>Schools</span>
                                                         </a>
                                                     </li>
-                                                    <li>
+                                                    <li class="list-none">
                                                         <a href="{% url 'students:teacher_list' %}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                                                             <i class="nav-link-icon lnr-picture"></i>
                                                             <span>Teachers</span>
@@ -215,7 +215,7 @@
                                     </div>
                                 </div>
                             </div>
-                           <ul id="mscc-notification-list" class="flex flex-wrap flex-column">
+                           <ul id="mscc-notification-list" class="flex flex-wrap flex-col">
                                 {% recent_export_history as exports %}
                                 {% for export in exports %}
                                 <li class="list-none">
@@ -251,13 +251,13 @@
                                 <div class="no-gutters flex flex-wrap -mx-3">
 
                                   {% if request.user|has_group:"CHARTER" %}
-                                    <div class="sm:w-1/2 px-3 col-xl-4">
+                                    <div class="sm:w-1/2 px-3 xl:w-1/3">
                                         <a href="{% url 'dashboard:pivot_dashboard' %}" class="btn-icon-vertical btn-square btn-transition inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors btn-outline-link">
                                             <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Pivot Builder / Makani
                                         </a>
                                     </div>
-                                    <div class="sm:w-1/2 px-3 col-xl-4">
+                                    <div class="sm:w-1/2 px-3 xl:w-1/3">
                                         <a href="{% url 'mscc:attendance_heatmap' %}" class="btn-icon-vertical btn-square btn-transition inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors btn-outline-link">
                                             <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Attendance Heat-map
@@ -266,7 +266,7 @@
                                   {% endif %}
                                 </div>
                             </div>
-                            <!--<ul class="flex flex-wrap flex-column">-->
+                            <!--<ul class="flex flex-wrap flex-col">-->
                                 <!--<li class="nav-item-divider list-none"></li>-->
                                 <!--<li class="nav-item-btn text-center list-none">-->
                                     <!--<button class="btn-shadow inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700 text-sm px-3 py-1.5">Follow-ups</button>-->
@@ -322,7 +322,7 @@
                                         </div>
                                         <div class="scroll-area-xs" style="height: 150px;">
                                             <div class="scrollbar-container ps">
-                                                <ul class="flex flex-wrap flex-column">
+                                                <ul class="flex flex-wrap flex-col">
                                                     <!--<li class="nav-item-header list-none">Activity-->
                                                     <!--</li>-->
                                                     <!--<li class="list-none">-->
@@ -436,37 +436,37 @@
 
 
                                 <li class="app-sidebar__heading"></li>
-                                <li>
+                                <li class="list-none">
                                     <a href="">
                                         <i class="metismenu-icon pe-7s-server" aria-hidden="true"></i>
                                     </a>
                                 </li>
-                                <li>
+                                <li class="list-none">
                                     <a href="">
                                         <i class="metismenu-icon pe-7s-users" aria-hidden="true"></i>
                                     </a>
                                 </li>
-                                <li>
+                                <li class="list-none">
                                     <a href="">
                                         <i class="metismenu-icon pe-7s-delete-user" aria-hidden="true"></i>
                                     </a>
                                 </li>
-                                <li>
+                                <li class="list-none">
                                     <a href="">
                                         <i class="metismenu-icon pe-7s-refresh-2" aria-hidden="true"></i>
                                     </a>
                                 </li>
-                                <li>
+                                <li class="list-none">
                                     <a href="">
                                         <i class="metismenu-icon pe-7s-refresh" aria-hidden="true"></i>
                                     </a>
                                 </li>
-                                <li>
+                                <li class="list-none">
                                     <a href="">
                                         <i class="metismenu-icon lnr-link"></i>
                                     </a>
                                 </li>
-                                <li>
+                                <li class="list-none">
                                     <a href="">
                                         <i class="metismenu-icon lnr-exit" aria-hidden="true"></i>
                                     </a>
