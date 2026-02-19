@@ -25,10 +25,10 @@
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
+                                        <span class="inline-block pr-2">
                                             <i class="pe-7s-display1"></i>
                                         </span>
-                                        <span class="d-inline-block">Dashboard</span>
+                                        <span class="inline-block">Dashboard</span>
                                     </div>
                                 </div>
                             </div>
@@ -36,14 +36,14 @@
                         </div>
 </div>
 
-<div class="row">
-                        <div class="col-md-6 col-lg-3">
-                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
+<div class="flex flex-wrap -mx-2">
+                        <div class="w-full px-2 md:w-1/2 w-full px-2 lg:w-1/4">
+                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success rounded-lg border border-slate-200 bg-white shadow-sm">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
                                         <div class="widget-title opacity-5 text-uppercase">Total Registration</div>
                                         <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
+                                            <div class="widget-chart-flex items-center">
                                                 <div>
                                                     <span class="opacity-10 text-success pr-2">
                                                         <i class="pe-7s-graph3"></i>
@@ -57,13 +57,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
+                        <div class="w-full px-2 md:w-1/2 w-full px-2 lg:w-1/4">
+                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary rounded-lg border border-slate-200 bg-white shadow-sm">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
                                         <div class="widget-title opacity-5 text-uppercase">Core-Package</div>
                                         <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
+                                            <div class="widget-chart-flex items-center">
                                                 <div>
                                                     <span class="opacity-10 text-info pr-2">
                                                         <i class="pe-7s-graph2"></i>
@@ -77,13 +77,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
+                        <div class="w-full px-2 md:w-1/2 w-full px-2 lg:w-1/4">
+                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger rounded-lg border border-slate-200 bg-white shadow-sm">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
                                         <div class="widget-title opacity-5 text-uppercase">Walk-in</div>
                                         <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
+                                            <div class="widget-chart-flex items-center">
                                                 <div>
                                                     <span class="opacity-10 text-danger pr-2">
                                                         <i class="pe-7s-display1"></i>
@@ -99,13 +99,13 @@
                         </div>
                     </div>
 
-<!--<div class="row">-->
+<!--<div class="flex flex-wrap -mx-2">-->
 
       <!--<div class="col-md-4">-->
-          <!--<div class="main-card mb-3 card">-->
-              <!--<div class="card-body">-->
+          <!--<div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">-->
+              <!--<div class="p-4">-->
                   <!--<h5 class="card-title">Select one or more center</h5>-->
-                  <!--<select multiple="multiple" id="center_filter" class="multiselect-dropdown form-control">-->
+                  <!--<select multiple="multiple" id="center_filter" class="multiselect-dropdown block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">-->
                     <!--{% for item in centers %}-->
                       <!--<option value="{{ item.id }}">{{ item }}</option>-->
                     <!--{% endfor %}-->
@@ -114,10 +114,10 @@
           <!--</div>-->
       <!--</div>-->
       <!--<div class="col-md-4">-->
-          <!--<div class="main-card mb-3 card">-->
-              <!--<div class="card-body">-->
+          <!--<div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">-->
+              <!--<div class="p-4">-->
                   <!--<h5 class="card-title">Select one or more governorate</h5>-->
-                  <!--<select multiple="multiple" id="governorate_filter" class="multiselect-dropdown form-control">-->
+                  <!--<select multiple="multiple" id="governorate_filter" class="multiselect-dropdown block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">-->
                     <!--{% for item in governorates %}-->
                       <!--<option value="{{ item.id }}">{{ item }}</option>-->
                     <!--{% endfor %}-->
@@ -127,10 +127,10 @@
       <!--</div>-->
 
       <!--<div class="col-md-4">-->
-          <!--<div class="main-card mb-3 card">-->
-              <!--<div class="card-body">-->
+          <!--<div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">-->
+              <!--<div class="p-4">-->
                   <!--<h5 class="card-title">Select one or more partner</h5>-->
-                  <!--<select multiple="multiple" id="partner_filter" class="multiselect-dropdown form-control">-->
+                  <!--<select multiple="multiple" id="partner_filter" class="multiselect-dropdown block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">-->
                     <!--{% for item in partners %}-->
                       <!--<option value="{{ item.id }}">{{ item }}</option>-->
                     <!--{% endfor %}-->
@@ -141,12 +141,12 @@
 
 <!--</div>-->
 
-<!--<div class="row">-->
+<!--<div class="flex flex-wrap -mx-2">-->
       <!--<div class="col-md-4">-->
-          <!--<div class="main-card mb-3 card">-->
-              <!--<div class="card-body">-->
+          <!--<div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">-->
+              <!--<div class="p-4">-->
                   <!--<h5 class="card-title">Select one or more round</h5>-->
-                  <!--<select multiple="multiple" id="round_filter" class="multiselect-dropdown form-control">-->
+                  <!--<select multiple="multiple" id="round_filter" class="multiselect-dropdown block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">-->
                     <!--{% for item in rounds %}-->
                       <!--<option value="{{ item.id }}">{{ item }}</option>-->
                     <!--{% endfor %}-->
@@ -156,105 +156,105 @@
       <!--</div>-->
 <!--</div>-->
 
-<div class="row">
+<div class="flex flex-wrap -mx-2">
 
       <div class="col-md-4">
-          <div class="main-card mb-3 card">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Children per Nationality</div>
-              <div class="card-body" id="children_per_nationality"></div>
+              <div class="p-4" id="children_per_nationality"></div>
           </div>
       </div>
 
       <div class="col-md-4">
-          <div class="main-card mb-3 card">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Children per Gender</div>
-              <div class="card-body" id="children_per_gender"></div>
+              <div class="p-4" id="children_per_gender"></div>
           </div>
       </div>
 
       <div class="col-md-4">
-          <div class="main-card mb-3 card">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Children per Programme</div>
-              <div class="card-body" id="children_per_programme"></div>
+              <div class="p-4" id="children_per_programme"></div>
           </div>
       </div>
 
 </div>
 
-<div class="row">
+<div class="flex flex-wrap -mx-2">
 
       <div class="col-md-4">
-          <div class="main-card mb-3 card">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Children per Source of Identification</div>
-              <div class="card-body" id="children_per_source"></div>
+              <div class="p-4" id="children_per_source"></div>
           </div>
       </div>
 
       <div class="col-md-4">
-          <div class="main-card mb-3 card">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Children per Family Status</div>
-              <div class="card-body" id="children_per_status"></div>
+              <div class="p-4" id="children_per_status"></div>
           </div>
       </div>
 
       <div class="col-md-4">
-          <div class="main-card mb-3 card">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Cash Support</div>
-              <div class="card-body" id="children_cash_support"></div>
+              <div class="p-4" id="children_cash_support"></div>
           </div>
       </div>
 
 </div>
 
-<div class="row">
+<div class="flex flex-wrap -mx-2">
 
       <div class="col-md-4">
-          <div class="main-card mb-3 card">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Children per Disability Type</div>
-              <div class="card-body" id="children_per_disability"></div>
+              <div class="p-4" id="children_per_disability"></div>
           </div>
       </div>
 
       <div class="col-md-4">
-          <div class="main-card mb-3 card">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Children Vulnerability</div>
-              <div class="card-body" id="children_per_vulnerability"></div>
+              <div class="p-4" id="children_per_vulnerability"></div>
           </div>
       </div>
 
       <div class="col-md-4">
-          <div class="main-card mb-3 card">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Volunteering</div>
-              <div class="card-body" id="children_volunteering"></div>
+              <div class="p-4" id="children_volunteering"></div>
           </div>
       </div>
 
 </div>
 
-<div class="row">
+<div class="flex flex-wrap -mx-2">
 
-    <div class="col-md-6">
-        <div class="main-card mb-3 card">
+    <div class="w-full px-2 md:w-1/2">
+        <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
             <div class="card-header">Children per Round</div>
-            <div class="card-body" id="children_per_round"></div>
+            <div class="p-4" id="children_per_round"></div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="main-card mb-3 card">
+    <div class="w-full px-2 md:w-1/2">
+        <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
             <div class="card-header">Children Moved Between Rounds</div>
-            <div class="card-body" id="children_moved_rounds"></div>
+            <div class="p-4" id="children_moved_rounds"></div>
         </div>
     </div>
 
 </div>
 
-<div class="row">
-      <div class="col-md-12">
-          <div class="main-card mb-3 card">
+<div class="flex flex-wrap -mx-2">
+      <div class="w-full px-2 md:w-full">
+          <div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
               <div class="card-header">Children moved between rounds</div>
-              <div class="card-body p-0" style="height: 600px; overflow-y: auto;">
-                  <table class="mb-0 table table-striped">
+              <div class="p-4 p-0" style="height: 600px; overflow-y: auto;">
+                  <min-w-full divide-y divide-slate-200 class="mb-0 min-w-full divide-y divide-slate-200 table-striped">
                       <thead>
                           <tr>
                               <th>Child</th>
@@ -275,7 +275,7 @@
                           </tr>
                           {% endfor %}
                       </tbody>
-                  </table>
+                  </min-w-full divide-y divide-slate-200>
               </div>
           </div>
       </div>

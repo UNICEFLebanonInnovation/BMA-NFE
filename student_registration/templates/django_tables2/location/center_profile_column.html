@@ -2,7 +2,7 @@
 {% load custom_tags %}
 
 {% load util_tags %}
-<a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-info">
+<a href="{{ column.attrs.url }}{{ record.id }}" class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700">
   <i class="icon-edit-sign icon-white"></i>
   {% trans "Profile" %}
 </a>

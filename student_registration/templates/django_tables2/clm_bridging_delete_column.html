@@ -4,12 +4,12 @@
 {% load util_tags %}
 {% if record.owner.id == request.user.id %}
     {% if record.total_absent_days >= 40 %}
-        <button class="btn btn-danger delete-button "  style="opacity: 0.6; cursor: not-allowed;" >
+        <button class="inline-flex items-center rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700 delete-button "  style="opacity: 0.6; cursor: not-allowed;" >
             <i class="icon-trash icon-white"></i>
             {% trans "Delete" %}
         </button>
     {% else %}
-        <button class="btn btn-danger delete-button" itemscope="{{ record.id }}" data-action="{{ column.attrs.url }}{{ record.id }}" translation="{% trans "Are you sure you want to delete this student?" %}">
+        <button class="inline-flex items-center rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700 delete-button" itemscope="{{ record.id }}" data-action="{{ column.attrs.url }}{{ record.id }}" translation="{% trans "Are you sure you want to delete this student?" %}">
             <i class="icon-trash icon-white"></i>
             {% trans "Delete" %}
         </button>

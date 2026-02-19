@@ -16,10 +16,10 @@
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
+                                        <span class="inline-block pr-2">
                                             <i class="fa fa-child"></i>
                                         </span>
-                                        <span class="d-inline-block">Child Profile - {{ instance.child.full_name }}</span>
+                                        <span class="inline-block">Child Profile - {{ instance.child.full_name }}</span>
                                     </div>
                                     <div class="page-title-subheading opacity-10">
                                         <nav class="" aria-label="breadcrumb">
@@ -41,9 +41,9 @@
 
       {% if request.user|has_group:"MSCC_FULL" %}
                         <div class="page-title-actions">
-                                <a href="#" data-toggle="modal" data-target="#newRoundModal" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
+                                <a href="#" data-toggle="modal" data-target="#newRoundModal" class="mr-3 btn-icon inline-flex items-center rounded bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
 
-                                <!--<button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">-->
+                                <!--<button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" data-original-title="Package Type">-->
                                     <!--{{ instance.type }}-->
                                 <!--</button>-->
                             </div>
@@ -53,10 +53,10 @@
 </div>
 
 
-<div class="row">
+<div class="flex flex-wrap -mx-2">
 
-        <div class="col-md-12">
-                                    <div class="mb-3 card">
+        <div class="w-full px-2 md:w-full">
+                                    <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                                         <div class="tabs-lg-alternate card-header">
                                             <ul class="nav nav-justified">
                                                 <li class="nav-item">
@@ -90,17 +90,17 @@
                                         </div>
                                         <div class="tab-content">
                                             <div class="tab-pane show{% if current_tab == 'info' %} active{% endif %}" id="tab-eg9-0" role="tabpanel">
-                                                <div class="card-body">
+                                                <div class="p-4">
                                                   {% include 'mscc/child_info_tab.html' %}
                                                 </div>
                                             </div>
                                             <div class="tab-pane show{% if current_tab == 'services' %} active{% endif %}" id="tab-eg9-1" role="tabpanel">
-                                                <div class="card-body">
+                                                <div class="p-4">
                                                   {% include 'mscc/child_services_tab.html' %}
                                                 </div>
                                             </div>
                                             <div class="tab-pane show{% if current_tab == 'attendance' %} active{% endif %}" id="tab-eg9-2" role="tabpanel">
-                                                <div class="card-body"><p class="mb-0">
+                                                <div class="p-4"><p class="mb-0">
                                                   {% include 'mscc/child_attendance_tab.html' %}
                                                 </div>
                                             </div>
@@ -144,8 +144,8 @@
         {% endif %}
       </div>
       <div class="modal-footer">
-        <a id="new-round-confirm" href="{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=Core-Package" class="btn btn-success">Confirm</a>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <a id="new-round-confirm" href="{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=Core-Package" class="inline-flex items-center rounded bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">Confirm</a>
+        <button type="button" class="inline-flex items-center rounded bg-slate-500 px-4 py-2 text-white hover:bg-slate-600" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>

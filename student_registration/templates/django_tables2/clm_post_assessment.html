@@ -1,7 +1,7 @@
 {% load static i18n %}
 {% load custom_tags %}
 {% load util_tags %}
-<a class="btn btn-info {% if not recorde.pre_test %}disabled{% endif %}"
+<a class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700 {% if not recorde.pre_test %}disabled{% endif %}"
    href="{{ record.post_assessment_form }}{{ request.get_host }}{{ column.attrs.url }}">
     <i class="icon-synch-sign icon-white"></i>
     {% trans "fill in" %}

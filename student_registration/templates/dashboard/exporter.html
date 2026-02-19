@@ -20,15 +20,15 @@
         </div>
         <hr>
 
-        <div class="row">
+        <div class="flex flex-wrap -mx-2">
           <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">2nd shift registration</h3>
                 <p class="card-text">Export data for 2nd shift registration of the current school year.</p>
 
                 <div class="btn-group">
-                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button type="button" class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="icon-export-sign icon-white"></i>&nbsp;
                       {% trans "Export" %}
                   </button>
@@ -45,13 +45,13 @@
           </div>
 
           <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">2nd shift gradings</h3>
                 <p class="card-text">Export data for 2nd shift gradings of the current school year.</p>
 
                 <div class="btn-group">
-                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button type="button" class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="icon-export-sign icon-white"></i>&nbsp;
                       {% trans "Export" %}
                   </button>
@@ -70,23 +70,23 @@
           </div>
 
           <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">2nd shift registration full data</h3>
                 <p class="card-text">Export the full data for 2nd shift registration for all school years.</p>
-                <a href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift" class="btn btn-primary">Export</a>
+                <a href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift" class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Export</a>
               </div>
             </div>
           </div>
 
           <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">ALP Pre-test</h3>
                 <p class="card-text">Export Pre-test gradings data entered by the partner for the current pre-test round.</p>
 
                 <div class="btn-group">
-                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button type="button" class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="icon-export-sign icon-white"></i>&nbsp;
                       {% trans "Export" %}
                   </button>
@@ -102,13 +102,13 @@
           </div>
 
           <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">ALP school registration</h3>
                 <p class="card-text">Export school registration data entered by the school IT for the current round.</p>
 
                 <div class="btn-group">
-                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button type="button" class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="icon-export-sign icon-white"></i>&nbsp;
                       {% trans "Export" %}
                   </button>
@@ -124,13 +124,13 @@
           </div>
 
           <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">ALP Post-test</h3>
                 <p class="card-text">Export Post-test gradings data entered by the partner for the current post-test round.</p>
 
                 <div class="btn-group">
-                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button type="button" class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="icon-export-sign icon-white"></i>&nbsp;
                       {% trans "Export" %}
                   </button>
@@ -146,31 +146,31 @@
           </div>
 
           <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">ALP full data</h3>
                 <p class="card-text">Export ALP full data for all rounds.</p>
-                <a href="{% url 'dashboard:run-exporter' %}?report=export_alp" class="btn btn-primary">Export</a>
+                <a href="{% url 'dashboard:run-exporter' %}?report=export_alp" class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Export</a>
               </div>
             </div>
           </div>
 
           <div class="col-sm-4">
             <form id="attendance-form" action="{% url 'dashboard:run-exporter-attendance' %}" method="GET">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">Attendances & Absences </h3>
-                <table border="0">
+                <min-w-full divide-y divide-slate-200 border="0">
                   <th></th>
                   <th></th>
                   <tr><td>
 			          <div class="col-sm-5 pull-left">
                   <label class="control-label  pull-left" for="txtfromschool" ><b>From School Number</b></label>
-				          <input type="text" class="form-control " id="txtfromschool" name="txtfromschool"  maxlength="80"/>
+				          <input type="text" class="block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 " id="txtfromschool" name="txtfromschool"  maxlength="80"/>
 			          </div>
                 <div class="col-sm-5 pull-left">
                   <label class="control-label  pull-left" for="txttoschool"><b>To School Number</b></label>
-				          <input type="text" class="form-control" id="txttoschool" name="txttoschool"  maxlength="80"/>
+				          <input type="text" class="block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" id="txttoschool" name="txttoschool"  maxlength="80"/>
 			           </div>
                     </td>
                 </tr>
@@ -188,12 +188,12 @@
 			           </div>
                     </td>
                   </tr>
-                  </table>
+                  </min-w-full divide-y divide-slate-200>
                  <br>
                 <div style="background-color:#E8E9E9">
                     <p class="card-text">Student's Last  Attendance and Absences</p>
-                    <input class="btn btn-primary" type="submit" value="Generate" name="btn_lastattendance" id="btn_lastattendance"/>
-                    <input class="btn btn-primary" type="submit" value="Excel" name="btn_lastattendance" id="btn_lastattendanceex"  style="background-color: green;" />
+                    <input class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit" value="Generate" name="btn_lastattendance" id="btn_lastattendance"/>
+                    <input class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit" value="Excel" name="btn_lastattendance" id="btn_lastattendanceex"  style="background-color: green;" />
                 </div>
               </div>
             </div>
@@ -202,21 +202,21 @@
 
           <div class="col-sm-4">
             <form id="summary-attendance-form" action="{% url 'dashboard:export-summary-attendance' %}" method="GET">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">Total of attend and absent days per students</h3>
-                <table border="0">
+                <min-w-full divide-y divide-slate-200 border="0">
                   <th></th>
                   <th></th>
                   <tr>
                     <td>
                       <div class="col-sm-5 pull-left">
                          <label class="control-label  pull-left" for="att_fromschool" ><b>From School Number</b></label>
-				                 <input type="text" class="form-control " id="att_fromschool" name="att_fromschool"  maxlength="80"/>
+				                 <input type="text" class="block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 " id="att_fromschool" name="att_fromschool"  maxlength="80"/>
 			                </div>
                       <div class="col-sm-5 pull-left">
                          <label class="control-label  pull-left" for="att_toschool"><b>To School Number</b></label>
-				                 <input type="text" class="form-control" id="att_toschool" name="att_toschool"  maxlength="80"/>
+				                 <input type="text" class="block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" id="att_toschool" name="att_toschool"  maxlength="80"/>
 			                </div>
                     </td>
                   </tr>
@@ -233,11 +233,11 @@
 			                </div>
                     </td>
                   </tr>
-                </table>
+                </min-w-full divide-y divide-slate-200>
                  <br>
                 <div style="background-color:#D1D3D4">
                     <p class="card-text">Total of attend and absent days per students</p>
-                    <input class="btn btn-primary" type="submit" value="Excel" name="btn_lastattendance" id="btn_lastattendance_excel"/>
+                    <input class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit" value="Excel" name="btn_lastattendance" id="btn_lastattendance_excel"/>
                 </div>
               </div>
             </div>
@@ -246,21 +246,21 @@
 
           <div class="col-sm-4"  >
             <form id="attendance-per-day" action="{% url 'dashboard:run-to-excel-per-day' %}" method="GET" >
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">  Daily : Attendances & Absences  </h3>
                 <p class="card-text">Export to Excel : Attendances & Absences per day</p>
-                <table border="0">
+                <min-w-full divide-y divide-slate-200 border="0">
                   <th></th>
                   <th></th>
                   <tr><td>
 			          <div class="col-sm-4 pull-left">
                   <label class="control-label  pull-left" for="txt_from_school" ><b>From School </b></label>
-				          <input type="text" class="form-control " id="txt_from_school" name="txt_from_school"  maxlength="80"/>
+				          <input type="text" class="block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 " id="txt_from_school" name="txt_from_school"  maxlength="80"/>
 			          </div>
                 <div class="col-sm-4 pull-left">
                   <label class="control-label  pull-left" for="txt_to_school"><b>To School </b></label>
-				          <input type="text" class="form-control" id="txt_to_school" name="txt_to_school"  maxlength="80"/>
+				          <input type="text" class="block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" id="txt_to_school" name="txt_to_school"  maxlength="80"/>
 			           </div>
                     </td>
                 </tr>
@@ -286,28 +286,28 @@
                     </td>
                   </tr>
 
-                  </table>
+                  </min-w-full divide-y divide-slate-200>
                 <br>
-               <input class="btn btn-primary" type="submit" value="Generate" name="btntype" id="btntype1"/>
-               <input class="btn btn-primary" type="submit" value="Excel" name="btntype" id="btntype2"  style="background-color: green;" />
-               <input class="btn btn-info" type="submit" value="Attendance" name="btntype" id="btntype3"/>
+               <input class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit" value="Generate" name="btntype" id="btntype1"/>
+               <input class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit" value="Excel" name="btntype" id="btntype2"  style="background-color: green;" />
+               <input class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700" type="submit" value="Attendance" name="btntype" id="btntype3"/>
               </div>
             </div>
             </form>
           </div>
 
          <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block" >
                 <h3 class="card-title">Common Tasks</h3>
                 <p class="card-text">Update duplicate students</p>
-                <a href="{% url 'dashboard:update_duplicatestd' %}" class="btn btn-primary" >update Duplicated students</a>
+                <a href="{% url 'dashboard:update_duplicatestd' %}" class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" >update Duplicated students</a>
                 <br>
-                <a href="{% url 'dashboard:dup_id_enr' %}" class="btn btn-info">Duplicate ID of students in enrollments</a>
+                <a href="{% url 'dashboard:dup_id_enr' %}" class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700">Duplicate ID of students in enrollments</a>
                 <br>
-                <a href="{% url 'dashboard:dup_nb_enr' %}" class="btn btn-primary">Duplicate Number of students in enrollments</a>
+                <a href="{% url 'dashboard:dup_nb_enr' %}" class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Duplicate Number of students in enrollments</a>
                 <br>
-                <a href="{% url 'dashboard:generate_pretest_result' %}" class="btn btn-info">Generate ALP-PreTest Results</a>
+                <a href="{% url 'dashboard:generate_pretest_result' %}" class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700">Generate ALP-PreTest Results</a>
                 <br>
                 <a href="{% url 'dashboard:evaluation' %}" class="btn btn-warning">Generate Evaluation</a>
               </div>
@@ -317,13 +317,13 @@
         </div>
 
         <div class="col-sm-4">
-            <div class="card m-3">
+            <div class="rounded-lg border border-slate-200 bg-white shadow-sm m-3">
               <div class="card-block">
                 <h3 class="card-title">De-Generate</h3>
                 <form id="de-generate" action="{% url 'dashboard:degenerate-list-justification' %}" method="GET" >
                      <label class="control-label  pull-left" for="txt_school" ><b>&nbsp;{% trans 'School number' %}&nbsp; </b></label>
-                            <input type="text" class="form-control " id="txt_school" name="txt_school"  maxlength="80"/>
-                            <input class="btn btn-primary" type="submit" value=" {% trans 'De-Generate List' %} " name="btntype" id="btntype1"/>
+                            <input type="text" class="block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 " id="txt_school" name="txt_school"  maxlength="80"/>
+                            <input class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit" value=" {% trans 'De-Generate List' %} " name="btntype" id="btntype1"/>
                 </form>
               </div>
             </div>

@@ -6,9 +6,9 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block main_content %}
-<div class="container">
+<div class="mx-auto px-4">
 
-  <div class="row">
+  <div class="flex flex-wrap -mx-2">
     <div class="col-sm-12">
 
       <h2>{{ object.email }}</h2>
@@ -20,11 +20,11 @@
 
 {% if object == request.user %}
 <!-- Action buttons -->
-<div class="row">
+<div class="flex flex-wrap -mx-2">
 
   <div class="col-sm-12 ">
-    <a class="btn btn-primary" href="{% url 'users:update' %}">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}">E-Mail</a>
+    <a class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" href="{% url 'users:update' %}">My Info</a>
+    <a class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" href="{% url 'account_email' %}">E-Mail</a>
     <!-- Your Stuff: Custom user template urls -->
   </div>
 

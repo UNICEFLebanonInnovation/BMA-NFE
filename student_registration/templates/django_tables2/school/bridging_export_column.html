@@ -3,7 +3,7 @@
 {% load util_tags %}
 {% if column.attrs.url %}
 <div style="width: 100px;">
-  <button onclick="checkSchoolBeforeExport(event, '{{ record.id }}')" class="btn btn-primary col-icon download-bridging-report-{{ record.id }}">
+  <button onclick="checkSchoolBeforeExport(event, '{{ record.id }}')" class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 col-icon download-bridging-report-{{ record.id }}">
     <i class="fa fa-download"></i>
   </button>
 

@@ -13,6 +13,7 @@ from __future__ import absolute_import, unicode_literals
 import environ
 import os
 import logging
+import importlib.util
 from kombu import Queue
 
 logger = logging.getLogger(__name__)
@@ -86,6 +87,12 @@ THIRD_PARTY_APPS = [
 ]
 
 
+
+TAILWIND_APPS = []
+if importlib.util.find_spec('tailwind') is not None:
+    TAILWIND_APPS.append('tailwind')
+TAILWIND_APPS.append('student_registration.theme')
+
 # Apps specific for this project go here.
 LOCAL_APPS = [
     'student_registration.users',  # custom users app
@@ -101,7 +108,7 @@ LOCAL_APPS = [
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + TAILWIND_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -441,3 +448,5 @@ UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
 # FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
 # cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
 # firebase_app = firebase_admin.initialize_app(cred)
+
+TAILWIND_APP_NAME = 'theme'

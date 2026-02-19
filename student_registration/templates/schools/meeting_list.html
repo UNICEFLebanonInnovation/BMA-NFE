@@ -17,10 +17,10 @@
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
+                                        <span class="inline-block pr-2">
                                             <i class="fa fa-user"></i>
                                         </span>
-                                        <span class="d-inline-block">
+                                        <span class="inline-block">
                                           {{ request.user.username }}
                                           - {{ request.user.partner }}
                                         </span>
@@ -48,24 +48,24 @@
                                 </div>
                             </div>
                         <div class="page-title-actions">
-                          <a href="{% url 'schools:meeting_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Meeting</a>
+                          <a href="{% url 'schools:meeting_add' school_id %}" class="mr-3 btn-icon inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Meeting</a>
                         </div>
                         </div>
 </div>
 
-<div class="row">
+<div class="flex flex-wrap -mx-2">
     <div class="col-lg-12">
 <div id="accordion" class="accordion-wrapper mb-3 form-filters">
-    <div class="card">
+    <div class="rounded-lg border border-slate-200 bg-white shadow-sm">
         <div id="headingOne" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 inline-flex items-center text-blue-600 hover:text-blue-700 btn-block collapsed">
                 <h5 class="m-0 p-0">
                     <i class="pe-7s-filter text-primary"></i>
                     Filters</h5>
             </button>
         </div>
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
-            <div class="card-body">
+            <div class="p-4">
             <form action="" method="get" class="form form-inline">
                 {% bootstrap_form filter.form layout='inline' %}
 
@@ -94,11 +94,11 @@
     </div>
 </div>
 
-<div class="row table-list">
+<div class="flex flex-wrap -mx-2 table-list">
     <div class="col-lg-12">
-        <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body">
-                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
+        <div class="card-hover-shadow-2x mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div class="p-4">
+                <div class="overflow-x-auto dataTables_wrapper dt-bootstrap5">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}
                 </div>

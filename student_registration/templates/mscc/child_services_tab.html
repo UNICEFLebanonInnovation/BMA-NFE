@@ -4,17 +4,17 @@
 {% load simple_tags %}
 
 {% load util_tags %}
-<div class="row staff-profile">
+<div class="flex flex-wrap -mx-2 staff-profile">
 
   <!--RS-->
 {% get_service instance 'RS' as result %}
   {% service_data 'EducationService' instance as es_result %}
   {% if result and es_result.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
 
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
   {% service_data 'EducationRSService' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -90,16 +90,16 @@
 
   {% if result1 and result2 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
 
-                                <div class="mb-3 card">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -1668,16 +1668,16 @@
 
   {% if result1 and result2 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
 
-                                <div class="mb-3 card">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -2116,10 +2116,10 @@
   <!--Digital component-->
 {% get_service instance 'Digital component' as result %}
   {% if result %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
   {% service_data 'DigitalService' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -2270,15 +2270,15 @@
 {% get_service instance 'Health & Nutrition' as result %}
   {% if result %}
 
-<div class="col-md-12 col-lg-6 col-xl-4">
-                                <div class="mb-3 card">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -2649,16 +2649,16 @@
 <!--  {{service}}-->
     {% get_service instance 'Adolescents kit' as result %}
       {% if result %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
 {% service_data 'YouthKitService' instance as result %}
-                                <div class="mb-3 card">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -2880,16 +2880,16 @@
   {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
   {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|BLN Catch-up|ABLN Level 1|ABLN Level 2|ABLN Catch-up|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2|YFS Level 1 - RS Grade 9|YFS Level 2 - RS Grade 9|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
   {% service_youth_data 'YouthService' instance  'Maharati' as result %}
-                                <div class="mb-3 card">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -2989,16 +2989,16 @@
    {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
   {% if service in 'YBLN Level 1|YBLN Level 2|YBLN Catch-up|YFS Level 1|YFS Level 2|YFS Level 1 - RS Grade 9|YFS Level 2 - RS Grade 9|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
-  <div class="col-md-12 col-lg-6 col-xl-4">
+  <div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
 {% service_youth_data 'YouthService' instance  'GIL' as result %}
-                                <div class="mb-3 card">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -3109,12 +3109,12 @@
   <!--LEGO-->
 {% get_service instance 'LEGO' as result %}
   {% if result %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
 
 {% service_data 'LegoService' instance as result %}
 
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -3183,16 +3183,16 @@
   <!--PSS-->
 {% get_service instance 'PSS' as result %}
   {% if result %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
 {% service_data 'PSSService' instance as result %}
-                                <div class="mb-3 card">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -3355,16 +3355,16 @@
   {% get_service_all instance 'FollowUpService' as results %}
   {% eligible_to_followup instance as result1 %}
   {% if result and result1 %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
 {% service_data 'FollowUpService' instance as result %}
-                                <div class="mb-3 card">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
                                             <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
                                             <!--Details-->
                                         <!--</div>-->
                                     <!--</div>-->
-                                    <div class="p-0 card-body">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -3534,10 +3534,10 @@
   <!--Inclusion-->
 {% get_service instance 'Inclusion' as result %}
   {% if result %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
   {% service_data 'InclusionService' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -3600,10 +3600,10 @@
   {% endif %}
 
   <!--Referral-->
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
   {% service_data 'Referral' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -3691,9 +3691,9 @@
 {% service_data 'YouthAssessment' instance as result %}
 {% service_data 'YouthReferral' instance as result1 %}
   <!--Youth Assessment-->
-<div class="col-md-12 col-lg-6 col-xl-4">
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -3865,10 +3865,10 @@
   <!--Recreational-->
 {% get_service instance 'Recreational' as result %}
   {% if result %}
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="w-full px-2 md:w-full w-full px-2 lg:w-1/2 w-full px-2 xl:w-1/3">
   {% service_data 'Recreational' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
+                                <div class="mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                                    <div class="p-0 p-4">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>

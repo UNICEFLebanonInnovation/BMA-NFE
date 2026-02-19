@@ -12,11 +12,11 @@
     }
 </style>
 
-<div class="row staff-profile">
+<div class="flex flex-wrap -mx-2 staff-profile">
 <!--Center Data-->
-<div class="col-md-12 col-lg-12 col-xl-12">
-    <div class="main-card mb-12 card">
-        <div class="card-body">
+<div class="w-full px-2 md:w-full col-lg-12 col-xl-12">
+    <div class="main-card mb-12 rounded-lg border border-slate-200 bg-white shadow-sm">
+        <div class="p-4">
             <h5 class="card-title" style="display: inline-block; margin-right: 10px;">Program Staff List</h5>
               {% if request.user|has_group:"MSCC_CENTER" %}
                   <th>
@@ -24,7 +24,7 @@
                   </th>
               {% endif %}
 
-            <table class="mb-0 table table-striped">
+            <min-w-full divide-y divide-slate-200 class="mb-0 min-w-full divide-y divide-slate-200 table-striped">
                 <thead>
                 <tr>
                     {% if request.user|has_group:"MSCC_CENTER" %}
@@ -74,7 +74,7 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-            </table>
+            </min-w-full divide-y divide-slate-200>
         </div>
     </div>
 </div>

@@ -5,7 +5,7 @@
 {% load util_tags %}
 {% if record.grade_level %}
     {% if record.grade_registration == '7' or record.grade_registration == '8' or record.grade_registration == '9' %}
-        <a href="{{ column.attrs.url }}{{ record.id }}{{ '/physics' }}" class="btn btn-success">
+        <a href="{{ column.attrs.url }}{{ record.id }}{{ '/physics' }}" class="inline-flex items-center rounded bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">
             <i class="icon-synch-sign icon-white"></i>
             {% trans "Physics" %}
         </a>

@@ -1,0 +1,6 @@
+/* Tailwind output placeholder.
+   Once django-tailwind is installed in the runtime environment,
+   run: python manage.py tailwind start/build */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

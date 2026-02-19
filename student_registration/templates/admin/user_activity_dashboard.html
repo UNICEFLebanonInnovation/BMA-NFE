@@ -6,7 +6,7 @@
 <h1>User Activity Dashboard</h1>
 <p>Total records: {{ total }}</p>
 <h2>Requests by Method</h2>
-<table class="table">
+<min-w-full divide-y divide-slate-200 class="min-w-full divide-y divide-slate-200">
   <thead><tr><th>Method</th><th>Count</th></tr></thead>
   <tbody>
   {% for item in method_stats %}
@@ -15,9 +15,9 @@
     <tr><td colspan="2">No data</td></tr>
   {% endfor %}
   </tbody>
-</table>
+</min-w-full divide-y divide-slate-200>
 <h2>Top Paths</h2>
-<table class="table">
+<min-w-full divide-y divide-slate-200 class="min-w-full divide-y divide-slate-200">
   <thead><tr><th>Path</th><th>Count</th></tr></thead>
   <tbody>
   {% for item in top_paths %}
@@ -26,5 +26,5 @@
     <tr><td colspan="2">No data</td></tr>
   {% endfor %}
   </tbody>
-</table>
+</min-w-full divide-y divide-slate-200>
 {% endblock %}

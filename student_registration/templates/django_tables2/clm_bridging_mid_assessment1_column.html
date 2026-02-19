@@ -4,9 +4,9 @@
 
 {% load util_tags %}
 {% if record.total_absent_days >= 40 %}
-      <a class="btn btn-info" style="opacity: 0.6; cursor: not-allowed;">
+      <a class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700" style="opacity: 0.6; cursor: not-allowed;">
 {% else %}
-      <a href="{{ column.attrs.url }}{{ record.id }}{{ '/1' }}" class="btn btn-primary">
+      <a href="{{ column.attrs.url }}{{ record.id }}{{ '/1' }}" class="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
 {% endif %}
         <i class="icon-synch-sign icon-white"></i>
         {% trans "Mid-Assessment" %}

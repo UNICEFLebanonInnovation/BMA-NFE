@@ -1,20 +1,20 @@
 
 {% load custom_tags %}
 {% load util_tags %}
-                                                <div class="card">
+                                                <div class="rounded-lg border border-slate-200 bg-white shadow-sm">
                                                     <div class="b-radius-0 card-header">
                                                         <h5 class="m-0 p-0">{{ attendance_month }} Attendance</h5>
                                             <div class="btn-actions-pane-right actions-icon-btn">
-                                              <button class="mb-2 mr-2 btn btn-success">Attendance<span class="badge badge-pill badge-light">{{ nbr_attended }}</span></button>
-                                              <button class="mb-2 mr-2 btn btn-danger">Absence<span class="badge badge-pill badge-light">{{ nbr_absent }}</span></button>
-                                              <!--<button class="mb-2 mr-2 btn btn-primary">Day Off<span class="badge badge-pill badge-light">1</span></button>-->
+                                              <button class="mb-2 mr-2 inline-flex items-center rounded bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">Attendance<span class="badge badge-pill badge-light">{{ nbr_attended }}</span></button>
+                                              <button class="mb-2 mr-2 inline-flex items-center rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700">Absence<span class="badge badge-pill badge-light">{{ nbr_absent }}</span></button>
+                                              <!--<button class="mb-2 mr-2 inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Day Off<span class="badge badge-pill badge-light">1</span></button>-->
                                             </div>
 
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="p-4">
 
-<div class="main-card mb-3 card">
-                                    <div class="card-body">
+<div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                                    <div class="p-4">
                                         <ul class="list-group">
                                           {% for item in instances %}
                                             <li class="list-group-item">

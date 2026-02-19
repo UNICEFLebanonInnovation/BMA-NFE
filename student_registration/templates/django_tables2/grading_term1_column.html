@@ -3,7 +3,7 @@
 
 {% load util_tags %}
 {% if request.user|has_group:"ENROL_GRADING" and record.grading_term1 %}
-<a href="{% url 'enrollments:grading' record.grading_term1 1 %}" class="btn btn-info" target="_blank">
+<a href="{% url 'enrollments:grading' record.grading_term1 1 %}" class="inline-flex items-center rounded bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700" target="_blank">
     <i class="icon-edit-sign icon-white"></i>
     {% trans "Term 1" %}
 </a>

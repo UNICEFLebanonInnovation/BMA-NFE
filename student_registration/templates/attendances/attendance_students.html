@@ -18,7 +18,7 @@
 
 {{ attendance_student_formset.non_form_errors }}
 {{ attendance_student_formset.management_form }}
-<table class="table">
+<min-w-full divide-y divide-slate-200 class="min-w-full divide-y divide-slate-200">
 {% for form in attendance_student_formset.forms %}
 
    {% if forloop.first %}
@@ -47,7 +47,7 @@
     {% endfor %}
   </tr>
 {% endfor %}
-</table>
+</min-w-full divide-y divide-slate-200>
 
 {% block extra_head %}
 

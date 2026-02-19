@@ -3,7 +3,7 @@
 
 {% load util_tags %}
 <button
-    class="btn btn-danger delete-button dropdown-item delete-inclusion-student"
+    class="inline-flex items-center rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700 delete-button dropdown-item delete-inclusion-student"
     itemscope="{{ record.id }}"
     data-action="{{ column.attrs.url }}{{ record.id }}"
     data-registration-id="{{ record.id }}"

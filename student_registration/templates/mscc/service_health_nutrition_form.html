@@ -22,10 +22,10 @@
           <div class="page-title-heading">
               <div>
                   <div class="page-title-head center-elem page-title-heading">
-                      <span class="d-inline-block pr-2">
+                      <span class="inline-block pr-2">
                           <i class="fa fa-id-card"></i>
                       </span>
-                      <span class="d-inline-block">
+                      <span class="inline-block">
                         Health and Nutrition
                       </span>
                   </div>
@@ -52,8 +52,8 @@
 
 <!--        {{ form.errors }}-->
 
-<div class="main-card mb-3 card">
-                                <div class="card-body">
+<div class="main-card mb-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                                <div class="p-4">
                                     <div id="smartwizard3" class="forms-wizard">
                                         <ul class="forms-wizard">
                                             <li>
@@ -75,13 +75,13 @@
                                     <div class="divider"></div>
 
                                     <div class="clearfix">
-                                        <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
-                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left inline-flex items-center text-blue-600 hover:text-blue-700">Reset</button>-->
+                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left inline-flex items-center text-blue-600 hover:text-blue-700">Back to list</a>
 
-                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
-                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
+                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine inline-flex items-center rounded bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">Save</button>-->
+                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine inline-flex items-center rounded bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">Save & add another</button>-->
 
-                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
+                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Next</button>
                                         <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
                                     </div>
                                 </div>

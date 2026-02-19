@@ -3,16 +3,16 @@
 {% load custom_tags %}
 {% load util_tags %}
 {% block table-wrapper %}
-    {% block table %}
-        <table class="mb-0 table table-striped table-hover">
-            {% block table.thead %}
-            {% if table.show_header %}
-                <thead {{ table.attrs.thead.as_html }}>
+    {% block min-w-full divide-y divide-slate-200 %}
+        <min-w-full divide-y divide-slate-200 class="mb-0 min-w-full divide-y divide-slate-200 table-striped table-hover">
+            {% block min-w-full divide-y divide-slate-200.thead %}
+            {% if min-w-full divide-y divide-slate-200.show_header %}
+                <thead {{ min-w-full divide-y divide-slate-200.attrs.thead.as_html }}>
                 <tr>
-                {% for column in table.columns %}
+                {% for column in min-w-full divide-y divide-slate-200.columns %}
                     <th {{ column.attrs.th.as_html }}>
                         {% if column.orderable %}
-                            <a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}">{{ column.header }}</a>
+                            <a href="{% querystring min-w-full divide-y divide-slate-200.prefixed_order_by_field=column.order_by_alias.next %}">{{ column.header }}</a>
                         {% else %}
                             {{ column.header }}
                         {% endif %}
@@ -21,64 +21,64 @@
                 </tr>
                 </thead>
             {% endif %}
-            {% endblock table.thead %}
-            {% block table.tbody %}
-                <tbody {{ table.attrs.tbody.as_html }}>
-                {% for row in table.paginated_rows %}
-                    {% block table.tbody.row %}
-                    <tr {{ row.attrs.as_html }}>
-                        {% for column, cell in row.items %}
+            {% endblock min-w-full divide-y divide-slate-200.thead %}
+            {% block min-w-full divide-y divide-slate-200.tbody %}
+                <tbody {{ min-w-full divide-y divide-slate-200.attrs.tbody.as_html }}>
+                {% for flex flex-wrap -mx-2 in min-w-full divide-y divide-slate-200.paginated_rows %}
+                    {% block min-w-full divide-y divide-slate-200.tbody.flex flex-wrap -mx-2 %}
+                    <tr {{ flex flex-wrap -mx-2.attrs.as_html }}>
+                        {% for column, cell in flex flex-wrap -mx-2.items %}
                             <td {{ column.attrs.td.as_html }}>
                                 {% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}
                                 <span class="badge {{ result }} badge-dot badge-dot-lg badge-dot-inside"></span>
                             </td>
                         {% endfor %}
                     </tr>
-                    {% endblock table.tbody.row %}
+                    {% endblock min-w-full divide-y divide-slate-200.tbody.flex flex-wrap -mx-2 %}
                 {% empty %}
-                    {% if table.empty_text %}
-                    {% block table.tbody.empty_text %}
-                        <tr><td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td></tr>
-                    {% endblock table.tbody.empty_text %}
+                    {% if min-w-full divide-y divide-slate-200.empty_text %}
+                    {% block min-w-full divide-y divide-slate-200.tbody.empty_text %}
+                        <tr><td colspan="{{ min-w-full divide-y divide-slate-200.columns|length }}">{{ min-w-full divide-y divide-slate-200.empty_text }}</td></tr>
+                    {% endblock min-w-full divide-y divide-slate-200.tbody.empty_text %}
                     {% endif %}
                 {% endfor %}
                 </tbody>
-            {% endblock table.tbody %}
-            {% block table.tfoot %}
-            {% if table.has_footer %}
-            <tfoot {{ table.attrs.tfoot.as_html }}>
+            {% endblock min-w-full divide-y divide-slate-200.tbody %}
+            {% block min-w-full divide-y divide-slate-200.tfoot %}
+            {% if min-w-full divide-y divide-slate-200.has_footer %}
+            <tfoot {{ min-w-full divide-y divide-slate-200.attrs.tfoot.as_html }}>
                 <tr>
-                {% for column in table.columns %}
+                {% for column in min-w-full divide-y divide-slate-200.columns %}
                     <td {{ column.attrs.tf.as_html }}>{{ column.footer }}</td>
                 {% endfor %}
                 </tr>
             </tfoot>
             {% endif %}
-            {% endblock table.tfoot %}
-        </table>
-    {% endblock table %}
+            {% endblock min-w-full divide-y divide-slate-200.tfoot %}
+        </min-w-full divide-y divide-slate-200>
+    {% endblock min-w-full divide-y divide-slate-200 %}
 
     {% block pagination %}
-        {% if table.page and table.paginator.num_pages > 1 %}
+        {% if min-w-full divide-y divide-slate-200.page and min-w-full divide-y divide-slate-200.paginator.num_pages > 1 %}
         <nav aria-label="Table navigation">
-            <ul class="pagination justify-content-center">
-            {% if table.page.has_previous %}
+            <ul class="pagination justify-center">
+            {% if min-w-full divide-y divide-slate-200.page.has_previous %}
                 {% block pagination.previous %}
                 <li class="previous page-item">
-                    <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}" class="page-link">
+                    <a href="{% querystring min-w-full divide-y divide-slate-200.prefixed_page_field=min-w-full divide-y divide-slate-200.page.previous_page_number %}" class="page-link">
                         <span aria-hidden="true">&laquo;</span>
                         {% trans 'previous' %}
                     </a>
                 </li>
                 {% endblock pagination.previous %}
             {% endif %}
-            {% if table.page.has_previous or table.page.has_next %}
+            {% if min-w-full divide-y divide-slate-200.page.has_previous or min-w-full divide-y divide-slate-200.page.has_next %}
 
             {% endif %}
-            {% if table.page.has_next %}
+            {% if min-w-full divide-y divide-slate-200.page.has_next %}
                 {% block pagination.next %}
                 <li class="next page-item">
-                    <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}" class="page-link">
+                    <a href="{% querystring min-w-full divide-y divide-slate-200.prefixed_page_field=min-w-full divide-y divide-slate-200.page.next_page_number %}" class="page-link">
                         {% trans 'next' %}
                         <span aria-hidden="true">&raquo;</span>
                     </a>
