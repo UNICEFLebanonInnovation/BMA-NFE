@@ -1,30 +1,60 @@
 {% extends "admin/base_site.html" %}
 {% load util_tags %}
 {% load custom_tags %}
-{% load static %}
+
 {% block content %}
-<h1>Export History Dashboard</h1>
-<p>Total records: {{ total }}</p>
-<h2>Exports by Type</h2>
-<table class="table">
-  <thead><tr><th>Type</th><th>Count</th></tr></thead>
-  <tbody>
-  {% for item in export_stats %}
-    <tr><td>{{ item.export_type|default:'(None)' }}</td><td>{{ item.count }}</td></tr>
-  {% empty %}
-    <tr><td colspan="2">No data</td></tr>
-  {% endfor %}
-  </tbody>
-</table>
-<h2>Exports by Partner</h2>
-<table class="table">
-  <thead><tr><th>Partner</th><th>Count</th></tr></thead>
-  <tbody>
-  {% for item in partner_stats %}
-    <tr><td>{{ item.partner_name|default:'(None)' }}</td><td>{{ item.count }}</td></tr>
-  {% empty %}
-    <tr><td colspan="2">No data</td></tr>
-  {% endfor %}
-  </tbody>
-</table>
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-primary card-outline">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="card-title mb-0">Export History Dashboard</h3>
+            <span class="badge badge-primary">Total: {{ total }}</span>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-4 mb-md-0">
+                <h4 class="h6 text-muted">Exports by Type</h4>
+                <table class="table table-striped table-hover">
+                  <thead>
+                    <tr><th>Type</th><th class="text-right">Count</th></tr>
+                  </thead>
+                  <tbody>
+                    {% for item in export_stats %}
+                      <tr>
+                        <td>{{ item.export_type|default:'(None)' }}</td>
+                        <td class="text-right">{{ item.count }}</td>
+                      </tr>
+                    {% empty %}
+                      <tr><td colspan="2">No data</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-6">
+                <h4 class="h6 text-muted">Exports by Partner</h4>
+                <table class="table table-striped table-hover">
+                  <thead>
+                    <tr><th>Partner</th><th class="text-right">Count</th></tr>
+                  </thead>
+                  <tbody>
+                    {% for item in partner_stats %}
+                      <tr>
+                        <td>{{ item.partner_name|default:'(None)' }}</td>
+                        <td class="text-right">{{ item.count }}</td>
+                      </tr>
+                    {% empty %}
+                      <tr><td colspan="2">No data</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

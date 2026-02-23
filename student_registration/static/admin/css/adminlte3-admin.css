@@ -1,0 +1,80 @@
+:root {
+  --adminlte-primary: #007bff;
+  --adminlte-sidebar: #343a40;
+}
+
+body[class*="app-"] {
+  background-color: #f4f6f9;
+  color: #1f2d3d;
+}
+
+#header {
+  background: var(--adminlte-sidebar);
+  color: #fff;
+  border-bottom: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+#branding h1,
+#branding h1 a:link,
+#branding h1 a:visited {
+  color: #fff;
+  font-weight: 600;
+}
+
+#user-tools,
+#user-tools a {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.module h2,
+.module caption,
+.inline-group h2 {
+  background: var(--adminlte-primary);
+}
+
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input,
+a.button {
+  background: var(--adminlte-primary);
+  border-color: var(--adminlte-primary);
+}
+
+.button.default,
+input[type="submit"].default,
+.submit-row input.default {
+  background: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+a.button:hover {
+  opacity: 0.95;
+}
+
+#content-main .module,
+.dashboard .module,
+.change-form .module,
+#changelist-filter,
+#changelist table,
+.object-tools,
+.breadcrumbs {
+  border-radius: 0.35rem;
+}
+
+.breadcrumbs {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  margin-bottom: 1rem;
+  color: #6c757d;
+}
+
+#changelist-filter h2 {
+  background: #fff;
+  color: #1f2d3d;
+  border-bottom: 1px solid #dee2e6;
+}
