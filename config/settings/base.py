@@ -59,7 +59,6 @@ DJANGO_APPS = [
     # Admin
     'adminlte3',
     'adminlte3_theme',
-    'jazzmin',
     'django.contrib.admin',
     'prettyjson',
     #'storages'
@@ -388,29 +387,6 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,  # Usually True for Swagger UI/Redoc
     'POSTPROCESSING_HOOKS': [],
     # OTHER SETTINGS AS NEEDED
-}
-
-JAZZMIN_SETTINGS = {
-    "site_title": "BMA",
-    "site_header": "BMA-2",
-    "welcome_sign": "Welcome, Admin",
-    "copyright": "UNICEF",
-    "show_sidebar": True,
-    "navigation_expanded": True,
-    "topmenu_links": [
-        {"app": "users"},
-        {"app": "backends"},
-        {"app": "mscc"},
-        {"app": "youth"},
-        {"app": "clm"},
-        {"app": "locations"},
-        {"app": "schools"},
-    ],
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.User": "fas fa-user",
-        "auth.Group": "fas fa-users",
-    },
 }
 
 # STORAGE CONFIGURATION
