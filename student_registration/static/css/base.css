@@ -1,6 +1,60 @@
-.app-page-title {
-      padding:  15px;
+.app-container {
+    background: linear-gradient(180deg, #f4f7fb 0%, #eef3f9 100%);
+    min-height: 100vh;
 }
+
+.app-main {
+    padding: 1.25rem;
+}
+
+.app-main__outer,
+.app-main__inner {
+    background: transparent;
+}
+
+.app-page-title,
+.card {
+    border-radius: 14px;
+}
+
+.app-page-title {
+    padding: 15px;
+    border: 1px solid #e7edf6;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(32, 52, 89, 0.07);
+}
+
+.card {
+    border: 1px solid #e7edf6;
+    box-shadow: 0 10px 24px rgba(32, 52, 89, 0.06);
+}
+
+.card-header {
+    border-bottom-color: #edf2fa;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.app-header {
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 26px rgba(14, 37, 79, 0.2);
+}
+
+.app-sidebar {
+    background: linear-gradient(190deg, #f9fbff 0%, #f1f5fc 100%);
+    border-right: 1px solid #e6edf8;
+}
+
+.app-sidebar .vertical-nav-menu a {
+    border-radius: 10px;
+    margin: 0.1rem 0.5rem;
+}
+
+.app-sidebar .vertical-nav-menu li a.mm-active,
+.app-sidebar .vertical-nav-menu li a:hover {
+    background: #e8f0ff;
+    color: #2652ba;
+}
+
 .form-wizard-content.sw-container.tab-content {
     min-height: 485px !important;
     overflow: scroll;
@@ -46,12 +100,10 @@ form .radio {
 .form-filters .form-control {
     width: 200px;
 }
-.w-100 {
-    width: 1500px !important;
-}
-
+.w-100,
 .table-list .card-body .table-responsive table {
-    width: 1500px !important;
+    width: 100% !important;
+    min-width: 1100px;
 }
 
 @media (width: 500px) {
@@ -93,6 +145,21 @@ form .radio {
 }
 .table-list .card-body {
     padding-top: 0px;
+}
+
+.table-responsive {
+    border: 1px solid #edf2fa;
+    border-radius: 12px;
+    overflow: auto;
+    background: #fff;
+}
+
+.table tbody tr:nth-child(even) {
+    background: #fbfdff;
+}
+
+.table tbody tr:hover {
+    background: #eef4ff;
 }
 .table-list .dropdown-menu.show {
     position: absolute !important;
@@ -189,6 +256,39 @@ label.form-control-label {
 .tabs-lg-alternate.card-header .widget-number {
     font-size: 2rem;
     font-weight: 200;
+}
+
+.btn,
+.form-control,
+.custom-select,
+.input-group-text {
+    border-radius: 10px;
+}
+
+.form-control,
+.custom-select {
+    border-color: #d9e3f2;
+    min-height: 42px;
+}
+
+.form-control:focus,
+.custom-select:focus {
+    border-color: #3f6ad8;
+    box-shadow: 0 0 0 0.2rem rgba(63, 106, 216, 0.16);
+}
+
+@media (max-width: 991px) {
+    .app-main {
+        padding: 0.8rem;
+    }
+
+    .app-page-title {
+        padding: 12px;
+    }
+
+    .table-responsive {
+        border-radius: 10px;
+    }
 }
 #quick-search-result  {
     position: absolute;
