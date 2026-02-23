@@ -57,6 +57,8 @@ DJANGO_APPS = [
     'dal_select2',
 
     # Admin
+    'adminlte3',
+    'adminlte3_theme',
     'jazzmin',
     'django.contrib.admin',
     'prettyjson',

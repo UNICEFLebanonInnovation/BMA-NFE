@@ -5,14 +5,7 @@
 
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-dymI8NhM7Q8I6F4qA4f6x+Jk8G5M5n9XQ2QqfI8A6Y4xXHzkwmo7aX6ixkmKfeNHYsYAGP82LPgAvrn8Z64Kbw==" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css" integrity="sha256-mXd5a2f4nqV6jP6KyHR+Y6z3n0JVpaz6RtWLpmjHtk0=" crossorigin="anonymous">
   <link rel="stylesheet" href="{% static 'admin/css/adminlte3-admin.css' %}">
-{% endblock %}
-
-{% block extrahead %}
-  {{ block.super }}
-  <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js" integrity="sha256-QfD5QfDFi1Cdm42Hcps225y7sY9qsK0R12gHgd6N53I=" crossorigin="anonymous" defer></script>
 {% endblock %}
 
 {% block bodyclass %}hold-transition sidebar-mini layout-fixed{% endblock %}
