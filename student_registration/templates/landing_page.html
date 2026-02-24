@@ -3,81 +3,476 @@
 {% load static i18n %}
 {% load custom_tags %}
 
-{% block module_name %}{% endblock %}
+{% block module_name %}sNFE Sector{% endblock %}
 
 {% block main_content %}
+<div class="container-fluid py-3 snfe-landing">
+    <style>
+        .snfe-landing {
+            background: linear-gradient(180deg, #f4f7ff 0%, #ffffff 45%);
+            min-height: calc(100vh - 90px);
+        }
+        .snfe-card {
+            border: 1px solid #e9ecf3;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 8px 24px rgba(40, 62, 90, 0.08);
+        }
+        .snfe-card-header {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            color: #6b7280;
+            margin-bottom: .5rem;
+        }
+        .snfe-title {
+            font-weight: 700;
+            color: #1f2a44;
+        }
+        .snfe-kpi {
+            border: 1px solid #edf0f6;
+            border-radius: 12px;
+            padding: 0.9rem;
+            background: #fbfcff;
+            transition: all .2s ease;
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+        .snfe-kpi:hover,
+        .snfe-quick-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(17, 24, 39, .08);
+            text-decoration: none;
+        }
+        .snfe-kpi strong {
+            display: block;
+            font-size: 1.3rem;
+            color: #101828;
+        }
+        .snfe-tab {
+            font-weight: 600;
+            color: #667085;
+            margin-right: 1rem;
+        }
+        .snfe-tab.active {
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: .4rem;
+        }
+        .snfe-feed-item {
+            border-left: 3px solid #dbeafe;
+            padding: .75rem 0 .75rem .9rem;
+            margin-bottom: .65rem;
+            background: #fcfdff;
+        }
+        .snfe-badge {
+            font-size: .73rem;
+            font-weight: 600;
+            border-radius: 999px;
+            padding: .2rem .6rem;
+            background: #eef2ff;
+            color: #3743a5;
+        }
+        .snfe-quick-link {
+            border: 1px solid #eceff5;
+            border-radius: 14px;
+            padding: 1rem;
+            background: white;
+            display: block;
+            height: 100%;
+            color: inherit;
+            text-decoration: none;
+            transition: all .2s ease;
+        }
+        .snfe-chart-card {
+            background: linear-gradient(135deg, #eff4ff 0%, #f9fbff 100%);
+            border-radius: 14px;
+            border: 1px solid #e4eaf6;
+            padding: .9rem;
+        }
+        .snfe-chart-container {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            color: #3b82f6;
+        }
+        .snfe-chart-container svg {
+            width: 100%;
+            height: 100%;
+        }
+        .snfe-chart-tooltip {
+            position: absolute;
+            pointer-events: none;
+            background: rgba(15, 23, 42, 0.92);
+            color: #fff;
+            padding: 6px 9px;
+            border-radius: 8px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity .15s ease;
+            z-index: 10;
+        }
+    </style>
 
-<!--<div class="app-page-title">-->
-                        <!--<div class="page-title-wrapper">-->
-                            <!--<div class="page-title-heading">-->
-                                <!--<div>-->
-                                    <!--<div class="page-title-head center-elem page-title-heading">-->
-                                        <!--<span class="d-inline-block pr-2">-->
-                                            <!--<i class="pe-7s-display1"></i>-->
-                                        <!--</span>-->
-                                        <!--<span class="d-inline-block">Dirasa</span>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center mb-2 mb-md-0">
+            <div class="icon-wrapper rounded-circle mr-2">
+                <div class="icon-wrapper-bg bg-primary"></div>
+                <i class="lnr-graduation-hat text-primary"></i>
+            </div>
+            <div>
+                <h4 class="mb-0 snfe-title">BMA sNFE Sector</h4>
+                <small class="text-muted">Modern landing page for registration, monitoring, and operations.</small>
+            </div>
+        </div>
+        <form class="mb-2 mb-md-0" style="min-width: 280px;">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white border-right-0"><i class="fa fa-search text-muted"></i></span>
+                </div>
+                <input type="text" class="form-control border-left-0" placeholder="Search child, student, center, registration ID">
+            </div>
+        </form>
+    </div>
 
-                        <!--</div>-->
-<!--</div>-->
+    <div class="row">
+        <div class="col-xl-7 mb-3">
+            <div class="snfe-card p-4 h-100">
+                <div class="snfe-card-header">Primary action</div>
+                <h3 class="snfe-title mb-2">NFE Registration</h3>
+                <p class="text-muted">Register learners, update records, and manage enrollment in one place.</p>
+                <a href="{% url 'mscc:child_add' %}" class="btn btn-primary btn-lg mb-3">Start New Registration</a>
+                <div class="d-flex flex-wrap">
+                    <a href="{% url 'mscc:list' %}" class="mr-3 mb-2"><i class="fa fa-file-text-o mr-1"></i> Continue Drafts</a>
+                    <a href="{% url 'mscc:list' %}" class="mr-3 mb-2"><i class="fa fa-search mr-1"></i> Search Registrations</a>
+                    <a href="{% url 'mscc:list' %}" class="mb-2"><i class="fa fa-upload mr-1"></i> Bulk Upload / Import</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-5 mb-3">
+            <div class="snfe-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <div class="snfe-card-header">Quick dashboard</div>
+                        <h5 class="snfe-title mb-0">Live KPIs</h5>
+                    </div>
+                    <a href="{% url 'mscc:dashboard' %}">Open full dashboard</a>
+                </div>
+                <div class="row">
+                    <div class="col-6 mb-2"><a class="snfe-kpi" href="{% url 'mscc:dashboard' %}"><small>Registrations Today</small><strong>37</strong></a></div>
+                    <div class="col-6 mb-2"><a class="snfe-kpi" href="{% url 'mscc:dashboard' %}"><small>This Week</small><strong>214</strong></a></div>
+                    <div class="col-6 mb-2"><a class="snfe-kpi" href="{% url 'mscc:list' %}"><small>Active Learners</small><strong>4,962</strong></a></div>
+                    <div class="col-6 mb-2"><a class="snfe-kpi" href="{% url 'mscc:list' %}"><small>Pending Validation</small><strong>89</strong></a></div>
+                    <div class="col-6 mb-2"><a class="snfe-kpi" href="{% url 'schools:school_list' %}"><small>Centers Reporting</small><strong>142</strong></a></div>
+                    <div class="col-6 mb-2"><a class="snfe-kpi" href="{% url 'mscc:dashboard' %}"><small>Attendance Submitted</small><strong>91%</strong></a></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="row">
-                            <div class="col-lg-12 col-xl-12">
-                                <div class="main-card mb-3 card">
-                                    <div class="grid-menu grid-menu-2col">
-                                        <div class="no-gutters row">
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-info"></div>
-                                                        <i class="lnr-laptop-phone text-info"></i>
-                                                    </div>
-                                                    <div class="widget-numbers">
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
-                                                            <a href="{% url 'mscc:list' %}">Makani</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Makani</span>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-info">
-                                                        <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
-                                                            <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Dashboard</span>
-                                                        {% endif %}
-                                                        <span class="pl-1"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-primary"></div>
-                                                        <i class="lnr-cog text-primary"></i></div>
-                                                  <div class="widget-numbers">
-                                                     {% if request.user|has_group:"CLM_Bridging" %}
-                                                    <a href="{% url 'clm:bridging_page' %}">Dirasa</a>
-                                                      {% endif %}
-                                                  </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-success">
-                                                        <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"CLM_Bridging" %}
-                                                            <a href="{% url 'clm:dashboard' %}">Dashboard</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Dashboard</span>
-                                                        {% endif %}
-                                                        <span class="pl-1"> </span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <div class="snfe-card p-4 mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="snfe-title mb-0">System Activity Overview</h5>
+            <div>
+                <span class="snfe-tab active">Activity Feed</span>
+                <span class="snfe-tab">Data Quality Alerts</span>
+                <span class="snfe-tab">Exports / Jobs</span>
+            </div>
+        </div>
 
+        <div class="snfe-feed-item">
+            <div class="d-flex justify-content-between">
+                <div><span class="snfe-badge mr-2">Registration</span> Center X submitted 42 new registrations.</div>
+                <small class="text-muted">10:22 AM</small>
+            </div>
+            <small class="text-muted">Actor: Center Admin</small>
+            <a class="d-block mt-1" href="{% url 'mscc:list' %}">View</a>
+        </div>
+        <div class="snfe-feed-item">
+            <div class="d-flex justify-content-between">
+                <div><span class="snfe-badge mr-2">Registration</span> Batch import completed (1,250 rows).</div>
+                <small class="text-muted">09:45 AM</small>
+            </div>
+            <small class="text-muted">Actor: Data Manager</small>
+            <a class="d-block mt-1" href="{% url 'mscc:list' %}">View</a>
+        </div>
+        <div class="snfe-feed-item">
+            <div class="d-flex justify-content-between">
+                <div><span class="snfe-badge mr-2">Learners</span> User Y updated learner record.</div>
+                <small class="text-muted">08:38 AM</small>
+            </div>
+            <small class="text-muted">Actor: Case Officer</small>
+            <a class="d-block mt-1" href="{% url 'mscc:list' %}">View</a>
+        </div>
+        <div class="snfe-feed-item mb-0">
+            <div class="d-flex justify-content-between">
+                <div><span class="snfe-badge mr-2">Reports</span> Export generated: NFE Registration – Feb 24, 2026.</div>
+                <small class="text-muted">07:54 AM</small>
+            </div>
+            <small class="text-muted">Actor: Reporting User</small>
+            <a class="d-block mt-1" href="{% url 'mscc:dashboard' %}">View</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-8 mb-3">
+            <div class="snfe-card p-4 h-100">
+                <h5 class="snfe-title mb-3">Quick Links</h5>
+                <div class="row">
+                    <div class="col-md-4 col-6 mb-3"><a class="snfe-quick-link" href="{% url 'mscc:child_add' %}"><i class="fa fa-id-card-o text-primary"></i><h6 class="mt-2 mb-1">NFE Registration</h6><small class="text-muted">Create and update learner records.</small></a></div>
+                    <div class="col-md-4 col-6 mb-3"><a class="snfe-quick-link" href="{% url 'mscc:list' %}"><i class="fa fa-search text-primary"></i><h6 class="mt-2 mb-1">Learner Search</h6><small class="text-muted">Find learners fast by key fields.</small></a></div>
+                    <div class="col-md-4 col-6 mb-3"><a class="snfe-quick-link" href="{% url 'schools:school_list' %}"><i class="fa fa-building-o text-primary"></i><h6 class="mt-2 mb-1">Centers</h6><small class="text-muted">Review active and reporting centers.</small></a></div>
+                    <div class="col-md-4 col-6 mb-3"><a class="snfe-quick-link" href="{% url 'mscc:dashboard' %}"><i class="fa fa-check-square-o text-primary"></i><h6 class="mt-2 mb-1">Attendance</h6><small class="text-muted">Track submission and participation.</small></a></div>
+                    <div class="col-md-4 col-6 mb-3"><a class="snfe-quick-link" href="{% url 'mscc:dashboard' %}"><i class="fa fa-line-chart text-primary"></i><h6 class="mt-2 mb-1">Reports & Exports</h6><small class="text-muted">Generate exports and visual reports.</small></a></div>
+                    <div class="col-md-4 col-6 mb-3"><a class="snfe-quick-link" href="#"><i class="fa fa-users text-primary"></i><h6 class="mt-2 mb-1">Users & Roles</h6><small class="text-muted">Manage access permissions.</small></a></div>
+                    <div class="col-md-4 col-6 mb-3"><a class="snfe-quick-link" href="#"><i class="fa fa-database text-primary"></i><h6 class="mt-2 mb-1">Reference Data</h6><small class="text-muted">Maintain lookups and mappings.</small></a></div>
+                    <div class="col-md-4 col-6 mb-3"><a class="snfe-quick-link" href="#"><i class="fa fa-life-ring text-primary"></i><h6 class="mt-2 mb-1">Help / SOP</h6><small class="text-muted">Guidelines and support resources.</small></a></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 mb-3">
+            <div class="snfe-card p-4 h-100">
+                <h5 class="snfe-title mb-3">At a Glance</h5>
+
+                <div class="snfe-chart-card mb-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <small class="text-muted">Registrations Trend (Last 14 Days)</small>
+                        <small class="text-muted">Auto sample data</small>
+                    </div>
+                    <div id="chart-registrations-trend" class="snfe-chart-container"></div>
+                </div>
+
+                <div class="snfe-chart-card">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <small class="text-muted">Top Centers by Volume</small>
+                        <small class="text-muted">Auto sample data</small>
+                    </div>
+                    <div id="chart-top-centers" class="snfe-chart-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+  function clearNode(selector) {
+    var node = document.querySelector(selector);
+    if (!node) {
+      return null;
+    }
+    node.innerHTML = '';
+    return node;
+  }
+
+  function toShortDate(dateValue) {
+    return d3.timeFormat('%b %d')(dateValue);
+  }
+
+  var trendData = (function () {
+    var today = new Date();
+    var start = d3.timeDay.offset(today, -13);
+    var days = d3.timeDays(start, d3.timeDay.offset(today, 1));
+    var offsets = [0, 5, -3, 2, 4, -2, 6, -1, 3, 2, -4, 4, 3, 5];
+    var base = 72;
+
+    return days.map(function (day, index) {
+      base = Math.max(15, base + offsets[index]);
+      return {
+        date: day,
+        value: base
+      };
+    });
+  }());
+
+  var centersData = [
+    { name: 'Center A', value: 420 },
+    { name: 'Center B', value: 365 },
+    { name: 'Center C', value: 310 },
+    { name: 'Center D', value: 280 },
+    { name: 'Center E', value: 250 },
+    { name: 'Center F', value: 210 },
+    { name: 'Center G', value: 180 },
+    { name: 'Center H', value: 150 }
+  ];
+
+  function createTooltip(container) {
+    return d3.select(container)
+      .append('div')
+      .attr('class', 'snfe-chart-tooltip');
+  }
+
+  function renderTrendLineChart(containerSelector, data) {
+    var container = clearNode(containerSelector);
+    if (!container) {
+      return;
+    }
+
+    var width = container.clientWidth || 600;
+    var height = container.clientHeight || 220;
+    var margin = { top: 8, right: 18, bottom: 32, left: 40 };
+    var innerW = width - margin.left - margin.right;
+    var innerH = height - margin.top - margin.bottom;
+
+    var svg = d3.select(container)
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height);
+
+    var g = svg.append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    var x = d3.scaleTime()
+      .domain(d3.extent(data, function (d) { return d.date; }))
+      .range([0, innerW]);
+
+    var y = d3.scaleLinear()
+      .domain([0, d3.max(data, function (d) { return d.value; }) * 1.15])
+      .nice()
+      .range([innerH, 0]);
+
+    g.append('g')
+      .attr('opacity', 0.2)
+      .call(d3.axisLeft(y).ticks(4).tickSize(-innerW).tickFormat(''))
+      .select('.domain').remove();
+
+    g.append('g')
+      .attr('transform', 'translate(0,' + innerH + ')')
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat('%b %d')));
+
+    g.append('g').call(d3.axisLeft(y).ticks(4));
+
+    var line = d3.line()
+      .x(function (d) { return x(d.date); })
+      .y(function (d) { return y(d.value); })
+      .curve(d3.curveMonotoneX);
+
+    g.append('path')
+      .datum(data)
+      .attr('fill', 'none')
+      .attr('stroke-width', 2.5)
+      .attr('stroke', 'currentColor')
+      .attr('d', line);
+
+    g.selectAll('circle')
+      .data(data)
+      .join('circle')
+      .attr('cx', function (d) { return x(d.date); })
+      .attr('cy', function (d) { return y(d.value); })
+      .attr('r', 3)
+      .attr('fill', 'currentColor')
+      .attr('opacity', 0.65);
+
+    var tooltip = createTooltip(container);
+    var bisect = d3.bisector(function (d) { return d.date; }).left;
+
+    g.append('rect')
+      .attr('width', innerW)
+      .attr('height', innerH)
+      .attr('fill', 'transparent')
+      .on('mousemove', function (event) {
+        var point = d3.pointer(event, this);
+        var hoverDate = x.invert(point[0]);
+        var idx = bisect(data, hoverDate);
+        var d0 = data[Math.max(0, idx - 1)];
+        var d1 = data[Math.min(data.length - 1, idx)];
+        var selected = (d1 && hoverDate - d0.date > d1.date - hoverDate) ? d1 : d0;
+
+        tooltip
+          .style('opacity', 1)
+          .style('left', (point[0] + margin.left + 12) + 'px')
+          .style('top', (point[1] + margin.top - 28) + 'px')
+          .html('<div><strong>' + toShortDate(selected.date) + '</strong></div><div>' + selected.value + ' registrations</div>');
+      })
+      .on('mouseleave', function () {
+        tooltip.style('opacity', 0);
+      });
+  }
+
+  function renderTopCentersBarChart(containerSelector, data) {
+    var container = clearNode(containerSelector);
+    if (!container) {
+      return;
+    }
+
+    var width = container.clientWidth || 600;
+    var height = container.clientHeight || 220;
+    var margin = { top: 8, right: 18, bottom: 58, left: 40 };
+    var innerW = width - margin.left - margin.right;
+    var innerH = height - margin.top - margin.bottom;
+
+    var svg = d3.select(container)
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height);
+
+    var g = svg.append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    var x = d3.scaleBand()
+      .domain(data.map(function (d) { return d.name; }))
+      .range([0, innerW])
+      .padding(0.28);
+
+    var y = d3.scaleLinear()
+      .domain([0, d3.max(data, function (d) { return d.value; }) * 1.15])
+      .nice()
+      .range([innerH, 0]);
+
+    g.append('g')
+      .attr('opacity', 0.2)
+      .call(d3.axisLeft(y).ticks(4).tickSize(-innerW).tickFormat(''))
+      .select('.domain').remove();
+
+    g.append('g')
+      .attr('transform', 'translate(0,' + innerH + ')')
+      .call(d3.axisBottom(x))
+      .selectAll('text')
+      .attr('transform', 'rotate(-25)')
+      .style('text-anchor', 'end');
+
+    g.append('g').call(d3.axisLeft(y).ticks(4));
+
+    var tooltip = createTooltip(container);
+
+    g.selectAll('rect.bar')
+      .data(data)
+      .join('rect')
+      .attr('class', 'bar')
+      .attr('x', function (d) { return x(d.name); })
+      .attr('y', function (d) { return y(d.value); })
+      .attr('width', x.bandwidth())
+      .attr('height', function (d) { return innerH - y(d.value); })
+      .attr('rx', 6)
+      .attr('fill', 'currentColor')
+      .attr('opacity', 0.85)
+      .on('mousemove', function (event, d) {
+        var point = d3.pointer(event, this);
+        tooltip
+          .style('opacity', 1)
+          .style('left', (point[0] + margin.left + x(d.name)) + 'px')
+          .style('top', (point[1] + margin.top - 30) + 'px')
+          .html('<div><strong>' + d.name + '</strong></div><div>' + d.value + ' registrations</div>');
+      })
+      .on('mouseleave', function () {
+        tooltip.style('opacity', 0);
+      });
+  }
+
+  function renderAllLandingCharts() {
+    renderTrendLineChart('#chart-registrations-trend', trendData);
+    renderTopCentersBarChart('#chart-top-centers', centersData);
+  }
+
+  renderAllLandingCharts();
+
+  window.addEventListener('resize', function () {
+    clearTimeout(window.__snfe_chart_resize_timer);
+    window.__snfe_chart_resize_timer = setTimeout(renderAllLandingCharts, 150);
+  });
+</script>
 {% endblock %}
