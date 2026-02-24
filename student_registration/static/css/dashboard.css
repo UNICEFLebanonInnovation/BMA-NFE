@@ -1,0 +1,5 @@
+.chart { min-height: 240px; }
+#filter-panel .form-control { font-size: 0.9rem; }
+#kpi-cards .card { border-left: 4px solid #3f6ad8; }
+svg text { font-size: 11px; fill: #495057; }
+svg rect:focus { outline: 2px solid #ffc107; }
