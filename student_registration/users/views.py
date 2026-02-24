@@ -15,8 +15,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.db.models import Count, Q
+from django.utils import timezone
+from datetime import timedelta
 from .models import User, WebPushToken
 import json
+from student_registration.mscc.models import Registration
+from student_registration.users.templatetags.custom_tags import has_group
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -129,6 +134,69 @@ def login_success(request):
 class LandingPage(LoginRequiredMixin,
                    TemplateView):
     template_name = 'landing_page.html'
+
+    def get_mscc_queryset(self):
+        """Return registrations scoped by user role and current round context."""
+        user = self.request.user
+        queryset = Registration.objects.filter(deleted=False)
+        round_filter = Q(round__isnull=True) | Q(round__current_year=True)
+
+        if user.is_superuser or has_group(user, 'MSCC_UNICEF'):
+            return queryset.filter(round_filter)
+
+        if has_group(user, 'MSCC_PARTNER') and user.partner_id:
+            return queryset.filter(round_filter, partner_id=user.partner_id)
+
+        if has_group(user, 'MSCC_CENTER') and user.center_id:
+            return queryset.filter(round_filter, center_id=user.center_id)
+
+        if has_group(user, 'MSCC'):
+            return queryset.filter(round_filter)
+
+        return Registration.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = self.get_mscc_queryset()
+
+        today = timezone.localdate()
+        start_date = today - timedelta(days=13)
+
+        trend_rows = (
+            queryset.filter(created__date__gte=start_date, created__date__lte=today)
+            .values('created__date')
+            .annotate(value=Count('id'))
+            .order_by('created__date')
+        )
+        trend_lookup = {
+            row['created__date'].isoformat(): row['value']
+            for row in trend_rows
+            if row['created__date']
+        }
+
+        trend_data = []
+        for offset in range(14):
+            day = start_date + timedelta(days=offset)
+            day_key = day.isoformat()
+            trend_data.append({'date': day_key, 'value': trend_lookup.get(day_key, 0)})
+
+        centers_data = list(
+            queryset.filter(center__isnull=False)
+            .values('center__name')
+            .annotate(value=Count('id'))
+            .order_by('-value', 'center__name')[:8]
+        )
+        centers_data = [
+            {'name': row['center__name'], 'value': row['value']}
+            for row in centers_data
+            if row['center__name']
+        ]
+
+        context.update({
+            'trend_data_json': json.dumps(trend_data),
+            'centers_data_json': json.dumps(centers_data),
+        })
+        return context
 
 
 def home(request):
