@@ -1,83 +1,185 @@
 {% extends "base.html" %}
-{% load util_tags %}
 {% load static i18n %}
 {% load custom_tags %}
 
-{% block module_name %}{% endblock %}
+{% block module_name %}Landing{% endblock %}
 
 {% block main_content %}
-
-<!--<div class="app-page-title">-->
-                        <!--<div class="page-title-wrapper">-->
-                            <!--<div class="page-title-heading">-->
-                                <!--<div>-->
-                                    <!--<div class="page-title-head center-elem page-title-heading">-->
-                                        <!--<span class="d-inline-block pr-2">-->
-                                            <!--<i class="pe-7s-display1"></i>-->
-                                        <!--</span>-->
-                                        <!--<span class="d-inline-block">Dirasa</span>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-
-                        <!--</div>-->
-<!--</div>-->
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-icon"><i class="pe-7s-study icon-gradient bg-night-fade"></i></div>
+      <div>
+        BMA sNFE Sector
+        <div class="page-title-subheading">Live MSCC overview from current database records.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="row">
-                            <div class="col-lg-12 col-xl-12">
-                                <div class="main-card mb-3 card">
-                                    <div class="grid-menu grid-menu-2col">
-                                        <div class="no-gutters row">
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-info"></div>
-                                                        <i class="lnr-laptop-phone text-info"></i>
-                                                    </div>
-                                                    <div class="widget-numbers">
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
-                                                            <a href="{% url 'mscc:list' %}">Makani</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Makani</span>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-info">
-                                                        <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
-                                                            <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Dashboard</span>
-                                                        {% endif %}
-                                                        <span class="pl-1"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-primary"></div>
-                                                        <i class="lnr-cog text-primary"></i></div>
-                                                  <div class="widget-numbers">
-                                                     {% if request.user|has_group:"CLM_Bridging" %}
-                                                    <a href="{% url 'clm:bridging_page' %}">Dirasa</a>
-                                                      {% endif %}
-                                                  </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-success">
-                                                        <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"CLM_Bridging" %}
-                                                            <a href="{% url 'clm:dashboard' %}">Dashboard</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Dashboard</span>
-                                                        {% endif %}
-                                                        <span class="pl-1"> </span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="card mb-3 widget-content bg-success">
+      <div class="widget-content-wrapper text-white">
+        <div class="widget-content-left"><div class="widget-heading">Today</div><div class="widget-subheading">Registrations</div></div>
+        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_today }}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="card mb-3 widget-content bg-primary">
+      <div class="widget-content-wrapper text-white">
+        <div class="widget-content-left"><div class="widget-heading">This Week</div><div class="widget-subheading">Registrations</div></div>
+        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_week }}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="card mb-3 widget-content bg-info">
+      <div class="widget-content-wrapper text-white">
+        <div class="widget-content-left"><div class="widget-heading">Active Learners</div><div class="widget-subheading">Distinct children</div></div>
+        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_active }}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="card mb-3 widget-content bg-warning">
+      <div class="widget-content-wrapper text-white">
+        <div class="widget-content-left"><div class="widget-heading">Pending Validation</div><div class="widget-subheading">Missing core profile data</div></div>
+        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_pending }}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="card mb-3 widget-content bg-secondary">
+      <div class="widget-content-wrapper text-white">
+        <div class="widget-content-left"><div class="widget-heading">Centers Reporting</div><div class="widget-subheading">Last 30 days</div></div>
+        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_centers }}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="card mb-3 widget-content bg-focus">
+      <div class="widget-content-wrapper text-white">
+        <div class="widget-content-left"><div class="widget-heading">Attendance</div><div class="widget-subheading">Current month</div></div>
+        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_attendance }}%</div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<div class="row">
+  <div class="col-lg-8">
+    <div class="main-card mb-3 card">
+      <div class="card-header">Registrations Trend (Last 14 Days)</div>
+      <div class="card-body"><div id="chart-registrations-trend" style="height:300px"></div></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="main-card mb-3 card">
+      <div class="card-header">Quick Modules</div>
+      <div class="card-body">
+        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user.is_superuser %}
+          <a class="btn btn-primary btn-block" href="{% url 'mscc:list' %}">NFE Registration List</a>
+          <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:child_add' %}">Start New Registration</a>
+          <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:dashboard' %}">Open MSCC Dashboard</a>
+          <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:attendance_report' %}">Attendance Reports</a>
+        {% else %}
+          <div class="text-muted">No MSCC module access for your user role.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-7">
+    <div class="main-card mb-3 card">
+      <div class="card-header">Top Centers by Volume</div>
+      <div class="card-body"><div id="chart-top-centers" style="height:320px"></div></div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="main-card mb-3 card">
+      <div class="card-header">Recent MSCC Exports</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Type</th><th>Created</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for export in recent_exports %}
+            <tr>
+              <td>{{ export.export_type }}</td>
+              <td>{{ export.created|date:"Y-m-d H:i" }}</td>
+              <td><span class="badge badge-{% if export.status == 'done' %}success{% elif export.status == 'failed' %}danger{% else %}warning{% endif %}">{{ export.status|title }}</span></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="3" class="text-center text-muted">No export history found.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+  const trendData = {{ trend_data|safe }}.map(d => ({...d, date: new Date(d.date)}));
+  const centersData = {{ top_centers_data|safe }};
+
+  function renderTrend() {
+    const container = d3.select('#chart-registrations-trend');
+    container.selectAll('*').remove();
+    const width = container.node().clientWidth || 600;
+    const height = 300;
+    const margin = {top: 10, right: 16, bottom: 35, left: 40};
+    const innerW = width - margin.left - margin.right;
+    const innerH = height - margin.top - margin.bottom;
+
+    const svg = container.append('svg').attr('width', width).attr('height', height);
+    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleTime().domain(d3.extent(trendData, d => d.date)).range([0, innerW]);
+    const y = d3.scaleLinear().domain([0, d3.max(trendData, d => d.value) || 1]).nice().range([innerH, 0]);
+
+    g.append('g').attr('transform', `translate(0,${innerH})`).call(d3.axisBottom(x).ticks(7).tickFormat(d3.timeFormat('%b %d')));
+    g.append('g').call(d3.axisLeft(y).ticks(5));
+
+    g.append('path')
+      .datum(trendData)
+      .attr('fill', 'none')
+      .attr('stroke', '#3f6ad8')
+      .attr('stroke-width', 2.5)
+      .attr('d', d3.line().x(d => x(d.date)).y(d => y(d.value)).curve(d3.curveMonotoneX));
+  }
+
+  function renderCenters() {
+    const container = d3.select('#chart-top-centers');
+    container.selectAll('*').remove();
+    const width = container.node().clientWidth || 600;
+    const height = 320;
+    const margin = {top: 10, right: 10, bottom: 70, left: 40};
+    const innerW = width - margin.left - margin.right;
+    const innerH = height - margin.top - margin.bottom;
+
+    const svg = container.append('svg').attr('width', width).attr('height', height);
+    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleBand().domain(centersData.map(d => d.name)).range([0, innerW]).padding(0.2);
+    const y = d3.scaleLinear().domain([0, d3.max(centersData, d => d.value) || 1]).nice().range([innerH, 0]);
+
+    g.append('g').attr('transform', `translate(0,${innerH})`).call(d3.axisBottom(x)).selectAll('text')
+      .attr('transform', 'rotate(-25)').style('text-anchor', 'end');
+    g.append('g').call(d3.axisLeft(y).ticks(5));
+
+    g.selectAll('rect').data(centersData).join('rect')
+      .attr('x', d => x(d.name)).attr('y', d => y(d.value))
+      .attr('width', x.bandwidth()).attr('height', d => innerH - y(d.value))
+      .attr('fill', '#16aaff');
+  }
+
+  renderTrend();
+  renderCenters();
+  window.addEventListener('resize', () => { renderTrend(); renderCenters(); });
+</script>
 {% endblock %}
