@@ -154,8 +154,14 @@ class LandingPage(LoginRequiredMixin,
         week_count = registrations.filter(created__date__gte=week_start).count()
         active_learners = registrations.values('child_id').distinct().count()
         pending_validation = registrations.filter(
-            Q(child__birthday__isnull=True)
+            Q(child__birthday_year__isnull=True)
+            | Q(child__birthday_year='')
+            | Q(child__birthday_month__isnull=True)
+            | Q(child__birthday_month='')
+            | Q(child__birthday_day__isnull=True)
+            | Q(child__birthday_day='')
             | Q(child__gender__isnull=True)
+            | Q(child__gender='')
             | Q(child__nationality__isnull=True)
         ).count()
         centers_reporting = registrations.filter(
