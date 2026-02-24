@@ -161,7 +161,9 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres:///student_registration'),
+    # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
+    'default': env.db('DATABASE_URL',
+    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/bma_sector'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 

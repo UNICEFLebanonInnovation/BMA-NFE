@@ -110,7 +110,7 @@
                                             {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                             <div class="col-sm-6 col-xl-4">
                                                 <ul class="nav flex-column">
-                                                    <li class="nav-item-header nav-item">Makani</li>
+                                                    <li class="nav-item-header nav-item">NFR</li>
                                                     <li class="nav-item">
                                                         <a href="{% url 'mscc:list' %}" class="nav-link">
                                                             <i class="nav-link-icon lnr-inbox"></i>
@@ -142,44 +142,6 @@
                                                             <span>Dashboard</span>
                                                         </a>
                                                     </li>
-                                                </ul>
-                                            </div>
-                                            {% endif %}
-                                            {% if request.user|has_group:"CLM_Bridging" %}
-                                            <div class="col-sm-6 col-xl-4">
-                                                <ul class="nav flex-column">
-                                                    <li class="nav-item-header nav-item">Dirasa</li>
-                                                    <li class="nav-item">
-                                                        <a href="{% url 'clm:bridging_list' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-inbox"></i>
-                                                            <span>Student Registration</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="{% url 'clm:attendance' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-book"></i>
-                                                            <span>Student Attendance</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{% url 'schools:school_list' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-picture"></i>
-                                                            <span>Schools</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{% url 'students:teacher_list' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-picture"></i>
-                                                            <span>Teachers</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="{% url 'clm:dashboard' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-file-empty"></i>
-                                                            <span>Dashboard</span>
-                                                        </a>
-                                                    </li>
-
                                                 </ul>
                                             </div>
                                             {% endif %}
@@ -218,7 +180,7 @@
                                 {% recent_export_history as exports %}
                                 {% for export in exports %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ export.file_url|default:'#' }}" target="_blank">Makani export {{ export.created|date:"Y-m-d H:i" }}</a>
+                                    <a class="nav-link" href="{{ export.file_url|default:'#' }}" target="_blank">NFE export {{ export.created|date:"Y-m-d H:i" }}</a>
                                 </li>
                                 {% empty %}
                                 <li class="nav-item">
@@ -249,11 +211,10 @@
                             <div class="grid-menu grid-menu-xl grid-menu-3col">
                                 <div class="no-gutters row">
 
-                                  {% if request.user|has_group:"CHARTER" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'dashboard:pivot_dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Pivot Builder / Makani
+                                            Pivot Builder
                                         </a>
                                     </div>
                                     <div class="col-sm-6 col-xl-4">
@@ -262,7 +223,6 @@
                                             Attendance Heat-map
                                         </a>
                                     </div>
-                                  {% endif %}
                                 </div>
                             </div>
                             <!--<ul class="nav flex-column">-->
@@ -495,15 +455,15 @@
                         <div class="app-footer__inner">
                             <div class="app-footer-left">
                                 <ul class="nav">
-                                    <li class="nav-item">
-                                        <img src="{% static 'images/unicef-logo.png' %}" height="50"
-                                            style="margin-top: -7px;" alt="" />
-                                    </li>
-                                    <li class="nav-item">
-                                        <div class="nav-link">
-                                            BMA - Beneficiary Monitoring & Assessment  2022 - Version 3.0
-                                        </div>
-                                    </li>
+                                    <!--<li class="nav-item">-->
+                                        <!--<img src="{% static 'images/unicef-logo.png' %}" height="50"-->
+                                            <!--style="margin-top: -7px;" alt="" />-->
+                                    <!--</li>-->
+                                    <!--<li class="nav-item">-->
+                                        <!--<div class="nav-link">-->
+                                            <!--BMA - Beneficiary Monitoring & Assessment  2022 - Version 3.0-->
+                                        <!--</div>-->
+                                    <!--</li>-->
                                 </ul>
                             </div>
                         </div>

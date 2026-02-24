@@ -2,7 +2,7 @@
 {% load static i18n %}
 {% load custom_tags %}
 
-{% block module_name %}Landing{% endblock %}
+{% block module_name %}{% endblock %}
 
 {% block main_content %}
 <div class="app-page-title">
@@ -10,8 +10,8 @@
     <div class="page-title-heading">
       <div class="page-title-icon"><i class="pe-7s-study icon-gradient bg-night-fade"></i></div>
       <div>
-        BMA sNFE Sector
-        <div class="page-title-subheading">Live MSCC overview from current database records.</div>
+        NFE Sector
+        <div class="page-title-subheading">Live overview from current database records.</div>
       </div>
     </div>
   </div>
@@ -79,14 +79,10 @@
     <div class="main-card mb-3 card">
       <div class="card-header">Quick Modules</div>
       <div class="card-body">
-        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user.is_superuser %}
           <a class="btn btn-primary btn-block" href="{% url 'mscc:list' %}">NFE Registration List</a>
           <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:child_add' %}">Start New Registration</a>
-          <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:dashboard' %}">Open MSCC Dashboard</a>
+          <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:dashboard' %}">Open Dashboard</a>
           <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:attendance_report' %}">Attendance Reports</a>
-        {% else %}
-          <div class="text-muted">No MSCC module access for your user role.</div>
-        {% endif %}
       </div>
     </div>
   </div>
@@ -101,7 +97,7 @@
   </div>
   <div class="col-lg-5">
     <div class="main-card mb-3 card">
-      <div class="card-header">Recent MSCC Exports</div>
+      <div class="card-header">Recent Exports</div>
       <div class="card-body p-0">
         <table class="table table-hover mb-0">
           <thead><tr><th>Type</th><th>Created</th><th>Status</th></tr></thead>
