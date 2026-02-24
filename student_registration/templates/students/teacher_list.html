@@ -140,3 +140,18 @@
         }
     </script>
 {% endblock %}
+
+{% block extra_css %}
+    <style>
+        .table-list .table-responsive .table {
+            width: 100% !important;
+            table-layout: fixed;
+        }
+
+        .table-list .table-responsive .table th,
+        .table-list .table-responsive .table td {
+            white-space: normal;
+            word-break: break-word;
+        }
+    </style>
+{% endblock %}
