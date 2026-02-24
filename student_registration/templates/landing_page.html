@@ -109,7 +109,7 @@
           {% for export in recent_exports %}
             <tr>
               <td>{{ export.export_type }}</td>
-              <td>{{ export.created|date:"Y-m-d H:i" }}</td>
+              <td>{{ export.created_display }}</td>
               <td><span class="badge badge-{% if export.status == 'done' %}success{% elif export.status == 'failed' %}danger{% else %}warning{% endif %}">{{ export.status|title }}</span></td>
             </tr>
           {% empty %}

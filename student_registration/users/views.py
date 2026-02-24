@@ -194,6 +194,20 @@ class LandingPage(LoginRequiredMixin,
         recent_exports = ExportHistory.objects.filter(
             export_type__icontains='Makani'
         ).order_by('-created')[:5]
+        export_rows = []
+        for export in recent_exports:
+            created = export.created
+            if created and timezone.is_aware(created):
+                created_display = timezone.localtime(created).strftime('%Y-%m-%d %H:%M')
+            elif created:
+                created_display = created.strftime('%Y-%m-%d %H:%M')
+            else:
+                created_display = ''
+            export_rows.append({
+                'export_type': export.export_type,
+                'created_display': created_display,
+                'status': export.status,
+            })
 
         context.update({
             'kpi_today': today_count,
@@ -204,7 +218,7 @@ class LandingPage(LoginRequiredMixin,
             'kpi_attendance': attendance_percent,
             'trend_data': json.dumps(trend_data),
             'top_centers_data': json.dumps(top_centers),
-            'recent_exports': recent_exports,
+            'recent_exports': export_rows,
         })
         return context
 
