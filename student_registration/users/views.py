@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.urls import reverse, reverse_lazy
+from django.conf import settings
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.http import (
     HttpResponse,
@@ -139,7 +140,10 @@ class LandingPage(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        today = timezone.localdate()
+        if settings.USE_TZ:
+            today = timezone.localdate()
+        else:
+            today = timezone.now().date()
         week_start = today - timezone.timedelta(days=6)
         trend_start = today - timezone.timedelta(days=13)
         month_start = today.replace(day=1)
