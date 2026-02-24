@@ -143,28 +143,12 @@ function clearNode(selector) {
     return el;
 }
 
-var trendData = (function() {
-    var today = new Date();
-    var start = d3.timeDay.offset(today, -13);
-    var days = d3.timeDays(start, d3.timeDay.offset(today, 1));
-    var base = 60 + Math.floor(Math.random() * 30);
+var trendData = {{ trend_data_json|safe }};
+trendData.forEach(function(item) {
+    item.date = parseISODate(item.date);
+});
 
-    return days.map(function(dt) {
-        base = Math.max(10, base + Math.floor((Math.random() - 0.45) * 18));
-        return {date: dt, value: base};
-    });
-})();
-
-var centersData = [
-    {name: 'Center A', value: 420},
-    {name: 'Center B', value: 365},
-    {name: 'Center C', value: 310},
-    {name: 'Center D', value: 280},
-    {name: 'Center E', value: 250},
-    {name: 'Center F', value: 210},
-    {name: 'Center G', value: 180},
-    {name: 'Center H', value: 150}
-];
+var centersData = {{ centers_data_json|safe }};
 
 function renderTrendLineChart(containerSelector, data) {
     var container = clearNode(containerSelector);
@@ -189,8 +173,10 @@ function renderTrendLineChart(containerSelector, data) {
         .domain(d3.extent(data, function(d) { return d.date; }))
         .range([0, innerW]);
 
+    var maxValue = d3.max(data, function(d) { return d.value; }) || 1;
+
     var y = d3.scaleLinear()
-        .domain([0, d3.max(data, function(d) { return d.value; }) * 1.15])
+        .domain([0, maxValue * 1.15])
         .nice()
         .range([innerH, 0]);
 
@@ -289,8 +275,14 @@ function renderTopCentersBarChart(containerSelector, data) {
         .range([0, innerW])
         .padding(0.25);
 
+    if (!data.length) {
+        return;
+    }
+
+    var maxValue = d3.max(data, function(d) { return d.value; }) || 1;
+
     var y = d3.scaleLinear()
-        .domain([0, d3.max(data, function(d) { return d.value; }) * 1.15])
+        .domain([0, maxValue * 1.15])
         .nice()
         .range([innerH, 0]);
 

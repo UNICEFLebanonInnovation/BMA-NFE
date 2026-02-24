@@ -15,7 +15,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.db.models import Count
+from django.db.models.functions import TruncDate
+from django.utils import timezone
 from .models import User, WebPushToken
+from student_registration.mscc.models import Registration
 import json
 
 
@@ -129,6 +133,46 @@ def login_success(request):
 class LandingPage(LoginRequiredMixin,
                    TemplateView):
     template_name = 'landing_page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        today = timezone.now().date()
+        start_date = today - timezone.timedelta(days=13)
+
+        trend_rows = (
+            Registration.objects
+            .filter(created__date__gte=start_date, created__date__lte=today)
+            .annotate(day=TruncDate('created'))
+            .values('day')
+            .annotate(value=Count('id'))
+            .order_by('day')
+        )
+
+        trend_map = {row['day']: row['value'] for row in trend_rows}
+        trend_data = []
+        for offset in range(14):
+            point_date = start_date + timezone.timedelta(days=offset)
+            trend_data.append({
+                'date': point_date.isoformat(),
+                'value': trend_map.get(point_date, 0),
+            })
+
+        top_centers = (
+            Registration.objects
+            .filter(center__isnull=False)
+            .values('center__center_name')
+            .annotate(value=Count('id'))
+            .order_by('-value')[:8]
+        )
+        centers_data = [
+            {'name': row['center__center_name'], 'value': row['value']}
+            for row in top_centers
+        ]
+
+        context['trend_data_json'] = json.dumps(trend_data)
+        context['centers_data_json'] = json.dumps(centers_data)
+        return context
 
 
 def home(request):
