@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.urls import reverse, reverse_lazy
+from django.conf import settings
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.http import (
     HttpResponse,
@@ -15,7 +16,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils import timezone
+from django.db.models import Count, Q
+from django.db.models.functions import TruncDate
 from .models import User, WebPushToken
+from student_registration.mscc.models import Registration
+from student_registration.attendances.models import MSCCAttendanceChild
+from student_registration.backends.models import ExportHistory
 import json
 
 
@@ -129,6 +136,101 @@ def login_success(request):
 class LandingPage(LoginRequiredMixin,
                    TemplateView):
     template_name = 'landing_page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if settings.USE_TZ:
+            today = timezone.localdate()
+        else:
+            today = timezone.now().date()
+        week_start = today - timezone.timedelta(days=6)
+        trend_start = today - timezone.timedelta(days=13)
+        month_start = today.replace(day=1)
+
+        registrations = Registration.objects.filter(deleted=False)
+
+        today_count = registrations.filter(created__date=today).count()
+        week_count = registrations.filter(created__date__gte=week_start).count()
+        active_learners = registrations.values('child_id').distinct().count()
+        pending_validation = registrations.filter(
+            Q(child__birthday_year__isnull=True)
+            | Q(child__birthday_year='')
+            | Q(child__birthday_month__isnull=True)
+            | Q(child__birthday_month='')
+            | Q(child__birthday_day__isnull=True)
+            | Q(child__birthday_day='')
+            | Q(child__gender__isnull=True)
+            | Q(child__gender='')
+            | Q(child__nationality__isnull=True)
+        ).count()
+        centers_reporting = registrations.filter(
+            created__date__gte=today - timezone.timedelta(days=30),
+            center__isnull=False,
+        ).values('center_id').distinct().count()
+
+        attendance_rows = MSCCAttendanceChild.objects.filter(
+            attendance_day__attendance_date__gte=month_start,
+            attendance_day__attendance_date__lte=today,
+        )
+        attendance_total = attendance_rows.count()
+        attendance_yes = attendance_rows.filter(attended='Yes').count()
+        attendance_percent = round((attendance_yes / attendance_total) * 100) if attendance_total else 0
+
+        trend_map = {
+            row['day'].strftime('%Y-%m-%d'): row['value']
+            for row in registrations.filter(created__date__gte=trend_start)
+            .annotate(day=TruncDate('created'))
+            .values('day')
+            .annotate(value=Count('id'))
+        }
+        trend_data = []
+        for idx in range(14):
+            day = trend_start + timezone.timedelta(days=idx)
+            key = day.strftime('%Y-%m-%d')
+            trend_data.append({'date': key, 'value': trend_map.get(key, 0)})
+
+        top_centers_qs = (
+            registrations.filter(center__isnull=False)
+            .values('center__name')
+            .annotate(value=Count('id'))
+            .order_by('-value')[:8]
+        )
+        top_centers = [
+            {'name': row['center__name'] or 'Unknown Center', 'value': row['value']}
+            for row in top_centers_qs
+        ]
+
+        recent_exports = ExportHistory.objects.filter(
+            export_type__icontains='Makani'
+        ).order_by('-created')[:5]
+        export_rows = []
+        for export in recent_exports:
+            created = export.created
+            if created and timezone.is_aware(created):
+                created_display = timezone.localtime(created).strftime('%Y-%m-%d %H:%M')
+            elif created:
+                created_display = created.strftime('%Y-%m-%d %H:%M')
+            else:
+                created_display = ''
+            export_rows.append({
+                'export_type': export.export_type,
+                'created_display': created_display,
+                'status': export.status,
+            })
+
+        context.update({
+            'kpi_today': today_count,
+            'kpi_week': week_count,
+            'kpi_active': active_learners,
+            'kpi_pending': pending_validation,
+            'kpi_centers': centers_reporting,
+            'kpi_attendance': attendance_percent,
+            'trend_data': json.dumps(trend_data),
+            'top_centers_data': json.dumps(top_centers),
+            'recent_exports': export_rows,
+        })
+        return context
 
 
 def home(request):
