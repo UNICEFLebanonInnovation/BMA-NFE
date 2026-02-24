@@ -96,12 +96,12 @@ onMessage(messaging, (payload) => {
       $('#downloadReadyModal').modal('show');
     }
     const timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
-    const text = 'Makani export ' + timestamp;
+    const text = 'NFR Sector export ' + timestamp;
     saveNotification(payload.data.url, text);
     addNotificationToList(payload.data.url, text);
   } else if (payload.data && payload.data.type === "mscc_export_failed") {
     const reason = payload.data.reason || 'Unknown error';
-    const text = 'Makani export failed: ' + reason;
+    const text = 'NFR Sector export failed: ' + reason;
     if (!document.hidden) {
       alert(text);
     }

@@ -202,7 +202,7 @@ class LandingPage(LoginRequiredMixin,
         ]
 
         recent_exports = ExportHistory.objects.filter(
-            export_type__icontains='Makani'
+            export_type__icontains='NFR Sector'
         ).order_by('-created')[:5]
         export_rows = []
         for export in recent_exports:

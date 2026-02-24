@@ -164,6 +164,8 @@ class FullFilter(PlaceholderFilterSet):
 
 
 class TeacherFilter(PlaceholderFilterSet):
+    NO_ROUND_OPTION = ('no_round', 'No Round')
+
     round = ModelChoiceFilter(queryset=Round.objects.filter(current_year=True).all(), empty_label=_('Round'))
     center = ModelChoiceFilter(queryset=Center.objects.all(), empty_label=_('Center'))
 

@@ -38,9 +38,9 @@ class ExportHistory(TimeStampedModel):
 
     EXPORT_TYPE = Choices(
         ('', '----------'),
-        ('Makani List', _('Makani List')),
-        ('Makani Raw Attendance', _('Makani Raw Attendance')),
-        ('Makani Total Attendance', _('Makani Total Attendance')),
+        ('NFR Sector List', _('NFR Sector List')),
+        ('NFR Sector Raw Attendance', _('NFR Sector Raw Attendance')),
+        ('NFR Sector Total Attendance', _('NFR Sector Total Attendance')),
         ('Center List', _('Center List')),
         ('Bridging Absence Raw Data', _('Bridging Absence Raw Data')),
         ('Bridging Attendance Total', _('Bridging Attendance Total')),

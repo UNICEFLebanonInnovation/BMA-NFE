@@ -380,7 +380,7 @@ class MSCCAttendance(TimeStampedModel):
 
     class Meta:
         ordering = ['attendance_date']
-        verbose_name = "Makani Attendance"
+        verbose_name = "NFR Sector Attendance"
 
     def __str__(self):
         return '{} - {}'.format(self.center, self.attendance_date)
@@ -441,7 +441,7 @@ class MSCCAttendanceChild(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Makani Child Attendance"
+        verbose_name = "NFR Sector Child Attendance"
 
     @property
     def attendance_date(self):

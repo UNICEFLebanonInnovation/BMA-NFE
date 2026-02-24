@@ -430,7 +430,7 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "verbose_name": "Makani Attendance",
+                "verbose_name": "NFR Sector Attendance",
                 "ordering": ["attendance_date"],
             },
         ),
@@ -495,7 +495,7 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "verbose_name": "Makani Child Attendance",
+                "verbose_name": "NFR Sector Child Attendance",
                 "ordering": ["id"],
             },
         ),

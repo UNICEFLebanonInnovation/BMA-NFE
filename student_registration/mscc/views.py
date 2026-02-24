@@ -928,14 +928,15 @@ class TeacherAddView(LoginRequiredMixin,
                  FormView):
     template_name = 'mscc/teacher_form.html'
     form_class = TeacherForm
-    success_url = '/mscc/teacher-list/'
+    success_url = reverse_lazy('mscc:teacher_list')
     group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
-            return '/mscc/teacher-add/'
+            return reverse_lazy('mscc:teacher_add')
         if self.request.POST.get('save_and_continue', None):
-            return '/mscc/teacher-edit/' + str(self.request.session.get('instance_id')) + '/'
+            # return '/mscc/teacher-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return reverse('mscc:teacher_edit', kwargs={'pk': self.request.session.get('instance_id')})
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -958,14 +959,15 @@ class TeacherEditView(LoginRequiredMixin,
                   FormView):
     template_name = 'mscc/teacher_form.html'
     form_class = TeacherForm
-    success_url = '/mscc/teacher-list/'
+    success_url = reverse_lazy('mscc:teacher_list')
     group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
-            return '/mscc/teacher-add/'
+            return reverse_lazy('mscc:teacher_add')
         if self.request.POST.get('save_and_continue', None):
-            return '/mscc/teacher-edit/' + str(self.request.session.get('instance_id')) + '/'
+            # return '/mscc/teacher-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return reverse('mscc:teacher_edit', kwargs={'pk': self.request.session.get('instance_id')})
         return self.success_url
 
     def get_form(self, form_class=None):
@@ -983,7 +985,7 @@ class TeacherEditView(LoginRequiredMixin,
 
 class TeacherDeleteView(LoginRequiredMixin, GroupRequiredMixin, DeleteView):
     model = Teacher
-    success_url = '/mscc/teacher-list/'
+    success_url = reverse_lazy('mscc:teacher_list')
     group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
 
     def get_object(self):
@@ -1086,7 +1088,7 @@ def export_list_background(request):
                             status=400)
 
     export_record = ExportHistory.objects.create(
-        export_type='Makani List',
+        export_type='NFR Sector List',
         created_by=user,
         partner_name=user.partner.name if user.partner else ''
     )
@@ -1159,7 +1161,7 @@ def export_list_async(request):
     else:
         file_format = request.GET.get('format', 'csv')
     export_record = ExportHistory.objects.create(
-        export_type='Makani List',
+        export_type='NFR Sector List',
         created_by=request.user,
         partner_name=request.user.partner.name if request.user.partner else '',
         fields=fields,

@@ -133,7 +133,7 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
         if user:
             send_push_to_web(
                 user,
-                "Makani export ready",
+                "NFR Sector export ready",
                 "Your export is ready to download.",
                 data={"type": "mscc_export_ready", "url": file_url},
             )
@@ -146,7 +146,7 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
                 # Notify the user that the export failed and include the reason
                 send_push_to_web(
                     export.created_by,
-                    "Makani export failed",
+                    "NFR Sector export failed",
                     str(e),
                     data={"type": "mscc_export_failed", "reason": str(e)},
                 )
@@ -243,7 +243,7 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         if user:
             send_push_to_web(
                 user,
-                "Makani export ready",
+                "NFR Sector export ready",
                 "Your export is ready to download.",
                 data={"type": "mscc_export_ready", "url": file_url},
             )
@@ -254,7 +254,7 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         if export.created_by:
             send_push_to_web(
                 export.created_by,
-                "Makani export failed",
+                "NFR Sector export failed",
                 str(e),
                 data={"type": "mscc_export_failed", "reason": str(e)},
             )

@@ -5,6 +5,7 @@
 {% load crispy_forms_tags %}
 {% load django_bootstrap5 %}
 
+{% load simple_tags %}
 {% bootstrap_css %}
 
 {% block project_title %}Teacher | {% if form.instance.id %}Edit{% else %}New{% endif %} {% endblock %}

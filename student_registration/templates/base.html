@@ -137,6 +137,12 @@
                                                       {% endif %}
                                                     </li>
                                                     <li class="nav-item">
+                                                        <a href="{% url 'mscc:teacher_list' %}" class="nav-link">
+                                                            <i class="nav-link-icon lnr-user"></i>
+                                                            <span>Teachers</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item">
                                                         <a href="{% url 'mscc:dashboard' %}" class="nav-link">
                                                             <i class="nav-link-icon lnr-file-empty"></i>
                                                             <span>Dashboard</span>
@@ -211,6 +217,7 @@
                             <div class="grid-menu grid-menu-xl grid-menu-3col">
                                 <div class="no-gutters row">
 
+                                    {% if request.user.is_authenticated %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'dashboard:pivot_dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -229,6 +236,8 @@
                                             Advanced Analytics
                                         </a>
                                     </div>
+                                    {% endif %}
+
                                 </div>
                             </div>
                             <!--<ul class="nav flex-column">-->

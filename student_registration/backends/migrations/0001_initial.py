@@ -46,9 +46,9 @@ class Migration(migrations.Migration):
                         blank=True,
                         choices=[
                             ("", "----------"),
-                            ("Makani List", "Makani List"),
-                            ("Makani Raw Attendance", "Makani Raw Attendance"),
-                            ("Makani Total Attendance", "Makani Total Attendance"),
+                            ("NFR Sector List", "NFR Sector List"),
+                            ("NFR Sector Raw Attendance", "NFR Sector Raw Attendance"),
+                            ("NFR Sector Total Attendance", "NFR Sector Total Attendance"),
                             ("Center List", "Center List"),
                             ("Bridging Absence Raw Data", "Bridging Absence Raw Data"),
                             ("Bridging Attendance Total", "Bridging Attendance Total"),

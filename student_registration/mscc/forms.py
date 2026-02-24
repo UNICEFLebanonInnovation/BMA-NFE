@@ -169,7 +169,7 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     source_of_identification = forms.ChoiceField(
-        label=_("Source of referral of the child to Makani"),
+        label=_("Source of referral of the child to NFR Sector"),
         widget=forms.Select,
         required=True,
         choices=Registration.IDENTIFICATION_SOURCE,
@@ -187,7 +187,7 @@ class MainForm(forms.ModelForm):
         initial=['None'],
     )
     # mscc_packages = forms.MultipleChoiceField(
-    #     label=_('Packages received/to be provided to child under Makani'),
+    #     label=_('Packages received/to be provided to child under NFR Sector'),
     #     choices=Registration.MSCC_PACKAGES,
     #     widget=forms.CheckboxSelectMultiple,
     #     required=False

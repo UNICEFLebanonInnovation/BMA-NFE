@@ -1164,7 +1164,7 @@
 #
 #         # Store export history
 #         ExportHistory.objects.create(
-#             export_type='Makani Raw Attendance',
+#             export_type='NFR Sector Raw Attendance',
 #             created_by=user,
 #             file_url=file_url,
 #             status='done',
@@ -1279,7 +1279,7 @@
 #
 #         # Store export history
 #         ExportHistory.objects.create(
-#             export_type='Makani Total Attendance',
+#             export_type='NFR Sector Total Attendance',
 #             created_by=user,
 #             file_url=file_url,
 #             status='done',
@@ -1395,7 +1395,7 @@
 #         file_url = reverse('mscc:export_download', args=[file_name])
 #
 #         ExportHistory.objects.create(
-#             export_type='Makani Total Attendance',
+#             export_type='NFR Sector Total Attendance',
 #             created_by=user,
 #             file_url=file_url,
 #             status='done',
