@@ -84,3 +84,18 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
 {% endblock %}
+
+{% block extra_css %}
+    <style>
+        .table-list .table-responsive .table {
+            width: 100% !important;
+            table-layout: fixed;
+        }
+
+        .table-list .table-responsive .table th,
+        .table-list .table-responsive .table td {
+            white-space: normal;
+            word-break: break-word;
+        }
+    </style>
+{% endblock %}
