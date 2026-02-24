@@ -3,81 +3,356 @@
 {% load static i18n %}
 {% load custom_tags %}
 
-{% block module_name %}{% endblock %}
+{% block module_name %}{% trans "BMA NFE" %}{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>
+    .nfe-chart-card {
+        min-height: 360px;
+    }
+
+    .nfe-chart-container {
+        width: 100%;
+        height: 280px;
+        position: relative;
+    }
+</style>
+{% endblock %}
 
 {% block main_content %}
-
-<!--<div class="app-page-title">-->
-                        <!--<div class="page-title-wrapper">-->
-                            <!--<div class="page-title-heading">-->
-                                <!--<div>-->
-                                    <!--<div class="page-title-head center-elem page-title-heading">-->
-                                        <!--<span class="d-inline-block pr-2">-->
-                                            <!--<i class="pe-7s-display1"></i>-->
-                                        <!--</span>-->
-                                        <!--<span class="d-inline-block">Dirasa</span>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-
-                        <!--</div>-->
-<!--</div>-->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="main-card card">
+            <div class="card-body">
+                <h3 class="mb-2">{% trans "BMA NFE Sector" %}</h3>
+                <p class="mb-0 text-muted">
+                    {% trans "Welcome to the NFE landing page. Use the quick actions below to access registration, dashboard insights, and key activity views." %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
-                            <div class="col-lg-12 col-xl-12">
-                                <div class="main-card mb-3 card">
-                                    <div class="grid-menu grid-menu-2col">
-                                        <div class="no-gutters row">
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-info"></div>
-                                                        <i class="lnr-laptop-phone text-info"></i>
-                                                    </div>
-                                                    <div class="widget-numbers">
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
-                                                            <a href="{% url 'mscc:list' %}">Makani</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Makani</span>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-info">
-                                                        <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
-                                                            <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Dashboard</span>
-                                                        {% endif %}
-                                                        <span class="pl-1"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-primary"></div>
-                                                        <i class="lnr-cog text-primary"></i></div>
-                                                  <div class="widget-numbers">
-                                                     {% if request.user|has_group:"CLM_Bridging" %}
-                                                    <a href="{% url 'clm:bridging_page' %}">Dirasa</a>
-                                                      {% endif %}
-                                                  </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-success">
-                                                        <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"CLM_Bridging" %}
-                                                            <a href="{% url 'clm:dashboard' %}">Dashboard</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Dashboard</span>
-                                                        {% endif %}
-                                                        <span class="pl-1"> </span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <div class="col-md-4 mb-3">
+        <div class="main-card card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{% trans "NFE Registration" %}</h5>
+                <p class="text-muted flex-grow-1">{% trans "Go directly to the NFE registration module to manage student intake and records." %}</p>
+                {% if request.user.is_superuser or request.user|has_group:"CLM_Bridging" %}
+                    <a class="btn btn-primary" href="{% url 'clm:bridging_page' %}">{% trans "Open Registration" %}</a>
+                {% else %}
+                    <button class="btn btn-light" disabled>{% trans "No Access" %}</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
+    <div class="col-md-4 mb-3">
+        <div class="main-card card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{% trans "Quick Dashboard" %}</h5>
+                <p class="text-muted flex-grow-1">{% trans "Jump to the NFE dashboard for trends, attendance, and education performance indicators." %}</p>
+                {% if request.user.is_superuser or request.user|has_group:"CLM_Bridging" %}
+                    <a class="btn btn-success" href="{% url 'clm:dashboard' %}">{% trans "Open Dashboard" %}</a>
+                {% else %}
+                    <button class="btn btn-light" disabled>{% trans "No Access" %}</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="main-card card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{% trans "System Activity Overview" %}</h5>
+                <p class="text-muted">{% trans "Quick links to monitor and follow the latest NFE activities." %}</p>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item px-0">
+                        {% if request.user.is_superuser or request.user|has_group:"CLM_Bridging" %}
+                            <a href="{% url 'clm:bridging_list' %}">{% trans "View registered learners" %}</a>
+                        {% else %}
+                            <span class="text-muted">{% trans "View registered learners" %}</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item px-0">
+                        {% if request.user.is_superuser or request.user|has_group:"CLM_Bridging" %}
+                            <a href="{% url 'clm:attendance' %}">{% trans "Track attendance activity" %}</a>
+                        {% else %}
+                            <span class="text-muted">{% trans "Track attendance activity" %}</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item px-0">
+                        {% if request.user.is_superuser or request.user|has_group:"CLM_Bridging" %}
+                            <a href="{% url 'clm:bridging_attendance_report' %}">{% trans "Open attendance reports" %}</a>
+                        {% else %}
+                            <span class="text-muted">{% trans "Open attendance reports" %}</span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-2">
+    <div class="col-12 col-lg-6 mb-3">
+        <div class="main-card card shadow-sm nfe-chart-card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span>{% trans "Registrations Trend (Last 14 Days)" %}</span>
+                <small class="text-muted">{% trans "Auto sample data" %}</small>
+            </div>
+            <div class="card-body">
+                <div id="chart-registrations-trend" class="nfe-chart-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 mb-3">
+        <div class="main-card card shadow-sm nfe-chart-card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span>{% trans "Top Centers by Volume" %}</span>
+                <small class="text-muted">{% trans "Auto sample data" %}</small>
+            </div>
+            <div class="card-body">
+                <div id="chart-top-centers" class="nfe-chart-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+function parseISODate(iso) {
+    var split = iso.split('-').map(Number);
+    return new Date(split[0], split[1] - 1, split[2]);
+}
+
+function fmtShortDate(date) {
+    return d3.timeFormat('%b %d')(date);
+}
+
+function clearNode(selector) {
+    var el = document.querySelector(selector);
+    if (!el) return null;
+    el.innerHTML = '';
+    return el;
+}
+
+var trendData = (function() {
+    var today = new Date();
+    var start = d3.timeDay.offset(today, -13);
+    var days = d3.timeDays(start, d3.timeDay.offset(today, 1));
+    var base = 60 + Math.floor(Math.random() * 30);
+
+    return days.map(function(dt) {
+        base = Math.max(10, base + Math.floor((Math.random() - 0.45) * 18));
+        return {date: dt, value: base};
+    });
+})();
+
+var centersData = [
+    {name: 'Center A', value: 420},
+    {name: 'Center B', value: 365},
+    {name: 'Center C', value: 310},
+    {name: 'Center D', value: 280},
+    {name: 'Center E', value: 250},
+    {name: 'Center F', value: 210},
+    {name: 'Center G', value: 180},
+    {name: 'Center H', value: 150}
+];
+
+function renderTrendLineChart(containerSelector, data) {
+    var container = clearNode(containerSelector);
+    if (!container) return;
+
+    var width = container.clientWidth || 600;
+    var height = container.clientHeight || 280;
+
+    var margin = {top: 10, right: 18, bottom: 34, left: 46};
+    var innerW = width - margin.left - margin.right;
+    var innerH = height - margin.top - margin.bottom;
+
+    var svg = d3.select(container)
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+    var g = svg.append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    var x = d3.scaleTime()
+        .domain(d3.extent(data, function(d) { return d.date; }))
+        .range([0, innerW]);
+
+    var y = d3.scaleLinear()
+        .domain([0, d3.max(data, function(d) { return d.value; }) * 1.15])
+        .nice()
+        .range([innerH, 0]);
+
+    g.append('g')
+        .attr('opacity', 0.15)
+        .call(d3.axisLeft(y).ticks(5).tickSize(-innerW).tickFormat(''))
+        .select('.domain').remove();
+
+    g.append('g')
+        .attr('transform', 'translate(0,' + innerH + ')')
+        .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat('%b %d')));
+
+    g.append('g')
+        .call(d3.axisLeft(y).ticks(5));
+
+    var line = d3.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.value); })
+        .curve(d3.curveMonotoneX);
+
+    g.append('path')
+        .datum(data)
+        .attr('fill', 'none')
+        .attr('stroke-width', 2.5)
+        .attr('stroke', 'currentColor')
+        .attr('d', line);
+
+    g.selectAll('circle')
+        .data(data)
+        .join('circle')
+        .attr('cx', function(d) { return x(d.date); })
+        .attr('cy', function(d) { return y(d.value); })
+        .attr('r', 3)
+        .attr('fill', 'currentColor')
+        .attr('opacity', 0.65);
+
+    var tip = d3.select(container)
+        .append('div')
+        .style('position', 'absolute')
+        .style('pointer-events', 'none')
+        .style('background', 'rgba(0,0,0,0.8)')
+        .style('color', '#fff')
+        .style('padding', '6px 8px')
+        .style('border-radius', '8px')
+        .style('font-size', '12px')
+        .style('opacity', 0);
+
+    var overlay = g.append('rect')
+        .attr('width', innerW)
+        .attr('height', innerH)
+        .attr('fill', 'transparent');
+
+    var bisect = d3.bisector(function(d) { return d.date; }).left;
+
+    overlay.on('mousemove', function(event) {
+        var pointer = d3.pointer(event);
+        var dt = x.invert(pointer[0]);
+        var idx = bisect(data, dt);
+        var d0 = data[Math.max(0, idx - 1)];
+        var d1 = data[Math.min(data.length - 1, idx)];
+        var d = (d1 && (dt - d0.date > d1.date - dt)) ? d1 : d0;
+
+        var rect = container.getBoundingClientRect();
+        tip.style('opacity', 1)
+            .style('left', (event.clientX - rect.left + 10) + 'px')
+            .style('top', (event.clientY - rect.top - 30) + 'px')
+            .html('<div><b>' + fmtShortDate(d.date) + '</b></div><div>' + d.value + ' registrations</div>');
+    });
+
+    overlay.on('mouseleave', function() {
+        tip.style('opacity', 0);
+    });
+}
+
+function renderTopCentersBarChart(containerSelector, data) {
+    var container = clearNode(containerSelector);
+    if (!container) return;
+
+    var width = container.clientWidth || 600;
+    var height = container.clientHeight || 280;
+
+    var margin = {top: 10, right: 18, bottom: 58, left: 46};
+    var innerW = width - margin.left - margin.right;
+    var innerH = height - margin.top - margin.bottom;
+
+    var svg = d3.select(container)
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+    var g = svg.append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    var x = d3.scaleBand()
+        .domain(data.map(function(d) { return d.name; }))
+        .range([0, innerW])
+        .padding(0.25);
+
+    var y = d3.scaleLinear()
+        .domain([0, d3.max(data, function(d) { return d.value; }) * 1.15])
+        .nice()
+        .range([innerH, 0]);
+
+    g.append('g')
+        .attr('opacity', 0.15)
+        .call(d3.axisLeft(y).ticks(5).tickSize(-innerW).tickFormat(''))
+        .select('.domain').remove();
+
+    g.append('g')
+        .attr('transform', 'translate(0,' + innerH + ')')
+        .call(d3.axisBottom(x))
+        .selectAll('text')
+        .attr('transform', 'rotate(-25)')
+        .style('text-anchor', 'end');
+
+    g.append('g').call(d3.axisLeft(y).ticks(5));
+
+    var bars = g.selectAll('rect.bar')
+        .data(data)
+        .join('rect')
+        .attr('class', 'bar')
+        .attr('x', function(d) { return x(d.name); })
+        .attr('y', function(d) { return y(d.value); })
+        .attr('width', x.bandwidth())
+        .attr('height', function(d) { return innerH - y(d.value); })
+        .attr('rx', 6)
+        .attr('opacity', 0.85)
+        .attr('fill', 'currentColor');
+
+    var tip = d3.select(container)
+        .append('div')
+        .style('position', 'absolute')
+        .style('pointer-events', 'none')
+        .style('background', 'rgba(0,0,0,0.8)')
+        .style('color', '#fff')
+        .style('padding', '6px 8px')
+        .style('border-radius', '8px')
+        .style('font-size', '12px')
+        .style('opacity', 0);
+
+    bars.on('mousemove', function(event, d) {
+        var rect = container.getBoundingClientRect();
+        tip.style('opacity', 1)
+            .style('left', (event.clientX - rect.left + 10) + 'px')
+            .style('top', (event.clientY - rect.top - 30) + 'px')
+            .html('<div><b>' + d.name + '</b></div><div>' + d.value + ' registrations</div>');
+    }).on('mouseleave', function() {
+        tip.style('opacity', 0);
+    });
+}
+
+function renderAllCharts() {
+    renderTrendLineChart('#chart-registrations-trend', trendData);
+    renderTopCentersBarChart('#chart-top-centers', centersData);
+}
+
+if (typeof d3 !== 'undefined') {
+    renderAllCharts();
+    window.addEventListener('resize', function() {
+        clearTimeout(window.__d3_resize_t);
+        window.__d3_resize_t = setTimeout(renderAllCharts, 150);
+    });
+}
+</script>
 {% endblock %}
