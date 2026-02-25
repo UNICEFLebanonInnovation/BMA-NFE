@@ -1,0 +1,222 @@
+/* BMA Redesign - Bootstrap 5 Overrides & Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --unicef-blue: #0097D7;
+    --unicef-dark-blue: #004F71;
+    --unicef-light-blue: #E1F5FE;
+    --bs-primary: var(--unicef-blue);
+    --bs-primary-rgb: 0, 151, 215;
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 70px;
+    --header-height: 64px;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* Layout */
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: #ffffff;
+    border-inline-end: 1px solid #dee2e6;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    height: var(--header-height);
+    background: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    padding-inline: 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+/* Typography & Components */
+h1, h2, h3, h4, h5 {
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: var(--unicef-blue);
+    border-color: var(--unicef-blue);
+}
+
+.btn-primary:hover {
+    background-color: var(--unicef-dark-blue);
+    border-color: var(--unicef-dark-blue);
+}
+
+.card {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+
+/* Navigation Items */
+.nav-link {
+    color: #495057;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    margin: 0.25rem 0.75rem;
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: var(--unicef-light-blue);
+    color: var(--unicef-blue);
+}
+
+.nav-link i {
+    width: 24px;
+    margin-inline-end: 12px;
+    font-size: 1.1rem;
+}
+
+/* Form Styles */
+.form-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+}
+
+.form-control:focus {
+    border-color: var(--unicef-blue);
+    box-shadow: 0 0 0 0.25rem rgba(0, 151, 215, 0.25);
+}
+
+/* RTL Support - Manual overrides if needed, but mostly handled by logical properties */
+
+/* Metric Cards */
+.metric-card {
+    padding: 1.5rem;
+}
+
+.metric-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--unicef-blue);
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick Action Tiles */
+.quick-action-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-decoration: none;
+    color: #212529;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    height: 100%;
+}
+
+.quick-action-tile:hover {
+    background-color: var(--unicef-light-blue);
+    border-color: var(--unicef-blue);
+    transform: translateY(-4px);
+}
+
+.quick-action-tile i {
+    font-size: 2.5rem;
+    color: var(--unicef-blue);
+    margin-bottom: 1rem;
+}
+
+/* Stepper for Wizard */
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 0;
+    list-style: none;
+    position: relative;
+}
+
+.stepper::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #dee2e6;
+    z-index: 0;
+}
+
+.step {
+    position: relative;
+    z-index: 1;
+    background: #f8f9fa;
+    padding: 0 10px;
+    text-align: center;
+    flex: 1;
+}
+
+.step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    font-weight: 600;
+}
+
+.step.active .step-icon {
+    border-color: var(--unicef-blue);
+    background: var(--unicef-blue);
+    color: #fff;
+}
+
+.step.completed .step-icon {
+    border-color: var(--unicef-blue);
+    color: var(--unicef-blue);
+}

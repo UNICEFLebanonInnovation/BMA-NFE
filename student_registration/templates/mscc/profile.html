@@ -3,160 +3,133 @@
 {% load custom_tags %}
 {% load static i18n %}
 {% load django_bootstrap5 %}
-
 {% load simple_tags %}
-{% bootstrap_css %}
 
-{% block project_title %}Child Profile{% endblock %}
+{% block project_title %}{% trans "Beneficiary Profile" %}{% endblock %}
+
+{% block module_name %}{% trans "Beneficiary Profile" %}{% endblock %}
 
 {% block content %}
+<div class="container-fluid">
+    <!-- Profile Header Summary -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <h3 class="fw-bold mb-1">{{ instance.child.full_name }}</h3>
+                    <div class="d-flex flex-wrap gap-3 small text-muted">
+                        <span><i class="bi bi-fingerprint me-1"></i> ID: {{ instance.child.id }}</span>
+                        <span><i class="bi bi-calendar-event me-1"></i> DOB: {{ instance.child.birthday }}</span>
+                        <span><i class="bi bi-geo-alt me-1"></i> {{ instance.child.cadaster }}</span>
+                        <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3">
+                            {{ instance.status|default:"Active" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-auto text-end">
+                    {% if request.user|has_group:"MSCC_FULL" %}
+                    <button type="button" class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#newRoundModal">
+                        <i class="bi bi-plus-lg me-2"></i> {% trans "New Round" %}
+                    </button>
+                    {% endif %}
+                    <div class="mt-2">
+                        <span class="badge bg-info-subtle text-info border border-info-subtle px-3">{{ instance.type }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-child"></i>
-                                        </span>
-                                        <span class="d-inline-block">Child Profile - {{ instance.child.full_name }}</span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a>Home</a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">List</a>
-                                                </li>
-                                                <li class="active breadcrumb-item" aria-current="page">
-                                                    Child Profile and Provided Services
-                                                </li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-
-      {% if request.user|has_group:"MSCC_FULL" %}
-                        <div class="page-title-actions">
-                                <a href="#" data-toggle="modal" data-target="#newRoundModal" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
-
-                                <!--<button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">-->
-                                    <!--{{ instance.type }}-->
-                                <!--</button>-->
-                            </div>
-    {% endif %}
-
-                        </div>
+    <!-- Main Profile Tabs -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white p-0 border-bottom-0">
+            <ul class="nav nav-tabs nav-fill redesign-tabs" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-3 active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-pane" type="button" role="tab">
+                        <i class="bi bi-info-circle me-2"></i> {% trans "Personal Info" %}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-3" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-pane" type="button" role="tab">
+                        <i class="bi bi-layers me-2"></i> {{ instance.type }}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-3" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance-pane" type="button" role="tab">
+                        <i class="bi bi-calendar-check me-2"></i> {% trans "Attendances" %}
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content" id="profileTabsContent">
+            <div class="tab-pane fade show active p-4" id="info-pane" role="tabpanel" aria-labelledby="info-tab">
+                {% include 'mscc/child_info_tab.html' %}
+            </div>
+            <div class="tab-pane fade p-4" id="services-pane" role="tabpanel" aria-labelledby="services-tab">
+                {% include 'mscc/child_services_tab.html' %}
+            </div>
+            <div class="tab-pane fade p-4" id="attendance-pane" role="tabpanel" aria-labelledby="attendance-tab">
+                {% include 'mscc/child_attendance_tab.html' %}
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<div class="row">
-
-        <div class="col-md-12">
-                                    <div class="mb-3 card">
-                                        <div class="tabs-lg-alternate card-header">
-                                            <ul class="nav nav-justified">
-                                                <li class="nav-item">
-                                                    <a data-toggle="tab" href="#tab-eg9-0" class="nav-link show{% if current_tab == 'info' %} active{% endif %}">
-                                                        <div class="widget-number">Child Info.</div>
-                                                        <!--<div class="tab-subheading">-->
-                                                                <!--<span class="pr-2 opactiy-6">-->
-                                                                    <!--<i class="fa fa-comment-dots"></i>-->
-                                                                <!--</span>-->
-                                                            <!--Totals-->
-                                                        <!--</div>-->
-                                                    </a></li>
-                                                <li class="nav-item">
-                                                    <a data-toggle="tab" href="#tab-eg9-1" class="nav-link show{% if current_tab == 'services' %} active{% endif %}">
-                                                        <div class="widget-number">{{ instance.type }}</div>
-                                                        <!--<div class="tab-subheading">Products</div>-->
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a data-toggle="tab" href="#tab-eg9-2" class="nav-link show{% if current_tab == 'attendance' %} active{% endif %}">
-                                                        <div class="widget-number text-danger">Attendances</div>
-                                                        <!--<div class="tab-subheading">-->
-                                                            <!--<span class="pr-2 opactiy-6">-->
-                                                                <!--<i class="fa fa-bullhorn"></i>-->
-                                                            <!--</span>-->
-                                                            <!--Income-->
-                                                        <!--</div>-->
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="tab-content">
-                                            <div class="tab-pane show{% if current_tab == 'info' %} active{% endif %}" id="tab-eg9-0" role="tabpanel">
-                                                <div class="card-body">
-                                                  {% include 'mscc/child_info_tab.html' %}
-                                                </div>
-                                            </div>
-                                            <div class="tab-pane show{% if current_tab == 'services' %} active{% endif %}" id="tab-eg9-1" role="tabpanel">
-                                                <div class="card-body">
-                                                  {% include 'mscc/child_services_tab.html' %}
-                                                </div>
-                                            </div>
-                                            <div class="tab-pane show{% if current_tab == 'attendance' %} active{% endif %}" id="tab-eg9-2" role="tabpanel">
-                                                <div class="card-body"><p class="mb-0">
-                                                  {% include 'mscc/child_attendance_tab.html' %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-</div>
-
-{% endblock %}
-
-{% block modal %}
-
-<div class="modal fade" id="newRoundModal" tabindex="-1" role="dialog" aria-labelledby="newRoundModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="newRoundModalLabel">Register the Child in a new Round</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<!-- Modal for New Round -->
+<div class="modal fade" id="newRoundModal" tabindex="-1" aria-labelledby="newRoundModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow">
+      <div class="modal-header border-bottom-0">
+        <h5 class="modal-title fw-bold" id="newRoundModalLabel">{% trans "Register in a New Round" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <p>To add this child to a new round, select the registration type (Core Package/Walk-In), and then click the "Confirm" button to create a new registration and start adding the education information.</p>
+      <div class="modal-body py-4">
+        <p class="text-muted mb-4">{% trans "Select the registration type to proceed with creating a new round for this beneficiary." %}</p>
+
         {% get_regitration_type instance.id as regitration_type %}
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="corePackage" name="registrationType" value="Core-Package" {% if regitration_type == "Core-Package" %}checked{% endif %}>
-          <label class="form-check-label" for="corePackage">Core Package</label>
+        <div class="list-group mb-4">
+          <label class="list-group-item list-group-item-action d-flex gap-3 py-3">
+            <input class="form-check-input flex-shrink-0" type="radio" name="registrationType" id="corePackage" value="Core-Package" {% if regitration_type == "Core-Package" %}checked{% endif %}>
+            <span class="d-block">
+              <span class="fw-bold">{% trans "Core Package" %}</span>
+              <span class="d-block small text-muted">{% trans "Standard multi-sectoral support package." %}</span>
+            </span>
+          </label>
+          <label class="list-group-item list-group-item-action d-flex gap-3 py-3">
+            <input class="form-check-input flex-shrink-0" type="radio" name="registrationType" id="walkIn" value="Walk-in" {% if regitration_type == "Walk-in" %}checked{% endif %}>
+            <span class="d-block">
+              <span class="fw-bold">{% trans "Walk-In" %}</span>
+              <span class="d-block small text-muted">{% trans "Direct services without full assessment." %}</span>
+            </span>
+          </label>
         </div>
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="walkIn" name="registrationType" value="Walk-in" {% if regitration_type == "Walk-in" %}checked{% endif %}>
-          <label class="form-check-label" for="walkIn">Walk-In</label>
-        </div>
+
         {% get_child_rounds instance.id as child_rounds %}
         {% if child_rounds %}
-          <h5>Regitration History</h5>
+          <h6 class="fw-bold mb-2">{% trans "Registration History" %}</h6>
+          <ul class="list-unstyled small">
           {% for child_round in child_rounds %}
-            <p>{{ child_round }}</p>
+            <li class="text-muted"><i class="bi bi-clock-history me-2"></i> {{ child_round }}</li>
           {% endfor %}
+          </ul>
         {% endif %}
       </div>
-      <div class="modal-footer">
-        <a id="new-round-confirm" href="{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=Core-Package" class="btn btn-success">Confirm</a>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      <div class="modal-footer border-top-0">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+        <a id="new-round-confirm" href="#" class="btn btn-primary px-4 fw-bold">{% trans "Confirm Registration" %}</a>
       </div>
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
-
-    <script type="text/javascript" src="{% static 'js/mscc/mscc.js' %}?v=34"></script>
-
+    <script type="text/javascript" src="{% static 'js/mscc/mscc.js' %}?v=35"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const confirmButton = document.getElementById("new-round-confirm");
@@ -171,5 +144,4 @@
             });
         });
     </script>
-
 {% endblock %}

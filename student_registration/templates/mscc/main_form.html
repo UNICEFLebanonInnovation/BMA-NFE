@@ -3,365 +3,284 @@
 {% load custom_tags %}
 {% load static i18n %}
 {% load crispy_forms_tags %}
-{% load static i18n %}
 {% load django_bootstrap5 %}
 
-{% bootstrap_css %}
-
-{% block project_title %}Registration{% endblock %}
+{% block project_title %}{% trans "Registration" %}{% endblock %}
 
 {% block extra_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
 {% endblock %}
 
+{% block module_name %}{% trans "Beneficiary Registration" %}{% endblock %}
+
 {% block content %}
+<div class="container-fluid">
+    <!-- Breadcrumbs / Center Info -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'mscc:list' %}">{% trans "List" %}</a></li>
+                    <li class="breadcrumb-item active">{{ request.user.center.name }}</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold mt-2">
+                {% if form.instance.id %}
+                    {% trans "Edit Child Record" %}
+                {% else %}
+                    {% trans "Register New Child" %}
+                {% endif %}
+            </h3>
+        </div>
+        <div class="col-md-4 text-md-end">
+             <span class="badge bg-light text-dark border p-2">
+                <i class="bi bi-geo-alt-fill text-primary me-1"></i>
+                {{ request.user.center.governorate }} / {{ request.user.center.caza }}
+             </span>
+        </div>
+    </div>
 
-<!--<div id="page-loader" class="loader-wrapper d-flex justify-content-center align-items-center" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.85); z-index: 1050;">-->
-    <!--<div class="loader">-->
-        <!--<div class="ball-spin-fade-loader">-->
-            <!--<div></div>-->
-            <!--<div></div>-->
-            <!--<div></div>-->
-            <!--<div></div>-->
-            <!--<div></div>-->
-            <!--<div></div>-->
-            <!--<div></div>-->
-            <!--<div></div>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</div>-->
+    {% if form.instance.id == None %}
+    <!-- Duplication Alert -->
+    <div class="" style="display:none;" id="child-duplication-error">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+            <div id="child-duplication-error-text"></div>
+        </div>
+    </div>
+    {% endif %}
 
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-child"></i>
-                                        </span>
-                                        <span class="d-inline-block">
-                                          {% if form.instance.id == None %}
-                                            Add New Child
-                                          {% else %}
-                                            Edit Child Info.
-                                          {% endif %}
-                                        </span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">Home</a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {% if form.instance.id == None %}
-                                                      <a href="{% url 'mscc:list' %}">List</a>
-                                                    {% else %}
-                                                      <a href="{% url 'mscc:child_profile' form.instance.id %}">Child Profile</a>
-                                                    {% endif %}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.governorate }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.caza }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.name }} - {{ request.user.center.type }}
-                                                </li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="page-title-actions"></div>
-
-                        </div>
-</div>
-
-<div class="" style="display:none;" id="child-duplication-error">
-  <div class="alert alert-danger fade show" role="alert" id="child-duplication-error-text"></div>
-</div>
-
-<div class="row">
-
-<div class="col-lg-9 {% if form.instance.id == None %}col-lg-9 col-md-9{% else %}col-lg-12 col-md-12{% endif %}">
-                                    <div class="main-card mb-3 card">
-                                        <div class="card-body">
-
-                                            <div id="smartwizard">
-
-                    <ul class="forms-wizard">
-                        <li>
-                            <a href="#step-1">
-                                <em>1</em><span>Child Information</span>
-                            </a>
+    <div class="row g-4">
+        <!-- Main Form Column -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <!-- Custom Stepper -->
+                    <ul class="stepper mb-5" id="registrationStepper">
+                        <li class="step active" data-step="1">
+                            <div class="step-icon">1</div>
+                            <div class="small fw-bold">{% trans "Identity" %}</div>
                         </li>
-                        <li>
-                            <a href="#step-2">
-                                <em>2</em><span>Parent/Caregiver Information</span>
-                            </a>
+                        <li class="step" data-step="2">
+                            <div class="step-icon">2</div>
+                            <div class="small fw-bold">{% trans "Caregivers" %}</div>
                         </li>
-                        <li>
-                            <a href="#step-3">
-                                <em>3</em><span>Work Status</span>
-                            </a>
+                        <li class="step" data-step="3">
+                            <div class="step-icon">3</div>
+                            <div class="small fw-bold">{% trans "Vulnerability" %}</div>
                         </li>
                     </ul>
 
-                    <div class="form-wizard-content">
-                                            <form method="post" action="{{ form.helper.form_action }}">
-                                                {% csrf_token %}
-                                                {% for h in form.hidden_fields %}
-                                                    {{ h }}
-                                                {% endfor %}
-                                                <div id="step-1">
-                                                    <div class="row card-body">
-                                                        <span class="badge-form badge-pill">1</span> <div class="col-md-3">{{ form.child_first_name|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">2</span> <div class="col-md-3">{{ form.child_father_name|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">3</span> <div class="col-md-3">{{ form.child_last_name|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form badge-pill">4</span> <div class="col-md-3">{{ form.child_birthday_year|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">5</span> <div class="col-md-3">{{ form.child_birthday_month|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">6</span> <div class="col-md-3">{{ form.child_birthday_day|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form badge-pill">7</span> <div class="col-md-3">{{ form.child_gender|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">8</span> <div class="col-md-3">{{ form.child_mother_fullname|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form badge-pill">9</span> <div class="col-md-3">{{ form.child_nationality|as_crispy_field }}</div>
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-3">{{ form.child_nationality_other|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">10</span> <div class="col-md-4">{{ form.child_p_code|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">11</span> <div class="col-md-4">{{ form.child_address|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">12</span> <div class="col-md-4">{{ form.child_living_arrangement|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">13</span> <div class="col-md-4">{{ form.child_disability|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">14</span> <div class="col-md-4">{{ form.child_marital_status|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">15</span> <div class="col-md-4">{{ form.child_have_children|as_crispy_field }}</div>
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-4">{{ form.child_children_number|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">16</span> <div class="col-md-4">{{ form.child_have_sibling|as_crispy_field }}</div>
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-4">{{ form.child_siblings_have_disability|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">17</span> <div class="col-md-4">{{ form.child_mother_pregnant_expecting|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">18</span> <div class="col-md-4">{{ form.partner_unique_number|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">19</span> <div class="col-md-4">{{ form.source_of_identification|as_crispy_field }}</div>
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-4">{{ form.source_of_identification_specify|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">20</span> <div class="col-md-9">{{ form.cash_support_programmes|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body d-none" id="child_fe_unique_id_block">
-                                                        <span class="badge-form-2 badge-pill">21</span> <div class="col-md-4">{{ form.child_fe_unique_id|as_crispy_field }}</div>
-                                                    </div>
-                                                </div>
-                                                <div id="step-2">
-                                                    <div class="row card-body">
-                                                        <span class="badge-form badge-pill">1</span> <div class="col-md-4">{{ form.father_educational_level|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">2</span> <div class="col-md-4">{{ form.mother_educational_level|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form badge-pill">3</span> <div class="col-md-3">{{ form.first_phone_number|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">4</span> <div class="col-md-3">{{ form.first_phone_number_confirm|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">5</span> <div class="col-md-3">{{ form.first_phone_owner|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form badge-pill">6</span> <div class="col-md-3">{{ form.second_phone_number|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">7</span> <div class="col-md-3">{{ form.second_phone_number_confirm|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">8</span> <div class="col-md-3">{{ form.second_phone_owner|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form badge-pill">9</span> <div class="col-md-3">{{ form.children_number_under18|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">10</span> <div class="col-md-3">{{ form.main_caregiver|as_crispy_field }}</div>
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-3">{{ form.main_caregiver_other|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">12</span> <div class="col-md-3">{{ form.caregiver_first_name|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">13</span> <div class="col-md-3">{{ form.caregiver_middle_name|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">14</span> <div class="col-md-3">{{ form.caregiver_last_name|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">15</span> <div class="col-md-3">{{ form.caregiver_mother_name|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">16</span> <div class="col-md-3">{{ form.main_caregiver_nationality|as_crispy_field }}</div>
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-3">{{ form.main_caregiver_nationality_other|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">18</span> <div class="col-md-6">{{ form.id_type|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id1">
-                                                        <span class="badge-form-2 badge-pill">19</span> <div class="col-md-5">{{ form.case_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">20</span> <div class="col-md-6">{{ form.case_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id1">
-                                                        <span class="badge-form-2 badge-pill">21</span> <div class="col-md-5">{{ form.parent_individual_case_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">22</span> <div class="col-md-6">{{ form.parent_individual_case_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id1">
-                                                        <span class="badge-form-2 badge-pill">23</span> <div class="col-md-5">{{ form.individual_case_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">24</span> <div class="col-md-6">{{ form.individual_case_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id2">
-                                                        <span class="badge-form-2 badge-pill">25</span> <div class="col-md-5">{{ form.recorded_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">26</span> <div class="col-md-6">{{ form.recorded_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id3">
-                                                        <span class="badge-form-2 badge-pill">27</span> <div class="col-md-5">{{ form.parent_national_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">28</span> <div class="col-md-6">{{ form.parent_national_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id3">
-                                                        <span class="badge-form-2 badge-pill">29</span> <div class="col-md-5">{{ form.national_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">30</span> <div class="col-md-6">{{ form.national_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id4">
-                                                        <span class="badge-form-2 badge-pill">31</span> <div class="col-md-5">{{ form.parent_syrian_national_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">32</span> <div class="col-md-6">{{ form.parent_syrian_national_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id4">
-                                                        <span class="badge-form-2 badge-pill">33</span> <div class="col-md-5">{{ form.syrian_national_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">34</span> <div class="col-md-6">{{ form.syrian_national_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id5">
-                                                        <span class="badge-form-2 badge-pill">35</span> <div class="col-md-5">{{ form.parent_sop_national_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">36</span> <div class="col-md-6">{{ form.parent_sop_national_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id5">
-                                                        <span class="badge-form-2 badge-pill">37</span> <div class="col-md-5">{{ form.sop_national_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">38</span> <div class="col-md-6">{{ form.sop_national_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id6">
-                                                        <span class="badge-form-2 badge-pill">39</span> <div class="col-md-5">{{ form.parent_other_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">40</span> <div class="col-md-6">{{ form.parent_other_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id6">
-                                                        <span class="badge-form-2 badge-pill">41</span> <div class="col-md-5">{{ form.other_number|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">42</span> <div class="col-md-6">{{ form.other_number_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body child_id child_id7">
-                                                        <span class="badge-form-2 badge-pill">43</span> <div class="col-md-5">{{ form.parent_extract_record|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">44</span> <div class="col-md-6">{{ form.parent_extract_record_confirm|as_crispy_field }}</div>
-                                                    </div>
-                                                </div>
-                                                <div id="step-3">
-                                                    <div class="row card-body">
-                                                        <span class="badge-form badge-pill">1</span> <div class="col-md-5">{{ form.have_labour|as_crispy_field }}</div>
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-6">{{ form.labour_type|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body" id="labour_details_1">
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-11">{{ form.labour_type_specify|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body" id="labour_details_2">
-                                                        <span class="badge-form badge-pill">4</span> <div class="col-md-5">{{ form.labour_hours|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">5</span> <div class="col-md-6">{{ form.labour_weekly_income|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body" id="labour_details_3">
-                                                        <span class="badge-form badge-pill">6</span> <div class="col-md-7">{{ form.labour_condition|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                      <div class="controls">
-                                                        <input type="submit" name="save" value="Save" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save" />
-                                                        <input type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" />
-                                                      </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                      </div>
+                    <form method="post" action="{{ form.helper.form_action }}" id="registrationForm" novalidate>
+                        {% csrf_token %}
+                        {% for h in form.hidden_fields %}{{ h }}{% endfor %}
 
-                                            </div>
-                                            <div class="divider"></div>
-                                            <div class="clearfix">
-                                                <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
-                                                <button type="button" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>
+                        <!-- Step 1: Child Information -->
+                        <div class="step-content active" id="step-1">
+                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "1. Basic Identity Information" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-4">{{ form.child_first_name|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_father_name|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_last_name|as_crispy_field }}</div>
 
-                                                <button type="button" id="next-btn" class="btn-shadow btn-wide float-right btn-pill btn-hover-shine btn btn-primary">Next</button>
-                                                <button type="button" id="prev-btn" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="col-md-4">{{ form.child_birthday_day|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_birthday_month|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_birthday_year|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.child_gender|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_mother_fullname|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.child_nationality|as_crispy_field }}</div>
+                                <div class="col-md-6" id="div_id_child_nationality_other">{{ form.child_nationality_other|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.child_p_code|as_crispy_field }}</div>
+                                <div class="col-md-8">{{ form.child_address|as_crispy_field }}</div>
+                            </div>
+
+                            <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "2. Status & Background" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">{{ form.child_living_arrangement|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_disability|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_marital_status|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_have_children|as_crispy_field }}</div>
+                                <div class="col-md-6" id="div_id_child_children_number">{{ form.child_children_number|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_have_sibling|as_crispy_field }}</div>
+                                <div class="col-md-6" id="div_id_child_siblings_have_disability">{{ form.child_siblings_have_disability|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_mother_pregnant_expecting|as_crispy_field }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Parent/Caregiver Information -->
+                        <div class="step-content d-none" id="step-2">
+                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "3. Caregiver Details" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">{{ form.father_educational_level|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.mother_educational_level|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.first_phone_number|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.first_phone_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.first_phone_owner|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.second_phone_number|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.second_phone_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.second_phone_owner|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.children_number_under18|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.main_caregiver|as_crispy_field }}</div>
+                                <div class="col-md-4" id="div_id_main_caregiver_other">{{ form.main_caregiver_other|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.caregiver_first_name|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.caregiver_middle_name|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.caregiver_last_name|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.caregiver_mother_name|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.main_caregiver_nationality|as_crispy_field }}</div>
+                            </div>
+
+                            <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "4. Identification Documentation" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-12">{{ form.id_type|as_crispy_field }}</div>
+
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.case_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.case_number_confirm|as_crispy_field }}</div>
+
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.parent_individual_case_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.parent_individual_case_number_confirm|as_crispy_field }}</div>
+
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.individual_case_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.individual_case_number_confirm|as_crispy_field }}</div>
+
+                                <div class="col-md-6 child_id child_id2 d-none">{{ form.recorded_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id2 d-none">{{ form.recorded_number_confirm|as_crispy_field }}</div>
+
+                                <div class="col-md-6 child_id child_id3 d-none">{{ form.parent_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id3 d-none">{{ form.parent_national_number_confirm|as_crispy_field }}</div>
+
+                                <div class="col-md-6 child_id child_id4 d-none">{{ form.parent_syrian_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id4 d-none">{{ form.parent_syrian_national_number_confirm|as_crispy_field }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Work Status & Final -->
+                        <div class="step-content d-none" id="step-3">
+                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "5. Labour & Vulnerability" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">{{ form.have_labour|as_crispy_field }}</div>
+                                <div class="col-md-6" id="div_id_labour_type">{{ form.labour_type|as_crispy_field }}</div>
+
+                                <div class="col-md-12" id="labour_details_1">{{ form.labour_type_specify|as_crispy_field }}</div>
+
+                                <div class="col-md-6" id="labour_details_2">{{ form.labour_hours|as_crispy_field }}</div>
+                                <div class="col-md-6" id="labour_details_2_alt">{{ form.labour_weekly_income|as_crispy_field }}</div>
+
+                                <div class="col-md-12" id="labour_details_3">{{ form.labour_condition|as_crispy_field }}</div>
+                            </div>
+
+                            <div class="mt-5 p-4 bg-light rounded border">
+                                <p class="small text-muted mb-4"><i class="bi bi-info-circle me-2"></i> {% trans "Please ensure all information is accurate before submitting. Registered records will be subject to validation." %}</p>
+                                <div class="d-flex justify-content-end">
+                                    <button type="reset" class="btn btn-light border me-3">{% trans "Reset Form" %}</button>
+                                    <button type="submit" name="save" class="btn btn-primary px-5 fw-bold" id="submit-id-save">
+                                        <i class="bi bi-check-circle me-2"></i> {% trans "Complete Registration" %}
+                                    </button>
                                 </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
-{% if form.instance.id == None %}
-  <div class="col-md-3" id="outreach-nfe-result">
-    <div class="main-card mb-3 card">
-      <div class="card-header"><i class="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Previous data</div>
-                                                  <div id="nfe_search_loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
-                                                    <div class="loader">
-                                                        <div class="ball-spin-fade-loader">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                        <div class="card-body" style="height: 225px; overflow: auto;">
-                                            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="nfe_search_result">
-                                                <!--<div class="vertical-timeline-item vertical-timeline-element">-->
-                                                    <!--<div>-->
-                                                        <!--<div class="vertical-timeline-element-icon bounce-in">-->
-                                                            <!--<div class="timeline-icon border-success bg-success">-->
-                                                                <!--<i class="fa fa-child text-white"></i>-->
-                                                            <!--</div>-->
-                                                        <!--</div>-->
-                                                        <!--<div class="vertical-timeline-element-content bounce-in">-->
-                                                            <!--<h4 class="timeline-title text-success">FontAwesome Icons</h4>-->
-                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
-                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
-                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
-                                                        <!--</div>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
+                <!-- Footer Navigation -->
+                <div class="card-footer bg-white p-4 border-top-0 d-flex justify-content-between">
+                    <button type="button" id="prev-btn" class="btn btn-outline-secondary px-4 d-none">
+                        <i class="bi bi-arrow-left me-2"></i> {% trans "Previous" %}
+                    </button>
+                    <div class="ms-auto">
+                        <button type="button" id="next-btn" class="btn btn-primary px-5 fw-bold">
+                            {% trans "Next Step" %} <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                                            </div>
-                                        </div>
-                                    </div>
+        <!-- Sidebar: Potential Matches -->
+        <div class="col-lg-3">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 80px;">
+                <div class="card-header bg-primary text-white d-flex align-items-center">
+                    <i class="bi bi-search me-2"></i>
+                    <span>{% trans "Potential Matches" %}</span>
+                </div>
+                <div class="card-body p-0" style="max-height: 500px; overflow-y: auto;">
+                    <div id="nfe_search_loader" class="text-center py-4 d-none">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <p class="small text-muted mt-2">{% trans "Searching..." %}</p>
+                    </div>
+                    <div class="list-group list-group-flush" id="nfe_search_result">
+                        <div class="p-4 text-center text-muted small">
+                            <i class="bi bi-info-circle fs-4 mb-2 d-block opacity-50"></i>
+                            {% trans "Start typing child's name and DOB to see potential duplicate records." %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-{% endif %}
-
-</div>
-
 {% endblock %}
 
 {% block extra_js %}
-
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=39"></script>
-    <!--<script type="text/javascript">-->
-        <!--(function () {-->
-            <!--function hidePageLoader() {-->
-                <!--var loader = document.getElementById('page-loader');-->
-                <!--if (loader) {-->
-                    <!--loader.classList.add('d-none');-->
-                <!--}-->
-            <!--}-->
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=40"></script>
+    <script type="text/javascript">
+        $(function() {
+            let currentStep = 1;
+            const totalSteps = 3;
 
-            <!--if (document.readyState === 'complete') {-->
-                <!--hidePageLoader();-->
-            <!--} else {-->
-                <!--window.addEventListener('load', hidePageLoader);-->
-            <!--}-->
-        <!--})();-->
-    <!--</script>-->
+            function updateWizard(step) {
+                $('.step-content').addClass('d-none');
+                $(`#step-${step}`).removeClass('d-none');
 
+                $('.step').removeClass('active completed');
+                $(`.step[data-step="${step}"]`).addClass('active');
+                for (let i = 1; i < step; i++) {
+                    $(`.step[data-step="${i}"]`).addClass('completed');
+                }
+
+                if (step === 1) {
+                    $('#prev-btn').addClass('d-none');
+                } else {
+                    $('#prev-btn').removeClass('d-none');
+                }
+
+                if (step === totalSteps) {
+                    $('#next-btn').addClass('d-none');
+                } else {
+                    $('#next-btn').removeClass('d-none');
+                }
+            }
+
+            $('#next-btn').on('click', function() {
+                // Trigger mscc.js validation logic if available
+                if (typeof validateMainForm === 'function') {
+                   if (!validateMainForm(true, currentStep)) return;
+                }
+
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateWizard(currentStep);
+                }
+            });
+
+            $('#prev-btn').on('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateWizard(currentStep);
+                }
+            });
+
+            // Override some mscc.js behavior to work with new UI
+            window.isAddPage = function() { return true; };
+        });
+    </script>
 {% endblock %}

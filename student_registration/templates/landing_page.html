@@ -2,133 +2,152 @@
 {% load static i18n %}
 {% load custom_tags %}
 
-{% block module_name %}{% endblock %}
+{% block module_name %}{% trans "Overview Dashboard" %}{% endblock %}
 
 {% block main_content %}
-<div class="app-page-title">
-  <div class="page-title-wrapper">
-    <div class="page-title-heading">
-      <div class="page-title-icon"><i class="pe-7s-study icon-gradient bg-night-fade"></i></div>
-      <div>
-        NFE Sector
-        <div class="page-title-subheading">Live overview from current database records.</div>
-      </div>
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">{% trans "Welcome back," %} {{ request.user.first_name|default:request.user.username }}</h2>
+        <p class="text-muted">{% trans "Here is what's happening in the NFE Sector today." %}</p>
     </div>
-  </div>
 </div>
 
-<div class="row">
-  <div class="col-md-6 col-xl-2">
-    <div class="card mb-3 widget-content bg-success">
-      <div class="widget-content-wrapper text-white">
-        <div class="widget-content-left"><div class="widget-heading">Today</div><div class="widget-subheading">Registrations</div></div>
-        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_today }}</div></div>
-      </div>
+<!-- Metric Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4 col-lg-2">
+        <div class="card metric-card">
+            <div class="metric-label">{% trans "Today" %}</div>
+            <div class="metric-value">{{ kpi_today }}</div>
+            <div class="small text-success"><i class="bi bi-arrow-up"></i> {% trans "Registrations" %}</div>
+        </div>
     </div>
-  </div>
-  <div class="col-md-6 col-xl-2">
-    <div class="card mb-3 widget-content bg-primary">
-      <div class="widget-content-wrapper text-white">
-        <div class="widget-content-left"><div class="widget-heading">This Week</div><div class="widget-subheading">Registrations</div></div>
-        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_week }}</div></div>
-      </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card metric-card">
+            <div class="metric-label">{% trans "This Week" %}</div>
+            <div class="metric-value">{{ kpi_week }}</div>
+            <div class="small text-primary">{% trans "Total new" %}</div>
+        </div>
     </div>
-  </div>
-  <div class="col-md-6 col-xl-2">
-    <div class="card mb-3 widget-content bg-info">
-      <div class="widget-content-wrapper text-white">
-        <div class="widget-content-left"><div class="widget-heading">Active Learners</div><div class="widget-subheading">Distinct children</div></div>
-        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_active }}</div></div>
-      </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card metric-card">
+            <div class="metric-label">{% trans "Active Children" %}</div>
+            <div class="metric-value">{{ kpi_active }}</div>
+            <div class="small text-muted">{% trans "In database" %}</div>
+        </div>
     </div>
-  </div>
-  <div class="col-md-6 col-xl-2">
-    <div class="card mb-3 widget-content bg-warning">
-      <div class="widget-content-wrapper text-white">
-        <div class="widget-content-left"><div class="widget-heading">Pending Validation</div><div class="widget-subheading">Missing core profile data</div></div>
-        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_pending }}</div></div>
-      </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card metric-card border-start border-warning border-4">
+            <div class="metric-label">{% trans "Pending" %}</div>
+            <div class="metric-value text-warning">{{ kpi_pending }}</div>
+            <div class="small text-muted">{% trans "Needs validation" %}</div>
+        </div>
     </div>
-  </div>
-  <div class="col-md-6 col-xl-2">
-    <div class="card mb-3 widget-content bg-secondary">
-      <div class="widget-content-wrapper text-white">
-        <div class="widget-content-left"><div class="widget-heading">Centers Reporting</div><div class="widget-subheading">Last 30 days</div></div>
-        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_centers }}</div></div>
-      </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card metric-card">
+            <div class="metric-label">{% trans "Centers" %}</div>
+            <div class="metric-value">{{ kpi_centers }}</div>
+            <div class="small text-muted">{% trans "Reporting" %}</div>
+        </div>
     </div>
-  </div>
-  <div class="col-md-6 col-xl-2">
-    <div class="card mb-3 widget-content bg-focus">
-      <div class="widget-content-wrapper text-white">
-        <div class="widget-content-left"><div class="widget-heading">Attendance</div><div class="widget-subheading">Current month</div></div>
-        <div class="widget-content-right"><div class="widget-numbers">{{ kpi_attendance }}%</div></div>
-      </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card metric-card">
+            <div class="metric-label">{% trans "Attendance" %}</div>
+            <div class="metric-value">{{ kpi_attendance }}%</div>
+            <div class="small text-muted">{% trans "Average" %}</div>
+        </div>
     </div>
-  </div>
 </div>
 
-<div class="row">
-  <div class="col-lg-8">
-    <div class="main-card mb-3 card">
-      <div class="card-header">Registrations Trend (Last 14 Days)</div>
-      <div class="card-body"><div id="chart-registrations-trend" style="height:300px"></div></div>
+<!-- Quick Actions -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <a href="{% url 'mscc:child_add' %}" class="quick-action-tile shadow-sm">
+            <i class="bi bi-person-plus-fill"></i>
+            <h5 class="fw-bold mb-1">{% trans "New Registration" %}</h5>
+            <p class="small text-muted text-center mb-0">{% trans "Register a new child or student in the NFE program." %}</p>
+        </a>
     </div>
-  </div>
-  <div class="col-lg-4">
-    <div class="main-card mb-3 card">
-      <div class="card-header">Quick Modules</div>
-      <div class="card-body">
-          <a class="btn btn-primary btn-block" href="{% url 'mscc:list' %}">NFE Registration List</a>
-          <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:child_add' %}">Start New Registration</a>
-          <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:dashboard' %}">Open Dashboard</a>
-          <a class="btn btn-outline-primary btn-block" href="{% url 'mscc:attendance_report' %}">Attendance Reports</a>
-      </div>
+    <div class="col-md-4">
+        <a href="{% url 'mscc:list' %}" class="quick-action-tile shadow-sm">
+            <i class="bi bi-people-fill"></i>
+            <h5 class="fw-bold mb-1">{% trans "Beneficiary List" %}</h5>
+            <p class="small text-muted text-center mb-0">{% trans "Search, filter, and manage existing beneficiary records." %}</p>
+        </a>
     </div>
-  </div>
+    <div class="col-md-4">
+        <a href="{% url 'mscc:attendance' %}" class="quick-action-tile shadow-sm">
+            <i class="bi bi-calendar2-check-fill"></i>
+            <h5 class="fw-bold mb-1">{% trans "Track Attendance" %}</h5>
+            <p class="small text-muted text-center mb-0">{% trans "Log daily or monthly attendance for active groups." %}</p>
+        </a>
+    </div>
 </div>
 
-<div class="row">
-  <div class="col-lg-7">
-    <div class="main-card mb-3 card">
-      <div class="card-header">Top Centers by Volume</div>
-      <div class="card-body"><div id="chart-top-centers" style="height:320px"></div></div>
+<div class="row g-4">
+    <!-- Trend Chart -->
+    <div class="col-lg-8">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>{% trans "Registrations Trend (Last 14 Days)" %}</span>
+                <button class="btn btn-sm btn-outline-secondary">{% trans "View Detailed Report" %}</button>
+            </div>
+            <div class="card-body">
+                <div id="chart-registrations-trend" style="height:350px"></div>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="col-lg-5">
-    <div class="main-card mb-3 card">
-      <div class="card-header">Recent Exports</div>
-      <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-          <thead><tr><th>Type</th><th>Created</th><th>Status</th></tr></thead>
-          <tbody>
-          {% for export in recent_exports %}
-            <tr>
-              <td>{{ export.export_type }}</td>
-              <td>{{ export.created_display }}</td>
-              <td><span class="badge badge-{% if export.status == 'done' %}success{% elif export.status == 'failed' %}danger{% else %}warning{% endif %}">{{ export.status|title }}</span></td>
-            </tr>
-          {% empty %}
-            <tr><td colspan="3" class="text-center text-muted">No export history found.</td></tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
+
+    <!-- Recent Exports & Activity -->
+    <div class="col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header">{% trans "Recent Data Exports" %}</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-3">{% trans "Type" %}</th>
+                                <th>{% trans "Created" %}</th>
+                                <th class="text-end pe-3">{% trans "Status" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for export in recent_exports %}
+                            <tr>
+                                <td class="ps-3"><span class="fw-medium">{{ export.export_type }}</span></td>
+                                <td class="small">{{ export.created_display }}</td>
+                                <td class="text-end pe-3">
+                                    <span class="badge rounded-pill bg-{% if export.status == 'done' %}success{% elif export.status == 'failed' %}danger{% else %}warning text-dark{% endif %}">
+                                        {{ export.status|title }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted small">{% trans "No recent export history." %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-white border-top-0 text-center">
+                <a href="#" class="small fw-bold text-decoration-none">{% trans "Manage All Exports" %}</a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script>
   const trendData = {{ trend_data|safe }}.map(d => ({...d, date: new Date(d.date)}));
-  const centersData = {{ top_centers_data|safe }};
 
   function renderTrend() {
     const container = d3.select('#chart-registrations-trend');
     container.selectAll('*').remove();
     const width = container.node().clientWidth || 600;
-    const height = 300;
-    const margin = {top: 10, right: 16, bottom: 35, left: 40};
+    const height = 350;
+    const margin = {top: 20, right: 30, bottom: 40, left: 50};
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
 
@@ -136,46 +155,34 @@
     const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
     const x = d3.scaleTime().domain(d3.extent(trendData, d => d.date)).range([0, innerW]);
-    const y = d3.scaleLinear().domain([0, d3.max(trendData, d => d.value) || 1]).nice().range([innerH, 0]);
+    const y = d3.scaleLinear().domain([0, d3.max(trendData, d => d.value) * 1.1 || 10]).nice().range([innerH, 0]);
 
-    g.append('g').attr('transform', `translate(0,${innerH})`).call(d3.axisBottom(x).ticks(7).tickFormat(d3.timeFormat('%b %d')));
-    g.append('g').call(d3.axisLeft(y).ticks(5));
+    // Grid lines
+    g.append('g').attr('class', 'grid').attr('color', '#f0f0f0').call(d3.axisLeft(y).tickSize(-innerW).tickFormat(''));
 
+    // Axes
+    g.append('g').attr('transform', `translate(0,${innerH})`).attr('class', 'text-muted').call(d3.axisBottom(x).ticks(7).tickFormat(d3.timeFormat('%b %d')));
+    g.append('g').attr('class', 'text-muted').call(d3.axisLeft(y).ticks(5));
+
+    // Area
+    const area = d3.area().x(d => x(d.date)).y0(innerH).y1(d => y(d.value)).curve(d3.curveMonotoneX);
+    g.append('path').datum(trendData).attr('fill', 'rgba(0, 151, 215, 0.1)').attr('d', area);
+
+    // Line
     g.append('path')
       .datum(trendData)
       .attr('fill', 'none')
-      .attr('stroke', '#3f6ad8')
-      .attr('stroke-width', 2.5)
+      .attr('stroke', '#0097D7')
+      .attr('stroke-width', 3)
       .attr('d', d3.line().x(d => x(d.date)).y(d => y(d.value)).curve(d3.curveMonotoneX));
-  }
 
-  function renderCenters() {
-    const container = d3.select('#chart-top-centers');
-    container.selectAll('*').remove();
-    const width = container.node().clientWidth || 600;
-    const height = 320;
-    const margin = {top: 10, right: 10, bottom: 70, left: 40};
-    const innerW = width - margin.left - margin.right;
-    const innerH = height - margin.top - margin.bottom;
-
-    const svg = container.append('svg').attr('width', width).attr('height', height);
-    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
-
-    const x = d3.scaleBand().domain(centersData.map(d => d.name)).range([0, innerW]).padding(0.2);
-    const y = d3.scaleLinear().domain([0, d3.max(centersData, d => d.value) || 1]).nice().range([innerH, 0]);
-
-    g.append('g').attr('transform', `translate(0,${innerH})`).call(d3.axisBottom(x)).selectAll('text')
-      .attr('transform', 'rotate(-25)').style('text-anchor', 'end');
-    g.append('g').call(d3.axisLeft(y).ticks(5));
-
-    g.selectAll('rect').data(centersData).join('rect')
-      .attr('x', d => x(d.name)).attr('y', d => y(d.value))
-      .attr('width', x.bandwidth()).attr('height', d => innerH - y(d.value))
-      .attr('fill', '#16aaff');
+    // Dots
+    g.selectAll('.dot').data(trendData).join('circle').attr('class', 'dot')
+      .attr('cx', d => x(d.date)).attr('cy', d => y(d.value))
+      .attr('r', 4).attr('fill', '#0097D7').attr('stroke', '#fff').attr('stroke-width', 2);
   }
 
   renderTrend();
-  renderCenters();
-  window.addEventListener('resize', () => { renderTrend(); renderCenters(); });
+  window.addEventListener('resize', renderTrend);
 </script>
 {% endblock %}
