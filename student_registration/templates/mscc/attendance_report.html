@@ -2,12 +2,8 @@
 {% load util_tags %}
 {% load custom_tags %}
 {% load static i18n %}
-{% load static i18n %}
-{% load django_bootstrap5 %}
 
-{% bootstrap_css %}
-
-{% block module_name %}NFR Sector - Attendance{% endblock %}
+{% block module_name %}{% trans "Attendance Reports" %}{% endblock %}
 {% block project_title %}Attendance Export{% endblock %}
 
 {% block content %}
@@ -61,116 +57,79 @@
                         <div class="p-icon green"></div>
                         <span class="uppercase">Filters</span>
 
-                        <div class="form-group">
-                            <label for="month">Select Month</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                                </div>
-                                <select id="month" class="form-control">
-                                    <option value="">Select Month</option>
-                                    <option value="01">January</option>
-                                    <option value="02">February</option>
-                                    <option value="03">March</option>
-                                    <option value="04">April</option>
-                                    <option value="05">May</option>
-                                    <option value="06">June</option>
-                                    <option value="07">July</option>
-                                    <option value="08">August</option>
-                                    <option value="09">September</option>
-                                    <option value="10">October</option>
-                                    <option value="11">November</option>
-                                    <option value="12">December</option>
-                                </select>
-                            </div>
+                        <div class="mb-3">
+                            <label for="month" class="form-label">{% trans "Select Month" %}</label>
+                            <select id="month" class="form-select">
+                                <option value="">{% trans "Select Month" %}</option>
+                                <option value="01">{% trans "January" %}</option>
+                                <option value="02">{% trans "February" %}</option>
+                                <option value="03">{% trans "March" %}</option>
+                                <option value="04">{% trans "April" %}</option>
+                                <option value="05">{% trans "May" %}</option>
+                                <option value="06">{% trans "June" %}</option>
+                                <option value="07">{% trans "July" %}</option>
+                                <option value="08">{% trans "August" %}</option>
+                                <option value="09">{% trans "September" %}</option>
+                                <option value="10">{% trans "October" %}</option>
+                                <option value="11">{% trans "November" %}</option>
+                                <option value="12">{% trans "December" %}</option>
+                            </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="year">Select Year</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                                </div>
-                                <select id="year" class="form-control">
-                                    <option value="">Select Year</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2025">2025</option>
-                                    <option value="2026">2026</option>
-<!--                                    <option value="2027">2027</option>-->
-<!--                                    <option value="2028">2028</option>-->
-<!--                                    <option value="2029">2029</option>-->
-<!--                                    <option value="2030">2030</option>-->
-                                </select>
-                            </div>
+                        <div class="mb-3">
+                            <label for="year" class="form-label">{% trans "Select Year" %}</label>
+                            <select id="year" class="form-select">
+                                <option value="">{% trans "Select Year" %}</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label for="partner">Select Partner</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
-                                </div>
-
-                                <select id="partner" class="form-control">
-                                    <option value="">Select Partner</option>
-                                    {% for item in partner %}
-                                      {% if item != '' %}
-                                        <option value="{{ item.id }}" {% if partner == item.id %}selected{% endif %}>{{ item.name }}</option>
-                                      {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
+                        <div class="mb-3">
+                            <label for="partner" class="form-label">{% trans "Select Partner" %}</label>
+                            <select id="partner" class="form-select">
+                                <option value="">{% trans "Select Partner" %}</option>
+                                {% for item in partner %}
+                                  {% if item != '' %}
+                                    <option value="{{ item.id }}" {% if partner == item.id %}selected{% endif %}>{{ item.name }}</option>
+                                  {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label for="center">Select Center</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
-                                </div>
-
-                                <select id="center" class="form-control">
-                                    <option value="">Select Center</option>
-                                    {% for item in center %}
-                                      {% if item != '' %}
-                                        <option value="{{ item.id }}" {% if center == item.id %}selected{% endif %}>{{ item.name }}</option>
-                                      {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
+                        <div class="mb-3">
+                            <label for="center" class="form-label">{% trans "Select Center" %}</label>
+                            <select id="center" class="form-select">
+                                <option value="">{% trans "Select Center" %}</option>
+                                {% for item in center %}
+                                  {% if item != '' %}
+                                    <option value="{{ item.id }}" {% if center == item.id %}selected{% endif %}>{{ item.name }}</option>
+                                  {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="education_program">Select Education Program</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
-                                </div>
-
-                                <select id="education_program" class="form-control">
-                                    <option value="">Select Education Program</option>
-                                    {% for item in education_program %}
-                                      {% if item != '' %}
-                                        <option value="{{ item }}" {% if education_program == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
-                                      {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
+                        <div class="mb-3">
+                            <label for="education_program" class="form-label">{% trans "Select Education Program" %}</label>
+                            <select id="education_program" class="form-select">
+                                <option value="">{% trans "Select Education Program" %}</option>
+                                {% for item in education_program %}
+                                  {% if item != '' %}
+                                    <option value="{{ item }}" {% if education_program == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                  {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label for="mscc-section">Select Section</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
-                                </div>
-                                <select id="mscc-section" class="form-control">
-                                    <option value="">Select Section</option>
-                                    {% for item in class_section %}
-                                      {% if item != '' %}
-                                        <option value="{{ item }}" {% if class_section == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
-                                      {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
+                        <div class="mb-3">
+                            <label for="mscc-section" class="form-label">{% trans "Select Section" %}</label>
+                            <select id="mscc-section" class="form-select">
+                                <option value="">{% trans "Select Section" %}</option>
+                                {% for item in class_section %}
+                                  {% if item != '' %}
+                                    <option value="{{ item }}" {% if class_section == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                  {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
                         <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3 download-report"
                                 onclick="generateAndOpenURL(event)">
