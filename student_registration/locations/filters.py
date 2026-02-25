@@ -13,6 +13,7 @@ from .models import (
     Center,
     Location
 )
+from student_registration.contrib.filters import RedesignFilterSet
 
 class PlaceholderFilterSet(FilterSet):
     """Base FilterSet that hides labels and uses placeholders."""
@@ -45,7 +46,7 @@ class PlaceholderFilterSet(FilterSet):
                 field.widget.attrs.setdefault('placeholder', label)
 
 
-class CenterFilter(PlaceholderFilterSet):
+class CenterFilter(RedesignFilterSet):
     TRUE_FALSE = Choices(
         ('True', _("Yes")),
         ('False', _("No")),

@@ -25,27 +25,13 @@ from .models import (
 )
 from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
+from student_registration.contrib.filters import RedesignFilterSet
 
 DELETED_CHOICES = [
     ('', 'All'),
     ('yes', 'Yes'),
     ('no', 'No'),
 ]
-
-class RedesignFilterSet(FilterSet):
-    """Base FilterSet for the modern redesign."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form.helper = FormHelper(self.form)
-        self.form.helper.form_method = "get"
-        self.form.helper.form_tag = True
-        self.form.helper.disable_csrf = True
-
-        for name, field in self.form.fields.items():
-            field.widget.attrs.update({'class': 'form-control mb-3'})
-            if isinstance(field.widget, forms.Select):
-                field.widget.attrs.update({'class': 'form-select mb-3'})
 
 class PlaceholderFilterSet(FilterSet):
     """Deprecated: Base FilterSet that hides labels and uses placeholders."""
