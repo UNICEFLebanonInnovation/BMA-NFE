@@ -43,20 +43,23 @@
 
 <body>
     <div class="app-wrapper">
+        {% if request.user.is_authenticated %}
         <!-- Sidebar -->
         <nav class="sidebar d-none d-lg-block">
             <div class="p-4 text-center">
                 <a href="{% url 'home' %}">
-                    <img src="{% static 'images/unicef-logo.png' %}" alt="BMA Logo" height="40">
+                    <img src="{% static 'images/clm_plus_logo.png' %}" alt="BMA Logo" height="40">
                 </a>
             </div>
             <div class="mt-4">
                 {% include "_sidebar_links.html" %}
             </div>
         </nav>
+        {% endif %}
 
         <!-- Main Content Area -->
         <main class="main-content">
+            {% if request.user.is_authenticated %}
             <!-- Topbar -->
             <header class="topbar">
                 <button class="btn d-lg-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
@@ -118,6 +121,7 @@
                     </div>
                 </div>
             </header>
+            {% endif %}
 
             <!-- Page Content -->
             <div class="p-4 flex-grow-1">
@@ -150,10 +154,11 @@
         </main>
     </div>
 
+    {% if request.user.is_authenticated %}
     <!-- Mobile Sidebar (Offcanvas) -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" style="width: 280px;">
         <div class="offcanvas-header border-bottom">
-            <img src="{% static 'images/unicef-logo.png' %}" alt="BMA Logo" height="30">
+            <img src="{% static 'images/clm_plus_logo.png' %}" alt="BMA Logo" height="30">
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body p-0">
@@ -162,6 +167,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
     <!-- Core Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
