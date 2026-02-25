@@ -11,106 +11,79 @@
 {% block project_title %}List{% endblock %}
 
 {% block content %}
-
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-user"></i>
-                                        </span>
-                                        <span class="d-inline-block">
-                                          {{ request.user.username }}
-                                          {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_CENTER"  %}
-                                          - {{ request.user.partner }}
-                                          {% endif %}
-                                        </span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="">Home</a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                      List
-                                                </li>
-                                              {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
-
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.governorate }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.caza }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.name }} - {{ request.user.center.type }}
-                                                </li>
-                                              {% endif %}
-
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-
-                        <div class="page-title-actions">
-{% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
-
-<a href="#" data-toggle="modal" data-target="#child-registration-modal" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
-
-{% endif %}
-                        </div>
-                        </div>
-</div>
-
-<div class="row">
-{% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
-  <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
-{% endif %}
-</div>
-
-<div class="row w-100">
-    <div class="col-lg-12">
-<div id="accordion" class="accordion-wrapper mb-3 form-filters">
-    <div class="card">
-        <div id="headingOne" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block">
-                <h5 class="m-0 p-0">
-                    <i class="pe-7s-filter text-primary"></i>
-                    Filters</h5>
+<div class="container-fluid">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                    <li class="breadcrumb-item active">{% trans "Beneficiary List" %}</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold mt-2">
+                {{ request.user.username }}
+                {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_CENTER" %}
+                <span class="text-muted fs-5 fw-normal">| {{ request.user.partner }}</span>
+                {% endif %}
+            </h3>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <button class="btn btn-outline-primary me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+                <i class="bi bi-funnel me-2"></i> {% trans "Advanced Search" %}
             </button>
+            <button class="btn btn-outline-success me-2 download-report-async" type="button">
+                <i class="bi bi-download me-2"></i> {% trans "Export Data" %}
+            </button>
+            {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
+            <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#child-registration-modal">
+                <i class="bi bi-plus-lg me-2"></i> {% trans "Register New" %}
+            </button>
+            {% endif %}
         </div>
-        <div data-parent="#accordion" id="collapseOne1" class="collapse">
-            <div class="card-body">
-            <form action="" method="get" class="form form-inline">
-               {% crispy filter.form 'bootstrap3' %}
+    </div>
 
-            </form>
+    {% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
+    <div class="alert alert-danger mb-4">
+        <i class="bi bi-exclamation-octagon-fill me-2"></i> {% trans "You don't have a center assigned to your profile. Please contact the administrator." %}
+    </div>
+    {% endif %}
+
+    <!-- Active Filters Display -->
+    <div id="active-filters" class="mb-3 d-flex flex-wrap gap-2">
+        <!-- JS will populate active filters here -->
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                {% csrf_token %}
+                {% render_table table 'django_tables2/bootstrap5.html' %}
             </div>
         </div>
     </div>
 </div>
-    </div>
-</div>
 
-<div class="row table-list w-100">
-    <div class="col-lg-12">
-        <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body">
-                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
-        {% csrf_token %}
-        {% render_table table 'django_tables2/bootstrap5.html' %}
-                </div>
+<!-- Advanced Search Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="filterOffcanvas" style="width: 400px;">
+    <div class="offcanvas-header border-bottom bg-light">
+        <h5 class="offcanvas-title fw-bold"><i class="bi bi-funnel me-2"></i> {% trans "Advanced Search" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="" method="get" id="filter-form">
+            {% crispy filter.form %}
+
+            <div class="d-grid gap-2 mt-4 pt-4 border-top">
+                <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                    <i class="bi bi-search me-2"></i> {% trans "Apply Filters" %}
+                </button>
+                <a href="{% url request.resolver_match.view_name %}" class="btn btn-light border fw-bold text-muted">
+                    <i class="bi bi-x-circle me-2"></i> {% trans "Clear All" %}
+                </a>
             </div>
-        </div>
+        </form>
     </div>
 </div>
-
 {% endblock %}
 
 {% block modal %}

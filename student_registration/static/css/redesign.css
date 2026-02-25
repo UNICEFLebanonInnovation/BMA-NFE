@@ -224,3 +224,22 @@ h1, h2, h3, h4, h5 {
 .hidden {
     display: none !important;
 }
+
+#active-filters .badge {
+    font-weight: 500;
+    font-size: 0.85rem;
+    border-color: #dee2e6 !important;
+}
+
+#active-filters .btn-close {
+    filter: none;
+    opacity: 0.8;
+}
+
+#active-filters .btn-close:hover {
+    opacity: 1;
+}
+
+.offcanvas-body .form-label {
+    margin-top: 0.5rem;
+}

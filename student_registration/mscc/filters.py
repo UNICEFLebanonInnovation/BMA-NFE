@@ -32,32 +32,38 @@ DELETED_CHOICES = [
     ('no', 'No'),
 ]
 
+class RedesignFilterSet(FilterSet):
+    """Base FilterSet for the modern redesign."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.helper = FormHelper(self.form)
+        self.form.helper.form_method = "get"
+        self.form.helper.form_tag = True
+        self.form.helper.disable_csrf = True
+
+        for name, field in self.form.fields.items():
+            field.widget.attrs.update({'class': 'form-control mb-3'})
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'class': 'form-select mb-3'})
+
 class PlaceholderFilterSet(FilterSet):
-    """Base FilterSet that hides labels and uses placeholders."""
+    """Deprecated: Base FilterSet that hides labels and uses placeholders."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.form.helper = FormHelper(self.form)
         self.form.helper.form_method = "get"     # django-filter expects GET
-        self.form.helper.form_class = "form-inline"
+        self.form.helper.form_class = "row g-3"
         self.form.helper.form_tag = True
-        # self.form.helper.add_input(Submit("submit", "Filter"))
-        # self.form.helper.add_input(Rest("Rest", "Cancel"))
-        all_fields = list(self.form.fields)  # -> ['type', 'partner', 'round', ...]
-        self.form.helper.layout = Layout(
-            *all_fields,
-            ButtonHolder(Submit("submit", "Filter", css_class="btn btn-primary"),
-                         HTML('<a href="" title="Async Download" class="btn btn-success download-report-async">Export</a>')
-            )
-        )
+
         for name, field in self.form.fields.items():
-            label = field.label or name.replace('_', ' ').title()
-            field.label = ''
             if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
+                label = field.label or name.replace('_', ' ').title()
                 field.widget.attrs.setdefault('placeholder', label)
 
 
-class MainFilter(PlaceholderFilterSet):
+class MainFilter(RedesignFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
@@ -120,7 +126,7 @@ class MainFilter(PlaceholderFilterSet):
         self.filters['round'].extra['choices'] = [self.NO_ROUND_OPTION] + round_choices
 
 
-class FullFilter(PlaceholderFilterSet):
+class FullFilter(RedesignFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
@@ -163,7 +169,7 @@ class FullFilter(PlaceholderFilterSet):
         ]
 
 
-class TeacherFilter(PlaceholderFilterSet):
+class TeacherFilter(RedesignFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
     round = ModelChoiceFilter(queryset=Round.objects.filter(current_year=True).all(), empty_label=_('Round'))
