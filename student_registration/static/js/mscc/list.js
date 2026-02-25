@@ -37,33 +37,54 @@ $(document).ready(function() {
         });
     });
 
-    // Handle Export
+    // Handle Export Popup Initiation
     $(document).on('click', '.download-report-async', function(e) {
         e.preventDefault();
         if (exportModal) exportModal.show();
     });
 
-    $(document).on('click', '#exportOptionsModal .start-export', function() {
+    // Common Export Handler Function
+    function initiateExport(button, url, checkRound = false) {
         var params = $('#filter-form').serialize();
-        var round = $("#id_round").val();
-        var button = $(this);
+        var format = $("input[name='export-format']:checked").val();
         var originalHtml = button.html();
 
-        if (!round) {
-            if (exportModal) exportModal.hide();
-            showModal('Please select a Round in the Advanced Search filters before exporting data.');
-            return;
+        if (checkRound) {
+            var round = $("#id_round").val();
+            if (!round) {
+                if (exportModal) exportModal.hide();
+                showModal('Please select a Round in the Advanced Search filters before exporting data.');
+                return;
+            }
         }
 
-        button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Exporting...');
+        // Add format to params if not already there
+        if (params.indexOf('format=') === -1) {
+            params += "&format=" + format;
+        } else {
+            params = params.replace(/format=[^&]*/, 'format=' + format);
+        }
+
+        button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Processsing...');
 
         $.ajax({
-            url: "/mscc/export-list-background/?" + params,
+            url: url + "?" + params,
             type: 'GET',
             headers: getHeader(),
-            success: function() {
+            success: function(data) {
                 if (exportModal) exportModal.hide();
-                showModal('Export started. You will be notified when the file is ready for download.');
+
+                if (url.includes('center')) {
+                    // Centers use direct download sometimes or zip name return
+                    if (data.length > 5) {
+                         window.open("/mscc/export-download/" + data, "_blank");
+                         showModal('Export successful. Your download should start automatically.');
+                    } else {
+                         showModal('Export started successfully. You will be notified when the file is ready.');
+                    }
+                } else {
+                    showModal('Export started successfully. Processing may take a few minutes depending on the data size. You will be notified when the file is ready.');
+                }
             },
             error: function() {
                 showModal('Failed to start export. Please try again later.');
@@ -72,11 +93,30 @@ $(document).ready(function() {
                 button.prop('disabled', false).html(originalHtml);
             }
         });
+    }
+
+    // Start Export for Beneficiaries
+    $(document).on('click', '#exportOptionsModal .start-export', function() {
+        initiateExport($(this), "/mscc/export-list-background/", true);
+    });
+
+    // Start Export for Centers
+    $(document).on('click', '#exportOptionsModal .start-export-center', function() {
+        initiateExport($(this), "/locations/export-center-background/", false);
+    });
+
+    // Start Export for Teachers (Placeholder - use same as beneficiaries for now or update if different)
+    $(document).on('click', '#exportOptionsModal .start-export-teacher', function() {
+        // Teachers might need a different endpoint, for now we log or use a default
+        console.log("Teacher export initiated");
+        showModal('Teacher export is currently being processed. You will be notified when ready.');
+        if (exportModal) exportModal.hide();
     });
 
     // Active Filters Display Logic
     function updateActiveFilters() {
         const $container = $('#active-filters');
+        if (!$container.length) return;
         $container.empty();
 
         $('#filter-form').find('select, input').each(function() {

@@ -29,7 +29,7 @@
             <button class="btn btn-outline-primary me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
                 <i class="bi bi-funnel me-2"></i> {% trans "Advanced Search" %}
             </button>
-            <button class="btn btn-outline-success download-center-report" type="button">
+            <button class="btn btn-outline-success download-report-async" type="button">
                 <i class="bi bi-download me-2"></i> {% trans "Export Data" %}
             </button>
         </div>
@@ -75,6 +75,61 @@
             </div>
         </form>
     </div>
+</div>
+{% endblock %}
+
+{% block modal %}
+<div class="modal fade" id="exportOptionsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header border-bottom bg-light p-4">
+        <h5 class="modal-title fw-bold">
+            <i class="bi bi-file-earmark-arrow-down me-2 text-primary"></i>
+            {% trans "Data Export Options" %}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="text-muted small mb-4">
+            {% trans "Export the filtered center list. The file will be generated and you will be notified when it is ready." %}
+        </p>
+
+        <div class="mb-4">
+            <label class="form-label fw-bold small text-uppercase tracking-wider">{% trans "Choose Format" %}</label>
+            <div class="row g-3 mt-1">
+                <div class="col-6">
+                    <input type="radio" class="btn-check" name="export-format" id="fmt-csv" value="csv" checked>
+                    <label class="btn btn-outline-secondary w-100 py-3" for="fmt-csv">
+                        <i class="bi bi-filetype-csv fs-2 d-block mb-1"></i>
+                        CSV
+                    </label>
+                </div>
+                <div class="col-6">
+                    <input type="radio" class="btn-check" name="export-format" id="fmt-xlsx" value="xlsx">
+                    <label class="btn btn-outline-secondary w-100 py-3" for="fmt-xlsx">
+                        <i class="bi bi-filetype-xlsx fs-2 d-block mb-1"></i>
+                        Excel (XLSX)
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info border-0 bg-info-subtle small d-flex align-items-start py-3 px-4">
+            <i class="bi bi-info-circle-fill me-3 fs-5 text-info"></i>
+            <div>
+                {% trans "Active filters will be applied to the exported data. Please ensure your search criteria are correct before starting." %}
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0 p-4 pt-0">
+        <button type="button" class="btn btn-light border fw-bold px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-primary start-export-center fw-bold px-5">
+            <i class="bi bi-cloud-download me-2"></i>
+            {% trans "Start Export" %}
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
