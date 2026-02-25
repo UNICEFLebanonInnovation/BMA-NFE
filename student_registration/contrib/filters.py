@@ -9,7 +9,7 @@ class RedesignFilterSet(FilterSet):
         super().__init__(*args, **kwargs)
         self.form.helper = FormHelper(self.form)
         self.form.helper.form_method = "get"
-        self.form.helper.form_tag = True
+        self.form.helper.form_tag = False
         self.form.helper.disable_csrf = True
 
         for name, field in self.form.fields.items():
