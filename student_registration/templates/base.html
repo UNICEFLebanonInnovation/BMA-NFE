@@ -188,5 +188,32 @@
     {% block extra_js %}{% endblock %}
     {% block modal %}{% endblock %}
 
+    <!-- Global Modals -->
+    <div class="modal fade" id="formErrorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-body p-5 text-center">
+                    <i class="bi bi-exclamation-circle text-danger display-1 mb-4"></i>
+                    <h4 class="fw-bold mb-3">{% trans "Verification Required" %}</h4>
+                    <div id="swal2-content" class="text-muted mb-4">{% trans "Please check the form mandatory fields." %}</div>
+                    <button type="button" class="btn btn-danger px-5 fw-bold" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="formSuccessModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-body p-5 text-center">
+                    <i class="bi bi-check-circle text-success display-1 mb-4"></i>
+                    <h4 class="fw-bold mb-3">{% trans "Success" %}</h4>
+                    <div class="text-muted mb-4">{% trans "Information has been successfully saved." %}</div>
+                    <button type="button" class="btn btn-success px-5 fw-bold" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
