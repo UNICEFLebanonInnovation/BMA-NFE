@@ -51,36 +51,7 @@
                 </a>
             </div>
             <div class="mt-4">
-                <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-                    <i class="bi bi-house-door"></i> <span>{% trans "Dashboard" %}</span>
-                </a>
-
-                {% if request.user.is_authenticated %}
-                <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Operations" %}</div>
-
-                {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
-                <a href="{% url 'mscc:list' %}" class="nav-link {% if 'mscc' in request.path %}active{% endif %}">
-                    <i class="bi bi-person-plus"></i> <span>{% trans "Registration" %}</span>
-                </a>
-                <a href="{% url 'mscc:attendance' %}" class="nav-link">
-                    <i class="bi bi-calendar-check"></i> <span>{% trans "Attendance" %}</span>
-                </a>
-                <a href="{% url 'locations:center_list' %}" class="nav-link">
-                    <i class="bi bi-building"></i> <span>{% trans "Centers" %}</span>
-                </a>
-                <a href="{% url 'mscc:teacher_list' %}" class="nav-link">
-                    <i class="bi bi-people"></i> <span>{% trans "Teachers" %}</span>
-                </a>
-                {% endif %}
-
-                <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Analytics" %}</div>
-                <a href="{% url 'dashboard:pivot_dashboard' %}" class="nav-link">
-                    <i class="bi bi-graph-up"></i> <span>{% trans "Pivot Builder" %}</span>
-                </a>
-                <a href="{% url 'dashboard:advanced_analytics' %}" class="nav-link">
-                    <i class="bi bi-pie-chart"></i> <span>{% trans "Advanced Analytics" %}</span>
-                </a>
-                {% endif %}
+                {% include "_sidebar_links.html" %}
             </div>
         </nav>
 
@@ -186,12 +157,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body p-0">
-            <!-- Sidebar content repeated for mobile -->
             <div class="mt-4">
-                <a href="{% url 'home' %}" class="nav-link active">
-                    <i class="bi bi-house-door"></i> <span>{% trans "Dashboard" %}</span>
-                </a>
-                <!-- ... other links ... -->
+                {% include "_sidebar_links.html" %}
             </div>
         </div>
     </div>
