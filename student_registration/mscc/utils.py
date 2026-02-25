@@ -148,14 +148,30 @@ def generate_education_history(registration_id, child_id, student_old_id):
         instance.save()
 
 
+def parse_date_flexible(date_str):
+    if not date_str:
+        return None
+    for fmt in ('%m/%d/%Y', '%Y-%m-%d'):
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+    return None
+
 def create_attendance(data, center_id):
     from datetime import datetime
     round_id = data["round_id"]
     education_program = data["education_program"]
     class_section = data["class_section"]
+
+    attendance_date = parse_date_flexible(data["attendance_date"])
+    if not attendance_date:
+        logger.error(f"Invalid date format: {data['attendance_date']}")
+        return False
+
     try:
         attendance, created = MSCCAttendance.objects.get_or_create(round_id=round_id, center_id=center_id,
-                                                                   attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'),
+                                                                   attendance_date=attendance_date,
                                                                    education_program=education_program,
                                                                    class_section=class_section
                                                                    )
@@ -189,13 +205,13 @@ def create_attendance(data, center_id):
         return False
 
 
-def load_child_attendance(center_id, round_id, attendance_date, education_program, class_section):
+def load_child_attendance(center_id, round_id, attendance_date_str, education_program, class_section):
     from datetime import datetime
 
     attendance = None
 
-    if attendance_date is not None:
-        attendance_date = datetime.strptime(attendance_date, '%m/%d/%Y')
+    if attendance_date_str is not None:
+        attendance_date = parse_date_flexible(attendance_date_str)
 
         attendance = MSCCAttendance.objects.filter(
             center_id=center_id,

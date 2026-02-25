@@ -170,16 +170,11 @@ $(document).ready(function() {
         });
     });
 
-    $('#attendance_date ').click(function(e) {
-        setTimeout(
-          function()
-          {
-            $('#attendance_children').empty("");
-            $('#load_attendance_children').removeClass('disabled');
-            $('#save_attendance_children').addClass('disabled');
-            $('#load_attendance_children').removeClass('disabled');
-          }, 500);
-
+    $('#attendance_date').on('change', function(e) {
+        $('#attendance_children').empty("");
+        $('#children_count').text(0);
+        $('#save_attendance_children').addClass('disabled');
+        $('#load_attendance_children').removeClass('disabled');
     });
 
 

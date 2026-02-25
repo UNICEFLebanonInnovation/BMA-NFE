@@ -138,7 +138,9 @@ class AttendanceView(LoginRequiredMixin,
         from collections import OrderedDict
 
         center_id = self.request.user.center_id
-        attendance_date = datetime.now().strftime('%m/%d/%Y')
+        now = datetime.now()
+        attendance_date = now.strftime('%m/%d/%Y')
+        attendance_date_iso = now.strftime('%Y-%m-%d')
         day_off = 'No'
         close_reason = ''
         round = Round.objects.filter(current_year=True)
@@ -155,7 +157,7 @@ class AttendanceView(LoginRequiredMixin,
 
         if center_id:
             instance = MSCCAttendance.objects.filter(center_id=center_id,
-                                                 attendance_date=datetime.now()).last()
+                                                 attendance_date=now).last()
 
         if instance:
             day_off = instance.day_off
@@ -164,6 +166,7 @@ class AttendanceView(LoginRequiredMixin,
         return {
             'instance': instance,
             'attendance_date': attendance_date,
+            'attendance_date_iso': attendance_date_iso,
             'day_off': day_off,
             'close_reason': close_reason,
             'education_program': education_program_dict,
@@ -225,7 +228,13 @@ class LoadAttendanceChildren(LoginRequiredMixin,
 
         try:
             # Parse the attendance_date_str into a datetime object
-            attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
+            # Support both MM/DD/YYYY and YYYY-MM-DD
+            if '-' in attendance_date_str:
+                attendance_date = datetime.strptime(attendance_date_str, '%Y-%m-%d').date()
+                # Convert back to expected format for load_child_attendance if needed
+                # Actually let's just use the string we have
+            else:
+                attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
 
             if attendance_date <= current_date and center_id:
                 data = load_child_attendance(

@@ -70,17 +70,16 @@
                                         </div>
                                         <div class="card-body">
 
-                                          <div class="form-group">
+                                          <div class="mb-4">
                                               {% csrf_token %}
                                               <input type="hidden" value="{{ request.user.center.id }}" name="center_id" id="center_id" />
-                                                  <div class="input-group">
-                                                      <div class="input-group-prepend datepicker-trigger">
-                                                          <div class="input-group-text">
-                                                              <i class="fa fa-calendar-alt"></i>
-                                                          </div>
-                                                      </div>
-                                                    <input type="text" class="form-control" data-toggle="datepicker" id="attendance_date" value="{{ attendance_date }}"/>
-                                                  </div>
+                                              <label for="attendance_date" class="form-label">{% trans "Attendance Date" %}</label>
+                                              <div class="input-group">
+                                                  <span class="input-group-text">
+                                                      <i class="bi bi-calendar3"></i>
+                                                  </span>
+                                                  <input type="date" class="form-control" id="attendance_date" value="{{ attendance_date_iso }}"/>
+                                              </div>
                                           </div>
 
                                           <div class="row g-3 mb-4">
@@ -121,7 +120,7 @@
                                           <div class="row g-3 mb-3">
                                                   <div class="col-md-6">
                                                             <label class="form-label d-block">{% trans "Attendance Type" %}</label>
-                                                            <div class="btn-group attendance_day_off" role="group">
+                                                            <div class="btn-group w-100 attendance_day_off" role="group">
                                                                 <input type="radio" class="btn-check" name="attendance_day_off" id="working_day" value="No" {% if day_off == 'No' %} checked{% endif %}>
                                                                 <label class="btn btn-outline-primary" for="working_day">{% trans "Working day" %}</label>
 
