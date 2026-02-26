@@ -1,198 +1,99 @@
 {% load static i18n %}
 {% load custom_tags %}
-
 {% load simple_tags %}
-
 {% load util_tags %}
-<div class="mb-2 mr-2 btn-group dropdown" style="position: relative;">
-    <button class="btn btn-outline-primary">Actions</button>
-    <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="dropdown-toggle-split dropdown-toggle btn btn-outline-primary"><span class="sr-only">Toggle Dropdown</span>
-    </button>
-    <!--<button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>-->
-    <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu" x-placement="bottom-start">
-        <a type="button" href="{% url 'mscc:child_profile' record.id %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-contact btn-icon-wrapper"> </i></button>
-          {% trans "View Profile" %}</a>
-       {% if user|has_group:"MSCC_CENTER" and  user.center %}
-        <a type="button" href="{% url 'mscc:child_edit' record.id %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
-          {% trans "Edit" %}</a>
-        <a type="button" href="" tabindex="0" class="dropdown-item delete-student"  data-registration-id="{{ record.id }}">
-          <button id="delete-button-{{ record.id }}" class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-delete btn-icon-wrapper"> </i></button>
-          {% trans "Delete" %}</a>
-      {% endif %}
 
-<div tabindex="-1" class="dropdown-divider"></div>
+<div class="dropdown table-actions-dropdown">
+    <button class="btn btn-light border btn-actions dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-three-dots"></i> {% trans "Actions" %}
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+        <li>
+            <a class="dropdown-item" href="{% url 'mscc:child_profile' record.id %}">
+                <i class="bi bi-person-bounding-box text-info"></i> {% trans "View Profile" %}
+            </a>
+        </li>
+        {% if user|has_group:"MSCC_CENTER" and user.center %}
+        <li>
+            <a class="dropdown-item" href="{% url 'mscc:child_edit' record.id %}">
+                <i class="bi bi-pencil-square text-primary"></i> {% trans "Edit Information" %}
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item delete-student text-danger" href="#" data-registration-id="{{ record.id }}">
+                <i class="bi bi-trash"></i> {% trans "Delete Record" %}
+            </a>
+        </li>
+        {% endif %}
+
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header small text-uppercase fw-bold text-muted">{% trans "Services & Assessments" %}</li>
+
+        {% service_data 'EducationAssessment' record as result_ea %}
+        {% if result_ea %}
+        <li>
+            <a class="dropdown-item" href="{% url 'mscc:service_diagnostic_assessment_edit' record.id result_ea.id %}">
+                <i class="bi bi-clipboard-check text-success"></i> {% trans "Diagnostic Assessment" %}
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'mscc:service_education_assessment_edit' record.id result_ea.id %}">
+                <i class="bi bi-book text-success"></i> {% trans "Education Assessment" %}
+            </a>
+        </li>
+        {% else %}
+        <li>
+            <a class="dropdown-item" href="{% url 'mscc:service_diagnostic_assessment_add' record.id %}">
+                <i class="bi bi-clipboard-plus text-success"></i> {% trans "Add Diagnostic Assessment" %}
+            </a>
+        </li>
+        {% endif %}
+
+        {% if record.child_age > 2 %}
+        {% service_data 'EducationService' record as result_es %}
+        <li>
+            <a class="dropdown-item" href="{% if result_es %}{% url 'mscc:service_education_edit' record.id result_es.id record.type %}{% else %}{% url 'mscc:service_education_add' record.id record.type %}{% endif %}">
+                <i class="bi bi-mortarboard text-success"></i> {% trans "Education Situation" %}
+            </a>
+        </li>
+        {% endif %}
 
         {% get_services record as services %}
 
-{% service_data 'EducationService' instance as result1 %}
-  {% if result1 %}
-      {% service_data 'EducationAssessment' record as result %}
-      {% if result %}
-        <a type="button" href="{% url 'mscc:service_diagnostic_assessment_edit' record.id result.id %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-          Diagnostic Assessment
-        </a>
-        {% if result.post_test_done %}
-        <a type="button" href="{% url 'mscc:service_education_assessment_edit' record.id result.id %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-          Education Assessment
-        </a>
-        {% else %}
-        <a type="button" href="{% url 'mscc:service_education_assessment_edit' record.id result.id %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-          Education Assessment
-        </a>
-        {% endif %}
-      {% else %}
-        <a type="button" href="{% url 'mscc:service_diagnostic_assessment_add' record.id %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-          Diagnostic Assessment
-        </a>
-      {% endif %}
-{% endif %}
-{% if record.child_age > 2 %}
-{% service_data 'EducationService' record as result %}
-      {% if result %}
-        <a type="button" href="{% url 'mscc:service_education_edit' record.id result.id record.type %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-          Education Situation
-        </a>
-      {% else %}
-        <a type="button" href="{% url 'mscc:service_education_add' record.id record.type %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-          Education Situation
-        </a>
-      {% endif %}
-{% endif %}
-
-
-        {% get_service_info services record 'RS' as result %}
-        {% if result %}
-          {% if result.service_id %}
-              <a type="button" href="{% url 'mscc:service_education_rs_edit' record.id result.service_id %}" tabindex="0" class="dropdown-item">
-                <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-                Retention Support
-              </a>
-          {% else %}
-            <a type="button" href="{% url 'mscc:service_education_rs_add' record.id %}" tabindex="0" class="dropdown-item">
-              <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-              Retention Support
+        {% get_service_info services record 'RS' as res_rs %}
+        {% if res_rs %}
+        <li>
+            <a class="dropdown-item" href="{% if res_rs.service_id %}{% url 'mscc:service_education_rs_edit' record.id res_rs.service_id %}{% else %}{% url 'mscc:service_education_rs_add' record.id %}{% endif %}">
+                <i class="bi bi-bookmark-star text-success"></i> {% trans "Retention Support" %}
             </a>
-          {% endif %}
+        </li>
         {% endif %}
 
-        {% get_service_info services record 'Inclusion' as result %}
-        {% if result %}
-          {% if result.service_id %}
-              <a type="button" href="{% url 'mscc:service_inclusion_edit' record.id result.service_id %}" tabindex="0" class="dropdown-item">
-                <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-                Inclusion
-              </a>
-          {% else %}
-            <a type="button" href="{% url 'mscc:service_inclusion_add' record.id %}" tabindex="0" class="dropdown-item">
-              <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-              Inclusion
+        {% get_service_info services record 'Inclusion' as res_inc %}
+        {% if res_inc %}
+        <li>
+            <a class="dropdown-item" href="{% if res_inc.service_id %}{% url 'mscc:service_inclusion_edit' record.id res_inc.service_id %}{% else %}{% url 'mscc:service_inclusion_add' record.id %}{% endif %}">
+                <i class="bi bi-universal-access text-success"></i> {% trans "Inclusion" %}
             </a>
-          {% endif %}
+        </li>
         {% endif %}
 
-        {% get_service_info services record 'Digital component' as result %}
-        {% if result %}
-          {% if result.service_id %}
-              <a type="button" href="{% url 'mscc:service_digital_edit' record.id result.service_id %}" tabindex="0" class="dropdown-item">
-                <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-                Digital Component
-              </a>
-          {% else %}
-            <a type="button" href="{% url 'mscc:service_digital_add' record.id %}" tabindex="0" class="dropdown-item">
-              <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-              Digital Component
+        {% get_service_info services record 'PSS' as res_pss %}
+        {% if res_pss %}
+        <li>
+            <a class="dropdown-item" href="{% if res_pss.service_id %}{% url 'mscc:service_pss_edit' record.id res_pss.service_id %}{% else %}{% url 'mscc:service_pss_add' record.id %}{% endif %}">
+                <i class="bi bi-heart-pulse text-success"></i> {% trans "PSS" %}
             </a>
-          {% endif %}
+        </li>
         {% endif %}
 
-        {% get_service_info services record 'Health and Nutrition' as result %}
-        {% if result %}
-          {% if result.service_id %}
-              <a type="button" href="{% url 'mscc:service_health_nutrition_edit' record.id result.child.age result.service_id %}" tabindex="0" class="dropdown-item">
-                <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-                Health and Nutrition
-              </a>
-          {% else %}
-            <a type="button" href="{% url 'mscc:service_health_nutrition_add' record.id result.child.age %}" tabindex="0" class="dropdown-item">
-              <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-              Health and Nutrition
+        {% get_service_info services record 'Referral' as res_ref %}
+        {% if res_ref %}
+        <li>
+            <a class="dropdown-item" href="{% if res_ref.service_id %}{% url 'mscc:referral_edit' record.id res_ref.service_id %}{% else %}{% url 'mscc:referral_add' record.id %}{% endif %}">
+                <i class="bi bi-box-arrow-up-right text-success"></i> {% trans "Referral" %}
             </a>
-          {% endif %}
+        </li>
         {% endif %}
-
-        {% get_service_info services record 'PSS' as result %}
-        {% if result %}
-          {% if result.service_id %}
-              <a type="button" href="{% url 'mscc:service_pss_edit' record.id result.service_id %}" tabindex="0" class="dropdown-item">
-                <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-                PSS
-              </a>
-          {% else %}
-            <a type="button" href="{% url 'mscc:service_pss_add' record.id %}" tabindex="0" class="dropdown-item">
-              <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-              PSS
-            </a>
-          {% endif %}
-        {% endif %}
-
-        {% get_service_info services record 'Adolescents kit' as result %}
-        {% if result %}
-          {% if result.service_id %}
-              <a type="button" href="{% url 'mscc:service_youth_kit_edit' record.id result.service_id %}" tabindex="0" class="dropdown-item">
-                <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-                Y&AD Kit
-              </a>
-          {% else %}
-            <a type="button" href="{% url 'mscc:service_youth_kit_add' record.id %}" tabindex="0" class="dropdown-item">
-              <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-              Y&AD Kit
-            </a>
-          {% endif %}
-        {% endif %}
-
-        {% get_service_info services record 'Caregivers Package' as result %}
-        {% if result %}
-          {% if result.service_id %}
-              <a type="button" href="{% url 'mscc:service_follow_up_edit' record.id result.service_id %}" tabindex="0" class="dropdown-item">
-                <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-                Protection follow-up
-              </a>
-          {% else %}
-            <a type="button" href="{% url 'mscc:service_follow_up_add' record.id %}" tabindex="0" class="dropdown-item">
-              <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-              Protection follow-up
-            </a>
-          {% endif %}
-        {% endif %}
-
-        {% get_service_info services record 'Referral' as result %}
-        {% if result %}
-          {% if result.service_id %}
-              <a type="button" href="{% url 'mscc:referral_edit' record.id result.service_id %}" tabindex="0" class="dropdown-item">
-                <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-                Referral
-              </a>
-          {% else %}
-            <a type="button" href="{% url 'mscc:referral_add' record.id %}" tabindex="0" class="dropdown-item">
-              <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-              Referral
-            </a>
-          {% endif %}
-        {% endif %}
-
-        <!--<h6 tabindex="-1" class="dropdown-header">Header</h6>-->
-        <!--<a type="button" tabindex="0" class="dropdown-item">Actions</a>-->
-        <!--<div tabindex="-1" class="dropdown-divider"></div>-->
-        <!--<a type="button" tabindex="0" class="dropdown-item">Dividers</a>-->
-    </div>
+    </ul>
 </div>
-
-

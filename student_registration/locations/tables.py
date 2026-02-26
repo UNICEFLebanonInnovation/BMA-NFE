@@ -9,17 +9,18 @@ class BootstrapTable(tables.Table):
 
     class Meta:
         model = Center
-        template = 'django_tables2/bootstrap.html'
-        attrs = {'class': 'table table-bordered table-striped table-hover'}
+        template = 'django_tables2/bootstrap5.html'
+        attrs = {'class': 'table table-hover'}
 
 
 class CenterTable(tables.Table):
-    profile_column = tables.TemplateColumn(verbose_name=_('Edit'), orderable=False,
+    profile_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                         template_name='django_tables2/location/center_profile_column.html',
                                         attrs={'url': '/locations/center-profile/'})
     class Meta:
         model = Center
-        template = 'django_tables2/bootstrap.html'
+        template = 'django_tables2/bootstrap5.html'
+        attrs = {'class': 'table table-hover'}
         fields = (
             'profile_column',
             'name',

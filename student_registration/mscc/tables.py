@@ -11,8 +11,8 @@ class BootstrapTable(tables.Table):
 
     class Meta:
         model = Registration
-        template = 'django_tables2/bootstrap4.html'
-        attrs = {'class': 'table table-bordered table-striped table-hover'}
+        template = 'django_tables2/bootstrap5.html'
+        attrs = {'class': 'table table-hover'}
 
 
 class CommonTable(tables.Table):
@@ -32,19 +32,22 @@ class CommonTable(tables.Table):
         verbose_name=_('Section'),
         orderable=False,
     )
-    has_previous_registration = tables.Column(
-        verbose_name=_('Has Previous Registration'),
+    has_previous_registration = tables.TemplateColumn(
+        verbose_name=_('Previous Reg.'),
         orderable=False,
+        template_code='''
+            {% if record.has_previous_registration %}
+                <span class="text-success" title="{% trans 'Has previous registration' %}"><i class="bi bi-check-circle-fill"></i></span>
+            {% else %}
+                <span class="text-muted opacity-50"><i class="bi bi-dash-circle"></i></span>
+            {% endif %}
+        '''
     )
-
-    # child_unicef_id = tables.Column(
-    #     verbose_name=_('UNICEF ID'),
-    #     orderable=False,
-    # )
 
     class Meta:
         model = Registration
-        template = 'django_tables2/bootstrap4.html'
+        template = 'django_tables2/bootstrap5.html'
+        attrs = {'class': 'table table-hover'}
         fields = ()
 
     def render_child_age(self, record):
@@ -78,12 +81,6 @@ class MainTable(CommonTable):
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
                                        template_name='django_tables2/mscc/absence_column.html')
 
-
-    # center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
-    # governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
-    # caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
-    # cadaster = tables.Column(verbose_name=_('Cadaster'), accessor='center.cadaster')
-
     class Meta:
         model = Registration
         fields = (
@@ -93,7 +90,6 @@ class MainTable(CommonTable):
             'round',
             'child.number',
             'child.unicef_id',
-            # 'child_unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -106,11 +102,6 @@ class MainTable(CommonTable):
             'class_section',
             'partner_unique_number',
             'has_previous_registration',
-            # 'center',
-            # 'center_type',
-            # 'governorate',
-            # 'caza',
-            # 'cadaster',
             'owner',
             'modified_by',
         )
@@ -122,35 +113,6 @@ class FullTable(CommonTable):
         orderable=False,
         template_name='django_tables2/mscc/action_column.html'
     )
-
-
-class TeacherTable(tables.Table):
-    action_column = tables.TemplateColumn(
-        verbose_name=_('Actions'),
-        orderable=False,
-        template_name='django_tables2/mscc/teacher_action_column.html',
-        attrs={'url_edit': '/mscc/teacher-edit/', 'url_delete': '/mscc/teacher-delete/'},
-    )
-
-    class Meta:
-        model = Teacher
-        template = 'django_tables2/bootstrap.html'
-        fields = (
-            'action_column',
-            'first_name',
-            'father_name',
-            'last_name',
-            'sex',
-            'unicef_id',
-            'primary_phone_number',
-            'center',
-            'round',
-            'email',
-            'owner',
-            'modified_by',
-            'created',
-            'modified',
-        )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
@@ -169,7 +131,6 @@ class TeacherTable(tables.Table):
             'round',
             'child.number',
             'child.unicef_id',
-            # 'child_unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -190,6 +151,36 @@ class TeacherTable(tables.Table):
             'has_previous_registration',
             'owner',
             'modified_by'
+        )
+
+
+class TeacherTable(tables.Table):
+    action_column = tables.TemplateColumn(
+        verbose_name=_('Actions'),
+        orderable=False,
+        template_name='django_tables2/mscc/teacher_action_column.html',
+        attrs={'url_edit': '/mscc/teacher-edit/', 'url_delete': '/mscc/teacher-delete/'},
+    )
+
+    class Meta:
+        model = Teacher
+        template = 'django_tables2/bootstrap5.html'
+        attrs = {'class': 'table table-hover'}
+        fields = (
+            'action_column',
+            'first_name',
+            'father_name',
+            'last_name',
+            'sex',
+            'unicef_id',
+            'primary_phone_number',
+            'center',
+            'round',
+            'email',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         )
 
 
@@ -217,7 +208,6 @@ class PartnerTable(CommonTable):
             'round',
             'child.number',
             'child.unicef_id',
-            # 'child_unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -253,7 +243,6 @@ class YouthMainTable(CommonTable):
             'action_column',
             'child.number',
             'child.unicef_id',
-            # 'child_unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -262,9 +251,4 @@ class YouthMainTable(CommonTable):
             'child_age',
             'child_birthday',
             'child.nationality',
-            # 'center',
-            # 'center_type',
-            # 'governorate',
-            # 'caza',
-            # 'cadaster',
         )

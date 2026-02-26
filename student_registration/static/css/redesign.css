@@ -243,3 +243,127 @@ h1, h2, h3, h4, h5 {
 .offcanvas-body .form-label {
     margin-top: 0.5rem;
 }
+
+/* Advanced Datatables Redesign */
+.table-container {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    font-size: 0.925rem;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 1rem 0.75rem;
+    border-top: none;
+    border-bottom: 2px solid #edf2f7;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table tbody td {
+    padding: 0.85rem 0.75rem;
+    vertical-align: middle;
+    color: #2d3748;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f7fafc;
+    transition: background-color 0.2s ease;
+}
+
+/* Custom Badge Styles for Tables */
+.badge-table {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+.badge-core-package {
+    background-color: var(--unicef-light-blue);
+    color: var(--unicef-blue);
+}
+
+.badge-walk-in {
+    background-color: #fff5f5;
+    color: #e53e3e;
+}
+
+/* Action Dropdown Modernization */
+.table-actions-dropdown .btn-actions {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.table-actions-dropdown .dropdown-menu {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #edf2f7;
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 200px;
+}
+
+.table-actions-dropdown .dropdown-item {
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #4a5568;
+}
+
+.table-actions-dropdown .dropdown-item:hover {
+    background-color: #f7fafc;
+    color: var(--unicef-blue);
+}
+
+.table-actions-dropdown .dropdown-item i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.table-actions-dropdown .dropdown-divider {
+    margin: 0.5rem -0.5rem;
+}
+
+/* Pagination Modernization */
+.pagination {
+    gap: 0.25rem;
+}
+
+.page-link {
+    border: none;
+    color: #4a5568;
+    padding: 0.5rem 0.85rem;
+    border-radius: 6px !important;
+    font-weight: 500;
+}
+
+.page-item.active .page-link {
+    background-color: var(--unicef-blue);
+}
+
+.page-link:hover {
+    background-color: #edf2f7;
+    color: var(--unicef-blue);
+}
