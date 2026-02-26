@@ -7,7 +7,6 @@
 {% load django_bootstrap5 %}
 
 {% load simple_tags %}
-{% bootstrap_css %}
 {% block project_title %}Center{% endblock %}
 
 {% block extra_head %}
@@ -68,7 +67,7 @@
                                         </ul>
                                         <div class="form-wizard-content">
 
-                                           {% crispy form 'bootstrap3' %}
+                                           {% crispy form %}
                                         </div>
                                     </div>
                                     <div class="divider"></div>

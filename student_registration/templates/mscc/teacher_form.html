@@ -6,7 +6,6 @@
 {% load django_bootstrap5 %}
 
 {% load simple_tags %}
-{% bootstrap_css %}
 
 {% block project_title %}Teacher | {% if form.instance.id %}Edit{% else %}New{% endif %} {% endblock %}
 
@@ -15,67 +14,33 @@
 {% endblock %}
 
 {% block main_content %}
-<div class="app-page-title">
-    <div class="page-title-wrapper">
-        <div class="page-title-heading">
-            <div>
-                <div class="page-title-head center-elem page-title-heading">
-                    <span class="d-inline-block pr-2">
-                        <i class="fa fa-id-card"></i>
-                    </span>
-                    <span class="d-inline-block">
-                        Teacher
-                    </span>
-                </div>
-                <div class="page-title-subheading opacity-10">
-                    <nav class="" aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="/">
-                                    Home
-                                </a>
-                            </li>
-                            <li class="breadcrumb-item">
-                                <a href="{% url 'mscc:teacher_list' %}">Teacher List</a>
-                            </li>
-                            <li class="breadcrumb-item">
-                                {% if form.instance.id %}Edit{% else %}New{% endif %}
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
+<div class="container-fluid">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'mscc:teacher_list' %}">{% trans "Teacher List" %}</a></li>
+                    <li class="breadcrumb-item active">{% if form.instance.id %}{% trans "Edit Teacher" %}{% else %}{% trans "Add Teacher" %}{% endif %}</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold mt-2">
+                {% if form.instance.id %}{% trans "Edit Teacher Record" %}{% else %}{% trans "Register New Teacher" %}{% endif %}
+            </h3>
         </div>
-        <div class="page-title-actions"></div>
     </div>
-</div>
 
-<div class="main-card mb-3 card">
-    <div class="card-body">
-        <div id="smartwizard3" class="forms-wizard">
-            <ul class="forms-wizard">
-                <li>
-                    <a href="#step-1">
-                        <em>1</em><span>Teacher General Information</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#step-2">
-                        <em>2</em><span>Attachments</span>
-                    </a>
-                </li>
-            </ul>
-
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
             <div class="form-wizard-content">
-                {% crispy form 'bootstrap3' %}
+                {% crispy form %}
             </div>
-        </div>
-        <div class="divider"></div>
 
-        <div class="clearfix">
-            <a href="{% url 'mscc:teacher_list' %}" type="button" class="btn-shadow float-left btn btn-link">Back to list</a>
-            <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
-            <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
+            <div class="d-flex justify-content-between mt-4 pt-4 border-top">
+                <a href="{% url 'mscc:teacher_list' %}" class="btn btn-light border fw-bold px-4">
+                    <i class="bi bi-arrow-left me-2"></i> {% trans "Back to List" %}
+                </a>
+            </div>
         </div>
     </div>
 </div>

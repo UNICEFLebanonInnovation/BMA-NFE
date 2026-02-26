@@ -6,7 +6,6 @@
 {% load django_bootstrap5 %}
 {% load crispy_forms_tags %}
 
-{% bootstrap_css %}
 
 {% block project_title %}List{% endblock %}
 
@@ -65,7 +64,7 @@
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
             <div class="card-body">
             <form action="" method="get" class="form form-inline">
-               {% crispy filter.form 'bootstrap3' %}
+               {% crispy filter.form %}
 
             </form>
             </div>

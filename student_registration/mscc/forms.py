@@ -1286,78 +1286,95 @@ class TeacherForm(forms.ModelForm):
         self.helper.form_action = form_action
 
         self.helper.layout = Layout(
-            Div(
-                Div(HTML('<span class="badge-form badge-pill">1</span>'), Div('center', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">2</span>'), Div('round', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">3</span>'), Div('birthdate', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">4</span>'), Div('first_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">5</span>'), Div('father_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">6</span>'), Div('last_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">7</span>'), Div('mother_fullname', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">8</span>'), Div('sex', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">9</span>'), Div('nationality', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">10</span>'), Div('id_type', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">11</span>'), Div('id_number', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">12</span>'),
-                    Div('primary_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">13</span>'),
-                    Div('email', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">14</span>'),
-                    Div('subjects_provided', css_class='col-md-3 multiple-choice'),
-                    HTML('<span class="badge-form badge-pill">15</span>'),
-                    Div('registration_level', css_class='col-md-3 multiple-choice'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('teacher_assignment', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_teaching_hours_private_school">17</span>'),
-                    Div('teaching_hours_private_school', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_teaching_hours_mscc">18</span>'),
-                    Div('teaching_hours_mscc', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                    Div('trainings', css_class='col-md-3 multiple-choice'),
-                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
-                    Div('training_sessions_attended', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">21</span>'),
-                    Div('extra_coaching', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_extra_coaching_specify">22</span>'),
-                    Div('extra_coaching_specify', css_class='col-md-3'),
-                    css_class='row card-body'),
-                css_id='step-1',
-            ),
-            Div(
-                Div(HTML('<span class="badge-form badge-pill">1</span>'), Div('attach_file_1', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">2</span>'), Div('attach_type_1', css_class='col-md-2'),
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('attach_short_description_1', css_class='col-md-4'), css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">4</span>'), Div('attach_file_2', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">5</span>'), Div('attach_type_2', css_class='col-md-2'),
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('attach_short_description_2', css_class='col-md-4'), css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">7</span>'), Div('attach_file_3', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">8</span>'), Div('attach_type_3', css_class='col-md-2'),
-                    HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('attach_short_description_3', css_class='col-md-4'), css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">10</span>'), Div('attach_file_4', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'), Div('attach_type_4', css_class='col-md-2'),
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('attach_short_description_4', css_class='col-md-4'), css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">13</span>'), Div('attach_file_5', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'), Div('attach_type_5', css_class='col-md-2'),
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('attach_short_description_5', css_class='col-md-4'), css_class='row card-body'),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+            Fieldset(
+                _('Teacher General Information'),
+                Div(
+                    Div('center', css_class='col-md-4'),
+                    Div('round', css_class='col-md-4'),
+                    Div('birthdate', css_class='col-md-4'),
+                    css_class='row g-3 mb-3'
                 ),
-                css_id='step-2',
+                Div(
+                    Div('first_name', css_class='col-md-4'),
+                    Div('father_name', css_class='col-md-4'),
+                    Div('last_name', css_class='col-md-4'),
+                    css_class='row g-3 mb-3'
+                ),
+                Div(
+                    Div('mother_fullname', css_class='col-md-4'),
+                    Div('sex', css_class='col-md-4'),
+                    Div('nationality', css_class='col-md-4'),
+                    css_class='row g-3 mb-3'
+                ),
+                Div(
+                    Div('id_type', css_class='col-md-4'),
+                    Div('id_number', css_class='col-md-4'),
+                    Div('email', css_class='col-md-4'),
+                    css_class='row g-3 mb-3'
+                ),
+                Div(
+                    Div('primary_phone_number', css_class='col-md-4'),
+                    Div('teacher_assignment', css_class='col-md-4'),
+                    css_class='row g-3 mb-3'
+                ),
+                Div(
+                    Div('teaching_hours_private_school', css_class='col-md-4'),
+                    Div('teaching_hours_mscc', css_class='col-md-4'),
+                    Div('training_sessions_attended', css_class='col-md-4'),
+                    css_class='row g-3 mb-3'
+                ),
+                Div(
+                    Div('extra_coaching', css_class='col-md-4'),
+                    Div('extra_coaching_specify', css_class='col-md-8'),
+                    css_class='row g-3 mb-3'
+                ),
+                Div(
+                    Div('subjects_provided', css_class='col-md-6'),
+                    Div('registration_level', css_class='col-md-6'),
+                    css_class='row g-3 mb-3'
+                ),
+                Div(
+                    Div('trainings', css_class='col-md-12'),
+                    css_class='row g-3 mb-3'
+                ),
+            ),
+            Fieldset(
+                _('Attachments'),
+                Div(
+                    Div('attach_file_1', css_class='col-md-5'),
+                    Div('attach_type_1', css_class='col-md-3'),
+                    Div('attach_short_description_1', css_class='col-md-4'),
+                    css_class='row g-3 mb-2'
+                ),
+                Div(
+                    Div('attach_file_2', css_class='col-md-5'),
+                    Div('attach_type_2', css_class='col-md-3'),
+                    Div('attach_short_description_2', css_class='col-md-4'),
+                    css_class='row g-3 mb-2'
+                ),
+                Div(
+                    Div('attach_file_3', css_class='col-md-5'),
+                    Div('attach_type_3', css_class='col-md-3'),
+                    Div('attach_short_description_3', css_class='col-md-4'),
+                    css_class='row g-3 mb-2'
+                ),
+                Div(
+                    Div('attach_file_4', css_class='col-md-5'),
+                    Div('attach_type_4', css_class='col-md-3'),
+                    Div('attach_short_description_4', css_class='col-md-4'),
+                    css_class='row g-3 mb-2'
+                ),
+                Div(
+                    Div('attach_file_5', css_class='col-md-5'),
+                    Div('attach_type_5', css_class='col-md-3'),
+                    Div('attach_short_description_5', css_class='col-md-4'),
+                    css_class='row g-3 mb-2'
+                ),
+            ),
+            FormActions(
+                Submit('save', _('Save Record'), css_class='btn btn-primary btn-lg px-5 fw-bold'),
+                Reset('reset', _('Reset'), css_class='btn btn-light border px-4 ms-2'),
+                css_class='mt-4 pt-4 border-top text-end'
             ),
         )
 
