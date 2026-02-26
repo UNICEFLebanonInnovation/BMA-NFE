@@ -8,14 +8,14 @@
     --unicef-light-blue: #E1F5FE;
     --bs-primary: var(--unicef-blue);
     --bs-primary-rgb: 0, 151, 215;
-    --sidebar-width: 280px;
-    --sidebar-collapsed-width: 80px;
+    --sidebar-width: 300px;
+    --sidebar-collapsed-width: 90px;
     --header-height: 60px;
 }
 
 @media (max-width: 1400px) {
     :root {
-        --sidebar-width: 240px;
+        --sidebar-width: 260px;
     }
 }
 
