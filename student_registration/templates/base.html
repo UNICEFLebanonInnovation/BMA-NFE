@@ -145,6 +145,7 @@
 
                 {% block main_content %}{% endblock %}
                 {% block content %}{% endblock %}
+                {% block content-full-page %}{% endblock %}
             </div>
 
             <!-- Footer -->
@@ -159,7 +160,7 @@
 
     {% if request.user.is_authenticated %}
     <!-- Mobile Sidebar (Offcanvas) -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" style="width: 300px;">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" style="width: 350px;">
         <div class="offcanvas-header border-bottom">
             <img src="{% static 'images/clm_plus_logo.png' %}" alt="BMA Logo" height="30">
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
