@@ -23,13 +23,29 @@
 {% endblock content %}
 
 {% block extra_js %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.min.css">
+
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.min.js"></script>
+
 <script type="text/javascript">
   $(function(){
-    $.getJSON("{% url 'dashboard:pivot_data' %}", function(data){
-      $("#pivot").pivotUI(data);
-    });
+    const $pivot = $("#pivot");
+    $pivot.html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Loading data...</p></div>');
+
+    $.getJSON("{% url 'dashboard:pivot_data' %}")
+      .done(function(data){
+        if (data && data.length > 0) {
+          $pivot.pivotUI(data);
+        } else {
+          $pivot.html('<div class="alert alert-info">No data available for the pivot table.</div>');
+        }
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        $pivot.html('<div class="alert alert-danger">Error loading pivot data: ' + textStatus + '</div>');
+        console.error("Pivot data load failed:", textStatus, errorThrown);
+      });
   });
 </script>
 {% endblock %}
