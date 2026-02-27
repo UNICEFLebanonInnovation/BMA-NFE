@@ -57,18 +57,21 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <!-- Custom Stepper -->
+                    <div class="wizard-progress">
+                        <div class="wizard-progress-bar" id="wizardProgressBar" style="width: 33%;"></div>
+                    </div>
                     <ul class="stepper mb-5" id="registrationStepper">
                         <li class="step active" data-step="1">
-                            <div class="step-icon">1</div>
-                            <div class="small fw-bold">{% trans "Identity" %}</div>
+                            <div class="step-icon"><i class="bi bi-person"></i></div>
+                            <div class="small fw-bold mt-1">{% trans "Identity" %}</div>
                         </li>
                         <li class="step" data-step="2">
-                            <div class="step-icon">2</div>
-                            <div class="small fw-bold">{% trans "Caregivers" %}</div>
+                            <div class="step-icon"><i class="bi bi-telephone"></i></div>
+                            <div class="small fw-bold mt-1">{% trans "Caregivers" %}</div>
                         </li>
                         <li class="step" data-step="3">
-                            <div class="step-icon">3</div>
-                            <div class="small fw-bold">{% trans "Vulnerability" %}</div>
+                            <div class="step-icon"><i class="bi bi-shield-check"></i></div>
+                            <div class="small fw-bold mt-1">{% trans "Review" %}</div>
                         </li>
                     </ul>
 
@@ -177,8 +180,58 @@
                                 <div class="col-md-12" id="labour_details_3">{{ form.labour_condition|as_crispy_field }}</div>
                             </div>
 
-                            <div class="mt-5 p-4 bg-light rounded border">
-                                <p class="small text-muted mb-4"><i class="bi bi-info-circle me-2"></i> {% trans "Please ensure all information is accurate before submitting. Registered records will be subject to validation." %}</p>
+                            <!-- Form Summary / Review -->
+                            <div class="mt-5 border-top pt-4">
+                                <h5 class="fw-bold mb-3"><i class="bi bi-card-checklist me-2 text-primary"></i> {% trans "Final Review" %}</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="summary-card p-3 rounded border h-100">
+                                            <h6 class="fw-bold mb-3 text-muted small text-uppercase">{% trans "Child Identity" %}</h6>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "Full Name" %}</label>
+                                                <span id="summary-name" class="fw-medium text-dark">-</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "DOB" %}</label>
+                                                <span id="summary-dob" class="fw-medium text-dark">-</span>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <label class="small text-muted d-block">{% trans "Nationality" %}</label>
+                                                    <span id="summary-nat" class="fw-medium text-dark">-</span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="small text-muted d-block">{% trans "Gender" %}</label>
+                                                    <span id="summary-gender" class="fw-medium text-dark">-</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="summary-card p-3 rounded border h-100">
+                                            <h6 class="fw-bold mb-3 text-muted small text-uppercase">{% trans "Caregiver Information" %}</h6>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "Contact Method" %}</label>
+                                                <span id="summary-phone" class="fw-medium text-dark">-</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "ID Document" %}</label>
+                                                <span id="summary-id-type" class="fw-medium text-dark">-</span>
+                                            </div>
+                                            <div>
+                                                <label class="small text-muted d-block">{% trans "ID Number" %}</label>
+                                                <span id="summary-id-num" class="fw-medium text-dark">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 p-4 bg-primary bg-opacity-10 rounded border border-primary border-opacity-25">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-shield-check fs-4 text-primary me-3"></i>
+                                    <p class="small text-dark mb-0">{% trans "By completing this registration, you confirm that all entered details are verified against physical documentation." %}</p>
+                                </div>
                                 <div class="d-flex justify-content-end">
                                     <button type="reset" class="btn btn-light border me-3">{% trans "Reset Form" %}</button>
                                     <button type="submit" name="save" class="btn btn-primary px-5 fw-bold" id="submit-id-save">
@@ -237,16 +290,37 @@
             let currentStep = 1;
             const totalSteps = 3;
 
-            function updateWizard(step) {
-                $('.step-content').addClass('d-none');
-                $(`#step-${step}`).removeClass('d-none');
+            function updateSummary() {
+                $('#summary-name').text(`${$('#id_child_first_name').val()} ${$('#id_child_father_name').val()} ${$('#id_child_last_name').val()}`);
+                $('#summary-dob').text(`${$('#id_child_birthday_day').val()}/${$('#id_child_birthday_month').val()}/${$('#id_child_birthday_year').val()}`);
+                $('#summary-nat').text($('#id_child_nationality option:selected').text());
+                $('#summary-gender').text($('#id_child_gender').val());
+                $('#summary-phone').text($('#id_first_phone_number').val() || '{% trans "Not provided" %}');
+                $('#summary-id-type').text($('#id_id_type option:selected').text() || '{% trans "Not selected" %}');
 
+                // Get the visible ID field value
+                let idVal = $('.child_id:visible').find('input').val() || '{% trans "N/A" %}';
+                $('#summary-id-num').text(idVal);
+            }
+
+            function updateWizard(step) {
+                // Progress Bar
+                const progress = (step / totalSteps) * 100;
+                $('#wizardProgressBar').css('width', `${progress}%`);
+
+                // Transitions
+                $('.step-content').addClass('d-none');
+                const $target = $(`#step-${step}`);
+                $target.removeClass('d-none');
+
+                // Stepper Icons
                 $('.step').removeClass('active completed');
                 $(`.step[data-step="${step}"]`).addClass('active');
                 for (let i = 1; i < step; i++) {
                     $(`.step[data-step="${i}"]`).addClass('completed');
                 }
 
+                // Nav Buttons
                 if (step === 1) {
                     $('#prev-btn').addClass('d-none');
                 } else {
@@ -255,13 +329,18 @@
 
                 if (step === totalSteps) {
                     $('#next-btn').addClass('d-none');
+                    updateSummary();
                 } else {
                     $('#next-btn').removeClass('d-none');
                 }
+
+                // Scroll to top of card on step change
+                $('html, body').animate({
+                    scrollTop: $(".card").offset().top - 100
+                }, 200);
             }
 
             $('#next-btn').on('click', function() {
-                // Trigger mscc.js validation logic if available
                 if (typeof validateMainForm === 'function') {
                    if (!validateMainForm(true, currentStep)) return;
                 }
@@ -279,7 +358,33 @@
                 }
             });
 
-            // Override some mscc.js behavior to work with new UI
+            // Initial call
+            updateWizard(1);
+
+            // Draft saving logic
+            const formId = "nfe_reg_draft";
+            $('input, select').on('change input', function() {
+                const formData = {};
+                $('#registrationForm').serializeArray().forEach(item => {
+                    formData[item.name] = item.value;
+                });
+                localStorage.setItem(formId, JSON.stringify(formData));
+            });
+
+            // Load draft if exists
+            const draft = localStorage.getItem(formId);
+            if (draft && !{{ form.instance.id|default:"null" }}) {
+                const data = JSON.parse(draft);
+                Object.keys(data).forEach(key => {
+                    $(`[name="${key}"]`).val(data[key]).trigger('change');
+                });
+            }
+
+            // Clear draft on submit
+            $('#registrationForm').on('submit', function() {
+                localStorage.removeItem(formId);
+            });
+
             window.isAddPage = function() { return true; };
         });
     </script>
