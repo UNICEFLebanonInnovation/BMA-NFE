@@ -229,7 +229,7 @@ $(document).ready(function() {
 //old student
 function old_child_search() {
 
-    if (isAddPage()) {
+    if (typeof isAddPage === 'function' && isAddPage()) {
 
         var birthday_year = $('#id_child_birthday_year').val();
         var birthday_month = $('#id_child_birthday_month').val();

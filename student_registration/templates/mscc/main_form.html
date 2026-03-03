@@ -316,6 +316,9 @@
 {% endblock %}
 
 {% block extra_js %}
+    <script type="text/javascript">
+        window.isAddPage = function() { return {% if not form.instance.id %}true{% else %}false{% endif %}; };
+    </script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=40"></script>
     <script type="text/javascript">
