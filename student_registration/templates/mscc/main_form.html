@@ -95,10 +95,16 @@
                                 <div class="col-md-6">{{ form.child_mother_fullname|as_crispy_field }}</div>
 
                                 <div class="col-md-6">{{ form.child_nationality|as_crispy_field }}</div>
-                                <div class="col-md-6" id="div_id_child_nationality_other">{{ form.child_nationality_other|as_crispy_field }}</div>
+                                <div class="col-md-6 d-none" id="div_id_child_nationality_other">{{ form.child_nationality_other|as_crispy_field }}</div>
 
                                 <div class="col-md-4">{{ form.child_p_code|as_crispy_field }}</div>
                                 <div class="col-md-8">{{ form.child_address|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.source_of_identification|as_crispy_field }}</div>
+                                <div class="col-md-6 d-none" id="div_id_source_of_identification_specify">{{ form.source_of_identification_specify|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.partner_unique_number|as_crispy_field }}</div>
+                                <div class="col-md-6 d-none" id="child_fe_unique_id_block">{{ form.child_fe_unique_id|as_crispy_field }}</div>
                             </div>
 
                             <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "2. Status & Background" %}</h5>
@@ -107,9 +113,9 @@
                                 <div class="col-md-6">{{ form.child_disability|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_marital_status|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_have_children|as_crispy_field }}</div>
-                                <div class="col-md-6" id="div_id_child_children_number">{{ form.child_children_number|as_crispy_field }}</div>
+                                <div class="col-md-6 d-none" id="div_id_child_children_number">{{ form.child_children_number|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_have_sibling|as_crispy_field }}</div>
-                                <div class="col-md-6" id="div_id_child_siblings_have_disability">{{ form.child_siblings_have_disability|as_crispy_field }}</div>
+                                <div class="col-md-6 d-none" id="div_id_child_siblings_have_disability">{{ form.child_siblings_have_disability|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_mother_pregnant_expecting|as_crispy_field }}</div>
                             </div>
                         </div>
@@ -131,7 +137,7 @@
 
                                 <div class="col-md-4">{{ form.children_number_under18|as_crispy_field }}</div>
                                 <div class="col-md-4">{{ form.main_caregiver|as_crispy_field }}</div>
-                                <div class="col-md-4" id="div_id_main_caregiver_other">{{ form.main_caregiver_other|as_crispy_field }}</div>
+                                <div class="col-md-4 d-none" id="div_id_main_caregiver_other">{{ form.main_caregiver_other|as_crispy_field }}</div>
 
                                 <div class="col-md-4">{{ form.caregiver_first_name|as_crispy_field }}</div>
                                 <div class="col-md-4">{{ form.caregiver_middle_name|as_crispy_field }}</div>
@@ -139,29 +145,52 @@
 
                                 <div class="col-md-6">{{ form.caregiver_mother_name|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.main_caregiver_nationality|as_crispy_field }}</div>
+                                <div class="col-md-12 d-none" id="div_id_main_caregiver_nationality_other">{{ form.main_caregiver_nationality_other|as_crispy_field }}</div>
                             </div>
 
                             <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "4. Identification Documentation" %}</h5>
                             <div class="row g-3">
                                 <div class="col-md-12">{{ form.id_type|as_crispy_field }}</div>
 
+                                <!-- Group 1: UNHCR Registered -->
                                 <div class="col-md-6 child_id child_id1 d-none">{{ form.case_number|as_crispy_field }}</div>
                                 <div class="col-md-6 child_id child_id1 d-none">{{ form.case_number_confirm|as_crispy_field }}</div>
-
                                 <div class="col-md-6 child_id child_id1 d-none">{{ form.parent_individual_case_number|as_crispy_field }}</div>
                                 <div class="col-md-6 child_id child_id1 d-none">{{ form.parent_individual_case_number_confirm|as_crispy_field }}</div>
-
                                 <div class="col-md-6 child_id child_id1 d-none">{{ form.individual_case_number|as_crispy_field }}</div>
                                 <div class="col-md-6 child_id child_id1 d-none">{{ form.individual_case_number_confirm|as_crispy_field }}</div>
 
+                                <!-- Group 2: UNHCR Recorded -->
                                 <div class="col-md-6 child_id child_id2 d-none">{{ form.recorded_number|as_crispy_field }}</div>
                                 <div class="col-md-6 child_id child_id2 d-none">{{ form.recorded_number_confirm|as_crispy_field }}</div>
 
+                                <!-- Group 3: Lebanese ID -->
                                 <div class="col-md-6 child_id child_id3 d-none">{{ form.parent_national_number|as_crispy_field }}</div>
                                 <div class="col-md-6 child_id child_id3 d-none">{{ form.parent_national_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id3 d-none">{{ form.national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id3 d-none">{{ form.national_number_confirm|as_crispy_field }}</div>
 
+                                <!-- Group 4: Syrian ID -->
                                 <div class="col-md-6 child_id child_id4 d-none">{{ form.parent_syrian_national_number|as_crispy_field }}</div>
                                 <div class="col-md-6 child_id child_id4 d-none">{{ form.parent_syrian_national_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id4 d-none">{{ form.syrian_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id4 d-none">{{ form.syrian_national_number_confirm|as_crispy_field }}</div>
+
+                                <!-- Group 5: Palestinian ID -->
+                                <div class="col-md-6 child_id child_id5 d-none">{{ form.parent_sop_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id5 d-none">{{ form.parent_sop_national_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id5 d-none">{{ form.sop_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id5 d-none">{{ form.sop_national_number_confirm|as_crispy_field }}</div>
+
+                                <!-- Group 6: Other ID -->
+                                <div class="col-md-6 child_id child_id6 d-none">{{ form.parent_other_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id6 d-none">{{ form.parent_other_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id6 d-none">{{ form.other_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id6 d-none">{{ form.other_number_confirm|as_crispy_field }}</div>
+
+                                <!-- Group 7: Extract Record -->
+                                <div class="col-md-6 child_id child_id7 d-none">{{ form.parent_extract_record|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id7 d-none">{{ form.parent_extract_record_confirm|as_crispy_field }}</div>
                             </div>
                         </div>
 
@@ -170,14 +199,18 @@
                             <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "5. Labour & Vulnerability" %}</h5>
                             <div class="row g-3">
                                 <div class="col-md-6">{{ form.have_labour|as_crispy_field }}</div>
-                                <div class="col-md-6" id="div_id_labour_type">{{ form.labour_type|as_crispy_field }}</div>
+                                <div class="col-md-6 d-none" id="div_id_labour_type">{{ form.labour_type|as_crispy_field }}</div>
 
-                                <div class="col-md-12" id="labour_details_1">{{ form.labour_type_specify|as_crispy_field }}</div>
+                                <div class="col-md-12 d-none" id="labour_details_1">{{ form.labour_type_specify|as_crispy_field }}</div>
 
-                                <div class="col-md-6" id="labour_details_2">{{ form.labour_hours|as_crispy_field }}</div>
-                                <div class="col-md-6" id="labour_details_2_alt">{{ form.labour_weekly_income|as_crispy_field }}</div>
+                                <div class="col-md-6 d-none" id="labour_details_2">{{ form.labour_hours|as_crispy_field }}</div>
+                                <div class="col-md-6 d-none" id="labour_details_2_alt">{{ form.labour_weekly_income|as_crispy_field }}</div>
 
-                                <div class="col-md-12" id="labour_details_3">{{ form.labour_condition|as_crispy_field }}</div>
+                                <div class="col-md-12 d-none" id="labour_details_3">{{ form.labour_condition|as_crispy_field }}</div>
+
+                                <div class="col-md-12 mt-4">
+                                    {{ form.cash_support_programmes|as_crispy_field }}
+                                </div>
                             </div>
 
                             <!-- Form Summary / Review -->
@@ -299,7 +332,8 @@
                 $('#summary-id-type').text($('#id_id_type option:selected').text() || '{% trans "Not selected" %}');
 
                 // Get the visible ID field value
-                let idVal = $('.child_id:visible').find('input').val() || '{% trans "N/A" %}';
+                let $visibleIdField = $('.child_id:visible').find('input');
+                let idVal = $visibleIdField.val() || '{% trans "N/A" %}';
                 $('#summary-id-num').text(idVal);
             }
 
@@ -341,7 +375,9 @@
             }
 
             $('#next-btn').on('click', function() {
-                if (typeof validateMainForm === 'function') {
+                if (typeof validateCurrentStep === 'function') {
+                   if (!validateCurrentStep(currentStep)) return;
+                } else if (typeof validateMainForm === 'function') {
                    if (!validateMainForm(true, currentStep)) return;
                 }
 

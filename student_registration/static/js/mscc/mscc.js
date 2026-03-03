@@ -184,9 +184,9 @@ $(document).ready(function() {
         if (first_name && father_name && last_name && year && month && day) {
 
           $('#search_loader').removeClass('hidden');
-          $('#nfe_search_loader').removeClass('hidden');
+          $('#nfe_search_loader').removeClass('d-none');
 
-          outreach_child_search();
+          if (typeof outreach_child_search === 'function') outreach_child_search();
           old_child_search();
           if ( mother_fullname && sex && nationality) {
             child_duplication_check();
@@ -215,43 +215,10 @@ $(document).ready(function() {
 
     $(document).on('click', '#next-page', function(e){
         e.preventDefault();
-        $(this).removeClass('error-field');
-        var error_fields = false;
-        $('input, select').filter('[required]:visible').each(function(){
-            if($(this).val() == null || $(this).val() == ''){
-                $(this).addClass('error-field');
-                error_fields = true;
-            }
-        });
-        if(typeof validateMainForm === 'function' && !validateMainForm(false, 1)){
-            error_fields = true;
-        }
-        if(!error_fields){
-            $('#next-btn22').trigger('click');
-            $(this).removeClass('error-field');
-         }else{
-            $('#formErrorModal').modal('show');
-        }
-    });
-
-    // Handle forms where the visible "Next" button uses the id "next-btn22" directly
-    // instead of the generic "next-page" id. Apply the same validation logic when
-    // the button is clicked and only allow progressing if validation succeeds.
-    $(document).on('click', '#next-btn22', function(e){
-        $(this).removeClass('error-field');
-        var error_fields = false;
-        $('input, select').filter('[required]:visible').each(function(){
-            if($(this).val() == null || $(this).val() == ''){
-                $(this).addClass('error-field');
-                error_fields = true;
-            }
-        });
-        if(typeof validateMainForm === 'function' && !validateMainForm(false, 1)){
-            error_fields = true;
-        }
-        if(error_fields){
-            e.preventDefault();
-            $('#formErrorModal').modal('show');
+        $(this).removeClass('is-invalid');
+        var currentStepNum = $('.step-content:visible').attr('id').split('-')[1];
+        if(typeof validateMainForm === 'function' && validateMainForm(true, parseInt(currentStepNum))){
+            $('#next-btn').trigger('click');
         }
     });
 
@@ -461,22 +428,20 @@ function reorganizeForm()
 
 //    Child Nationality
     var child_nationality = $('select#id_child_nationality').val();
-    $('div#div_id_child_nationality_other').addClass('d-none');
-//    $('#child_nationality_other_badge').addClass('d-none');
+    $('div#div_id_child_nationality_other').addClass('d-none').hide();
 
     if(child_nationality == 6){
-        $('#div_id_child_nationality_other').removeClass('d-none');
-//        $('#child_nationality_other_badge').removeClass('d-none');
+        $('#div_id_child_nationality_other').removeClass('d-none').show();
     }
     else{
         $('#id_child_nationality_other').val('');
     }
 
     if(child_nationality == 5 && $('#id_type').val() == 'Walk-in'){
-        $('#child_fe_unique_id_block').removeClass('d-none');
+        $('#child_fe_unique_id_block').removeClass('d-none').show();
     }
     else{
-        $('#child_fe_unique_id_block').addClass('d-none');
+        $('#child_fe_unique_id_block').addClass('d-none').hide();
         $('#id_child_fe_unique_id').val('');
     }
 
@@ -484,12 +449,10 @@ function reorganizeForm()
     var child_have_children = $('select#id_child_have_children').val();
 
     if(child_have_children =='Yes'){
-        $('div#div_id_child_children_number').removeClass('d-none');
-//        $('#child_children_number_badge').removeClass('d-none');
+        $('div#div_id_child_children_number').removeClass('d-none').show();
     }
     else{
-        $('div#div_id_child_children_number').addClass('d-none');
-//        $('#child_children_number_badge').addClass('d-none');
+        $('div#div_id_child_children_number').addClass('d-none').hide();
         $('#id_child_children_number').val('');
     }
 
@@ -497,30 +460,26 @@ function reorganizeForm()
     var child_have_sibling = $('select#id_child_have_sibling').val();
 
     if(child_have_sibling =='Yes'){
-        $('div#div_id_child_siblings_have_disability').removeClass('d-none');
-//        $('#child_siblings_have_disability_badge').removeClass('d-none');
+        $('div#div_id_child_siblings_have_disability').removeClass('d-none').show();
     }
     else{
-        $('div#div_id_child_siblings_have_disability').addClass('d-none');
-//        $('#child_siblings_have_disability_badge').addClass('d-none');
+        $('div#div_id_child_siblings_have_disability').addClass('d-none').hide();
         $('#id_child_siblings_have_disability').val('');
     }
 
 //   Source of Identification
     var source_of_identification = $('select#id_source_of_identification').val();
-    $('div#div_id_source_of_identification_specify').addClass('d-none');
-//    $('#source_of_identification_specify_badge').addClass('d-none');
+    $('div#div_id_source_of_identification_specify').addClass('d-none').hide();
 
     if(source_of_identification == 'Other Sources'){
-        $('#div_id_source_of_identification_specify').removeClass('d-none');
-//        $('#source_of_identification_specify_badge').removeClass('d-none');
+        $('#div_id_source_of_identification_specify').removeClass('d-none').show();
     }
 
 //    Main Caregiver
     var main_caregiver = $('select#id_main_caregiver').val();
-    $('div#div_id_main_caregiver_other').addClass('d-none');
+    $('div#div_id_main_caregiver_other').addClass('d-none').hide();
     if(main_caregiver == 'Other'){
-        $('#div_id_main_caregiver_other').removeClass('d-none');
+        $('#div_id_main_caregiver_other').removeClass('d-none').show();
     }
     else
     {
@@ -529,9 +488,9 @@ function reorganizeForm()
 
 //    Main Caregiver Nationality
     var main_caregiver_nationality = $('select#id_main_caregiver_nationality').val();
-    $('div#div_id_main_caregiver_nationality_other').addClass('d-none');
+    $('div#div_id_main_caregiver_nationality_other').addClass('d-none').hide();
     if(main_caregiver_nationality == 6){
-        $('#div_id_main_caregiver_nationality_other').removeClass('d-none');
+        $('#div_id_main_caregiver_nationality_other').removeClass('d-none').show();
     }
     else
     {
@@ -550,63 +509,65 @@ function reorganizeForm()
     6	"Other nationality"
     7	"Caregiver has no ID" */
 
-    $('div.child_id').addClass('d-none');
+    $('div.child_id').addClass('d-none').hide();
     if(id_type == 1){
-        $('div.child_id1').removeClass('d-none');
+        $('div.child_id1').removeClass('d-none').show();
     }
 
     if(id_type == 2){
-        $('div.child_id2').removeClass('d-none');
+        $('div.child_id2').removeClass('d-none').show();
     }
 
     if(id_type == 5){
-        $('div.child_id3').removeClass('d-none');
+        $('div.child_id3').removeClass('d-none').show();
     }
 
     if(id_type == 3){
-        $('div.child_id4').removeClass('d-none');
+        $('div.child_id4').removeClass('d-none').show();
     }
 
     if(id_type == 4){
-        $('div.child_id5').removeClass('d-none');
+        $('div.child_id5').removeClass('d-none').show();
     }
 
     if(id_type == 6){
-        $('div.child_id6').removeClass('d-none');
+        $('div.child_id6').removeClass('d-none').show();
     }
 
     if(id_type == 9){
-        $('div.child_id7').removeClass('d-none');
+        $('div.child_id7').removeClass('d-none').show();
     }
 
     //  Labour
     var have_labour = $('select#id_have_labour').val();
     if(have_labour == '' || have_labour == 'No'){
-        $('div#div_id_labour_type').addClass('d-none');
-        $('#labour_details_1').addClass('d-none');
-        $('#labour_details_2').addClass('d-none');
-        $('#labour_details_3').addClass('d-none');
-        $('#id_labour_type').val('')
-        $('#id_labour_type_specify').val('')
-        $('#id_labour_hours').val('')
-        $('#id_labour_weekly_income').val('')
-        $('#labour_condition').val('')
+        $('div#div_id_labour_type').addClass('d-none').hide();
+        $('#labour_details_1').addClass('d-none').hide();
+        $('#labour_details_2').addClass('d-none').hide();
+        $('#labour_details_2_alt').addClass('d-none').hide();
+        $('#labour_details_3').addClass('d-none').hide();
+        $('#id_labour_type').val('');
+        $('#id_labour_type_specify').val('');
+        $('#id_labour_hours').val('');
+        $('#id_labour_weekly_income').val('');
+        $('input[name="labour_condition"]').prop('checked', false);
     }
     else
     {
-        $('div#div_id_labour_type').removeClass('d-none');
-        $('#labour_details_1').removeClass('d-none');
-        $('#labour_details_2').removeClass('d-none');
-        $('#labour_details_3').removeClass('d-none');
+        $('div#div_id_labour_type').removeClass('d-none').show();
+        $('#labour_details_1').removeClass('d-none').show();
+        $('#labour_details_2').removeClass('d-none').show();
+        $('#labour_details_2_alt').removeClass('d-none').show();
+        $('#labour_details_3').removeClass('d-none').show();
     }
 
     var labour_type = $('select#id_labour_type').val();
     if(labour_type == 'Other services'){
-        $('div#div_id_labour_type_specify').removeClass('d-none');
+        $('div#div_id_labour_type_specify').removeClass('d-none').show();
     }
     else
     {
-        $('div#div_id_labour_type_specify').addClass('d-none');
+        $('div#div_id_labour_type_specify').addClass('d-none').hide();
         $('#id_labour_type_specify').val('');
     }
 }
@@ -1061,9 +1022,9 @@ function validateMainForm(showModal, step) {
 
     if (showModal && !valid) {
         var missingByStep = {};
-        $('.is-invalid').each(function() {
+        $('.is-invalid:visible').each(function() {
             var field = $(this);
-            var stepDiv = field.closest('div[id^="step-"]');
+            var stepDiv = field.closest('.step-content');
             var stepId = stepDiv.length ? stepDiv.attr('id') : 'step-1';
             var stepNum = stepId.split('-')[1];
             if (!missingByStep[stepNum]) {
@@ -1094,8 +1055,7 @@ function validateMainForm(showModal, step) {
 
 $(document).ready(function() {
     $('form').on('submit', function(e) {
-        var step = $('#step-1').is(':visible') ? 1 : null;
-        if (!validateMainForm(true, step)) {
+        if (!validateMainForm(true)) {
             e.preventDefault();
         }
     });
@@ -1106,9 +1066,14 @@ $(document).ready(function() {
         if (!$field.hasClass('is-invalid')) {
             showSuccess($field);
         }
-        var step = $('#step-1').is(':visible') ? 1 : null;
-        validateMainForm(false, step);
+        // Don't auto-validate entire form on every keypress to avoid premature step-error modals
+        // Just validate current field
     });
+
+    // Handle wizard specific validation on step change
+    window.validateCurrentStep = function(step) {
+        return validateMainForm(true, step);
+    };
 
     $('#formErrorModal').on('hidden.bs.modal', function(){
         $('#formErrorModal #swal2-content').text('Please check the form mandatory fields.');
