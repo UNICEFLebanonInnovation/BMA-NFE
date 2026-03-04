@@ -34,7 +34,7 @@
                                                 </li>
                                                 {% endif %}
                                                 <li class="active breadcrumb-item" aria-current="page">
-                                                    Center and Program Staff
+                                                    Center and Teachers
                                                 </li>
                                             </ol>
                                         </nav>
@@ -58,7 +58,7 @@
                                                     </a></li>
                                                 <li class="nav-item">
                                                     <a data-toggle="tab" href="#tab-eg9-1" class="nav-link show{% if current_tab == 'services' %} active{% endif %}">
-                                                        <div class="widget-number">Program Staff</div>
+                                                        <div class="widget-number">Teachers</div>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -71,7 +71,7 @@
                                             </div>
                                             <div class="tab-pane show{% if current_tab == 'services' %} active{% endif %}" id="tab-eg9-1" role="tabpanel">
                                                 <div class="card-body">
-                                                  {% include 'location/program_staff_tab.html' %}
+                                                  {% include 'location/teachers_tab.html' %}
                                                 </div>
                                             </div>
                                         </div>
@@ -88,7 +88,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" src="{% static 'js/location/program_staff.js' %}?v=19"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=2"></script>
-
 {% endblock %}
