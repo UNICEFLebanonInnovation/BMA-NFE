@@ -193,80 +193,63 @@ class CenterForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Div(
+            Fieldset(
+                _('General Information'),
                 Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('name', css_class='col-md-3 disabled-input'),
-                    css_class='row card-body',
+                    Div('name', css_class='col-md-6'),
+                    Div('type', css_class='col-md-6'),
+                    css_class='row mb-3',
                 ),
+            ),
+            Fieldset(
+                _('Location & Accessibility'),
                 Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('caza', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('cadaster', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('longitude', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('latitude', css_class='col-md-3'),
-                    css_class='row card-body',
+                    Div('governorate', css_class='col-md-4'),
+                    Div('caza', css_class='col-md-4'),
+                    Div('cadaster', css_class='col-md-4'),
+                    css_class='row mb-3',
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('manager_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('email', css_class='col-md-3'),
-                    css_class='row card-body',
+                    Div('longitude', css_class='col-md-4'),
+                    Div('latitude', css_class='col-md-4'),
+                    Div('cwd_accessible', css_class='col-md-4'),
+                    css_class='row mb-3',
+                ),
+            ),
+            Fieldset(
+                _('Management & Contact'),
+                Div(
+                    Div('manager_name', css_class='col-md-4'),
+                    Div('phone_number', css_class='col-md-4'),
+                    Div('email', css_class='col-md-4'),
+                    css_class='row mb-3',
+                ),
+            ),
+            Fieldset(
+                _('Provided Services & Programs'),
+                Div(
+                    Div('provided_packages', css_class='col-md-6 bg-light p-3 rounded-3'),
+                    Div('programs', css_class='col-md-6 bg-light p-3 rounded-3'),
+                    css_class='row mb-3 mx-0',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('type', css_class='col-md-3'),
-                    css_class='row card-body',
+                    Div('offer_digital_learning', css_class='col-md-4'),
+                    Div('have_digital_hub', css_class='col-md-4'),
+                    Div('admin_staff_number', css_class='col-md-4'),
+                    css_class='row mb-3',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('provided_packages', css_class='col-md-3  multiple-choice'),
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('programs', css_class='col-md-3  multiple-choice'),
-                    css_class='row card-body',
+                    Div('neaby_phcc', css_class='col-md-8'),
+                    Div('is_active', css_class='col-md-4'),
+                    css_class='row mb-4',
                 ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('cwd_accessible', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('admin_staff_number', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('offer_digital_learning', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('have_digital_hub', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('neaby_phcc', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                    Div('is_active', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-
-                ),
-                css_id='step-1',
+            ),
+            FormActions(
+                Submit('save', _('Save Center Details'),
+                       css_class='btn btn-primary px-5 fw-bold'),
+                Reset('reset', _('Reset Form'),
+                      css_class='btn btn-outline-secondary ms-2'),
+                css_class='d-flex justify-content-end border-top pt-4'
             ),
         )
 

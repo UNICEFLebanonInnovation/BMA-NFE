@@ -13,78 +13,55 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
 {% endblock %}
 
+{% block module_name %}
+    <i class="bi bi-building me-2"></i> {% if instance %}{% trans "Edit Center" %}{% else %}{% trans "Add New Center" %}{% endif %}
+{% endblock %}
+
 {% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+        {% if request.user|has_group:"MSCC_PARTNER" %}
+        <li class="breadcrumb-item"><a href="{% url 'locations:center_list' %}">{% trans "Centers" %}</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active" aria-current="page">{% if instance %}{{ instance.name }}{% else %}{% trans "New Center" %}{% endif %}</li>
+    </ol>
+</nav>
 
-<div class="app-page-title">
-      <div class="page-title-wrapper">
-          <div class="page-title-heading">
-              <div>
-                  <div class="page-title-head center-elem page-title-heading">
-                      <span class="d-inline-block pr-2">
-                          <i class="fa fa-id-card"></i>
-                      </span>
-                      <span class="d-inline-block">
-                        Center
-                      </span>
-                  </div>
-                  <div class="page-title-subheading opacity-10">
-                      <nav class="" aria-label="breadcrumb">
-                          <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="/">
-                                                        Home
-                                                    </a>
-                                                </li>
-                                                {% if request.user|has_group:"MSCC_PARTNER" %}
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'locations:center_list' %}">List</a>
-                                                </li>
-                                                {% endif %}
-                               <li class="breadcrumb-item">
-                                     Center
-                              </li>
-
-                          </ol>
-                      </nav>
-                  </div>
-              </div>
-          </div>
-          <div class="page-title-actions"></div>
-      </div>
-</div>
-
-        <!--{{ form.errors }}-->
-
-<div class="main-card mb-3 card">
-                                <div class="card-body">
-                                    <div id="smartwizard3" class="forms-wizard">
-                                        <ul class="forms-wizard">
-                                            <li>
-                                                <a href="#step-1">
-                                                    <em>1</em><span>Center</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                        <div class="form-wizard-content">
-
-                                           {% crispy form %}
-                                        </div>
-                                    </div>
-                                    <div class="divider"></div>
-
-                                    <div class="clearfix">
-                                        <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
-                                        <a href="{% url 'locations:center_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
-
-                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
-                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
-
-                                        <!--<button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>-->
-                                        <!--<button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>-->
-                                    </div>
-                                </div>
+<div class="row justify-content-center">
+    <div class="col-xl-10">
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-primary">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        {% if instance %}{% trans "Center Management" %}{% else %}{% trans "Center Registration" %}{% endif %}
+                    </h5>
+                    <a href="{% url 'locations:center_list' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> {% trans "Back to List" %}
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                {% if form.errors %}
+                    <div class="alert alert-danger border-0 shadow-sm mb-4">
+                        <div class="d-flex">
+                            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">{% trans "Please correct the errors below" %}</h6>
+                                <p class="mb-0 small">{% trans "Some required fields are missing or contain invalid data." %}</p>
                             </div>
+                        </div>
+                    </div>
+                {% endif %}
 
+                <div class="redesign-form">
+                    {% crispy form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -94,8 +71,8 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/location/center.js' %}?v=11"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
     <script>
-      var url_districts = "{% url 'clm:load_districts' %}";
-      var url_cadasters = "{% url 'clm:load_cadasters' %}";
+      var url_districts = "{% url 'locations:load_districts' %}";
+      var url_cadasters = "{% url 'locations:load_cadasters' %}";
 
       $("#id_governorate").change(function () {
           load_districts(url_districts);

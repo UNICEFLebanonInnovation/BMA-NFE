@@ -37,4 +37,14 @@ urlpatterns = [
         view=views.ProfileView.as_view(),
         name='center_profile'
     ),
+    re_path(
+        r'^ajax/load-districts/$',
+        view=views.load_districts,
+        name='load_districts'
+    ),
+    re_path(
+        r'^ajax/load-cadasters/$',
+        view=views.load_cadasters,
+        name='load_cadasters'
+    ),
 ]
