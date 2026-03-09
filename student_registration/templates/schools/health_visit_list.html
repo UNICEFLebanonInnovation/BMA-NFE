@@ -95,10 +95,10 @@
 <div class="row table-list">
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body">
-                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
+            <div class="card-body p-0">
+                <div class="table-responsive">
         {% csrf_token %}
-        {% render_table table 'django_tables2/bootstrap.html' %}
+        {% render_table table 'django_tables2/bootstrap5.html' %}
                 </div>
             </div>
         </div>

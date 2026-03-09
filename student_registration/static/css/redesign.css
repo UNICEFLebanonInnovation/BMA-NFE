@@ -342,13 +342,29 @@ h1, h2, h3, h4, h5 {
     overflow: hidden;
 }
 
+.table-responsive {
+    max-height: calc(100vh - 320px);
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: 0 0 12px 12px;
+    position: relative;
+}
+
+/* Override legacy base.css if necessary */
+.table-responsive table {
+    width: 100% !important;
+    min-width: 1000px; /* Ensure horizontal scroll if too many columns */
+}
+
 .table {
     margin-bottom: 0;
     font-size: 0.925rem;
+    border-collapse: separate !important;
+    border-spacing: 0;
 }
 
 .table thead th {
-    background-color: #f8f9fa;
+    background-color: #f8f9fa !important;
     color: #495057;
     font-weight: 600;
     text-transform: uppercase;
@@ -358,9 +374,10 @@ h1, h2, h3, h4, h5 {
     border-top: none;
     border-bottom: 2px solid #edf2f7;
     white-space: nowrap;
-    position: sticky;
-    top: var(--header-height);
-    z-index: 10;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20;
+    box-shadow: inset 0 -2px 0 #edf2f7; /* Keep the bottom border during scroll */
 }
 
 .table tbody td {
@@ -533,6 +550,21 @@ h1, h2, h3, h4, h5 {
 /* Accessibility - focus states */
 .btn:focus, .form-control:focus, .page-link:focus {
     box-shadow: 0 0 0 3px rgba(0, 151, 215, 0.4);
+}
+
+/* Global Loading Overlay */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 /* RTL Specific Logical properties for spacing if not handled by Bootstrap */

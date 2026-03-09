@@ -26,8 +26,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- Custom Redesign CSS -->
-    <link href="{% static 'css/redesign.css' %}" rel="stylesheet">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link href="{% static 'css/redesign.css' %}" rel="stylesheet">
 
     {% block extra_head %}{% endblock %}
 
@@ -201,8 +201,10 @@
     <script type="text/javascript">
       $(function () {
         // Updated loading overlay for BS5
-        $(document).on('submit', 'form', function () {
-          // You can implement a BS5 modal or spinner here
+        $(document).on('submit', 'form', function (e) {
+          if (!$(this).hasClass('no-overlay')) {
+              $('#loading-overlay').css('display', 'flex').hide().fadeIn(200);
+          }
         });
 
         // Sidebar Toggle Logic
@@ -236,6 +238,13 @@
 
     {% block extra_js %}{% endblock %}
     {% block modal %}{% endblock %}
+
+    <!-- Global Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+        <h5 class="fw-bold">{% trans "Processing..." %}</h5>
+        <p class="text-muted">{% trans "This may take a few moments." %}</p>
+    </div>
 
     <!-- Global Modals -->
     <div class="modal fade" id="formErrorModal" tabindex="-1" aria-hidden="true">
