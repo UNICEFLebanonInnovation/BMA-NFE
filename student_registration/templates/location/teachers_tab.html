@@ -3,67 +3,86 @@
 
 {% load simple_tags %}
 {% load util_tags %}
- <style>
-    .right-align {
-        text-align: right;
-    }
-    .dropdown-item i {
-      margin-right: 5px;
-    }
-</style>
-
-<div class="row staff-profile">
-<!--Center Data-->
-<div class="col-md-12 col-lg-12 col-xl-12">
-    <div class="main-card mb-12 card">
-        <div class="card-body">
-            <h5 class="card-title" style="display: inline-block; margin-right: 10px;">Teachers List</h5>
-              {% if request.user|has_group:"MSCC_CENTER" %}
-                  <th>
-                    <a href="{% url 'mscc:teacher_add' %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Teacher." style="display: inline-block;"><i class="pe-7s-plus"></i></a>
-                  </th>
-              {% endif %}
-
-            <table class="mb-0 table table-striped">
-                <thead>
-                <tr>
-                    {% if request.user|has_group:"MSCC_CENTER" %}
-                        <th>Actions</th>
-                    {% endif %}
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Sex</th>
-                    <th>Phone Number</th>
-                    <th>Email</th>
-                    <th>Subjects</th>
-                    <th>Teaching Hours</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for teacher in teachers %}
-                    <tr>
-                        {% if request.user|has_group:"MSCC_CENTER" %}
-                          <th>
-                            <a href="{% url 'mscc:teacher_edit' teacher.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Teacher."><i class="pe-7s-pen"></i></a>
-                          </th>
-                        {% endif %}
-                        <td> {{ teacher.first_name }} </td>
-                        <td> {{ teacher.last_name }} </td>
-                        <td> {{ teacher.sex }} </td>
-                        <td> {{ teacher.primary_phone_number }} </td>
-                        <td> {{ teacher.email }} </td>
-                        <td>
-                          {% for sub in teacher.subjects_provided %}
-                              {{ sub }}<br>
-                          {% endfor %}
-                        </td>
-                        <td> {{ teacher.teaching_hours_mscc }} </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h6 class="mb-0 fw-bold text-primary">{% trans "Teachers List" %}</h6>
+    {% if request.user|has_group:"MSCC_CENTER" %}
+        <a href="{% url 'mscc:teacher_add' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-person-plus-fill me-1"></i> {% trans "Add Teacher" %}
+        </a>
+    {% endif %}
 </div>
 
+<div class="table-responsive" style="max-height: 500px;">
+    <table class="table table-hover align-middle">
+        <thead>
+        <tr>
+            {% if request.user|has_group:"MSCC_CENTER" %}
+                <th style="width: 80px;">{% trans "Actions" %}</th>
+            {% endif %}
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Gender" %}</th>
+            <th>{% trans "Contact" %}</th>
+            <th>{% trans "Subjects" %}</th>
+            <th>{% trans "Hours" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for teacher in teachers %}
+            <tr>
+                {% if request.user|has_group:"MSCC_CENTER" %}
+                    <td>
+                        <div class="dropdown table-actions-dropdown">
+                            <button class="btn btn-actions btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                <li>
+                                    <a class="dropdown-item py-2" href="{% url 'mscc:teacher_edit' teacher.id %}">
+                                        <i class="bi bi-pencil me-2"></i> {% trans "Edit Teacher" %}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                {% endif %}
+                <td>
+                    <div class="fw-bold">{{ teacher.first_name }} {{ teacher.last_name }}</div>
+                </td>
+                <td>
+                    {% if teacher.sex == 'Male' %}
+                        <span class="badge bg-primary-subtle text-primary">{% trans "Male" %}</span>
+                    {% elif teacher.sex == 'Female' %}
+                        <span class="badge bg-success-subtle text-success">{% trans "Female" %}</span>
+                    {% else %}
+                        {{ teacher.sex }}
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="small fw-semibold"><i class="bi bi-telephone me-1"></i> {{ teacher.primary_phone_number }}</div>
+                    <div class="small text-muted"><i class="bi bi-envelope me-1"></i> {{ teacher.email }}</div>
+                </td>
+                <td>
+                    {% for sub in teacher.subjects_provided %}
+                        <span class="badge bg-light text-dark border me-1 mb-1">{{ sub }}</span>
+                    {% empty %}
+                        <span class="text-muted small italic">{% trans "N/A" %}</span>
+                    {% endfor %}
+                </td>
+                <td>
+                    <span class="fw-bold text-dark">{{ teacher.teaching_hours_mscc }}</span>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7" class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="bi bi-people empty-state-icon"></i>
+                        <h6 class="empty-state-title">{% trans "No Teachers Found" %}</h6>
+                        <p class="empty-state-description">{% trans "Try adding a teacher using the button above." %}</p>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
