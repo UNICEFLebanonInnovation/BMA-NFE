@@ -10,7 +10,7 @@ form .card-body {
     padding-top: 0px;
     margin-bottom: 0px;
 }
-/*form #step-2 {
+form #step-2 {
     display: none;
 }
 form #step-3 {
@@ -18,7 +18,7 @@ form #step-3 {
 }
 form #step-4 {
     display: none;
-}*/
+}
 /*form .form-group label {
     float: left;
 }*/
