@@ -5,509 +5,154 @@
 {% load simple_tags %}
 
 {% load util_tags %}
-<div class="row staff-profile">
-
-<!--Child Bio Data-->
-<div class="col-md-12 col-lg-6 col-xl-4">
-                            <div class="card-shadow-primary profile-responsive card-border mb-3 card">
-<div class="dropdown-menu-header">
-                                    <div class="dropdown-menu-header-inner bg-info">
-                                        <div class="menu-header-image opacity-3"></div>
-                                        <div class="menu-header-content btn-pane-right">
-                                            <div class="avatar-icon-wrapper mr-2 avatar-icon-xl">
-                                                <div class="avatar-icon rounded">
-                                                    {% if instance.child.gender == 'Female' %}
-                                                        <img src="{% static 'images/avatars/female.png' %}">
-                                                    {% else %}
-                                                        <img src="{% static 'images/avatars/male.png' %}">
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="menu-header-title">{{ instance.child.full_name }}</h5>
-                                                <h6 class="menu-header-subtitle">Father: {{ instance.child.father_name  }}</h6>
-                                                <h6 class="menu-header-subtitle">Mother: {{ instance.child.mother_fullname  }}</h6>
-                                            </div>
-                                            <!--<div class="menu-header-btn-pane">-->
-                                                <!--<button class="button btn btn-pill btn-dark" data-style="slide-right"><a href="{% url 'mscc:child_edit' instance.id %}" style="color: white;"><i class="pe-7s-pen"></i></a></button>-->
-                                            <!--</div>-->
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <ul class="list-group list-group-flush" style="height: 400px; overflow: scroll;">
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Nationality</div>
-                                                        {% if instance.child.nationality.id == 6  %}
-                                                            <div class="widget-subheading">{{ instance.child.nationality.name }} - {{ instance.child.nationality_other }}</div>
-                                                        {% else %}
-                                                            <div class="widget-subheading">{{ instance.child.nationality.name }}</div>
-                                                        {% endif %}
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">ID type - Number</div>
-                                                    <div class="widget-subheading">
-                                                      {% if instance.type == 'Core-Package' %}
-                                                      {% if instance.child.id_type and instance.child.id_type.id != 7 %}
-                                                        {{ instance.child.id_type.name }} - {{ instance.child.id_number }}
-                                                      {% else %}
-                                                        {{ instance.child.id_type.name }}
-                                                      {% endif %}
-                                                      {% endif %}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                  <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Birthday</div>
-                                                    <div class="widget-subheading">
-                                                      {{ instance.child.birthday }} - {{ instance.child.age_year_month }}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Number</div>
-                                                    <div class="widget-subheading">
-                                                      {{ instance.child.number }}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                  <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Partner Unique Number</div>
-                                                    <div class="widget-subheading">
-                                                      {{ instance.partner_unique_number }}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Family Status</div>
-                                                    <div class="widget-subheading">
-                                                      {% if instance.child.have_children == 'Yes'  %}
-                                                        <div class="widget-subheading">{{ instance.child.marital_status }} - {{ instance.child.children_number }} child</div>
-                                                      {% else %}
-                                                        <div class="widget-subheading">{{ instance.child.marital_status }}</div>
-                                                      {% endif %}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Any disability or special need?</div>
-                                                    <div class="widget-subheading">
-                                                      {{ instance.child.disability }}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Source of referral of the child to NFR Sector</div>
-                                                    <div class="widget-subheading">
-                                                      {{ instance.source_of_identification }}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Cash support programmes that the child is already benefiting from</div>
-                                                    <div class="widget-subheading">
-                                                      {% for prog in instance.cash_support_programmes %}
-                                                        <div> {{prog}} </div>
-                                                      {% endfor %}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <!--<li class="list-group-item">-->
-                                        <!--<div class="widget-content p-0">-->
-                                            <!--<div class="widget-content-wrapper">-->
-                                                <!--<div class="widget-content-left">-->
-                                                    <!--<div class="widget-heading">Packages received/to be provided to child under NFR Sector</div>-->
-                                                    <!--<div class="widget-subheading">-->
-                                                      <!--{% for item in instance.mscc_packages %}-->
-                                                        <!--<div> {{item}} </div>-->
-                                                      <!--{% endfor %}-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                                <!--<div class="widget-content-right">-->
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-info"><span></span></div>-->
-                                                <!--</div>-->
-                                            <!--</div>-->
-                                        <!--</div>-->
-                                    <!--</li>-->
-
-                                </ul>
+<div class="row g-4">
+    <!-- Primary Identity & Bio -->
+    <div class="col-md-6 col-xl-4">
+        <div class="card border h-100 shadow-none">
+            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold text-primary">{% trans "Core Identity" %}</h6>
+                <div class="d-flex align-items-center gap-2">
+                    {% if instance.child.gender == 'Female' %}
+                        <span class="badge bg-danger-subtle text-danger"><i class="bi bi-gender-female"></i> {% trans "Female" %}</span>
+                    {% else %}
+                        <span class="badge bg-primary-subtle text-primary"><i class="bi bi-gender-male"></i> {% trans "Male" %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item py-3">
+                        <div class="row small text-uppercase fw-bold text-muted mb-1">
+                            <div class="col-12">{% trans "Full Name & Family" %}</div>
+                        </div>
+                        <div class="fw-bold">{{ instance.child.full_name }}</div>
+                        <div class="small text-muted mt-1">
+                            <span class="d-block">{% trans "Father" %}: {{ instance.child.father_name }}</span>
+                            <span class="d-block">{% trans "Mother" %}: {{ instance.child.mother_fullname }}</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Nationality" %}</div>
+                                <div>{{ instance.child.nationality.name }}</div>
+                                {% if instance.child.nationality_other %}<div class="small text-muted">{{ instance.child.nationality_other }}</div>{% endif %}
+                            </div>
+                            <div class="col-6">
+                                <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "ID Type" %}</div>
+                                <div>{{ instance.child.id_type.name|default:"N/A" }}</div>
+                                {% if instance.child.id_number %}<div class="small text-muted">{{ instance.child.id_number }}</div>{% endif %}
                             </div>
                         </div>
-
-<!--General Info-->
-<div class="col-md-12 col-lg-6 col-xl-4">
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
-                                        <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
-                                            <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
-                                            <!--Details-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                    <div class="p-0 card-body">
-                                        <div class="dropdown-menu-header mt-0 mb-0">
-                                            <div class="dropdown-menu-header-inner bg-heavy-rain">
-                                                <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">General info.
-                                                      <div style="float:right;">
-                                                            <a href="{% url 'mscc:child_edit' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Child Infos.">Edit</a>
-                                                      </div>
-                                                    </h5>
-                                                    <!--<h6 class="menu-header-subtitle">-->
-                                                        <!--You have-->
-                                                        <!--<b class="text-info">21 </b>-->
-                                                        <!--unread messages-->
-                                                    <!--</h6>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-1" data-toggle="tab" href="#tab-animated-1" aria-selected="true">
-                                                    <span>Address</span>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-0" data-toggle="tab" href="#tab-animated-0">
-                                                    <span>Household</span>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-2" data-toggle="tab" href="#tab-animated-2">
-                                                    <span>Social/Economic</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                        <div class="tab-content">
-                                            <div class="tab-pane" id="tab-animated-0" role="tabpanel">
-                                                <div class="scroll-area-sm" style="height: 340px;">
-                                                    <div class="scrollbar-container ps ps--active-y">
-                                                        <div class="p-3">
-                                                            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Father’s educational level</h4>
-                                                                            <p> {{instance.child.father_educational_level}}</p></div>
-                                                                    </div>
-                                                                </div>
-
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mother’s educational level</h4>
-                                                                            <p> {{instance.child.mother_educational_level}}</p></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Primary phone number</h4>
-                                                                            <p> {{instance.child.first_phone_number}}</p></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-info text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who will be answering the phone</h4>
-                                                                            <p> {{instance.child.first_phone_owner}}</p></div>
-                                                                    </div>
-                                                                </div>
-
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone-handset text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Secondary phone number</h4>
-                                                                            <p> {{instance.child.second_phone_number}}</p></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who will be answering the phone</h4>
-                                                                            <p> {{instance.child.second_phone_owner}}</p></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of children under 18</h4>
-                                                                              <p> {{instance.child.children_number_under18}}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
-                                                                          {% if instance.child.main_caregiver == 'Other'  %}
-                                                                              <p> {{instance.child.main_caregiver}} - {{instance.child.main_caregiver_other}}</p>
-                                                                          {% else %}
-                                                                              <p> {{instance.child.main_caregiver}}</p>
-                                                                          {% endif %}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-cloud text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caretaker's Full Name</h4>
-                                                                            <p> {{instance.child.caregiver_full_name}}</p></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="pe-7s-user-female text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caretaker's Mother Full Name</h4>
-                                                                            <p> {{instance.child.caregiver_mother_name}}</p></div>
-                                                                    </div>
-                                                                </div>
-                                                               <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
-                                                                          {% if instance.child.main_caregiver_nationality.id == 6 %}
-                                                                              <p> {{instance.child.main_caregiver_nationality}} - {{instance.child.main_caregiver_other}}</p>
-                                                                          {% else %}
-
-                                                                              <p> {{instance.child.main_caregiver_nationality}}</p>
-                                                                          {% endif %}
-                                                                        </div>
-                                                                    </div>
-                                                               </div>
-                                                              <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's ID Type</h4>
-                                                                          {% if instance.type == 'Core-Package' %}
-                                                                          {% if instance.child.id_type and instance.child.id_type.id != 7 %}
-                                                                              <p> {{ instance.child.id_type.name }} - {{ instance.child.caregiver_id_number }}</p>
-                                                                          {% else %}
-                                                                              <p> {{ instance.child.id_type.name }}</p>
-                                                                          {% endif %}
-                                                                          {% endif %}
-                                                                        </div>
-                                                                    </div>
-                                                               </div>
-                                                              <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Have siblings?</h4>
-                                                                          {{ instance.child.have_sibling }}
-                                                                          <br>
-                                                                          {% if instance.child.have_sibling == "Yes" %}
-                                                                              Any of the siblings have a disability?: {{ instance.child.siblings_have_disability }}
-                                                                          {% endif %}
-                                                                        </div>
-                                                                    </div>
-                                                               </div>
-
-                                                              <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the mother pregnant or expecting?</h4>
-                                                                          {{ instance.child.mother_pregnant_expecting }}
-                                                                        </div>
-                                                                    </div>
-                                                               </div>
-
-                                                            </div>
-                                                        </div>
-                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
-                                                </div>
-                                            </div>
-                                            <div class="tab-pane active show" id="tab-animated-1" role="tabpanel">
-                                                <div class="scroll-area-sm" style="height: 340px;">
-                                                    <div class="scrollbar-container ps">
-                                                        <div class="p-3">
-
-                                                    <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-culture text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">
-                                                                    P-Code where the child lives in Internal Settlement/Camp
-
-                                                                </h4>
-                                                                    <p>
-                                                                        <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
-                                                                    </p>
-                                                                    <p>{{ instance.child.p_code }}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                      <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-home text-info"></i></div></span>
-
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">
-                                                                    Address
-
-                                                                </h4>
-                                                                    <p>
-                                                                        <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
-                                                                    </p>
-                                                                    <p> {{ instance.child.address }}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-map-marker text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Governorate / District</h4>
-                                                                    <p> {{ instance.center.governorate }} / {{ instance.center.caza }}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-map-marker text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Living Arrangement</h4>
-                                                                    <p> {{ instance.child.living_arrangement }}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-
-                                                        </div>
-                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
-                                                </div>
-                                            </div>
-                                            <div class="tab-pane" id="tab-animated-2" role="tabpanel">
-                                                <div class="scroll-area-sm" style="height: 340px;">
-                                                    <div class="scrollbar-container ps">
-                                                        <div class="p-3">
-
-                                                    <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Does the child participate in work?</h4>
-                                                                    <p>{{ instance.have_labour }} </p></div>
-                                                            </div>
-                                                        </div>
-
-                                                        {% if instance.have_labour != 'No' %}
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Type of Labor</h4>
-                                                                  <p> {{instance.labour_type}} {% if instance.labour_type == 'Other services'%} - {{instance.labour_type_specify}}{% endif %}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="lnr-hourglass text-info text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Working hours during a week? (in hours)</h4>
-                                                                     <p>{{ instance.labour_hours }} </p></div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">How much does the child get paid per week?</h4>
-                                                                     <p>{{ instance.labour_weekly_income }} </p></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Work condition that the child is exposed to</h4>
-                                                                  <div class="widget-subheading">
-                                                                        {% for prog in instance.labour_condition %}
-                                                                          <div> {{prog}} </div>
-                                                                        {% endfor %}
-                                                                  </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        {% endif %}
-
-                                                    </div>
-
-                                                        </div>
-
-                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
-                                                    <!--View All Messages-->
-                                                <!--</button>-->
-                                            </li>
-                                        </ul>
-                                    </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Family Status" %}</div>
+                                <div>{{ instance.child.marital_status }}</div>
+                                {% if instance.child.have_children == 'Yes' %}
+                                    <div class="badge bg-info-subtle text-info mt-1">{{ instance.child.children_number }} {% trans "Children" %}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-6">
+                                <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Disability" %}</div>
+                                <div class="{% if instance.child.disability != 'No' %}text-danger fw-bold{% endif %}">
+                                    {{ instance.child.disability }}
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Household & Environment -->
+    <div class="col-md-6 col-xl-4">
+        <div class="card border h-100 shadow-none">
+            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold text-primary">{% trans "Household & Care" %}</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item py-3">
+                        <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Main Caretaker" %}</div>
+                        <div class="fw-bold">{{ instance.child.caregiver_full_name }}</div>
+                        <div class="small text-muted">
+                            <i class="bi bi-people me-1"></i> {{ instance.child.main_caregiver }}
+                            {% if instance.child.main_caregiver_other %}({{ instance.child.main_caregiver_other }}){% endif %}
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Parents Education" %}</div>
+                                <div class="small"><span class="text-muted">F:</span> {{ instance.child.father_educational_level }}</div>
+                                <div class="small"><span class="text-muted">M:</span> {{ instance.child.mother_educational_level }}</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Primary Phone" %}</div>
+                                <div class="fw-bold text-primary">{{ instance.child.first_phone_number }}</div>
+                                <div class="small text-muted">{{ instance.child.first_phone_owner }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3 bg-light-subtle">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="small text-uppercase fw-bold text-muted mb-2">{% trans "Living Conditions" %}</div>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-white border text-dark fw-normal"><i class="bi bi-house-door me-1"></i> {{ instance.child.living_arrangement }}</span>
+                                    <span class="badge bg-white border text-dark fw-normal"><i class="bi bi-geo me-1"></i> {{ instance.child.address|truncatechars:30 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Labor & Economic -->
+    <div class="col-md-6 col-xl-4">
+        <div class="card border h-100 shadow-none">
+            <div class="card-header bg-light py-3 border-bottom">
+                <h6 class="mb-0 fw-bold text-primary">{% trans "Social & Economic" %}</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item py-3">
+                        <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Child Labor" %}</div>
+                        {% if instance.have_labour != 'No' %}
+                            <div class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> {% trans "Engaged in work" %}</div>
+                            <div class="small mt-2 p-2 bg-danger-subtle rounded border border-danger-subtle">
+                                <div><strong>{% trans "Type" %}:</strong> {{ instance.labour_type }}</div>
+                                <div><strong>{% trans "Hours/Week" %}:</strong> {{ instance.labour_hours }}h</div>
+                                <div><strong>{% trans "Income/Week" %}:</strong> {{ instance.labour_weekly_income }}</div>
+                            </div>
+                        {% else %}
+                            <div class="text-success"><i class="bi bi-check-circle-fill me-1"></i> {% trans "Not engaged in work" %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="small text-uppercase fw-bold text-muted mb-2">{% trans "Active Cash Support" %}</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            {% for prog in instance.cash_support_programmes %}
+                                <span class="badge bg-info-subtle text-info border border-info-subtle">{{ prog }}</span>
+                            {% empty %}
+                                <span class="text-muted small">{% trans "No support programs recorded" %}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Source of Identification" %}</div>
+                        <div class="small">{{ instance.source_of_identification }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
   <!--Education history and current situation -->
 <div class="col-md-12 col-lg-6 col-xl-4">

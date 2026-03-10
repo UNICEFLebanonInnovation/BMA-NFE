@@ -12,33 +12,57 @@
 {% block content %}
 <div class="container-fluid">
     <!-- Profile Header Summary -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-4">
-            <div class="row align-items-center">
-                <div class="col-auto">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="bi bi-person-fill fs-1"></i>
+    <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <div class="col-md-auto bg-primary d-flex align-items-center justify-content-center p-4" style="min-width: 150px;">
+                    <div class="text-white text-center">
+                        <i class="bi bi-person-bounding-box display-3"></i>
+                        <div class="small mt-2 opacity-75">{% trans "Beneficiary" %}</div>
                     </div>
                 </div>
-                <div class="col">
-                    <h3 class="fw-bold mb-1">{{ instance.child.full_name }}</h3>
-                    <div class="d-flex flex-wrap gap-3 small text-muted">
-                        <span><i class="bi bi-fingerprint me-1"></i> ID: {{ instance.child.id }}</span>
-                        <span><i class="bi bi-calendar-event me-1"></i> DOB: {{ instance.child.birthday }}</span>
-                        <span><i class="bi bi-geo-alt me-1"></i> {{ instance.child.cadaster }}</span>
-                        <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3">
-                            {{ instance.status|default:"Active" }}
-                        </span>
+                <div class="col-md p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h2 class="fw-bold mb-1 text-dark">{{ instance.child.full_name }}</h2>
+                            <div class="d-flex flex-wrap gap-3 text-muted">
+                                <span><i class="bi bi-fingerprint me-1"></i> <span class="fw-bold text-dark">{{ instance.child.id }}</span></span>
+                                <span><i class="bi bi-calendar3 me-1"></i> {{ instance.child.birthday }} ({{ instance.child.age }}y)</span>
+                                <span><i class="bi bi-geo-alt me-1"></i> {{ instance.child.governorate }} / {{ instance.child.cadaster }}</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge rounded-pill bg-success px-3 py-2 mb-2">
+                                <i class="bi bi-check-circle me-1"></i> {{ instance.status|default:"Active" }}
+                            </span>
+                            <div class="text-primary fw-bold small text-uppercase tracking-wider">{{ instance.type }}</div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-auto text-end">
-                    {% if request.user|has_group:"MSCC_FULL" %}
-                    <button type="button" class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#newRoundModal">
-                        <i class="bi bi-plus-lg me-2"></i> {% trans "New Round" %}
-                    </button>
-                    {% endif %}
-                    <div class="mt-2">
-                        <span class="badge bg-info-subtle text-info border border-info-subtle px-3">{{ instance.type }}</span>
+                    <div class="border-top pt-3 d-flex justify-content-between align-items-center">
+                        <div class="d-flex gap-4">
+                            <div>
+                                <div class="text-muted small">{% trans "Partner" %}</div>
+                                <div class="fw-bold">{{ instance.partner|default:"N/A" }}</div>
+                            </div>
+                            <div>
+                                <div class="text-muted small">{% trans "Center" %}</div>
+                                <div class="fw-bold">{{ instance.center|default:"N/A" }}</div>
+                            </div>
+                            <div>
+                                <div class="text-muted small">{% trans "Current Round" %}</div>
+                                <div class="fw-bold text-primary">{{ instance.round|default:"1" }}</div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            {% if request.user|has_group:"MSCC_FULL" %}
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newRoundModal">
+                                <i class="bi bi-plus-circle me-2"></i> {% trans "New Round" %}
+                            </button>
+                            {% endif %}
+                            <a href="{% url 'mscc:child_edit' instance.id %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-pencil me-2"></i> {% trans "Edit Profile" %}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

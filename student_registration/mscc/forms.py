@@ -1287,94 +1287,79 @@ class TeacherForm(forms.ModelForm):
 
         self.helper.layout = Layout(
             Fieldset(
-                _('Teacher General Information'),
-                Div(
-                    Div('center', css_class='col-md-4'),
-                    Div('round', css_class='col-md-4'),
-                    Div('birthdate', css_class='col-md-4'),
-                    css_class='row g-3 mb-3'
-                ),
+                _('Identity & Contact'),
                 Div(
                     Div('first_name', css_class='col-md-4'),
                     Div('father_name', css_class='col-md-4'),
                     Div('last_name', css_class='col-md-4'),
-                    css_class='row g-3 mb-3'
+                    css_class='row mb-3'
                 ),
                 Div(
                     Div('mother_fullname', css_class='col-md-4'),
                     Div('sex', css_class='col-md-4'),
-                    Div('nationality', css_class='col-md-4'),
-                    css_class='row g-3 mb-3'
+                    Div('birthdate', css_class='col-md-4'),
+                    css_class='row mb-3'
                 ),
                 Div(
+                    Div('nationality', css_class='col-md-4'),
                     Div('id_type', css_class='col-md-4'),
                     Div('id_number', css_class='col-md-4'),
-                    Div('email', css_class='col-md-4'),
-                    css_class='row g-3 mb-3'
+                    css_class='row mb-3'
                 ),
                 Div(
-                    Div('primary_phone_number', css_class='col-md-4'),
+                    Div('primary_phone_number', css_class='col-md-6'),
+                    Div('email', css_class='col-md-6'),
+                    css_class='row mb-3'
+                ),
+            ),
+            Fieldset(
+                _('Assignment & Qualifications'),
+                Div(
+                    Div('center', css_class='col-md-6'),
+                    Div('round', css_class='col-md-6'),
+                    css_class='row mb-3'
+                ),
+                Div(
                     Div('teacher_assignment', css_class='col-md-4'),
-                    css_class='row g-3 mb-3'
-                ),
-                Div(
                     Div('teaching_hours_private_school', css_class='col-md-4'),
                     Div('teaching_hours_mscc', css_class='col-md-4'),
+                    css_class='row mb-3'
+                ),
+                Div(
+                    Div('subjects_provided', css_class='col-md-6 bg-light p-3 rounded-3'),
+                    Div('registration_level', css_class='col-md-6 bg-light p-3 rounded-3'),
+                    css_class='row mb-3 mx-0'
+                ),
+                Div(
+                    Div('trainings', css_class='col-md-8'),
                     Div('training_sessions_attended', css_class='col-md-4'),
-                    css_class='row g-3 mb-3'
+                    css_class='row mb-3'
                 ),
                 Div(
                     Div('extra_coaching', css_class='col-md-4'),
                     Div('extra_coaching_specify', css_class='col-md-8'),
-                    css_class='row g-3 mb-3'
-                ),
-                Div(
-                    Div('subjects_provided', css_class='col-md-6'),
-                    Div('registration_level', css_class='col-md-6'),
-                    css_class='row g-3 mb-3'
-                ),
-                Div(
-                    Div('trainings', css_class='col-md-12'),
-                    css_class='row g-3 mb-3'
+                    css_class='row mb-3'
                 ),
             ),
             Fieldset(
-                _('Attachments'),
+                _('Required Documents'),
                 Div(
-                    Div('attach_file_1', css_class='col-md-5'),
+                    Div('attach_file_1', css_class='col-md-6'),
                     Div('attach_type_1', css_class='col-md-3'),
-                    Div('attach_short_description_1', css_class='col-md-4'),
-                    css_class='row g-3 mb-2'
+                    Div('attach_short_description_1', css_class='col-md-3'),
+                    css_class='row mb-2 align-items-end'
                 ),
                 Div(
-                    Div('attach_file_2', css_class='col-md-5'),
+                    Div('attach_file_2', css_class='col-md-6'),
                     Div('attach_type_2', css_class='col-md-3'),
-                    Div('attach_short_description_2', css_class='col-md-4'),
-                    css_class='row g-3 mb-2'
-                ),
-                Div(
-                    Div('attach_file_3', css_class='col-md-5'),
-                    Div('attach_type_3', css_class='col-md-3'),
-                    Div('attach_short_description_3', css_class='col-md-4'),
-                    css_class='row g-3 mb-2'
-                ),
-                Div(
-                    Div('attach_file_4', css_class='col-md-5'),
-                    Div('attach_type_4', css_class='col-md-3'),
-                    Div('attach_short_description_4', css_class='col-md-4'),
-                    css_class='row g-3 mb-2'
-                ),
-                Div(
-                    Div('attach_file_5', css_class='col-md-5'),
-                    Div('attach_type_5', css_class='col-md-3'),
-                    Div('attach_short_description_5', css_class='col-md-4'),
-                    css_class='row g-3 mb-2'
+                    Div('attach_short_description_2', css_class='col-md-3'),
+                    css_class='row mb-2 align-items-end'
                 ),
             ),
             FormActions(
-                Submit('save', _('Save Record'), css_class='btn btn-primary btn-lg px-5 fw-bold'),
-                Reset('reset', _('Reset'), css_class='btn btn-light border px-4 ms-2'),
-                css_class='mt-4 pt-4 border-top text-end'
+                Submit('save', _('Complete Registration'), css_class='btn btn-primary px-5 fw-bold shadow-sm'),
+                Reset('reset', _('Clear Form'), css_class='btn btn-outline-secondary ms-2'),
+                css_class='d-flex justify-content-end border-top pt-4 mt-4'
             ),
         )
 
