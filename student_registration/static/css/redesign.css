@@ -343,17 +343,30 @@ h1, h2, h3, h4, h5 {
 }
 
 .table-responsive {
-    max-height: calc(100vh - 320px);
+    max-height: 600px; /* Standard max height for lists */
     overflow-y: auto;
     overflow-x: auto;
     border-radius: 0 0 12px 12px;
     position: relative;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+@media (min-height: 1000px) {
+    .table-responsive {
+        max-height: 750px;
+    }
 }
 
 /* Override legacy base.css if necessary */
 .table-responsive table {
     width: 100% !important;
-    min-width: 1000px; /* Ensure horizontal scroll if too many columns */
+    min-width: 1200px; /* Force horizontal scroll for data-heavy tables */
+}
+
+/* Specific override for base.css w-100 which is hardcoded to 1500px */
+.table-responsive .w-100 {
+    width: 100% !important;
+    min-width: 1200px !important;
 }
 
 .table {
@@ -361,23 +374,53 @@ h1, h2, h3, h4, h5 {
     font-size: 0.925rem;
     border-collapse: separate !important;
     border-spacing: 0;
+    width: 100% !important;
+}
+
+.table {
+    border-collapse: separate !important;
+    border-spacing: 0;
 }
 
 .table thead th {
-    background-color: #f8f9fa !important;
-    color: #495057;
-    font-weight: 600;
+    background-color: #f1f5f9 !important; /* Slightly darker gray for better highlight */
+    color: #0f172a; /* Darker text for contrast */
+    font-weight: 700;
     text-transform: uppercase;
     font-size: 0.75rem;
-    letter-spacing: 0.5px;
-    padding: 0.85rem 0.6rem;
-    border-top: none;
-    border-bottom: 2px solid #edf2f7;
+    letter-spacing: 0.05em;
+    padding: 1rem 0.75rem;
+    border-top: 1px solid #e2e8f0 !important;
+    border-bottom: 3px solid #cbd5e1 !important; /* Thicker bottom border */
     white-space: nowrap;
     position: sticky !important;
     top: 0 !important;
-    z-index: 20;
-    box-shadow: inset 0 -2px 0 #edf2f7; /* Keep the bottom border during scroll */
+    z-index: 1020;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure no transparency during scroll */
+.table thead th::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f1f5f9;
+    z-index: -1;
+}
+
+.table thead th a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.table thead th a:hover {
+    color: var(--unicef-blue);
 }
 
 .table tbody td {
