@@ -7,18 +7,26 @@
 {% block head_title %}{% trans "Sign Out" %}{% endblock %}
 
 {% block inner %}
-<h1>{% trans "Sign Out" %}</h1>
+<div class="col-md-10 col-lg-6 col-xl-5">
+    <div class="card border-0 shadow-lg rounded-4">
+        <div class="card-body p-4 p-md-5 text-center">
+            <i class="bi bi-box-arrow-right text-danger display-4 mb-3"></i>
+            <h2 class="fw-bold mb-3">{% trans "Sign Out" %}</h2>
 
-<p>{% trans 'Are you sure you want to sign out?' %}</p>
+            <p class="text-muted mb-4">{% trans 'Are you sure you want to sign out of the system?' %}</p>
 
-<form method="post" action="{% url 'account_logout' %}">
-  {% csrf_token %}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-  {% endif %}
-  <button class="btn btn-danger" type="submit">{% trans 'Sign Out' %}</button>
-</form>
-
-
+            <form method="post" action="{% url 'account_logout' %}" class="redesign-form">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                {% endif %}
+                <div class="d-grid gap-2">
+                    <button class="btn btn-danger btn-lg fw-bold" type="submit">{% trans 'Sign Out' %}</button>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">{% trans "Stay Logged In" %}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
