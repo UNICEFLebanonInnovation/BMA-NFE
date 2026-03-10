@@ -2,7 +2,7 @@
 {% load i18n %}
 
 <div class="table-responsive">
-    <table {% render_config.table.attrs %} class="table table-hover align-middle mb-0">
+    <table class="table table-hover align-middle mb-0" {{ table.attrs.as_html }}>
         {% block table.thead %}
         {% if table.show_header %}
             <thead {{ table.attrs.thead.as_html }}>
@@ -10,7 +10,7 @@
                 {% for column in table.columns %}
                     <th {{ column.attrs.th.as_html }} class="{% if column.orderable %}sortable{% endif %}">
                         {% if column.orderable %}
-                            <a href="{% export_url column.attrs.ordered__next_sort_query %}" class="text-decoration-none">
+                            <a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}" class="text-decoration-none">
                                 <span class="header-text">{{ column.header }}</span>
                                 {% if column.is_ordered %}
                                     <i class="bi bi-sort-{{ column.sort_direction|slice:":4" }} ms-auto text-primary fs-6"></i>
@@ -69,7 +69,7 @@
                 <ul class="pagination justify-content-center mb-0">
                     {% if table.page.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="{% export_url table.prefixed_page_field=table.page.previous_page_number %}">
+                            <a class="page-link" href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}">
                                 <i class="bi bi-chevron-left"></i>
                             </a>
                         </li>
@@ -87,7 +87,7 @@
 
                     {% if table.page.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="{% export_url table.prefixed_page_field=table.page.next_page_number %}">
+                            <a class="page-link" href="{% querystring table.prefixed_page_field=table.page.next_page_number %}">
                                 <i class="bi bi-chevron-right"></i>
                             </a>
                         </li>
