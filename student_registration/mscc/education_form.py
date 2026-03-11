@@ -14,9 +14,7 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
-from dal import autocomplete
 
-from student_registration.mscc.templatetags.simple_tags import get_service
 from student_registration.mscc.utils import validate_date
 from .models import (
     Registration,
@@ -29,7 +27,6 @@ from .models import (
 )
 from student_registration.schools.models import (
     School,
-    PartnerOrganization
 )
 from .utils import update_child_attendance
 
@@ -459,7 +456,7 @@ class EducationServiceForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     education_program = forms.ChoiceField(
-        label=_("Core Package Program"),
+        label=_("Program"),
         widget=forms.Select, required=True,
         choices=EducationService.EDUCATION_PROGRAM,
     )
@@ -480,85 +477,44 @@ class EducationServiceForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
-        package_type = kwargs.pop('package_type', None)
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
 
         self.fields['registration_id'].initial = registry
 
-        service_bln = get_service(registry, 'BLN')
-        service_abln = get_service(registry, 'ABLN')
-        service_cbece = get_service(registry, 'CB-ECE')
-        service_rs = get_service(registry, 'RS')
-        service_ybln = get_service(registry, 'YBLN')
-        service_yfs = get_service(registry, 'YFS')
-        service_ecd = get_service(registry, 'ECD')
-        service_rs_yfs = get_service(registry, 'RS-YFS')
-
-        service_bln_catch_up = get_service(registry, 'BLN Catch-up')
-        service_abln_catch_up = get_service(registry, 'ABLN Catch-up')
-        service_ybln_catch_up = get_service(registry, 'YBLN Catch-up')
-        service_cbece_catch_up = get_service(registry, 'CB-ECE Catch-up')
-
         choices = list()
-        if service_bln:
-            choices.append(('BLN Level 1', _('BLN Level 1')))
-            choices.append(('BLN Level 2', _('BLN Level 2')))
-            choices.append(('BLN Level 3', _('BLN Level 3')))
-        if service_bln_catch_up:
-            choices.append(('BLN Catch-up', _('BLN Catch-up')))
-        if service_cbece:
-            choices.append(('CBECE Level 1', _('CBECE Level 1')))
-            choices.append(('CBECE Level 2', _('CBECE Level 2')))
-            choices.append(('CBECE Level 3', _('CBECE Level 3')))
-        if service_cbece_catch_up:
-            choices.append(('CBECE Catch-up', _('CBECE Catch-up')))
-        if service_abln:
-            choices.append(('ABLN Level 1', _('ABLN Level 1')))
-            choices.append(('ABLN Level 2', _('ABLN Level 2')))
-        if service_abln_catch_up:
-            choices.append(('ABLN Catch-up', _('ABLN Catch-up')))
-        if service_rs:
-            choices.append(('RS Grade 1', _('RS Grade 1')))
-            choices.append(('RS Grade 2', _('RS Grade 2')))
-            choices.append(('RS Grade 3', _('RS Grade 3')))
-            choices.append(('RS Grade 4', _('RS Grade 4')))
-            choices.append(('RS Grade 5', _('RS Grade 5')))
-            choices.append(('RS Grade 6', _('RS Grade 6')))
-            choices.append(('RS Grade 7', _('RS Grade 7')))
-            choices.append(('RS Grade 8', _('RS Grade 8')))
-            choices.append(('RS Grade 9', _('RS Grade 9')))
-        if service_ybln:
-            choices.append(('YBLN Level 1', _('YBLN Level 1')))
-            choices.append(('YBLN Level 2', _('YBLN Level 2')))
-        if service_ybln_catch_up:
-            choices.append(('YBLN Catch-up', _('YBLN Catch-up')))
-        if service_yfs:
-            choices.append(('YFS Level 1', _('YFS Level 1')))
-            choices.append(('YFS Level 2', _('YFS Level 2')))
-        if service_ecd:
-            choices.append(('ECD', _('ECD')))
-        if service_rs_yfs:
-            choices.append(('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')))
-            choices.append(('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')))
+        choices.append(('BLN Level 1', _('BLN Level 1')))
+        choices.append(('BLN Level 2', _('BLN Level 2')))
+        choices.append(('BLN Level 3', _('BLN Level 3')))
+        choices.append(('BLN Catch-up', _('BLN Catch-up')))
+        choices.append(('CBECE Level 1', _('CBECE Level 1')))
+        choices.append(('CBECE Level 2', _('CBECE Level 2')))
+        choices.append(('CBECE Level 3', _('CBECE Level 3')))
+        choices.append(('CBECE Catch-up', _('CBECE Catch-up')))
+        choices.append(('ABLN Level 1', _('ABLN Level 1')))
+        choices.append(('ABLN Level 2', _('ABLN Level 2')))
+        choices.append(('ABLN Catch-up', _('ABLN Catch-up')))
+        choices.append(('RS Grade 1', _('RS Grade 1')))
+        choices.append(('RS Grade 2', _('RS Grade 2')))
+        choices.append(('RS Grade 3', _('RS Grade 3')))
+        choices.append(('RS Grade 4', _('RS Grade 4')))
+        choices.append(('RS Grade 5', _('RS Grade 5')))
+        choices.append(('RS Grade 6', _('RS Grade 6')))
+        choices.append(('RS Grade 7', _('RS Grade 7')))
+        choices.append(('RS Grade 8', _('RS Grade 8')))
+        choices.append(('RS Grade 9', _('RS Grade 9')))
+        choices.append(('YBLN Level 1', _('YBLN Level 1')))
+        choices.append(('YBLN Level 2', _('YBLN Level 2')))
+        choices.append(('YBLN Catch-up', _('YBLN Catch-up')))
+        choices.append(('YFS Level 1', _('YFS Level 1')))
+        choices.append(('YFS Level 2', _('YFS Level 2')))
+        choices.append(('ECD', _('ECD')))
+        choices.append(('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')))
+        choices.append(('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')))
 
         self.fields['education_program'].choices = choices
 
-        choices_education_status = list()
-        if package_type == 'Walk-in':
-            choices_education_status.append(('', _('----------')))
-            choices_education_status.append(('Currently registered in Formal Education school',
-                                             _('Currently registered in Formal Education school')))
-            choices_education_status.append(('Currently registered in Formal Education school but not attending',
-                                             _('Currently registered in Formal Education school but not attending')))
-            self.fields['education_status'].choices = choices_education_status
-
         display_edu_section = ''
-        if package_type != 'Core-Package':
-            display_edu_section = ' d-none'
-            self.fields['education_program'].required = False
-            self.fields['class_section'].required = False
-            self.fields['registration_date'].required = False
 
         if registry:
             child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()
@@ -601,10 +557,10 @@ class EducationServiceForm(forms.ModelForm):
 
             self.fields['round'].queryset = available_rounds
 
-        form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
+        form_action = reverse('mscc:service_education_add', kwargs={'registry': registry})
         if instance:
             form_action = reverse('mscc:service_education_edit',
-                                  kwargs={'registry': registry, 'package_type': package_type, 'pk': instance})
+                                  kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -650,8 +606,7 @@ class EducationServiceForm(forms.ModelForm):
             ),
         )
 
-    def save(self, request=None, instance=None, registry=None, package_type=None):
-        from datetime import datetime
+    def save(self, request=None, instance=None, registry=None):
         validated_data = request.POST
 
         if not instance:

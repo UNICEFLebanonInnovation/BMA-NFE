@@ -74,12 +74,8 @@
                                                 <div class="widget-content-left">
                                                     <div class="widget-heading">ID type - Number</div>
                                                     <div class="widget-subheading">
-                                                      {% if instance.type == 'Core-Package' %}
                                                       {% if instance.child.id_type and instance.child.id_type.id != 7 %}
                                                         {{ instance.child.id_type.name }} - {{ instance.child.id_number }}
-                                                      {% else %}
-                                                        {{ instance.child.id_type.name }}
-                                                      {% endif %}
                                                       {% endif %}
                                                     </div>
                                                 </div>
@@ -350,12 +346,10 @@
                                                               <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
-                                                                          {% if instance.type == 'Core-Package' %}
                                                                           {% if instance.child.id_type and instance.child.id_type.id != 7 %}
                                                                               <p> {{ instance.child.id_type.name }} - {{ instance.child.caregiver_id_number }}</p>
                                                                           {% else %}
                                                                               <p> {{ instance.child.id_type.name }}</p>
-                                                                          {% endif %}
                                                                           {% endif %}
                                                                         </div>
                                                                     </div>

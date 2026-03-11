@@ -20,7 +20,6 @@ from .models import (
     Registration,
     EducationService,
     Round,
-    PACKAGE_TYPES,
     Teacher,
 )
 from student_registration.child.models import Child
@@ -52,7 +51,6 @@ class PlaceholderFilterSet(FilterSet):
 class MainFilter(RedesignFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
-    type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     child__first_name = CharFilter(lookup_expr='icontains' )
     child__father_name = CharFilter(lookup_expr='icontains')
     child__last_name = CharFilter(lookup_expr='icontains')
@@ -115,7 +113,6 @@ class MainFilter(RedesignFilterSet):
 class FullFilter(RedesignFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
-    type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
 

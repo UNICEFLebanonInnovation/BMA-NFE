@@ -14,7 +14,7 @@ from crispy_forms.bootstrap import (
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 
-from .utils import update_service, validate_date, TrimmedDateField
+from .utils import validate_date, TrimmedDateField
 from .models import (
     PSSService,
     InclusionService,
@@ -178,8 +178,6 @@ class PSSServiceForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
-        update_service(registry_id=registry, service_name='PSS', service_id=instance.id)
-
         return instance
 
     def clean(self):
@@ -272,8 +270,6 @@ class InclusionServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='Inclusion', service_id=instance.id)
 
         return instance
 
@@ -492,8 +488,6 @@ class DigitalServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='Digital component', service_id=instance.id)
 
         return instance
 
@@ -1090,8 +1084,6 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
-        update_service(registry_id=registry, service_name='Health and Nutrition', service_id=instance.id)
-
         return instance
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -1347,8 +1339,6 @@ class HealthNutritionReferralForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='Health and Nutrition', service_id=instance.id)
 
         return instance
 
@@ -1628,8 +1618,6 @@ class YouthKitServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='Adolescents kit', service_id=instance.id)
 
         return instance
 
@@ -2147,8 +2135,6 @@ class FollowUpServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='Caregivers Package', service_id=instance.id)
 
         return instance
 
@@ -2710,8 +2696,6 @@ class LegoServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='LEGO', service_id=instance.id)
 
         return instance
 

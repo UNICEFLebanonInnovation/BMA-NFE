@@ -469,16 +469,6 @@ h1, h2, h3, h4, h5 {
     font-size: 0.75rem;
 }
 
-.badge-core-package {
-    background-color: var(--unicef-light-blue);
-    color: var(--unicef-blue);
-}
-
-.badge-walk-in {
-    background-color: #fff5f5;
-    color: #e53e3e;
-}
-
 /* Action Dropdown Modernization */
 .table-actions-dropdown .btn-actions {
     padding: 0.25rem 0.75rem;

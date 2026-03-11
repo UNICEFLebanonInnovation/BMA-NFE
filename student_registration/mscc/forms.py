@@ -35,7 +35,6 @@ from .models import (
 from student_registration.schools.models import (
     School
 )
-from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
 from student_registration.mscc.templatetags.simple_tags import get_service, get_education_service
 import datetime
@@ -460,17 +459,14 @@ class MainForm(forms.ModelForm):
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
     student_old = forms.IntegerField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
-    type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(MainForm, self).__init__(*args, **kwargs)
 
-        display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('mscc:child_add')
         if instance:
-            display_registry = ' d-none'
             form_action = reverse('mscc:child_edit', kwargs={'pk': instance.id})
 
         self.helper = FormHelper()
@@ -520,68 +516,63 @@ class MainForm(forms.ModelForm):
         if source_of_identification == 'Other Sources' and not source_of_identification_specify:
             self.add_error('source_of_identification_specify', 'This field is required')
 
-        package_type = cleaned_data.get("type")
-        if package_type == 'Core-Package':
+        father_educational_level = cleaned_data.get("father_educational_level")
+        mother_educational_level = cleaned_data.get("mother_educational_level")
+        if not father_educational_level:
+            self.add_error('father_educational_level', 'This field is required')
+        if not mother_educational_level:
+            self.add_error('mother_educational_level', 'This field is required')
 
-            father_educational_level = cleaned_data.get("father_educational_level")
-            mother_educational_level = cleaned_data.get("mother_educational_level")
-            if not father_educational_level:
-                self.add_error('father_educational_level', 'This field is required')
-            if not mother_educational_level:
-                self.add_error('mother_educational_level', 'This field is required')
+        first_phone_owner = cleaned_data.get("first_phone_owner")
+        first_phone_number = cleaned_data.get("first_phone_number")
+        first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
+        second_phone_number = cleaned_data.get("second_phone_number")
+        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
+        if not first_phone_owner:
+            self.add_error('first_phone_owner', 'This field is required')
+        if not first_phone_number:
+            self.add_error('first_phone_number', 'This field is required')
+        if not first_phone_number_confirm:
+            self.add_error('first_phone_number_confirm', 'This field is required')
+        elif first_phone_number != first_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('first_phone_number_confirm', msg)
+        if second_phone_number != second_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('second_phone_number_confirm', msg)
 
-            first_phone_owner = cleaned_data.get("first_phone_owner")
-            first_phone_number = cleaned_data.get("first_phone_number")
-            first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
-            second_phone_number = cleaned_data.get("second_phone_number")
-            second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
-            if not first_phone_owner:
-                self.add_error('first_phone_owner', 'This field is required')
-            if not first_phone_number:
-                self.add_error('first_phone_number', 'This field is required')
-            if not first_phone_number_confirm:
-                self.add_error('first_phone_number_confirm', 'This field is required')
-            elif first_phone_number != first_phone_number_confirm:
-                msg = "The phone numbers are not matched"
-                self.add_error('first_phone_number_confirm', msg)
-            if second_phone_number != second_phone_number_confirm:
-                msg = "The phone numbers are not matched"
-                self.add_error('second_phone_number_confirm', msg)
+        main_caregiver = cleaned_data.get("main_caregiver")
+        main_caregiver_other = cleaned_data.get("main_caregiver_other")
 
-            main_caregiver = cleaned_data.get("main_caregiver")
-            main_caregiver_other = cleaned_data.get("main_caregiver_other")
-
-            if not main_caregiver:
-                self.add_error('main_caregiver', 'This field is required')
-            if main_caregiver == 'Other' and not main_caregiver_other:
-                self.add_error('main_caregiver_other', 'This field is required')
+        if not main_caregiver:
+            self.add_error('main_caregiver', 'This field is required')
+        if main_caregiver == 'Other' and not main_caregiver_other:
+            self.add_error('main_caregiver_other', 'This field is required')
 
 
-            children_number_under18 = cleaned_data.get("children_number_under18")
-            if not children_number_under18:
-                self.add_error('children_number_under18', 'This field is required')
+        children_number_under18 = cleaned_data.get("children_number_under18")
+        if not children_number_under18:
+            self.add_error('children_number_under18', 'This field is required')
 
-
-
-            have_labour = cleaned_data.get("have_labour")
-            labour_type = cleaned_data.get("labour_type")
-            labour_type_specify = cleaned_data.get("labour_type_specify")
-            labour_hours = cleaned_data.get("labour_hours")
-            labour_weekly_income = cleaned_data.get("labour_weekly_income")
-            labour_condition = cleaned_data.get("labour_condition")
-            if not have_labour:
-                self.add_error('have_labour', 'This field is required')
-            if have_labour != 'No':
-                if not labour_type:
-                    self.add_error('labour_type', 'This field is required')
-                elif labour_type == 'Other services' and not labour_type_specify:
-                    self.add_error('labour_type_specify', 'This field is required')
-                if not labour_hours:
-                    self.add_error('labour_hours', 'This field is required')
-                if not labour_weekly_income:
-                    self.add_error('labour_weekly_income', 'This field is required')
-                if not labour_condition:
-                    self.add_error('labour_condition', 'This field is required')
+        have_labour = cleaned_data.get("have_labour")
+        labour_type = cleaned_data.get("labour_type")
+        labour_type_specify = cleaned_data.get("labour_type_specify")
+        labour_hours = cleaned_data.get("labour_hours")
+        labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        labour_condition = cleaned_data.get("labour_condition")
+        if not have_labour:
+            self.add_error('have_labour', 'This field is required')
+        if have_labour != 'No':
+            if not labour_type:
+                self.add_error('labour_type', 'This field is required')
+            elif labour_type == 'Other services' and not labour_type_specify:
+                self.add_error('labour_type_specify', 'This field is required')
+            if not labour_hours:
+                self.add_error('labour_hours', 'This field is required')
+            if not labour_weekly_income:
+                self.add_error('labour_weekly_income', 'This field is required')
+            if not labour_condition:
+                self.add_error('labour_condition', 'This field is required')
 
             id_type = cleaned_data.get("id_type")
             case_number = cleaned_data.get("case_number")
@@ -735,18 +726,10 @@ class MainForm(forms.ModelForm):
         if instance:
             serializer = MainSerializer(instance, data=request.POST)
             if serializer.is_valid():
-                old_dob_year = instance.child.birthday_year
-                old_dob_month = instance.child.birthday_month
-                old_dob_age = instance.child_age
 
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
-
                 instance.modified_by = request.user
                 instance.save()
-
-                if (old_dob_year != instance.child.birthday_year or
-                    old_dob_month != instance.child.birthday_month) and old_dob_age != instance.child_age:
-                    regenerate_services(instance.child.age, instance, request.user)
 
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
@@ -761,16 +744,15 @@ class MainForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
+                if not instance.partner and instance.center and instance.center.partner_id:
+                    instance.partner_id = instance.center.partner_id
                 instance.center = request.user.center
                 if request.POST.get("student_old"):
                     instance.student_old = request.POST.get("student_old")
                 instance.save()
+
                 request.session['instance_id'] = instance.id
-                generate_services(instance.child.age, instance, request.user)
-                generate_education_history(instance.id, instance.child_id, instance.student_old)
-
                 messages.success(request, _('Your data has been sent successfully to the server'))
-
             else:
                 messages.warning(request, serializer.errors)
 
@@ -869,7 +851,6 @@ class MainForm(forms.ModelForm):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
-            'type'
         )
 
 
@@ -1349,13 +1330,13 @@ class TeacherForm(forms.ModelForm):
                     css_class='row mb-3 mx-0'
                 ),
                 Div(
-                    Div('trainings', css_class='col-md-8'),
+                    Div('trainings', css_class='col-md-4'),
                     Div('training_sessions_attended', css_class='col-md-4'),
                     css_class='row mb-3'
                 ),
                 Div(
                     Div('extra_coaching', css_class='col-md-4'),
-                    Div('extra_coaching_specify', css_class='col-md-8'),
+                    Div('extra_coaching_specify', css_class='col-md-4'),
                     css_class='row mb-3'
                 ),
             ),
@@ -1419,7 +1400,6 @@ class TeacherForm(forms.ModelForm):
             instance.save()
         else:
             messages.warning(request, serializer.errors)
-
         if instance:
             request.session['instance_id'] = instance.id
 

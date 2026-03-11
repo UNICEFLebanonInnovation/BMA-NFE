@@ -32,122 +32,6 @@ def to_array(fields, obj):
     return data
 
 
-def generate_services(child_age, registry, user=None):
-    try:
-        from .models import ProvidedServices, Packages
-        from student_registration.users.templatetags.custom_tags import has_group
-
-        packages = Packages.objects.filter(type=registry.type, age=child_age)
-        if user and has_group(user, 'MSCC_YOUTH'):
-            packages = packages.filter(category="Youth")
-
-        for package in packages.all():
-            instance, created = ProvidedServices.objects.get_or_create(name=package.name,
-                                                                       registration=registry,
-                                                                       type=package.type,
-                                                                       category=package.category)
-            instance.save()
-    except Exception as ex:
-        return False
-
-
-def regenerate_services(child_age, registry, user=None):
-    from .templatetags.simple_tags import service_data
-    from .models import ProvidedServices
-
-    ProvidedServices.objects.filter(registration=registry).delete()
-    generate_services(child_age, registry, user)
-    service = service_data('EducationService', registry)
-    if service:
-        service.education_program = ""
-        service.save()
-
-
-def update_service(service_name, registry_id, service_id):
-    from .models import ProvidedServices
-    ProvidedServices.objects.filter(registration_id=registry_id,
-                                    name=service_name).update(service_id=service_id,
-                                                              completed=True,
-                                                              completion_date=datetime.now())
-
-
-def generate_education_history(registration_id, child_id, student_old_id):
-    from .models import EducationHistory
-
-    # 'BLN'
-    bln_old_registrations = BLN.objects.filter(student_id=student_old_id).values_list('id', flat=True)
-    bln_old_registrations = list(bln_old_registrations)
-
-    for reg_id in bln_old_registrations:
-        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
-                                                                   child=child_id,
-                                                                   student_old=student_old_id,
-                                                                   programme_type = 'BLN',
-                                                                   programme_id = reg_id)
-        instance.save()
-
-    # 'ABLN'
-    abln_old_registrations = ABLN.objects.filter(student_id=student_old_id).values_list('id', flat=True)
-    abln_old_registrations = list(abln_old_registrations)
-
-    for reg_id in abln_old_registrations:
-        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
-                                                                   child=child_id,
-                                                                   student_old=student_old_id,
-                                                                   programme_type='ABLN',
-                                                                   programme_id=reg_id)
-        instance.save()
-
-    # 'Bridging'
-    bridging_old_registrations = Bridging.objects.filter(student_id=student_old_id).values_list('id', flat=True)
-    bridging_old_registrations = list(bridging_old_registrations)
-
-    for reg_id in bridging_old_registrations:
-        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
-                                                                   child=child_id,
-                                                                   student_old=student_old_id,
-                                                                   programme_type='Bridging',
-                                                                   programme_id=reg_id)
-        instance.save()
-
-
-    # 'RS'
-    rs_old_registrations = RS.objects.filter(student_id=student_old_id).values_list('id', flat=True)
-    rs_old_registrations = list(rs_old_registrations)
-
-    for reg_id in rs_old_registrations:
-        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
-                                                                   child=child_id,
-                                                                   student_old=student_old_id,
-                                                                   programme_type='RS',
-                                                                   programme_id=reg_id)
-        instance.save()
-
-    # 'CBECE'
-    cbece_old_registrations = CBECE.objects.filter(student_id=student_old_id).values_list('id', flat=True)
-    cbece_old_registrations = list(cbece_old_registrations)
-
-    for reg_id in cbece_old_registrations:
-        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
-                                                                   child=child_id,
-                                                                   student_old=student_old_id,
-                                                                   programme_type='CBECE',
-                                                                   programme_id=reg_id)
-        instance.save()
-
-    # 'Inclusion'
-    inclusion_old_registrations = Inclusion.objects.filter(student_id=student_old_id).values_list('id', flat=True)
-    inclusion_old_registrations = list(inclusion_old_registrations)
-
-    for reg_id in inclusion_old_registrations:
-        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
-                                                                   child=child_id,
-                                                                   student_old=student_old_id,
-                                                                   programme_type='Inclusion',
-                                                                   programme_id=reg_id)
-        instance.save()
-
-
 def parse_date_flexible(date_str):
     if not date_str:
         return None
@@ -206,7 +90,6 @@ def create_attendance(data, center_id):
 
 
 def load_child_attendance(center_id, round_id, attendance_date_str, education_program, class_section):
-    from datetime import datetime
 
     attendance = None
 
@@ -248,7 +131,6 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
             registrations = (
                 Registration.objects.filter(
                     center_id=center_id,
-                    type='Core-Package',
                     deleted=False,
                     round_id=round_id,
                 )
@@ -291,7 +173,6 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
             registrations = (
                 Registration.objects.filter(
                     center_id=center_id,
-                    type='Core-Package',
                     deleted=False,
                     round_id=round_id,
                 )

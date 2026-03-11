@@ -408,15 +408,9 @@ function reorganizeForm()
 {
 //  child_gender
     var child_gender = $('select#id_child_gender').val();
-    var package_type = $('#id_type').val();
 
-    if (package_type == 'Core-Package') {
-        $('#id_first_phone_number').prop('required', true);
-        $('#id_first_phone_number_confirm').prop('required', true);
-    } else {
-        $('#id_first_phone_number').prop('required', false);
-        $('#id_first_phone_number_confirm').prop('required', false);
-    }
+    $('#id_first_phone_number').prop('required', true);
+    $('#id_first_phone_number_confirm').prop('required', true);
 
     if(child_gender =='Female'){
         $("#id_child_have_children").append('<option value="Child pregnant or expecting children">Child pregnant or expecting children</option>');
@@ -747,8 +741,6 @@ function validateMainForm(showModal, step) {
         return valid;
     }
 
-    var package_type = $('#id_type').val();
-    if (package_type == 'Core-Package') {
         if ($('#id_father_educational_level').is(':visible') && $('#id_father_educational_level').val() === '') {
             showError('#id_father_educational_level', 'This field is required');
             valid = false;
@@ -1014,11 +1006,6 @@ function validateMainForm(showModal, step) {
             showError('#id_child_living_arrangement', 'This field is required');
             valid = false;
         }
-//        if ($('#id_cash_support_programmes').val() === '') {
-//            showError('#id_cash_support_programmes', 'This field is required');
-//            valid = false;
-//        }
-    }
 
     if (showModal && !valid) {
         var missingByStep = {};
