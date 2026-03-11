@@ -23,6 +23,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 logger = logging.getLogger(__name__)
 
 from student_registration.mscc.models import (
+    PACKAGE_TYPES,
     Round,
     EducationService,
     Registration,
@@ -30,10 +31,6 @@ from student_registration.mscc.models import (
 )
 from student_registration.schools.models import PartnerOrganization
 from student_registration.locations.models import Center, Location
-
-
-def _today():
-    return timezone.now().date()
 
 
 class ChartBuilderView(LoginRequiredMixin, TemplateView):
@@ -46,6 +43,7 @@ class ChartBuilderView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context.update(
             {
+                "package_types": PACKAGE_TYPES,
                 "partners": PartnerOrganization.objects.all(),
                 "rounds": Round.objects.all(),
                 "centers": Center.objects.all(),
@@ -90,6 +88,7 @@ def pivot_data(request):
             district=F("center__cadaster__name"),
             gender=F("child__gender"),
             nationality=F("child__nationality__name"),
+            package_type=F("type"),
         )
     )
 
@@ -102,6 +101,7 @@ def pivot_data(request):
             "district": getattr(row, "district", "") or "",
             "gender": getattr(row, "gender", "") or "",
             "nationality": getattr(row, "nationality", "") or "",
+            "package_type": getattr(row, "package_type", "") or "",
             "round": getattr(row, "round_name", "") or "",
             "round_year": getattr(row, "round_year", "") or "",
             "programme_type": getattr(row, "programme_type", "") or "",
@@ -252,7 +252,7 @@ def analytics_trend(request):
         qs = analytics_base_queryset(request.user, params)
         days = int(params.get('days', 30))
         if not params.get('date_from') and not params.get('date_to'):
-            start = _today() - timedelta(days=max(days - 1, 0))
+            start = timezone.localdate() - timedelta(days=max(days - 1, 0))
             start_dt = timezone.make_aware(datetime.combine(start, time.min))
             qs = qs.filter(created__gte=start_dt)
 
@@ -267,7 +267,7 @@ def analytics_trend(request):
             start_day = min(values)
             end_day = max(values)
         else:
-            end_day = _today()
+            end_day = timezone.localdate()
             start_day = end_day - timedelta(days=max(days - 1, 0))
 
         series = []

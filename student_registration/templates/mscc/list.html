@@ -33,7 +33,7 @@
             <button class="btn btn-outline-success me-2 download-report-async" type="button">
                 <i class="bi bi-download me-2"></i> {% trans "Export Data" %}
             </button>
-            {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner.id %}
+            {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
             <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#child-registration-modal">
                 <i class="bi bi-plus-lg me-2"></i> {% trans "Add New Child" %}
             </button>
@@ -44,12 +44,6 @@
     {% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
     <div class="alert alert-danger mb-4">
         <i class="bi bi-exclamation-octagon-fill me-2"></i> {% trans "You don't have a center assigned to your profile. Please contact the administrator." %}
-    </div>
-    {% endif %}
-
-    {% if request.user|has_group:"MSCC_CENTER" and not request.user.partner %}
-    <div class="alert alert-danger mb-4">
-        <i class="bi bi-exclamation-octagon-fill me-2"></i> {% trans "You don't have a partner assigned to your profile. Please contact the administrator." %}
     </div>
     {% endif %}
 
@@ -94,13 +88,16 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content border-0 shadow-lg">
       <div class="modal-header border-bottom bg-light">
-        <h5 class="modal-title fw-bold">{% trans "New Registration" %}</h5>
+        <h5 class="modal-title fw-bold">{% trans "Select Registration Type" %}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-4">
         <div class="d-grid gap-3">
-          <a href="{% url 'mscc:child_add' %}" class="btn btn-primary btn-lg fw-bold py-3">
-            <i class="bi bi-box-seam me-2"></i> {% trans "Start" %}
+          <a href="{% url 'mscc:child_add' %}?type=Core-Package" class="btn btn-primary btn-lg fw-bold py-3">
+            <i class="bi bi-box-seam me-2"></i> {% trans "Core Package" %}
+          </a>
+          <a href="{% url 'mscc:child_add' %}?type=Walk-in" class="btn btn-outline-danger btn-lg fw-bold py-3">
+            <i class="bi bi-person-walking me-2"></i> {% trans "Walk-in" %}
           </a>
         </div>
       </div>

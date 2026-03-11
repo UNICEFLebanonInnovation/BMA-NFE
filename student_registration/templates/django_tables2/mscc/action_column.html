@@ -52,12 +52,40 @@
         {% if record.child_age > 2 %}
         {% service_data 'EducationService' record as result_es %}
         <li>
-            <a class="dropdown-item{% if not record.type %} disabled{% endif %}"{% if record.type %} href="{% if result_es %}{% url 'mscc:service_education_edit' record.id result_es.id record.type %}{% else %}{% url 'mscc:service_education_add' record.id record.type %}{% endif %}"{% else %} href="#" aria-disabled="true" tabindex="-1"{% endif %}>
+            <a class="dropdown-item" href="{% if result_es %}{% url 'mscc:service_education_edit' record.id result_es.id record.type %}{% else %}{% url 'mscc:service_education_add' record.id record.type %}{% endif %}">
                 <i class="bi bi-mortarboard text-success"></i> {% trans "Education Situation" %}
             </a>
         </li>
         {% endif %}
 
+        {% get_services record as services %}
+
+        {% get_service_info services record 'RS' as res_rs %}
+        {% if res_rs %}
+        <li>
+            <a class="dropdown-item" href="{% if res_rs.service_id %}{% url 'mscc:service_education_rs_edit' record.id res_rs.service_id %}{% else %}{% url 'mscc:service_education_rs_add' record.id %}{% endif %}">
+                <i class="bi bi-bookmark-star text-success"></i> {% trans "Retention Support" %}
+            </a>
+        </li>
+        {% endif %}
+
+        {% get_service_info services record 'Inclusion' as res_inc %}
+        {% if res_inc %}
+        <li>
+            <a class="dropdown-item" href="{% if res_inc.service_id %}{% url 'mscc:service_inclusion_edit' record.id res_inc.service_id %}{% else %}{% url 'mscc:service_inclusion_add' record.id %}{% endif %}">
+                <i class="bi bi-universal-access text-success"></i> {% trans "Inclusion" %}
+            </a>
+        </li>
+        {% endif %}
+
+        {% get_service_info services record 'PSS' as res_pss %}
+        {% if res_pss %}
+        <li>
+            <a class="dropdown-item" href="{% if res_pss.service_id %}{% url 'mscc:service_pss_edit' record.id res_pss.service_id %}{% else %}{% url 'mscc:service_pss_add' record.id %}{% endif %}">
+                <i class="bi bi-heart-pulse text-success"></i> {% trans "PSS" %}
+            </a>
+        </li>
+        {% endif %}
 
         {% get_service_info services record 'Referral' as res_ref %}
         {% if res_ref %}

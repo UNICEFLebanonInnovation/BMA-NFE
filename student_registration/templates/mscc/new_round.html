@@ -66,12 +66,48 @@
                                             <div id="step-1">
 
                                               <div class="row card-body">
-                                                <h2>To add this child to a new round, click the "Confirm" button to create a new registration and start adding the education information.</h2>
+                                                <h2>To add this child to a new round, select the registration type (Core Package/Walk-In), and then click the "Confirm" button to create a new registration and start adding the education information.</h2>
                                               </div>
                                               <div class="row card-body">
                                                         <h6></h6><br>
                                               </div>
                                               <br>
+                                              <div class="row card-body">
+                                                  <h5>Package type:  </h5>
+                                              </div>
+
+                                              {% get_regitration_type registry as regitration_type  %}
+                                              <div class="row card-body">
+                                                  <div class="form-check">
+                                                      <input
+                                                          type="radio"
+                                                          class="form-check-input"
+                                                          id="corePackage"
+                                                          name="registrationType"
+                                                          value="Core-Package"
+                                                          {% if regitration_type == "Core-Package" %}checked{% endif %}
+                                                      >
+                                                      <label class="form-check-label" for="corePackage">Core Package</label>
+                                                  </div>
+                                              </div>
+
+                                              <div class="row card-body">
+                                                  <div class="form-check">
+                                                      <input
+                                                          type="radio"
+                                                          class="form-check-input"
+                                                          id="walkIn"
+                                                          name="registrationType"
+                                                          value="Walk-in"
+                                                          {% if regitration_type == "Walk-in" %}checked{% endif %}
+                                                      >
+                                                      <label class="form-check-label" for="walkIn">Walk-In</label>
+                                                  </div>
+                                              </div>
+
+
+
+
 
                                                 <br>
                                                 {% get_child_rounds registry as child_rounds  %}
@@ -90,7 +126,7 @@
                                               <!--<div class="row card-body">-->
                                                   <div class="form-group" style="padding-top: 100px;">
                                                     <div class="">
-                                                      <a type="button" href="{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed" name="new_round_confirmation" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save">Confirm</a>
+                                                      <a type="button" href="{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=Core-Package" name="new_round_confirmation" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save">Confirm</a>
                                                       <a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="{% url 'mscc:list' %}">Cancel</a>
                                                     </div>
                                                   </div>

@@ -10,7 +10,6 @@ __pycache__/
 nfe/
 env/
 venv/
-staticfiles/
 
 # Django
 *.log

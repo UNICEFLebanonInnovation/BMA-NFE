@@ -1,0 +1,11 @@
+{% load static i18n %}
+{% load custom_tags %}
+{% load util_tags %}
+
+{% if record.type == 'Core-Package' %}
+<span class="badge badge-table badge-core-package">Core-Package</span>
+{% elif record.type == 'Walk-in' %}
+<span class="badge badge-table badge-walk-in">Walk-in</span>
+{% else %}
+<span class="badge badge-table bg-light text-dark">{{ record.type }}</span>
+{% endif %}

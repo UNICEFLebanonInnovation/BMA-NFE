@@ -18,6 +18,13 @@ from student_registration.schools.models import (
     PartnerOrganization
 )
 
+PACKAGE_TYPES = Choices(
+    ('Core-Package', _('Core Package')),
+    ('Walk-in', _('Walk-in')),
+    # ('Walk-in-OOSC', _('Walk-in OOSC')),
+    # ('Walk-in-In-School', _('Walk-in In School')),
+)
+
 PACKAGE_CATEGORIES = Choices(
     ('Education', 'Education'),
     ('Youth', 'Youth'),
@@ -877,6 +884,7 @@ class Packages(models.Model):
         max_length=100,
         blank=True,
         null=True,
+        choices=PACKAGE_TYPES,
         verbose_name=_('Type')
     )
     category = models.CharField(

@@ -1,74 +1,67 @@
-# BMA – NFE Sector: UI/UX Redesign Documentation
+# BMA – NFE Sector: UI/UX Redesign Technical Specifications
 
-## 1. Information Architecture (IA)
-
-### Core Modules
-1.  **Dashboard (Landing Page):** Central hub for operational activity, quick actions, and high-level KPIs via Power BI integration.
-2.  **NFE Registration:** 3-step streamlined wizard (Identity, Caregivers/Household, Review) for enrolling beneficiaries.
-3.  **Beneficiary Management:**
-    *   **Beneficiary List:** High-density data table with advanced filtering (Partner, Center, Program, Status).
-    *   **Beneficiary Profile:** Multi-tab view (Personal Info, Education History, Services, Attendance).
-4.  **Operational Tools:**
-    *   **Attendance Tracking:** Monthly logs and daily export tools.
-    *   **Center Management:** Management of physical locations, p-codes, and associated staff.
-5.  **Analytics:** Integrated Power BI reporting for sector-wide monitoring.
-
-### Navigation Structure
-*   **Global Search:** Persistent search in top navigation for ID or Name.
-*   **Sidebar (Collapsible):** Dashboard, Beneficiary List, New Registration, Attendance Reports, Center Management, Admin Settings.
-*   **User Profile:** Right-aligned menu for account settings, password changes, and logout.
+This document outlines the design and architectural changes implemented during the system modernization. These patterns are designed to be reusable for any Django-based operational management system using Bootstrap 5.
 
 ---
 
-## 2. Design System Summary
+## 1. Global Architecture & Layout
+*   **Modern Sidebar Implementation:**
+    *   Replaced legacy ArchitectUI sidebar with a lightweight, collapsible Bootstrap 5 sidebar.
+    *   **Width:** 350px (optimized for large screens) with responsive hiding on mobile.
+    *   **Hierarchy:** Flat navigation structure for primary modules; nested menus avoided to reduce cognitive load.
+*   **Native RTL Support:**
+    *   Implemented logical CSS properties (e.g., `margin-inline-start`, `text-align: start`) instead of hardcoded `left/right` values.
+    *   Used `bootstrap.rtl.min.css` dynamically based on user language settings.
 
-### Typography Scale
-*   **Primary Font:** Inter / System Sans-Serif.
-*   **Headings:** Bold (700 weight), Primary Color (#003366 - UNICEF Blue variant).
-*   **Body:** Regular (400 weight), #333333 for readability.
-*   **Labels/Captions:** Semibold (600 weight), Uppercase for section headers.
+## 2. Design System (Branding & Foundations)
+*   **Color Palette (UNICEF-Inspired):**
+    *   **Primary:** `#003366` (Deep Blue) - Used for navigation, headers, and primary actions.
+    *   **Secondary:** `#00ADEF` (Light Blue) - Used for info alerts and secondary indicators.
+    *   **Success:** `#28a745` (Green) - Used for final submissions and active statuses.
+    *   **Background:** `#F4F7F6` (Light Gray) - Used for main content areas to reduce glare.
+*   **Typography:**
+    *   Standardized on **Inter** (fallback to system sans-serif).
+    *   **Font Weights:** 400 (Regular), 600 (Semibold), 700 (Bold).
+    *   **Base size:** 14px (optimized for high-density operational data).
 
-### Spacing & Layout
-*   **Base Unit:** 8px (Grid system: 8, 16, 24, 32, 48, 64).
-*   **Containers:** Max-width fluid with standard gutters (g-4).
-*   **Cards:** Bordered, shadow-sm, 0.5rem border-radius.
+## 3. Form UX Patterns (Critical for High Accuracy)
+*   **Intuitive Guidance:**
+    *   **Placeholders:** Every text input has a descriptive example (e.g., `e.g. Ahmad`, `teacher@example.com`).
+    *   **Help Text:** Standardized format instructions (e.g., `Format: XX-XXXXXX`) placed directly under the input.
+*   **Logical Organization:**
+    *   **Fieldsets:** Forms are broken down into logical sections (Identity, Contact, Assignment) using Django-crispy-forms `Fieldset`.
+    *   **Visual Hierarchy:** Section headers are larger and bold; minor notes are small and muted.
+*   **Wizard Workflow (NFE Registration):**
+    *   Divided complex registration (80+ fields) into a **3-step linear wizard**:
+        1. **Identity:** Basic bio and nationality.
+        2. **Caregivers & Household:** Social/Economic data and primary contacts.
+        3. **Review & Confirm:** A summary view of all data before final server submission.
+    *   **Validation:** Step-by-step client-side validation prevents users from proceeding with errors.
 
-### Component Styles
-*   **Buttons:**
-    *   **Primary:** Solid blue, rounded-2, bold text.
-    *   **Secondary/Outline:** For non-critical actions (Export, Edit).
-    *   **Danger:** Reserved for Delete/Remove actions with confirmation.
-*   **Forms:**
-    *   **Inputs:** High-contrast borders, clear focus states.
-    *   **Validation:** Real-time feedback with `is-invalid` classes and `invalid-feedback` text.
-*   **Tables:**
-    *   **Sticky Headers:** Crucial for large datasets.
-    *   **Hover States:** Row highlighting for easier tracking.
-    *   **Density:** Tight padding (py-2) for operational efficiency.
+## 4. Operational Data Tables
+*   **High-Density Efficiency:**
+    *   Reduced table cell padding (`py-2`) to maximize information visible on screen.
+    *   **Sticky Headers:** Implemented `.sticky-top` on `<thead>` with high z-index to keep headers visible during long scrolls.
+*   **Responsive Containers:**
+    *   Wrapped all tables in `.table-responsive` to handle overflow on 14-inch screens.
+    *   **Row Hover:** Sublte background change on hover for better row tracking in large datasets.
 
----
+## 5. Beneficiary Profile & IA
+*   **Information Decoupling:**
+    *   Extracted Education History from general bio and moved to a dedicated tab.
+    *   **Vertical Timelines:** Used for chronological data (Education rounds, assessments) to visualize progress over time.
+*   **Actionable Dashboarding:**
+    *   Profile headers now contain a summary "Mini-Dashboard" with key IDs, ages, and statuses.
 
-## 3. UX Improvements
+## 6. Component Reusability Checklist
+*   **Authentication UI:** Redesigned login and password management pages into a centered, narrow card layout to improve focus and professional feel.
+*   **Buttons:** Standardized on `btn-primary` for "Save/Finish" and `btn-outline-secondary` for "Cancel/Back".
+*   **Cards:** Standardized on `border-0 shadow-sm` for a modern "floating" feel.
+*   **Icons:** Globally migrated to **Bootstrap Icons (BI)** for consistency and performance.
+*   **Search Filters:** Migrated all search panels to Bootstrap **Offcanvas** elements to keep the main list view clean and focused.
 
-### Bulk Operations
-*   **Export:** Unified export dialog with format selection and background processing alerts.
-*   **Import:** Standardized CSV/Excel templates with pre-validation logic.
-
-### Duplicate Detection
-*   **Real-time Check:** As user types Name/DOB in the registration form, a background AJAX call checks for matches and displays a "Potentially Registered" warning with a link to the existing profile.
-
-### Connectivity Considerations
-*   **Client-side Persistence:** Registration wizard steps are saved locally to prevent data loss on browser refresh.
-*   **Optimistic UI:** Actions (like attendance marking) update the UI immediately while syncing in the background.
-
----
-
-## 4. Developer Implementation Checklist (Bootstrap 5.3)
-
-- [x] **Framework Upgrade:** Migrate legacy ArchitectUI/Bootstrap 4 classes to Bootstrap 5.3 native classes.
-- [x] **Global CSS:** Implement UNICEF branding in `redesign.css`.
-- [x] **Layout Template:** Use `base.html` with the new sidebar/topbar structure.
-- [x] **RTL Support:** Ensure `html dir="rtl"` works correctly with Bootstrap 5's native RTL support.
-- [x] **Sticky Headers:** Apply `.sticky-top` and high z-index to `thead` in `django_tables2`.
-- [x] **Wizard Logic:** Use `mscc.js` for step transitions and validation.
-- [x] **Icons:** Standardize on **Bootstrap Icons (BI)** for lightweight loading.
+## 7. Technical Implementation Notes
+*   **CSS Entry Point:** `student_registration/static/css/redesign.css`
+*   **JS Core Logic:** `student_registration/static/js/mscc/mscc.js` (Handles wizard, validation, and AJAX duplication checks).
+*   **Base Template:** `student_registration/templates/base.html` (The "Golden Source" for layouts).
+*   **Standard Table Template:** `student_registration/templates/django_tables2/bootstrap5.html`

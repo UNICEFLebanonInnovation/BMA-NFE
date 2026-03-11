@@ -1,10 +1,6 @@
 {% load i18n custom_tags %}
 <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-    <i class="bi bi-house-door"></i> <span>{% trans "Home" %}</span>
-</a>
-
-<a href="{% url 'mscc:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-    <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
+    <i class="bi bi-house-door"></i> <span>{% trans "Dashboard" %}</span>
 </a>
 
 {% if request.user.is_authenticated %}
@@ -31,8 +27,5 @@
 </a>
 <a href="{% url 'dashboard:advanced_analytics' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'advanced_analytics' %}active{% endif %}">
     <i class="bi bi-pie-chart"></i> <span>{% trans "Advanced Analytics" %}</span>
-</a>
-<a href="{% url 'mscc:attendance_heatmap' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'attendance_heatmap' %}active{% endif %}">
-    <i class="bi bi-calendar3"></i> <span>{% trans "Attendance Heatmap" %}</span>
 </a>
 {% endif %}

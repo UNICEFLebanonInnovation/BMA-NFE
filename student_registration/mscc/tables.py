@@ -76,6 +76,8 @@ class MainTable(CommonTable):
         orderable=False,
         template_name='django_tables2/mscc/action_column.html'
     )
+    type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
+                                        template_name='django_tables2/mscc/type_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
                                        template_name='django_tables2/mscc/absence_column.html')
 
@@ -83,6 +85,7 @@ class MainTable(CommonTable):
         model = Registration
         fields = (
             'action_column',
+            'type_column',
             'absence_column',
             'round',
             'child.number',
@@ -110,6 +113,8 @@ class FullTable(CommonTable):
         orderable=False,
         template_name='django_tables2/mscc/action_column.html'
     )
+    type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
+                                        template_name='django_tables2/mscc/type_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
                                        template_name='django_tables2/mscc/absence_column.html')
     center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
@@ -121,6 +126,7 @@ class FullTable(CommonTable):
         model = Registration
         fields = (
             'action_column',
+            'type_column',
             'absence_column',
             'round',
             'child.number',
@@ -184,6 +190,8 @@ class PartnerTable(CommonTable):
         orderable=False,
         template_name='django_tables2/mscc/action_column.html'
     )
+    type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
+                                        template_name='django_tables2/mscc/type_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
                                        template_name='django_tables2/mscc/absence_column.html')
     center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
@@ -195,6 +203,7 @@ class PartnerTable(CommonTable):
         model = Registration
         fields = (
             'action_column',
+            'type_column',
             'absence_column',
             'round',
             'child.number',
