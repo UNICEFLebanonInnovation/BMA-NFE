@@ -80,7 +80,7 @@ class CenterAdminForm(forms.ModelForm):
 class CenterForm(forms.ModelForm):
     name = forms.CharField(
         label=_("Center name"),
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Hope Community Center')}),
         required = False
     )
     governorate = forms.ModelChoiceField(
@@ -107,26 +107,28 @@ class CenterForm(forms.ModelForm):
     )
     longitude = forms.FloatField(
         label=_('Center GPS (longitude)'),
-        widget=forms.NumberInput(attrs=({'maxlength': 12})),
+        widget=forms.NumberInput(attrs=({'maxlength': 12, 'placeholder': '35.xxxx'})),
         min_value=0, required=True
     )
     latitude = forms.FloatField(
         label=_('Center GPS (latitude)'),
-        widget=forms.NumberInput(attrs=({'maxlength': 12})),
+        widget=forms.NumberInput(attrs=({'maxlength': 12, 'placeholder': '33.xxxx'})),
         min_value=0, required=True
     )
     manager_name = forms.CharField(
         label=_("Center Manager name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('Full name of center manager')}), required=True
     )
     phone_number = forms.RegexField(
         regex=r'^\d{2}-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX (e.g. 01-123456)'}),
         required=True,
-        label=_('Phone number')
+        label=_('Phone number'),
+        help_text=_('Landline or official mobile number.')
     )
     email = forms.RegexField(
         regex=r'^\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b',
+        widget=forms.TextInput(attrs={'placeholder': _('center@example.com')}),
         required=False,
         label=_('Email')
     )
@@ -155,7 +157,7 @@ class CenterForm(forms.ModelForm):
     )
     admin_staff_number = forms.IntegerField(
         label=_('Number of Admin staff in the center'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=True,
         initial=0,
         min_value=0
@@ -178,7 +180,8 @@ class CenterForm(forms.ModelForm):
     )
     neaby_phcc = forms.CharField(
         label=_("Nearby PHCC name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al-Razi PHC')}), required=True,
+        help_text=_('Primary Healthcare Center closest to this location.')
     )
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)

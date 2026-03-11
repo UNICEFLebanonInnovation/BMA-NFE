@@ -49,7 +49,7 @@ class DiagnosticAssessmentForm(forms.ModelForm):
     )
     pre_arabic_grade = forms.IntegerField(
         label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         min_value=0, required=False,
         initial=0
     )
@@ -66,7 +66,7 @@ class DiagnosticAssessmentForm(forms.ModelForm):
     )
     pre_language_grade = forms.IntegerField(
         label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         min_value=0, required=False,
         initial=0
     )
@@ -83,7 +83,7 @@ class DiagnosticAssessmentForm(forms.ModelForm):
     )
     pre_math_grade = forms.IntegerField(
         label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         min_value=0, required=False,
         initial=0
     )
@@ -221,7 +221,7 @@ class EducationAssessmentForm(forms.ModelForm):
     )
     barriers_other = forms.CharField(
         label=_('Please specify'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _('Describe other barriers')}), required=False
     )
     post_test_done = forms.ChoiceField(
         label=_('Did the child undertake the Post tests?'),
@@ -247,7 +247,7 @@ class EducationAssessmentForm(forms.ModelForm):
     )
     post_arabic_grade = forms.IntegerField(
         label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=False,
         initial=0
     )
@@ -264,7 +264,7 @@ class EducationAssessmentForm(forms.ModelForm):
     )
     post_language_grade = forms.IntegerField(
         label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=False,
         initial=0
     )
@@ -281,7 +281,7 @@ class EducationAssessmentForm(forms.ModelForm):
     )
     post_math_grade = forms.IntegerField(
         label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=False,
         initial=0
     )
@@ -448,7 +448,8 @@ class EducationServiceForm(forms.ModelForm):
     )
     dropout_date = forms.DateField(
         label=_("Please Specify dropout date from school"),
-        required=False
+        required=False,
+        help_text=_('Last date the child attended formal school.')
     )
     round = forms.ModelChoiceField(
         queryset=Round.objects.filter(current_year=True),
@@ -469,7 +470,8 @@ class EducationServiceForm(forms.ModelForm):
     )
     registration_date = forms.DateField(
         label=_("Date of registration in the round"),
-        required=False
+        required=False,
+        help_text=_('The date the child joined the current round.')
     )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)

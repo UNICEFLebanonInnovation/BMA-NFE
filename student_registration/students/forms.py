@@ -98,15 +98,15 @@ class TeacherForm(forms.ModelForm):
     )
     first_name = forms.CharField(
         label=_("First name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Mohamad')}), required=True
     )
     father_name = forms.CharField(
         label=_("Father name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Ahmad')}), required=True
     )
     last_name = forms.CharField(
         label=_("Last name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Sayed')}), required=True
     )
     sex = forms.ChoiceField(
         label=_("Gender"),
@@ -119,12 +119,14 @@ class TeacherForm(forms.ModelForm):
     )
     primary_phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX (e.g. 70-123456)'}),
         required=True,
-        label=_('Main Phone number')
+        label=_('Main Phone number'),
+        help_text=_('Mobile number of the teacher.')
     )
     email = forms.RegexField(
         regex=r'^\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b',
+        widget=forms.TextInput(attrs={'placeholder': _('teacher@example.com')}),
         required=False,
         label=_('Email')
     )

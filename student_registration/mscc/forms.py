@@ -57,19 +57,19 @@ class MainForm(forms.ModelForm):
     # )
     child_first_name = forms.CharField(
         label=_("Child\'s First Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Ahmad')}), required=True
     )
     child_father_name = forms.CharField(
         label=_("Child\'s Father Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Mohamad')}), required=True
     )
     child_last_name = forms.CharField(
         label=_("Child\'s Family Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Sayed')}), required=True
     )
     child_mother_fullname = forms.CharField(
         label=_("Mother Full Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Fatima Al Ali')}), required=True
     )
     child_gender = forms.ChoiceField(
         label=_("Child\'s Gender"),
@@ -83,7 +83,7 @@ class MainForm(forms.ModelForm):
     )
     child_nationality_other = forms.CharField(
         label=_('If Other, Please specify'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _('Specify other nationality')}), required=False
     )
     child_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -111,12 +111,13 @@ class MainForm(forms.ModelForm):
     )
     child_p_code = forms.CharField(
         label=_('Insert Pcode if the child lives in Internal Settlement/Camp'),
-        widget=forms.TextInput, required=False,
-        max_length=50
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. LB-01-001')}), required=False,
+        max_length=50,
+        help_text=_('Commonly used for mapping and settlement tracking.')
     )
     child_address = forms.CharField(
         label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Beirut, Hamra Street, Al Amal Bldg, Floor 2')}), required=False
     )
     child_living_arrangement = forms.ChoiceField(
         label=_("Living Arrangement"),
@@ -140,10 +141,11 @@ class MainForm(forms.ModelForm):
     )
     child_children_number = forms.IntegerField(
         label=_('If yes, How many?'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=False,
         initial=0,
-        min_value=0
+        min_value=0,
+        help_text=_('Enter 0 if the child has no children.')
     )
     child_have_sibling = forms.ChoiceField(
         label=_("Does the child have siblings?"),
@@ -177,7 +179,7 @@ class MainForm(forms.ModelForm):
     )
     source_of_identification_specify = forms.CharField(
         label=_('If Other, Please specify'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Community outreach team')}), required=False
     )
     cash_support_programmes = forms.MultipleChoiceField(
         label=_('Cash support programmes that the child is already benefiting from'),
@@ -213,7 +215,8 @@ class MainForm(forms.ModelForm):
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
         required=False,
-        label=_('Primary phone number')
+        label=_('Primary phone number'),
+        help_text=_('Enter a valid mobile number for the primary contact.')
     )
     first_phone_number_confirm = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
@@ -258,19 +261,19 @@ class MainForm(forms.ModelForm):
     )
     caregiver_first_name = forms.CharField(
         label=_("Caregiver First Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's first name")}), required=False
     )
     caregiver_middle_name = forms.CharField(
         label=_("Caregiver Middle Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's father's name")}), required=False
     )
     caregiver_last_name = forms.CharField(
         label=_("Caregiver Last Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's family name")}), required=False
     )
     caregiver_mother_name = forms.CharField(
         label=_("Caregiver Mother Full Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Full name of the caregiver's mother")}), required=False
     )
     have_labour = forms.ChoiceField(
         label=_('Does the child participate in work?'),
@@ -1110,10 +1113,26 @@ class TeacherForm(forms.ModelForm):
         required=True,
         to_field_name='id',
     )
-    first_name = forms.CharField(label=_('First name'), widget=forms.TextInput, required=True)
-    father_name = forms.CharField(label=_('Father name'), widget=forms.TextInput, required=True)
-    last_name = forms.CharField(label=_('Last name'), widget=forms.TextInput, required=True)
-    mother_fullname = forms.CharField(label=_('Mother full name'), widget=forms.TextInput, required=False)
+    first_name = forms.CharField(
+        label=_('First name'),
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Mohamad')}),
+        required=True
+    )
+    father_name = forms.CharField(
+        label=_('Father name'),
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Ahmad')}),
+        required=True
+    )
+    last_name = forms.CharField(
+        label=_('Last name'),
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Sayed')}),
+        required=True
+    )
+    mother_fullname = forms.CharField(
+        label=_('Mother full name'),
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Fatima Al Ali')}),
+        required=False
+    )
     sex = forms.ChoiceField(
         label=_('Gender'),
         widget=forms.Select,
@@ -1147,9 +1166,11 @@ class TeacherForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
         label=_('Main Phone number'),
+        help_text=_('Format: XX-XXXXXX (e.g. 70-123456)')
     )
     email = forms.RegexField(
         regex=r'^\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b',
+        widget=forms.TextInput(attrs={'placeholder': _('teacher@example.com')}),
         required=False,
         label=_('Email'),
     )

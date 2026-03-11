@@ -23,15 +23,15 @@ class SchoolForm(forms.ModelForm):
     )
     number = forms.IntegerField(
         label=_('School CERD Number'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. 1234')}), required=False
     )
     name = forms.CharField(
         label=_("School name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Hikma Public School')}), required=True
     )
     director_name = forms.CharField(
         label=_("School director name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('Full name of the director')}), required=True
     )
     land_phone_number = forms.RegexField(
         label=_('School land phone number'),
@@ -64,12 +64,12 @@ class SchoolForm(forms.ModelForm):
     )
     longitude = forms.FloatField(
         label=_('School GPS (longitude)'),
-        widget=forms.NumberInput(attrs=({'maxlength': 12})),
+        widget=forms.NumberInput(attrs=({'maxlength': 12, 'placeholder': '35.xxxx'})),
         min_value=0, required=True
     )
     latitude = forms.FloatField(
         label=_('School GPS (latitude)'),
-        widget=forms.NumberInput(attrs=({'maxlength': 12})),
+        widget=forms.NumberInput(attrs=({'maxlength': 12, 'placeholder': '33.xxxx'})),
         min_value=0, required=True
     )
     registration_level = forms.MultipleChoiceField(
@@ -80,7 +80,8 @@ class SchoolForm(forms.ModelForm):
     )
     school_capacity = forms.IntegerField(
         label=_('School capacity'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': '0'}), required=False,
+        help_text=_('Total student capacity of the school building.')
     )
     empty_building = forms.ChoiceField(
         label=_("Available empty building/closed campus"),
@@ -430,7 +431,7 @@ class ClubForm(forms.ModelForm):
 
     club_name = forms.CharField(
         label=_("Club name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Science Club')}), required=True
     )
     number_clubs = forms.IntegerField(
         label=_('Number of Clubs'),
@@ -526,7 +527,7 @@ class MeetingForm(forms.ModelForm):
 
     meeting_name = forms.CharField(
         label=_("Meeting Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Monthly Staff Meeting')}), required=True
     )
     meeting_date = forms.DateField(
         label=_('Meeting Date'),
@@ -609,7 +610,7 @@ class CommunityInitiativeForm(forms.ModelForm):
 
     community_group_name = forms.CharField(
         label=_("Community Group Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Parents Committee')}), required=True
     )
     number_initiatives = forms.IntegerField(
         label=_('Number of Initiatives'),
@@ -681,7 +682,7 @@ class CommunityInitiativeForm(forms.ModelForm):
 class HealthVisitForm(forms.ModelForm):
     focal_point_name = forms.CharField(
         label=_("Health Focal Point Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('Full name of focal point')}), required=True
     )
     number_visits = forms.IntegerField(
         label=_('Number of Visits'),
