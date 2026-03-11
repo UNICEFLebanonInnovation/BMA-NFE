@@ -2,43 +2,113 @@
 {% load util_tags %}
 {% load custom_tags %}
 {% load static i18n %}
-{% load static i18n %}
 {% load django_bootstrap5 %}
-
 {% load simple_tags %}
 
-{% block project_title %}Dashboard{% endblock %}
-{% block module_name %}NFR Sector - Dashboard{% endblock %}
+{% block project_title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
+<div class="container-fluid">
+    <!-- Welcome Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">{% trans "Welcome back," %} {{ request.user.first_name|default:request.user.username }}</h3>
+            <p class="text-muted">{% trans "Monitor NFE activities and manage registrations efficiently." %}</p>
+        </div>
+        <div class="text-end">
+            <span class="badge bg-light text-dark border py-2 px-3">
+                <i class="bi bi-calendar3 me-2 text-primary"></i> {% now "F d, Y" %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Action Tiles -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <a href="{% url 'mscc:child_add' %}" class="card border-0 shadow-sm h-100 text-decoration-none text-center p-3 quick-action-card transition-base">
+                <div class="card-body">
+                    <div class="icon-shape bg-primary-subtle text-primary rounded-circle mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-person-plus-fill fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{% trans "New Registration" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Enroll a new beneficiary in the NFE program." %}</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'mscc:list' %}" class="card border-0 shadow-sm h-100 text-decoration-none text-center p-3 quick-action-card transition-base">
+                <div class="card-body">
+                    <div class="icon-shape bg-success-subtle text-success rounded-circle mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-search fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{% trans "Beneficiary List" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Search and manage existing records." %}</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'mscc:attendance_report' %}" class="card border-0 shadow-sm h-100 text-decoration-none text-center p-3 quick-action-card transition-base">
+                <div class="card-body">
+                    <div class="icon-shape bg-warning-subtle text-warning rounded-circle mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-bar-chart-fill fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{% trans "Attendance Reports" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Monitor daily and monthly attendance logs." %}</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'locations:center_list' %}" class="card border-0 shadow-sm h-100 text-decoration-none text-center p-3 quick-action-card transition-base">
+                <div class="card-body">
+                    <div class="icon-shape bg-info-subtle text-info rounded-circle mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-geo-alt-fill fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{% trans "Centers" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Manage NFE centers and staff." %}</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Power BI / Monitoring Section -->
+    <div class="card border-0 shadow-sm overflow-hidden mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-graph-up me-2 text-primary"></i> {% trans "Operational Insights" %}</h5>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-filter me-1"></i> {% trans "Period: 2025" %}
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">{% trans "2024" %}</a></li>
+                    <li><a class="dropdown-item active" href="#">{% trans "2025" %}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="ratio ratio-21x9" style="min-height: 600px;">
+                <iframe title="NFR Sector - 2025 - V2"
+                        src="https://app.powerbi.com/view?r=eyJrIjoiYTlhYjRjYWItNGY2YS00YTU1LWEwNWQtNjE1MWUwMzgyNDVkIiwidCI6Ijc3NDEwMTk1LTE0ZTEtNGZiOC05MDRiLWFiMTg5MjAyMzY2NyIsImMiOjh9"
+                        frameborder="0"
+                        allowFullScreen="true">
+                </iframe>
+            </div>
+        </div>
+        <div class="card-footer bg-light-subtle py-2">
+            <small class="text-muted"><i class="bi bi-info-circle me-1"></i> {% trans "Data is updated daily. Use the Power BI controls for deep-dive analysis." %}</small>
+        </div>
+    </div>
+</div>
 
 <style>
-  .filter-package-type {
-    cursor: pointer;
-  }
-
+    .quick-action-card:hover {
+        transform: translateY(-5px);
+        background-color: var(--bs-light);
+    }
+    .quick-action-card .icon-shape {
+        transition: transform 0.3s ease;
+    }
+    .quick-action-card:hover .icon-shape {
+        transform: scale(1.1);
+    }
 </style>
-
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="pe-7s-display1"></i>
-                                        </span>
-                                        <span class="d-inline-block">Dashboard</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-</div>
-
-<div class="row">
-
-  <iframe title="NFR Sector - 2025 - V2" width="95%" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiYTlhYjRjYWItNGY2YS00YTU1LWEwNWQtNjE1MWUwMzgyNDVkIiwidCI6Ijc3NDEwMTk1LTE0ZTEtNGZiOC05MDRiLWFiMTg5MjAyMzY2NyIsImMiOjh9" frameborder="0" allowFullScreen="true"></iframe>
-
-</div>
-
 {% endblock content %}

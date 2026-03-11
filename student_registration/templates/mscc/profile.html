@@ -79,6 +79,11 @@
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
+                    <button class="nav-link py-3" id="edu-tab" data-bs-toggle="tab" data-bs-target="#edu-pane" type="button" role="tab">
+                        <i class="bi bi-mortarboard me-2"></i> {% trans "Education History" %}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
                     <button class="nav-link py-3" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-pane" type="button" role="tab">
                         <i class="bi bi-layers me-2"></i> {{ instance.type }}
                     </button>
@@ -93,6 +98,9 @@
         <div class="tab-content" id="profileTabsContent">
             <div class="tab-pane fade show active p-4" id="info-pane" role="tabpanel" aria-labelledby="info-tab">
                 {% include 'mscc/child_info_tab.html' %}
+            </div>
+            <div class="tab-pane fade p-4" id="edu-pane" role="tabpanel" aria-labelledby="edu-tab">
+                {% include 'mscc/child_education_details.html' %}
             </div>
             <div class="tab-pane fade p-4" id="services-pane" role="tabpanel" aria-labelledby="services-tab">
                 {% include 'mscc/child_services_tab.html' %}
