@@ -611,41 +611,42 @@ class EducationServiceForm(forms.ModelForm):
         self.helper.form_action = form_action
         self.helper.layout = Layout(
             Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('education_status', css_class='col-md-6'),
-                    HTML('<span class="badge-form-0 badge-pill"></span>'),
-                    Div('dropout_date', css_class='col-md-4'),
-                    css_class='row card-body'
+                Fieldset(
+                    _('Current Educational Status'),
+                    Div(
+                        Div('education_status', css_class='col-md-7'),
+                        Div('dropout_date', css_class='col-md-5'),
+                        css_class='row mb-3'
+                    ),
+                    Div(
+                        Div('round', css_class='col-md-6'),
+                        css_class='row mb-3'
+                    ),
                 ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('round', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('education_program', css_class='col-md-3'),
-                    Div('catch_up_registered', css_class='col-md-3'),
-                    css_class='row card-body' + display_edu_section
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('class_section', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('registration_date', css_class='col-md-3'),
-                    css_class='row card-body'+display_edu_section
+                Fieldset(
+                    _('Program Enrollment Details'),
+                    Div(
+                        Div('education_program', css_class='col-md-6'),
+                        Div('catch_up_registered', css_class='col-md-6'),
+                        css_class='row mb-3' + display_edu_section
+                    ),
+                    Div(
+                        Div('class_section', css_class='col-md-6'),
+                        Div('registration_date', css_class='col-md-6'),
+                        css_class='row mb-3' + display_edu_section
+                    ),
+                    css_class='mt-4'
                 ),
                 css_id='step-1'
             ),
             FormActions(
-                Submit('save', 'Save',
-                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Submit('save', _('Save Education Data'),
+                       css_class='btn btn-primary px-5 fw-bold shadow-sm'),
                 HTML(
-                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/mscc/child-registration-cancel/{}/">Cancel</a>'.format(
+                    '<a class="btn btn-outline-secondary ms-2" id="cancel-id-cancel" href="/mscc/child-registration-cancel/{}/">Cancel</a>'.format(
                         registry)
                 ),
-
+                css_class='d-flex justify-content-end border-top pt-4 mt-4'
             ),
         )
 
@@ -1105,48 +1106,48 @@ class EducationGradingForm(forms.ModelForm):
         if programme_type in ["BLN Level 1", "BLN Level 2", "BLN Level 3"]:
             self.helper.layout = Layout(
                 Div(
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('participation', css_class='col-md-4'),
-                        css_class='row card-body ' + display_post_fields_css
+                    Fieldset(
+                        _('Engagement & Barriers'),
+                        Div(
+                            Div('participation', css_class='col-md-4'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('barriers', css_class='col-md-7'),
+                            Div('barriers_other', css_class='col-md-5'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('post_test_done', css_class='col-md-6'),
+                            Div('school_year_completed', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
+                        css_class=display_post_fields_css
                     ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('barriers', css_class='col-md-8'),
-                        Div('barriers_other', css_class='col-md-3'),
-                        css_class='row card-body ' + display_post_fields_css
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('post_test_done', css_class='col-md-5'),
-                        HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('school_year_completed', css_class='col-md-5'),
-                        css_class='row card-body ' + display_post_fields_css
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">' + str(1 + ctr) + '</span>'),
-                        Div('arabic_grade', css_class='col-md-4'),
-                        HTML('<span class="badge-form badge-pill">' + str(2 + ctr) + '</span>'),
-                        Div('language_grade', css_class='col-md-4'),
-                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">' + str(3 + ctr) + '</span>'),
-                        Div('math_grade', css_class='col-md-4'),
-                        HTML('<span class="badge-form badge-pill">' + str(4 + ctr) + '</span>'),
-                        Div('social_emotional_grade', css_class='col-md-4'),
-                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">' + str(5 + ctr) + '</span>'),
-                        Div('artistic_grade', css_class='col-md-4'),
-                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    Fieldset(
+                        _('Subject Grades'),
+                        Div(
+                            Div('arabic_grade', css_class='col-md-6'),
+                            Div('language_grade', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('math_grade', css_class='col-md-6'),
+                            Div('social_emotional_grade', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('artistic_grade', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
+                        css_class=grade_field_css + display_pre_fields_css
                     ),
                     FormActions(
-                        Submit('save', 'Save',
-                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                        Submit('save', _('Save Grades'),
+                               css_class='btn btn-primary px-5 fw-bold shadow-sm'),
+                        Reset('reset', _('Reset'),
+                              css_class='btn btn-outline-secondary ms-2'),
+                        css_class='d-flex justify-content-end border-top pt-4 mt-4'
                     ),
                     css_id='step-1'
                 ),

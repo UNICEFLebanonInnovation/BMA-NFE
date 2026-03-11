@@ -951,83 +951,80 @@ class ReferralForm(forms.ModelForm):
         if is_cbece == 'Yes':
             self.helper.layout = Layout(
                 Div(
-                    Div(
-                        Div('is_cbece', css_class='col-md-6'),
-                        css_class='row card-body d-none'
+                    Div('is_cbece', css_class='d-none'),
+                    Fieldset(
+                        _('Formal Education Referral'),
+                        Div(
+                            Div('referred_formal_education', css_class='col-md-6'),
+                            Div('referred_school', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('referred_formal_education', css_class='col-md-5'),
-                        Div('referred_school', css_class='col-md-6'),
-                        css_class='row card-body'
+                    Fieldset(
+                        _('Resources & Services'),
+                        Div(
+                            Div('receive_needed_material', css_class='col-md-12'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('referred_service', css_class='col-md-6'),
+                            Div('referred_service_other', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('receive_needed_material', css_class='col-md-11'),
-                        css_class='row card-body'
+                    Fieldset(
+                        _('Recommended Path'),
+                        Div(
+                            Div('recommended_learning_path', css_class='col-md-6'),
+                            Div('dropout_date', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('referred_service', css_class='col-md-5'),
-                        Div('referred_service_other', css_class='col-md-6'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('recommended_learning_path', css_class='col-md-5'),
-                        Div('dropout_date', css_class='col-md-6'),
-                        css_class='row card-body'
-                    ),
-
                     css_id='step-1'
                 ),
                 FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    Submit('save', _('Save Referral'),
+                           css_class='btn btn-primary px-5 fw-bold shadow-sm'),
+                    Reset('reset', _('Reset'),
+                          css_class='btn btn-outline-secondary ms-2'),
+                    css_class='d-flex justify-content-end border-top pt-4 mt-4'
                 ),
         )
         if is_cbece == 'No':
             self.helper.layout = Layout(
                 Div(
-                    Div(
-                        Div('is_cbece', css_class='col-md-6'),
-                        css_class='row card-body d-none'
+                    Div('is_cbece', css_class='d-none'),
+                    Fieldset(
+                        _('Referral Services'),
+                        Div(
+                            Div('receive_needed_material', css_class='col-md-12'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('referred_service', css_class='col-md-6'),
+                            Div('referred_service_other', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('referred_formal_education', css_class='col-md-5'),
-                        Div('referred_school', css_class='col-md-6'),
-                        css_class='row card-body d-none'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('receive_needed_material', css_class='col-md-11'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('referred_service', css_class='col-md-5'),
-                        Div('referred_service_other', css_class='col-md-6'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('recommended_learning_path', css_class='col-md-11'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        Div('dropout_date', css_class='col-md-5'),
-                        css_class='row card-body'
+                    Fieldset(
+                        _('Recommended Outcome'),
+                        Div(
+                            Div('recommended_learning_path', css_class='col-md-12'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('dropout_date', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
                     css_id='step-1'
                 ),
                 FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    Submit('save', _('Save Referral'),
+                           css_class='btn btn-primary px-5 fw-bold shadow-sm'),
+                    Reset('reset', _('Reset'),
+                          css_class='btn btn-outline-secondary ms-2'),
+                    css_class='d-flex justify-content-end border-top pt-4 mt-4'
                 ),
         )
 
