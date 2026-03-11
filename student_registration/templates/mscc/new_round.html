@@ -7,90 +7,144 @@
 
 {% load simple_tags %}
 
-{% block project_title %}{% trans "New Round Registration" %}{% endblock %}
+{% block project_title %}New Round{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'mscc:list' %}">{% trans "Home" %}</a></li>
-                <li class="breadcrumb-item">
-                    <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname registry %}</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">{% trans "New Round" %}</li>
-            </ol>
-        </nav>
-        <h2 class="fw-bold text-primary">{% trans "Register in a New Round" %}</h2>
-        <p class="text-muted">{% trans "Enroll the beneficiary into a new educational cycle." %}</p>
-    </div>
+
+<div class="app-page-title">
+      <div class="page-title-wrapper">
+          <div class="page-title-heading">
+              <div>
+                  <div class="page-title-head center-elem page-title-heading">
+                      <span class="d-inline-block pr-2">
+                          <i class="fa fa-id-card"></i>
+                      </span>
+                      <span class="d-inline-block">
+                        Register the Child in a new Round
+                      </span>
+                  </div>
+                  <div class="page-title-subheading opacity-10">
+                      <nav class="" aria-label="breadcrumb">
+                          <ol class="breadcrumb">
+                              <li class="breadcrumb-item">
+                                  <a href="{% url 'mscc:list' %}">Home</a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname registry %}</a>
+                              </li>
+                               <li class="breadcrumb-item">
+                                     New Round
+                              </li>
+
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+          <div class="page-title-actions"></div>
+      </div>
 </div>
 
-<div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-        <div class="row align-items-center mb-4">
-            <div class="col-auto">
-                <div class="bg-light-blue p-3 rounded-circle">
-                    <i class="bi bi-person-plus fs-1 text-primary"></i>
-                </div>
-            </div>
-            <div class="col">
-                <h4 class="mb-1">{% trans "Confirm Enrollment" %}</h4>
-                <p class="mb-0 text-muted">
-                    {% trans "To add this child to a new round, please confirm the action below. This will create a new registration record for the current active cycle." %}
-                </p>
-            </div>
-        </div>
+        <!--{{ form.errors }}-->
 
-        {% get_child_rounds registry as child_rounds %}
-        {% if child_rounds %}
-        <div class="mb-4">
-            <h5 class="fw-bold mb-3">{% trans "Registration History" %}</h5>
-            <div class="list-group list-group-flush border rounded">
-                {% for child_round in child_rounds %}
-                <div class="list-group-item">
-                    <i class="bi bi-calendar-check me-2 text-success"></i> {{ child_round }}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
+<div class="main-card mb-3 card">
+                                <div class="card-body">
+                                    <div id="smartwizard3" class="forms-wizard">
+                                        <ul class="forms-wizard">
+                                            <li>
+                                                <a href="#step-1">
+                                                    <em>1</em><span>Register the Child in a new Round</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="form-wizard-content">
+                                          <form>
+                                            <div id="step-1">
 
-        <hr class="my-4 opacity-25">
+                                              <div class="row card-body">
+                                                <h2>To add this child to a new round, click the "Confirm" button to create a new registration and start adding the education information.</h2>
+                                              </div>
+                                              <div class="row card-body">
+                                                        <h6></h6><br>
+                                              </div>
+                                              <br>
 
-        <div class="d-flex justify-content-end gap-2">
-            <a href="{% url 'mscc:child_profile' registry %}?current_tab=services" class="btn btn-outline-secondary px-4 fw-bold">
-                {% trans "Cancel" %}
-            </a>
-            <a href="{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed"
-               id="submit-id-save" class="btn btn-primary px-5 fw-bold">
-                <i class="bi bi-check-circle me-2"></i>{% trans "Confirm Registration" %}
-            </a>
-        </div>
-    </div>
-</div>
+                                                <br>
+                                                {% get_child_rounds registry as child_rounds  %}
+                                                {% if child_rounds  %}
+                                                    <div class="row card-body">
+                                                        <h5>Regitration History</h5><br>
+                                                    </div>
+                                                    {% for child_round in child_rounds %}
+                                                      <div class="row card-body">
+                                                        <h6>{{ child_round }}</h6><br>
+                                                      </div>
+                                                    {% endfor %}
+                                                {% endif %}
+
+
+                                              <!--<div class="row card-body">-->
+                                                  <div class="form-group" style="padding-top: 100px;">
+                                                    <div class="">
+                                                      <a type="button" href="{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed" name="new_round_confirmation" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save">Confirm</a>
+                                                      <a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="{% url 'mscc:list' %}">Cancel</a>
+                                                    </div>
+                                                  </div>
+                                              <!--</div>-->
+
+                                            </div>
+
+                                          </form>
+
+                                        </div>
+                                    </div>
+                                    <!--<div class="divider"></div>-->
+
+                                    <div class="clearfix">
+                                        <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
+                                        <!--<a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>-->
+
+                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
+                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
+
+                                        <!--<button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>-->
+                                        <!--<button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>-->
+                                    </div>
+                                </div>
+                            </div>
+
 {% endblock %}
 
 {% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/service_digital.js' %}?v=5"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const confirmButton = document.getElementById("submit-id-save");
         const radioButtons = document.querySelectorAll("input[name='registrationType']");
 
+        // Function to update the href of the button based on the selected radio button
         const updateHref = () => {
-            const selectedRadio = document.querySelector("input[name='registrationType']:checked");
-            if (selectedRadio) {
-                const selectedType = selectedRadio.value;
-                confirmButton.href = `{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}`;
-            }
+            const selectedType = document.querySelector("input[name='registrationType']:checked").value;
+            confirmButton.href = `{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}`;
         };
 
-        if (radioButtons.length > 0) {
-            updateHref();
-            radioButtons.forEach((radio) => {
-                radio.addEventListener("change", updateHref);
-            });
-        }
+        // Update the href when the page loads (in case a default is selected)
+        updateHref();
+
+        // Add event listeners to radio buttons to update the href dynamically
+        radioButtons.forEach((radio) => {
+            radio.addEventListener("change", updateHref);
+        });
     });
 </script>
+
 {% endblock %}

@@ -103,10 +103,6 @@ h1, h2, h3, h4, h5 {
     border-color: var(--unicef-dark-blue);
 }
 
-.bg-light-blue {
-    background-color: var(--unicef-light-blue) !important;
-}
-
 .card {
     border-radius: 8px;
     border: none;
