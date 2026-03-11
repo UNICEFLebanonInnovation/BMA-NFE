@@ -90,20 +90,12 @@ from student_registration.users.templatetags.custom_tags import has_group
 def chart_data(request):
     """Return aggregated MSCC registration data for charts.
 
-    Args:
-        request (HttpRequest): Incoming request containing optional filters such
-            as ``chart``, ``package_type``, ``partner`` and date bounds.
-
     Returns:
         JsonResponse: A list of label/value pairs representing the grouped
         registration counts.
     """
     metric = request.GET.get('chart', 'nationality')
     qs = Registration.objects.filter(deleted=False)
-
-    package_type = request.GET.get('package_type')
-    if package_type:
-        qs = qs.filter(type=package_type)
 
     partner = request.GET.get('partner')
     if partner:
@@ -165,7 +157,6 @@ class ProfileView(LoginRequiredMixin,
             whether the child can be enrolled in a new round.
         """
         instance = Registration.objects.get(id=self.kwargs['pk'])
-        generate_services(instance.child.age, instance)
         current_tab = self.request.GET.get('current_tab', 'info')
 
         rounds_registered = EducationService.objects.filter(
@@ -198,14 +189,6 @@ class DashboardView(LoginRequiredMixin,
     template_name = 'mscc/dashboard.html'
 
     def get_context_data(self, **kwargs):
-        """Return an empty context for the dashboard shell.
-
-        Args:
-            **kwargs: Keyword arguments passed by :class:`TemplateView`.
-
-        Returns:
-            dict: An empty context dictionary used by the template.
-        """
 
         return {}
 
@@ -260,35 +243,11 @@ class DashboardCustomView(LoginRequiredMixin,
 
         return {
             'total': instances.count(),
-            'total_corepackage': instances.filter(type='Core-Package').count(),
-            'total_walkin': instances.filter(type='Walk-in').count(),
             'centers': centers,
             'governorates': governorates,
             'partners': partners,
             'rounds': rounds,
             'moved_children': moved_children,
-        }
-
-
-class DashboardYouthView(LoginRequiredMixin,
-                         TemplateView):
-    template_name = 'mscc/dashboard_youth.html'
-
-    def get_context_data(self, **kwargs):
-        from student_registration.locations.models import Center, Location
-        from student_registration.clm.models import PartnerOrganization
-
-        instances = Registration.objects.all()
-        centers = Center.objects.all()
-        governorates = Location.objects.filter(type_id=1)
-        partners = PartnerOrganization.objects.all()
-
-        return {
-            'total': instances.count(),
-            'total_corepackage': instances.filter(type='Core-Package').count(),
-            'centers': centers,
-            'governorates': governorates,
-            'partners': partners
         }
 
 
@@ -398,6 +357,11 @@ class MainAddView(LoginRequiredMixin,
     success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
+    def dispatch(self, request, *args, **kwargs):
+        if has_group(request.user, 'MSCC_CENTER') and not request.user.partner:
+            return redirect('mscc:list')
+        return super(MainAddView, self).dispatch(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse('mscc:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
 
@@ -484,7 +448,6 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self):
 
         registry = self.request.GET.get('registry')
-        type = self.request.GET.get('registrationType')
 
         if self.request.GET.get('new_round_confirmation', None) == 'confirmed':
             import copy
@@ -494,15 +457,13 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             new_registration.round = None
             new_registration.owner = self.request.user
             new_registration.modified_by = self.request.user
-            new_registration.type = type
             if self.request.user.center:
                 new_registration.center = self.request.user.center
             if self.request.user.partner:
                 new_registration.partner = self.request.user.partner
             new_registration.save()
 
-            generate_services(new_registration.child.age, new_registration, self.request.user)
-            return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id, 'package_type': type})
+            return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id})
 
         return reverse('mscc:new_round', kwargs={'registry': registry})
 

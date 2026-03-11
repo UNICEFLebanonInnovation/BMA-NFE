@@ -80,7 +80,7 @@ class CenterAdminForm(forms.ModelForm):
 class CenterForm(forms.ModelForm):
     name = forms.CharField(
         label=_("Center name"),
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Hope Community Center')}),
         required = False
     )
     governorate = forms.ModelChoiceField(
@@ -107,26 +107,28 @@ class CenterForm(forms.ModelForm):
     )
     longitude = forms.FloatField(
         label=_('Center GPS (longitude)'),
-        widget=forms.NumberInput(attrs=({'maxlength': 12})),
+        widget=forms.NumberInput(attrs=({'maxlength': 12, 'placeholder': '35.xxxx'})),
         min_value=0, required=True
     )
     latitude = forms.FloatField(
         label=_('Center GPS (latitude)'),
-        widget=forms.NumberInput(attrs=({'maxlength': 12})),
+        widget=forms.NumberInput(attrs=({'maxlength': 12, 'placeholder': '33.xxxx'})),
         min_value=0, required=True
     )
     manager_name = forms.CharField(
         label=_("Center Manager name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('Full name of center manager')}), required=True
     )
     phone_number = forms.RegexField(
         regex=r'^\d{2}-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX (e.g. 01-123456)'}),
         required=True,
-        label=_('Phone number')
+        label=_('Phone number'),
+        help_text=_('Landline or official mobile number.')
     )
     email = forms.RegexField(
         regex=r'^\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b',
+        widget=forms.TextInput(attrs={'placeholder': _('center@example.com')}),
         required=False,
         label=_('Email')
     )
@@ -155,7 +157,7 @@ class CenterForm(forms.ModelForm):
     )
     admin_staff_number = forms.IntegerField(
         label=_('Number of Admin staff in the center'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=True,
         initial=0,
         min_value=0
@@ -178,7 +180,8 @@ class CenterForm(forms.ModelForm):
     )
     neaby_phcc = forms.CharField(
         label=_("Nearby PHCC name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al-Razi PHC')}), required=True,
+        help_text=_('Primary Healthcare Center closest to this location.')
     )
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -193,80 +196,63 @@ class CenterForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Div(
+            Fieldset(
+                _('General Information'),
                 Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('name', css_class='col-md-3 disabled-input'),
-                    css_class='row card-body',
+                    Div('name', css_class='col-md-6'),
+                    Div('type', css_class='col-md-6'),
+                    css_class='row mb-3',
                 ),
+            ),
+            Fieldset(
+                _('Location & Accessibility'),
                 Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('caza', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('cadaster', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('longitude', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('latitude', css_class='col-md-3'),
-                    css_class='row card-body',
+                    Div('governorate', css_class='col-md-4'),
+                    Div('caza', css_class='col-md-4'),
+                    Div('cadaster', css_class='col-md-4'),
+                    css_class='row mb-3',
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('manager_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('email', css_class='col-md-3'),
-                    css_class='row card-body',
+                    Div('longitude', css_class='col-md-4'),
+                    Div('latitude', css_class='col-md-4'),
+                    Div('cwd_accessible', css_class='col-md-4'),
+                    css_class='row mb-3',
+                ),
+            ),
+            Fieldset(
+                _('Management & Contact'),
+                Div(
+                    Div('manager_name', css_class='col-md-4'),
+                    Div('phone_number', css_class='col-md-4'),
+                    Div('email', css_class='col-md-4'),
+                    css_class='row mb-3',
+                ),
+            ),
+            Fieldset(
+                _('Provided Services & Programs'),
+                Div(
+                    Div('provided_packages', css_class='col-md-6 bg-light p-3 rounded-3'),
+                    Div('programs', css_class='col-md-6 bg-light p-3 rounded-3'),
+                    css_class='row mb-3 mx-0',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('type', css_class='col-md-3'),
-                    css_class='row card-body',
+                    Div('offer_digital_learning', css_class='col-md-4'),
+                    Div('have_digital_hub', css_class='col-md-4'),
+                    Div('admin_staff_number', css_class='col-md-4'),
+                    css_class='row mb-3',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('provided_packages', css_class='col-md-3  multiple-choice'),
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('programs', css_class='col-md-3  multiple-choice'),
-                    css_class='row card-body',
+                    Div('neaby_phcc', css_class='col-md-8'),
+                    Div('is_active', css_class='col-md-4'),
+                    css_class='row mb-4',
                 ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('cwd_accessible', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('admin_staff_number', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('offer_digital_learning', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('have_digital_hub', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('neaby_phcc', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                    Div('is_active', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-
-                ),
-                css_id='step-1',
+            ),
+            FormActions(
+                Submit('save', _('Save Center Details'),
+                       css_class='btn btn-primary px-5 fw-bold'),
+                Reset('reset', _('Reset Form'),
+                      css_class='btn btn-outline-secondary ms-2'),
+                css_class='d-flex justify-content-end border-top pt-4'
             ),
         )
 

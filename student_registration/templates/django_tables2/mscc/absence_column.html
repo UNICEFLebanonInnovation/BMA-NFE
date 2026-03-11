@@ -1,11 +1,13 @@
-
 {% load static i18n %}
 {% load custom_tags %}
-
-
 {% load util_tags %}
+
 {% if record.total_absent_days >= 40 %}
-    <span class="badge badge-danger align-text-bottom ml-1" style="padding: 10px 10px;">{{ record.total_absent_days }}</span>
+    <span class="badge badge-table bg-danger-subtle text-danger border border-danger-subtle fw-bold">
+        <i class="bi bi-exclamation-octagon-fill me-1"></i> {{ record.total_absent_days }}
+    </span>
 {% else %}
-    <span class="badge badge-primary align-text-bottom ml-1" style="padding: 10px 10px;">{{ record.total_absent_days }}</span>
+    <span class="badge badge-table bg-light text-dark border fw-medium">
+        {{ record.total_absent_days }}
+    </span>
 {% endif %}

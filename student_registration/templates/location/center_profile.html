@@ -5,81 +5,55 @@
 {% load django_bootstrap5 %}
 
 {% load simple_tags %}
-{% bootstrap_css %}
 
 {% block project_title %}Center Profile{% endblock %}
 
+{% block module_name %}
+    <i class="bi bi-building me-2"></i> {% trans "Center Profile" %}
+{% endblock %}
+
 {% block content %}
-
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-child"></i>
-                                        </span>
-                                        <span class="d-inline-block">Center Profile - {{ instance.name }}</span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="/">
-                                                        Home
-                                                    </a>
-                                                </li>
-                                                {% if request.user|has_group:"MSCC_PARTNER" %}
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'locations:center_list' %}">List</a>
-                                                </li>
-                                                {% endif %}
-                                                <li class="active breadcrumb-item" aria-current="page">
-                                                    Center and Program Staff
-                                                </li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-</div>
-
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+        {% if request.user|has_group:"MSCC_PARTNER" %}
+        <li class="breadcrumb-item"><a href="{% url 'locations:center_list' %}">{% trans "Centers" %}</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active" aria-current="page">{{ instance.name }}</li>
+    </ol>
+</nav>
 
 <div class="row">
-
-        <div class="col-md-12">
-                                    <div class="mb-3 card">
-                                        <div class="tabs-lg-alternate card-header">
-                                            <ul class="nav nav-justified">
-                                                <li class="nav-item">
-                                                    <a data-toggle="tab" href="#tab-eg9-0" class="nav-link show{% if current_tab == 'info' %} active{% endif %}">
-                                                        <div class="widget-number">Center</div>
-                                                    </a></li>
-                                                <li class="nav-item">
-                                                    <a data-toggle="tab" href="#tab-eg9-1" class="nav-link show{% if current_tab == 'services' %} active{% endif %}">
-                                                        <div class="widget-number">Program Staff</div>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="tab-content">
-                                            <div class="tab-pane show{% if current_tab == 'info' %} active{% endif %}" id="tab-eg9-0" role="tabpanel">
-                                                <div class="card-body">
-                                                  {% include 'location/center_info_tab.html' %}
-                                                </div>
-                                            </div>
-                                            <div class="tab-pane show{% if current_tab == 'services' %} active{% endif %}" id="tab-eg9-1" role="tabpanel">
-                                                <div class="card-body">
-                                                  {% include 'location/program_staff_tab.html' %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom p-0">
+                <ul class="nav nav-tabs nav-fill border-0" id="profileTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link border-0 py-3 fw-bold {% if current_tab == 'info' or not current_tab %}active{% endif %}"
+                                id="info-tab" data-bs-toggle="tab" data-bs-target="#info-pane" type="button" role="tab">
+                            <i class="bi bi-info-circle me-2"></i> {% trans "Center Details" %}
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link border-0 py-3 fw-bold {% if current_tab == 'services' %}active{% endif %}"
+                                id="teachers-tab" data-bs-toggle="tab" data-bs-target="#teachers-pane" type="button" role="tab">
+                            <i class="bi bi-people me-2"></i> {% trans "Teachers" %}
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content" id="profileTabsContent">
+                <div class="tab-pane fade {% if current_tab == 'info' or not current_tab %}show active{% endif %} p-4"
+                     id="info-pane" role="tabpanel" aria-labelledby="info-tab">
+                    {% include 'location/center_info_tab.html' %}
+                </div>
+                <div class="tab-pane fade {% if current_tab == 'services' %}show active{% endif %} p-4"
+                     id="teachers-pane" role="tabpanel" aria-labelledby="teachers-tab">
+                    {% include 'location/teachers_tab.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
@@ -89,7 +63,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" src="{% static 'js/location/program_staff.js' %}?v=19"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=2"></script>
-
 {% endblock %}

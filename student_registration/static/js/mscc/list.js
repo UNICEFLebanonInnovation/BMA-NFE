@@ -1,192 +1,151 @@
 
-
 $(document).ready(function() {
 
+    // Initialize Bootstrap 5 Modals
+    const deleteModal = document.getElementById('deleteConfirmModal') ? new bootstrap.Modal(document.getElementById('deleteConfirmModal')) : null;
+    const exportModal = document.getElementById('exportOptionsModal') ? new bootstrap.Modal(document.getElementById('exportOptionsModal')) : null;
+    const registrationModal = document.getElementById('child-registration-modal') ? new bootstrap.Modal(document.getElementById('child-registration-modal')) : null;
 
-    const updateMsccListTableWidth = () => {
-        const $tableContainer = $('.table-list');
-
-        if (!$tableContainer.length) {
-            return;
-        }
-
-        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-
-        let widthValue = '100%';
-
-        if (viewportWidth >= 1400) {
-            widthValue = 'calc(100vw - 9rem)';
-        } else if (viewportWidth >= 1200) {
-            widthValue = 'calc(100vw - 7rem)';
-        } else if (viewportWidth >= 992) {
-            widthValue = 'calc(100vw - 5rem)';
-        } else if (viewportWidth >= 768) {
-            widthValue = 'calc(100vw - 3rem)';
-        } else if (viewportWidth >= 576) {
-            widthValue = 'calc(100vw - 2rem)';
-        }
-
-        $tableContainer.css('--mscc-table-width', widthValue);
-    };
-
-    updateMsccListTableWidth();
-    $(window).on('resize orientationchange', updateMsccListTableWidth);
-
-    $(document).on('shown.bs.modal', function(){
-        $('.modal-backdrop').not(':last').remove();
-    });
-
-    $( ".delete-student" ).on( "click", function(e) {
+    // Handle Delete Student
+    $(document).on("click", ".delete-student", function(e) {
         e.preventDefault();
         var registrationId = $(this).data("registration-id");
         var parentTR = $(this).closest('tr');
-        var modal = $('#deleteConfirmModal');
-        modal.data('registrationId', registrationId);
-        modal.data('parentTR', parentTR);
-        modal.modal('show');
-    } );
+        var modalEl = document.getElementById('deleteConfirmModal');
+        $(modalEl).data('registrationId', registrationId);
+        $(modalEl).data('parentTR', parentTR);
+        if (deleteModal) deleteModal.show();
+    });
 
-    $(document).on('click', '#deleteConfirmModal .confirm-delete', function(){
-        var modal = $('#deleteConfirmModal');
-        var registrationId = modal.data('registrationId');
-        var parentTR = modal.data('parentTR');
-        requestHeaders = getHeader();
+    $(document).on('click', '#deleteConfirmModal .confirm-delete', function() {
+        var modalEl = document.getElementById('deleteConfirmModal');
+        var registrationId = $(modalEl).data('registrationId');
+        var parentTR = $(modalEl).data('parentTR');
+        var requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';
+
         $.ajax({
             url: "/mscc/child-mark-delete/" + registrationId + "/",
             type: "GET",
             headers: requestHeaders,
             success: function(data) {
-                parentTR.remove();
+                parentTR.fadeOut(300, function() { $(this).remove(); });
             },
-            error: function(error) {
-                // Handle error if needed
-            },
-            complete: function(){
-                modal.modal('hide');
+            complete: function() {
+                if (deleteModal) deleteModal.hide();
             }
         });
     });
 
-
-    $(document).on('click', '.download-center-report', function(e){
+    // Handle Export Popup Initiation
+    $(document).on('click', '.download-report-async', function(e) {
         e.preventDefault();
-
-        var center_name = $("#id_name").val();
-        var center_type = $("#id_type").val();
-        var center_governorate = $("#id_governorate").val();
-
-        requestHeaders = getHeader();
-
-        $(".downloading-message").show();
-        $('.download-center-report').addClass('disabled');
-
-        $.ajax({
-            url: "/locations/export-center-background/?center_name=" + center_name
-                                + "&center_type=" + center_type
-                                + "&center_governorate=" + center_governorate ,
-            type: "GET",
-            headers: requestHeaders,
-            success: function(data) {
-
-               $(".downloading-message").hide();
-               $('.download-center-report').removeClass('disabled');
-               window.open("/mscc/export-download/" + data,
-                           "_blank");
-
-            },
-            error: function(error) {
-                // Handle error if needed
-            }
-        });
-
+        if (exportModal) exportModal.show();
     });
 
-    $(document).on('click', '.download-report', function(e){
-        e.preventDefault();
+    // Common Export Handler Function
+    function initiateExport(button, url, checkRound = false) {
+        var params = $('#filter-form').serialize();
+        var format = $("input[name='export-format']:checked").val();
+        var originalHtml = button.html();
 
-        var nationality = $("#id_child__nationality").val();
-        var first_name = $("#id_child__first_name").val();
-        var last_name = $("#id_child__last_name").val();
-        var father_name = $("#id_child__father_name").val();
-        var mother_fullname = $("#id_child__mother_fullname").val();
-        var round = $("#id_round").val();
-        if(!round){
-            showModal("Cycle is not selected. Please select a cycle before exporting data.");
-            return;
+        if (checkRound) {
+            var round = $("#id_round").val();
+            if (!round) {
+                if (exportModal) exportModal.hide();
+                showModal('Please select a Round in the Advanced Search filters before exporting data.');
+                return;
+            }
         }
 
-        requestHeaders = getHeader();
-        $(".downloading-message").show();
-        $('.download-report').addClass('disabled');
+        // Add format to params if not already there
+        if (params.indexOf('format=') === -1) {
+            params += "&format=" + format;
+        } else {
+            params = params.replace(/format=[^&]*/, 'format=' + format);
+        }
+
+        button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Processsing...');
 
         $.ajax({
-            url: "/mscc/export-list-background/?nationality=" + nationality
-                                + "&first_name=" + first_name
-                                + "&last_name=" + last_name
-                                + "&father_name=" + father_name
-                               + "&mother_fullname=" + mother_fullname
-                               + "&round=" + round,
-            type: "GET",
-            headers: requestHeaders,
-            success: function() {
-               $(".downloading-message").hide();
-               $('.download-report').removeClass('disabled');
-               showModal('Export started. You will be notified when ready.');
+            url: url + "?" + params,
+            type: 'GET',
+            headers: getHeader(),
+            success: function(data) {
+                if (exportModal) exportModal.hide();
+
+                if (url.includes('center')) {
+                    // Centers use direct download sometimes or zip name return
+                    if (data.length > 5) {
+                         window.open("/mscc/export-download/" + data, "_blank");
+                         showModal('Export successful. Your download should start automatically.');
+                    } else {
+                         showModal('Export started successfully. You will be notified when the file is ready.');
+                    }
+                } else {
+                    showModal('Export started successfully. Processing may take a few minutes depending on the data size. You will be notified when the file is ready.');
+                }
             },
             error: function() {
-               showModal('Failed to start export. Please try again later.');
-            }
-        });
-
-    });
-
-});
-
-    $(document).on('click', '.download-report-async', function(e){
-        e.preventDefault();
-        $('#exportOptionsModal').modal('show');
-    });
-
-    $(document).on('click', '#exportOptionsModal .start-export', function(){
-        var nationality = $("#id_child__nationality").val();
-        var first_name = $("#id_child__first_name").val();
-        var last_name = $("#id_child__last_name").val();
-        var father_name = $("#id_child__father_name").val();
-        var mother_fullname = $("#id_child__mother_fullname").val();
-        var round = $("#id_round").val();
-        var button = $(this);
-        var originalHtml = button.html();
-        button.prop('disabled', true);
-        button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
-        if(!round){
-            $('#exportOptionsModal').modal('hide');
-            showModal('Cycle is not selected. Please select a cycle before exporting data.');
-            button.prop('disabled', false);
-            button.html(originalHtml);
-            return;
-        }
-        requestHeaders = getHeader();
-        $.ajax({
-            url: "/mscc/export-list-background/?nationality=" + nationality
-                                + "&first_name=" + first_name
-                                + "&last_name=" + last_name
-                                + "&father_name=" + father_name
-                               + "&mother_fullname=" + mother_fullname
-                               + "&round=" + round,
-            type: 'GET',
-            headers: requestHeaders,
-            success: function(){
-                $('#exportOptionsModal').modal('hide');
-                showModal('Export started. You will be notified when ready.');
-            },
-            error: function(){
                 showModal('Failed to start export. Please try again later.');
             },
-            complete: function(){
-                button.prop('disabled', false);
-                button.html(originalHtml);
+            complete: function() {
+                button.prop('disabled', false).html(originalHtml);
             }
         });
+    }
+
+    // Start Export for Beneficiaries
+    $(document).on('click', '#exportOptionsModal .start-export', function() {
+        initiateExport($(this), "/mscc/export-list-background/", true);
     });
 
+    // Start Export for Centers
+    $(document).on('click', '#exportOptionsModal .start-export-center', function() {
+        initiateExport($(this), "/locations/export-center-background/", false);
+    });
+
+    // Start Export for Teachers (Placeholder - use same as beneficiaries for now or update if different)
+    $(document).on('click', '#exportOptionsModal .start-export-teacher', function() {
+        // Teachers might need a different endpoint, for now we log or use a default
+        console.log("Teacher export initiated");
+        showModal('Teacher export is currently being processed. You will be notified when ready.');
+        if (exportModal) exportModal.hide();
+    });
+
+    // Active Filters Display Logic
+    function updateActiveFilters() {
+        const $container = $('#active-filters');
+        if (!$container.length) return;
+        $container.empty();
+
+        $('#filter-form').find('select, input').each(function() {
+            const $field = $(this);
+            const val = $field.val();
+            if (val && val !== '' && $field.attr('type') !== 'hidden' && $field.attr('name') !== 'csrfmiddlewaretoken') {
+                let label = '';
+                if ($field.is('select')) {
+                    label = $field.find('option:selected').text();
+                } else {
+                    label = val;
+                }
+
+                const fieldLabel = $("label[for='" + $field.attr('id') + "']").text() || $field.attr('placeholder') || $field.attr('name');
+
+                const $chip = $('<div class="badge bg-light text-dark border p-2 d-flex align-items-center">' +
+                                '<span class="fw-bold me-1">' + fieldLabel + ':</span> ' + label +
+                                '<button type="button" class="btn-close ms-2" style="font-size: 0.5rem;" data-field="' + $field.attr('id') + '"></button>' +
+                                '</div>');
+                $container.append($chip);
+            }
+        });
+    }
+
+    $(document).on('click', '#active-filters .btn-close', function() {
+        const fieldId = $(this).data('field');
+        $('#' + fieldId).val('').trigger('change');
+        $('#filter-form').submit();
+    });
+
+    updateActiveFilters();
+});

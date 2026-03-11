@@ -164,7 +164,7 @@
 
     function addChart(){
         if(charts.length >= 10){
-            showModal('Maximum 10 charts allowed');
+            alert('Maximum 10 charts allowed');
             return;
         }
         const type = document.getElementById('chart-type').value;
@@ -173,11 +173,14 @@
         charts.push({id,type,metric});
         const container = document.createElement('div');
         container.id = 'chart-'+id;
-        container.className = 'chart-wrapper';
-        container.innerHTML = '<div class="chart-loading">Loading...</div>'+
-            '<button class="delete-chart btn btn-danger btn-sm" style="position:absolute;top:5px;right:5px;">Delete</button>'+
-            '<button class="fullscreen-chart btn btn-secondary btn-sm" style="position:absolute;top:5px;right:80px;">Fullscreen</button>'+
-            '<svg></svg><div class="chart-legend"></div>';
+        container.className = 'col-md-6 chart-wrapper mb-4';
+        container.innerHTML = '<div class="card shadow-sm border-0 h-100"><div class="card-body p-4">'+
+            '<div class="chart-loading">Loading...</div>'+
+            '<div class="d-flex justify-content-end gap-2 mb-3">'+
+            '<button class="fullscreen-chart btn btn-outline-secondary btn-sm"><i class="bi bi-fullscreen"></i></button>'+
+            '<button class="delete-chart btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>'+
+            '</div>'+
+            '<svg style="width:100%; height:300px;"></svg><div class="chart-legend mt-3"></div></div></div>';
         container.querySelector('.delete-chart').addEventListener('click', function(){
             removeChart(id);
         });
@@ -216,11 +219,14 @@
             charts.forEach(c=>{
                 const div = document.createElement('div');
                 div.id = 'chart-'+c.id;
-                div.className = 'chart-wrapper';
-                div.innerHTML = '<div class="chart-loading">Loading...</div>'+
-                    '<button class="delete-chart btn btn-danger btn-sm" style="position:absolute;top:5px;right:5px;">Delete</button>'+
-                    '<button class="fullscreen-chart btn btn-secondary btn-sm" style="position:absolute;top:5px;right:80px;">Fullscreen</button>'+
-                    '<svg></svg><div class="chart-legend"></div>';
+                div.className = 'col-md-6 chart-wrapper mb-4';
+                div.innerHTML = '<div class="card shadow-sm border-0 h-100"><div class="card-body p-4">'+
+                    '<div class="chart-loading">Loading...</div>'+
+                    '<div class="d-flex justify-content-end gap-2 mb-3">'+
+                    '<button class="fullscreen-chart btn btn-outline-secondary btn-sm"><i class="bi bi-fullscreen"></i></button>'+
+                    '<button class="delete-chart btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>'+
+                    '</div>'+
+                    '<svg style="width:100%; height:300px;"></svg><div class="chart-legend mt-3"></div></div></div>';
                 div.querySelector('.delete-chart').addEventListener('click', function(){
                     removeChart(c.id);
                 });

@@ -1,0 +1,605 @@
+/* BMA Redesign - Bootstrap 5 Overrides & Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --unicef-blue: #0097D7;
+    --unicef-dark-blue: #004F71;
+    --unicef-light-blue: #E1F5FE;
+    --bs-primary: var(--unicef-blue);
+    --bs-primary-rgb: 0, 151, 215;
+    --sidebar-width: 350px;
+    --sidebar-collapsed-width: 90px;
+    --header-height: 60px;
+}
+
+@media (max-width: 1400px) {
+    :root {
+        --sidebar-width: 320px;
+    }
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* Layout */
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: #ffffff;
+    border-inline-end: 1px solid #dee2e6;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    transition: all 0.2s ease-in-out;
+    z-index: 1000;
+    overflow-x: hidden;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .text-uppercase {
+    display: none !important;
+}
+
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 0.75rem 0;
+    margin: 0.25rem 0.5rem;
+    font-size: 0 !important;
+}
+
+.sidebar.collapsed .nav-link i {
+    margin-inline-end: 0;
+    font-size: 1.25rem !important;
+}
+
+.sidebar.collapsed .p-4 img {
+    height: 24px;
+}
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.topbar {
+    height: var(--header-height);
+    background: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    padding-inline: 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+/* Typography & Components */
+h1, h2, h3, h4, h5 {
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: var(--unicef-blue);
+    border-color: var(--unicef-blue);
+}
+
+.btn-primary:hover {
+    background-color: var(--unicef-dark-blue);
+    border-color: var(--unicef-dark-blue);
+}
+
+.card {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+
+/* Navigation Items */
+.nav-link {
+    color: #495057;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    margin: 0.25rem 0.75rem;
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: var(--unicef-light-blue);
+    color: var(--unicef-blue);
+}
+
+.nav-link i {
+    width: 24px;
+    margin-inline-end: 12px;
+    font-size: 1.1rem;
+}
+
+/* Form Styles */
+.form-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+}
+
+.form-control:focus {
+    border-color: var(--unicef-blue);
+    box-shadow: 0 0 0 0.25rem rgba(0, 151, 215, 0.25);
+}
+
+/* RTL Support - Manual overrides if needed, but mostly handled by logical properties */
+
+/* Metric Cards */
+.metric-card {
+    padding: 1.5rem;
+}
+
+.metric-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--unicef-blue);
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick Action Tiles */
+.quick-action-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-decoration: none;
+    color: #212529;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    height: 100%;
+}
+
+.quick-action-tile:hover {
+    background-color: var(--unicef-light-blue);
+    border-color: var(--unicef-blue);
+    transform: translateY(-4px);
+}
+
+.quick-action-tile i {
+    font-size: 2.5rem;
+    color: var(--unicef-blue);
+    margin-bottom: 1rem;
+}
+
+/* Stepper for Wizard */
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 0;
+    list-style: none;
+    position: relative;
+}
+
+.stepper::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #dee2e6;
+    z-index: 0;
+}
+
+.step {
+    position: relative;
+    z-index: 1;
+    background: #f8f9fa;
+    padding: 0 10px;
+    text-align: center;
+    flex: 1;
+}
+
+.step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    font-weight: 600;
+}
+
+.step.active .step-icon {
+    border-color: var(--unicef-blue);
+    background: var(--unicef-blue);
+    color: #fff;
+}
+
+.step.completed .step-icon {
+    border-color: var(--unicef-blue);
+    background: var(--unicef-light-blue);
+    color: var(--unicef-blue);
+}
+
+.wizard-progress {
+    height: 4px;
+    background-color: #dee2e6;
+    margin-bottom: 3rem;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.wizard-progress-bar {
+    height: 100%;
+    background-color: var(--unicef-blue);
+    transition: width 0.3s ease;
+    width: 0;
+}
+
+.step-content {
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step-content.d-none {
+    display: none !important;
+    opacity: 0;
+    transform: translateX(30px);
+}
+
+.step-content:not(.d-none) {
+    opacity: 1;
+    transform: translateX(0);
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Advanced Form Controls */
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--unicef-blue);
+    opacity: 0.8;
+}
+
+.is-invalid + .invalid-feedback {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+.summary-card {
+    background: #fff;
+    border-inline-start: 4px solid var(--unicef-blue);
+    transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.hidden {
+    display: none !important;
+}
+
+#active-filters .badge {
+    font-weight: 500;
+    font-size: 0.85rem;
+    border-color: #dee2e6 !important;
+}
+
+#active-filters .btn-close {
+    filter: none;
+    opacity: 0.8;
+}
+
+#active-filters .btn-close:hover {
+    opacity: 1;
+}
+
+.offcanvas-body .form-label {
+    margin-top: 0.5rem;
+}
+
+/* Advanced Datatables Redesign */
+.table-container {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table-responsive {
+    max-height: 600px; /* Standard max height for lists */
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: 0 0 12px 12px;
+    position: relative;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+@media (min-height: 1000px) {
+    .table-responsive {
+        max-height: 750px;
+    }
+}
+
+/* Override legacy base.css if necessary */
+.table-responsive table {
+    width: 100% !important;
+    min-width: 1200px; /* Force horizontal scroll for data-heavy tables */
+}
+
+/* Specific override for base.css w-100 which is hardcoded to 1500px */
+.table-responsive .w-100 {
+    width: 100% !important;
+    min-width: 1200px !important;
+}
+
+.table {
+    margin-bottom: 0;
+    font-size: 0.925rem;
+    border-collapse: separate !important;
+    border-spacing: 0;
+    width: 100% !important;
+}
+
+.table {
+    border-collapse: separate !important;
+    border-spacing: 0;
+}
+
+.table thead th {
+    background-color: #f1f5f9 !important; /* Slightly darker gray for better highlight */
+    color: #0f172a; /* Darker text for contrast */
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1rem 0.75rem;
+    border-top: 1px solid #e2e8f0 !important;
+    border-bottom: 3px solid #cbd5e1 !important; /* Thicker bottom border */
+    white-space: nowrap;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1020;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure no transparency during scroll */
+.table thead th::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f1f5f9;
+    z-index: -1;
+}
+
+.table thead th a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.table thead th a:hover {
+    color: var(--unicef-blue);
+}
+
+.table tbody td {
+    padding: 0.7rem 0.6rem;
+    vertical-align: middle;
+    color: #2d3748;
+    border-bottom: 1px solid #edf2f7;
+}
+
+@media (max-width: 1440px) {
+    :root {
+        --header-height: 50px;
+    }
+    .p-4 {
+        padding: 1.5rem !important;
+    }
+    .table {
+        font-size: 0.825rem;
+    }
+    .table thead th {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.65rem;
+    }
+    .table tbody td {
+        padding: 0.5rem 0.4rem;
+    }
+    .btn-actions {
+        padding: 0.15rem 0.4rem;
+        font-size: 0.75rem;
+    }
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f7fafc;
+    transition: background-color 0.2s ease;
+}
+
+/* Custom Badge Styles for Tables */
+.badge-table {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+/* Action Dropdown Modernization */
+.table-actions-dropdown .btn-actions {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.table-actions-dropdown .dropdown-menu {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #edf2f7;
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 200px;
+}
+
+.table-actions-dropdown .dropdown-item {
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #4a5568;
+}
+
+.table-actions-dropdown .dropdown-item:hover {
+    background-color: #f7fafc;
+    color: var(--unicef-blue);
+}
+
+.table-actions-dropdown .dropdown-item i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.table-actions-dropdown .dropdown-divider {
+    margin: 0.5rem -0.5rem;
+}
+
+/* Pagination Modernization */
+.pagination {
+    gap: 0.25rem;
+}
+
+/* Custom Scrollbar for responsive tables */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+.page-link {
+    border: none;
+    color: #4a5568;
+    padding: 0.5rem 0.85rem;
+    border-radius: 6px !important;
+    font-weight: 500;
+}
+
+.page-item.active .page-link {
+    background-color: var(--unicef-blue);
+}
+
+.page-link:hover {
+    background-color: #edf2f7;
+    color: var(--unicef-blue);
+}
+
+/* Empty States */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.empty-state-title {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state-description {
+    color: #718096;
+    max-width: 300px;
+    margin: 0 auto 1.5rem;
+}
+
+/* Accessibility - focus states */
+.btn:focus, .form-control:focus, .page-link:focus {
+    box-shadow: 0 0 0 3px rgba(0, 151, 215, 0.4);
+}
+
+/* Global Loading Overlay */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* RTL Specific Logical properties for spacing if not handled by Bootstrap */
+[dir="rtl"] .me-2 { margin-left: 0.5rem !important; margin-right: 0 !important; }
+[dir="rtl"] .ms-2 { margin-right: 0.5rem !important; margin-left: 0 !important; }

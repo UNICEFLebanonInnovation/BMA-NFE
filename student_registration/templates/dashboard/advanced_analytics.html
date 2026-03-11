@@ -1,51 +1,118 @@
 {% extends "mscc/base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block project_title %}Advanced Analytics{% endblock %}
 {% block module_name %}Advanced Analytics{% endblock %}
 
-{% block content %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<div class="app-page-title">
-  <div class="page-title-wrapper">
-    <div class="page-title-heading">
-      <div class="page-title-head center-elem page-title-heading">
-        <span class="d-inline-block pr-2"><i class="pe-7s-graph3"></i></span>
-        <span class="d-inline-block">Advanced Analytics Dashboard</span>
-      </div>
-    </div>
-  </div>
-</div>
+{% block main_content %}
+<div class="container-fluid">
+    <div class="row g-4">
+        <aside class="col-lg-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h6 class="fw-bold mb-0">{% trans "Analytics Filters" %}</h6>
+                </div>
+                <div class="card-body" id="filter-panel">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Date Range" %}</label>
+                        <input type="date" id="date_from" class="form-control mb-2" aria-label="Date from">
+                        <input type="date" id="date_to" class="form-control mb-2" aria-label="Date to">
+                    </div>
 
-<div class="row">
-  <aside class="col-lg-3">
-    <div class="card mb-3">
-      <div class="card-header">Filters</div>
-      <div class="card-body" id="filter-panel">
-        <input type="date" id="date_from" class="form-control mb-2" aria-label="Date from">
-        <input type="date" id="date_to" class="form-control mb-2" aria-label="Date to">
-        <select id="partner_id" class="form-control mb-2"><option value="">All partners</option>{% for p in partners %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select>
-        <select id="center_id" class="form-control mb-2"><option value="">All centers</option>{% for c in centers %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select>
-        <select id="programme_id" class="form-control mb-2"><option value="">All programmes</option>{% for p in programmes %}<option value="{{ p.0 }}">{{ p.1 }}</option>{% endfor %}</select>
-        <button id="download-csv" class="btn btn-primary btn-block">Download current filtered data as CSV</button>
-      </div>
-    </div>
-  </aside>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Partner" %}</label>
+                        <select id="partner_id" class="form-select mb-2">
+                            <option value="">{% trans "All partners" %}</option>
+                            {% for p in partners %}
+                            <option value="{{ p.id }}">{{ p.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-  <section class="col-lg-9">
-    <div class="row" id="kpi-cards">
-      <div class="col-md-3"><div class="card card-body"><h6>Total</h6><p id="kpi-total">0</p></div></div>
-      <div class="col-md-3"><div class="card card-body"><h6>Partners</h6><p id="kpi-partners">0</p></div></div>
-      <div class="col-md-3"><div class="card card-body"><h6>Centers</h6><p id="kpi-centers">0</p></div></div>
-      <div class="col-md-3"><div class="card card-body"><h6>Programmes</h6><p id="kpi-programmes">0</p></div></div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Center" %}</label>
+                        <select id="center_id" class="form-select mb-2">
+                            <option value="">{% trans "All centers" %}</option>
+                            {% for c in centers %}
+                            <option value="{{ c.id }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Programme" %}</label>
+                        <select id="programme_id" class="form-select mb-2">
+                            <option value="">{% trans "All programmes" %}</option>
+                            {% for p in programmes %}
+                            <option value="{{ p.0 }}">{{ p.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4 pt-3 border-top">
+                        <button id="download-csv" class="btn btn-outline-primary btn-sm fw-bold">
+                            <i class="bi bi-download me-1"></i> {% trans "Export to CSV" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <section class="col-lg-9">
+            <div class="row g-3" id="kpi-cards">
+                <div class="col-md-3">
+                    <div class="card metric-card border-0 shadow-sm">
+                        <div class="metric-label">{% trans "Total" %}</div>
+                        <div class="metric-value" id="kpi-total">0</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card border-0 shadow-sm">
+                        <div class="metric-label">{% trans "Partners" %}</div>
+                        <div class="metric-value" id="kpi-partners">0</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card border-0 shadow-sm">
+                        <div class="metric-label">{% trans "Centers" %}</div>
+                        <div class="metric-value" id="kpi-centers">0</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card border-0 shadow-sm">
+                        <div class="metric-label">{% trans "Programmes" %}</div>
+                        <div class="metric-value" id="kpi-programmes">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4 mt-1">
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 fw-bold">{% trans "Registration Trend" %}</div>
+                        <div class="card-body chart" id="chart-trend"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 fw-bold">{% trans "Gender Distribution" %}</div>
+                        <div class="card-body chart" id="chart-gender"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 fw-bold">{% trans "Nationality Distribution" %}</div>
+                        <div class="card-body chart" id="chart-nationality"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 fw-bold">{% trans "Programme vs Age Group" %}</div>
+                        <div class="card-body chart" id="chart-crosstab"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-    <div class="row mt-3">
-      <div class="col-md-6"><div class="card"><div class="card-header">Registration Trend</div><div class="card-body chart" id="chart-trend"></div></div></div>
-      <div class="col-md-6"><div class="card"><div class="card-header">Gender Distribution</div><div class="card-body chart" id="chart-gender"></div></div></div>
-      <div class="col-md-6 mt-3"><div class="card"><div class="card-header">Nationality Distribution</div><div class="card-body chart" id="chart-nationality"></div></div></div>
-      <div class="col-md-6 mt-3"><div class="card"><div class="card-header">Programme vs Age Group</div><div class="card-body chart" id="chart-crosstab"></div></div></div>
-    </div>
-  </section>
 </div>
 
 <script>

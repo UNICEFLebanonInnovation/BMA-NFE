@@ -149,15 +149,15 @@ class CommonForm(forms.ModelForm):
 
     student_first_name = forms.CharField(
         label=_("First name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Mohamad')}), required=True
     )
     student_father_name = forms.CharField(
         label=_("Father name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Ahmad')}), required=True
     )
     student_last_name = forms.CharField(
         label=_("Last name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Sayed')}), required=True
     )
     student_sex = forms.ChoiceField(
         label=_("Gender"),
@@ -195,16 +195,17 @@ class CommonForm(forms.ModelForm):
     )
     student_mother_fullname = forms.CharField(
         label=_("Mother fullname"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Fatima Al Ali')}), required=True
     )
     student_address = forms.CharField(
         label=_("The area where the child resides"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Beirut, Street name')}), required=True
     )
     student_p_code = forms.CharField(
         label=_('P-Code If a child lives in a tent / Brax in a random camp'),
-        widget=forms.TextInput, required=False,
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. LB-01-001')}), required=False,
         max_length=50,
+        help_text=_('Tracking number for informal settlements.')
     )
 
     disability = forms.ModelChoiceField(
@@ -229,19 +230,19 @@ class CommonForm(forms.ModelForm):
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
     caretaker_first_name = forms.CharField(
         label=_("Caregiver First Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's first name")}), required=False
     )
     caretaker_middle_name = forms.CharField(
         label=_("Caregiver Middle Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's father's name")}), required=False
     )
     caretaker_last_name = forms.CharField(
         label=_("Caregiver Last Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's family name")}), required=False
     )
     caretaker_mother_name = forms.CharField(
         label=_("Caregiver Mother Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Full name of the caregiver's mother")}), required=False
     )
     caretaker_birthday_year = forms.ChoiceField(
         label=_("Caregiver birthday year"),
@@ -486,9 +487,10 @@ class BridgingForm(CommonForm):
 
     phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX (e.g. 70-123456)'}),
         required=True,
-        label=_('Main Phone number')
+        label=_('Main Phone number'),
+        help_text=_('Primary contact number.')
     )
     phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
@@ -528,7 +530,7 @@ class BridgingForm(CommonForm):
     )
     individual_case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX (e.g. LEB-12345678)'}),
         required=False,
         label=_(
             'Individual ID of the Child from the certificate')
@@ -544,7 +546,8 @@ class BridgingForm(CommonForm):
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
-        label=_('UNHCR Barcode number (Shifra number)')
+        label=_('UNHCR Barcode number (Shifra number)'),
+        help_text=_('Commonly known as Shifra number.')
     )
     recorded_number_confirm = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
@@ -2045,7 +2048,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
     dropout_reason = forms.CharField(
         label=_('Dropout reason'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _('Describe reason for dropout')}), required=False
     )
     dropout_date = forms.DateField(
         label=_("Dropout date"),
@@ -2090,7 +2093,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
     arabic_alphabet_knowledge = forms.FloatField(
         label=_('Arabic Alphabet Knowledge'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         min_value=0, required=False
     )
     arabic_familiar_words = forms.FloatField(
@@ -2135,12 +2138,12 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
     math = forms.FloatField(
         label=_('Math'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         min_value=0, required=False
     )
     exam3 = forms.FloatField(
         label=_('Exam 3'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         min_value=0, required=False
     )
     follow_up_type = forms.ChoiceField(
@@ -2616,7 +2619,7 @@ class BridgingMidAssessmentForm(forms.ModelForm):
     )
     exam2 = forms.FloatField(
         label=_('Exam 2'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         min_value=0, required=False
     )
     registration_level = forms.ChoiceField(

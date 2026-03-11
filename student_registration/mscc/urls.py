@@ -64,11 +64,6 @@ urlpatterns = [
         name='dashboard'
     ),
     re_path(
-        r'^dashboard-youth/$',
-        view=views.DashboardYouthView.as_view(),
-        name='dashboard_youth'
-    ),
-    re_path(
         r'^dashboard-data/$',
         view=views.DashboardDataView.as_view(),
         name='dashboard_data'
@@ -104,12 +99,12 @@ urlpatterns = [
         name='service_diagnostic_assessment_edit'
     ),
     re_path(
-        r'^services/education-add/(?P<registry>[\w.@+-]+)/(?P<package_type>[^/]+)/$',
+        r'^services/education-add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_add'
     ),
     re_path(
-        r'^services/education-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/(?P<package_type>[\w\s.@+-]+)/$',
+        r'^services/education-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_edit'
     ),

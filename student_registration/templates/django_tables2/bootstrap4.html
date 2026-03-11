@@ -4,7 +4,7 @@
 {% load util_tags %}
 {% block table-wrapper %}
     {% block table %}
-        <table class="mb-0 table table-striped table-hover">
+        <div class="table-responsive shadow-sm border rounded-3 overflow-hidden"><table class="mb-0 table table-striped table-hover">
             {% block table.thead %}
             {% if table.show_header %}
                 <thead {{ table.attrs.thead.as_html }}>
@@ -55,7 +55,7 @@
             </tfoot>
             {% endif %}
             {% endblock table.tfoot %}
-        </table>
+        </table></div>
     {% endblock table %}
 
     {% block pagination %}

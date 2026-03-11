@@ -6,7 +6,6 @@
 {% load django_bootstrap5 %}
 
 {% load simple_tags %}
-{% bootstrap_css %}
 
 {% block project_title %}Education Assessment{% endblock %}
 
@@ -64,7 +63,7 @@
                                         </ul>
                                         <div class="form-wizard-content">
 
-                                           {% crispy form 'bootstrap4' %}
+                                           {% crispy form %}
                                         </div>
                                     </div>
                                     <div class="divider"></div>

@@ -71,77 +71,91 @@
 </style>
 {% endblock %}
 
-{% block content %}
-<section class="main-content-wrapper">
-    <section id="main-content">
-        <div class="title_left">
-            <h3>{% trans "Chart Builder" %}</h3>
+{% block project_title %}{% trans "Chart Builder" %}{% endblock %}
+{% block module_name %}{% trans "Chart Builder" %}{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid">
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0">{% trans "Configure Your Chart" %}</h5>
         </div>
-        <hr>
-        <div class="row">
-            <div class="col-md-12">
-                <form id="chart-form" class="mb-4">
-                    <div class="form-row align-items-end">
-                        <div class="form-group col-md-3">
-                            <label for="chart-type">{% trans "Chart Type" %}</label>
-                            <select id="chart-type" class="form-control">
-                                <option value="bar">{% trans "Bar" %}</option>
-                                <option value="line">{% trans "Line" %}</option>
-                                <option value="pie">{% trans "Pie" %}</option>
+        <div class="card-body">
+            <form id="chart-form">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="chart-type" class="form-label">{% trans "Chart Type" %}</label>
+                        <select id="chart-type" class="form-select">
+                            <option value="bar">{% trans "Bar" %}</option>
+                            <option value="line">{% trans "Line" %}</option>
+                            <option value="pie">{% trans "Pie" %}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="mscc-data-type" class="form-label">{% trans "MSCC Data Source" %}</label>
+                        <div class="input-group">
+                            <select id="mscc-data-type" class="form-select">
+                                <option value="nationality">{% trans "By Nationality" %}</option>
+                                <option value="gender">{% trans "By Gender" %}</option>
+                                <option value="partner">{% trans "By Partner" %}</option>
+                                <option value="round">{% trans "By Round" %}</option>
+                                <option value="center">{% trans "By Center" %}</option>
+                                <option value="governorate">{% trans "By Governorate" %}</option>
+                                <option value="caza">{% trans "By Caza" %}</option>
+                                <option value="district">{% trans "By District" %}</option>
+                                <option value="programme_type">{% trans "By Programme Type" %}</option>
                             </select>
-                        </div>
-                        <div class="form-group col-md-5">
-                            <label for="mscc-data-type">{% trans "MSCC Data Source" %}</label>
-                            <div class="d-flex">
-                                <select id="mscc-data-type" class="form-control mr-2">
-                                    <option value="nationality">{% trans "By Nationality" %}</option>
-                                    <option value="gender">{% trans "By Gender" %}</option>
-                                    <option value="package_type">{% trans "By Package Type" %}</option>
-                                    <option value="partner">{% trans "By Partner" %}</option>
-                                    <option value="round">{% trans "By Round" %}</option>
-                                    <option value="center">{% trans "By Center" %}</option>
-                                    <option value="governorate">{% trans "By Governorate" %}</option>
-                                    <option value="caza">{% trans "By Caza" %}</option>
-                                    <option value="district">{% trans "By District" %}</option>
-                                    <option value="programme_type">{% trans "By Programme Type" %}</option>
-                                </select>
-                                <button type="button" id="load-mscc-data" class="btn btn-secondary">{% trans "Load MSCC Data" %}</button>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="filter-round">{% trans "Filter by Round" %}</label>
-                            <select id="filter-round" class="form-control">
-                                <option value="">{% trans "All Rounds" %}</option>
-                                {% for round in rounds %}
-                                <option value="{{ round.name }}">{{ round.name }}</option>
-                                {% endfor %}
-                            </select>
+                            <button type="button" id="load-mscc-data" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise me-1"></i> {% trans "Load Data" %}
+                            </button>
                         </div>
                     </div>
-                    <div class="form-group mt-3">
-                        <label for="chart-data">{% trans "Data (JSON)" %}</label>
-                        <textarea id="chart-data" class="form-control" rows="5">[
+                    <div class="col-md-4">
+                        <label for="filter-round" class="form-label">{% trans "Filter by Round" %}</label>
+                        <select id="filter-round" class="form-select">
+                            <option value="">{% trans "All Rounds" %}</option>
+                            {% for round in rounds %}
+                            <option value="{{ round.name }}">{{ round.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label for="chart-data" class="form-label">{% trans "Data (JSON)" %}</label>
+                    <textarea id="chart-data" class="form-control" rows="5" style="font-family: monospace;">[
 {"label": "A", "value": 30},
 {"label": "B", "value": 80},
 {"label": "C", "value": 45}
 ]</textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">{% trans "Render" %}</button>
-                </form>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mb-3">
-                    <button id="add-chart" type="button" class="btn btn-primary mr-2">{% trans "Add Chart" %}</button>
-                    <button id="save-dashboard" type="button" class="btn btn-secondary">{% trans "Save Dashboard" %}</button>
                 </div>
-                <div id="loading-indicator">{% trans "Loading..." %}</div>
-                <div id="charts-container"></div>
-            </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary px-4 fw-bold">
+                        <i class="bi bi-play-fill me-1"></i> {% trans "Render Chart" %}
+                    </button>
+                </div>
+            </form>
         </div>
-    </section>
-</section>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">{% trans "Dashboard Preview" %}</h5>
+        <div class="d-flex gap-2">
+            <button id="add-chart" type="button" class="btn btn-outline-primary btn-sm fw-bold">
+                <i class="bi bi-plus-lg me-1"></i> {% trans "Add to Dashboard" %}
+            </button>
+            <button id="save-dashboard" type="button" class="btn btn-success btn-sm fw-bold">
+                <i class="bi bi-save me-1"></i> {% trans "Save Changes" %}
+            </button>
+        </div>
+    </div>
+
+    <div id="loading-indicator" class="text-center py-5 d-none">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">{% trans "Updating visualization..." %}</p>
+    </div>
+
+    <div id="charts-container" class="row g-4"></div>
+</div>
 {% endblock %}
 
 {% block extra_js %}

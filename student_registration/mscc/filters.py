@@ -20,11 +20,11 @@ from .models import (
     Registration,
     EducationService,
     Round,
-    PACKAGE_TYPES,
     Teacher,
 )
 from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
+from student_registration.contrib.filters import RedesignFilterSet
 
 DELETED_CHOICES = [
     ('', 'All'),
@@ -33,34 +33,24 @@ DELETED_CHOICES = [
 ]
 
 class PlaceholderFilterSet(FilterSet):
-    """Base FilterSet that hides labels and uses placeholders."""
+    """Deprecated: Base FilterSet that hides labels and uses placeholders."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.form.helper = FormHelper(self.form)
         self.form.helper.form_method = "get"     # django-filter expects GET
-        self.form.helper.form_class = "form-inline"
+        self.form.helper.form_class = "row g-3"
         self.form.helper.form_tag = True
-        # self.form.helper.add_input(Submit("submit", "Filter"))
-        # self.form.helper.add_input(Rest("Rest", "Cancel"))
-        all_fields = list(self.form.fields)  # -> ['type', 'partner', 'round', ...]
-        self.form.helper.layout = Layout(
-            *all_fields,
-            ButtonHolder(Submit("submit", "Filter", css_class="btn btn-primary"),
-                         HTML('<a href="" title="Async Download" class="btn btn-success download-report-async">Export</a>')
-            )
-        )
+
         for name, field in self.form.fields.items():
-            label = field.label or name.replace('_', ' ').title()
-            field.label = ''
             if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
+                label = field.label or name.replace('_', ' ').title()
                 field.widget.attrs.setdefault('placeholder', label)
 
 
-class MainFilter(PlaceholderFilterSet):
+class MainFilter(RedesignFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
-    type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     child__first_name = CharFilter(lookup_expr='icontains' )
     child__father_name = CharFilter(lookup_expr='icontains')
     child__last_name = CharFilter(lookup_expr='icontains')
@@ -120,10 +110,9 @@ class MainFilter(PlaceholderFilterSet):
         self.filters['round'].extra['choices'] = [self.NO_ROUND_OPTION] + round_choices
 
 
-class FullFilter(PlaceholderFilterSet):
+class FullFilter(RedesignFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
-    type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
 
@@ -163,7 +152,7 @@ class FullFilter(PlaceholderFilterSet):
         ]
 
 
-class TeacherFilter(PlaceholderFilterSet):
+class TeacherFilter(RedesignFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
     round = ModelChoiceFilter(queryset=Round.objects.filter(current_year=True).all(), empty_label=_('Round'))

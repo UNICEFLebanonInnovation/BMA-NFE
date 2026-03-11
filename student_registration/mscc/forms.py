@@ -35,7 +35,6 @@ from .models import (
 from student_registration.schools.models import (
     School
 )
-from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
 from student_registration.mscc.templatetags.simple_tags import get_service, get_education_service
 import datetime
@@ -57,19 +56,19 @@ class MainForm(forms.ModelForm):
     # )
     child_first_name = forms.CharField(
         label=_("Child\'s First Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Ahmad')}), required=True
     )
     child_father_name = forms.CharField(
         label=_("Child\'s Father Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Mohamad')}), required=True
     )
     child_last_name = forms.CharField(
         label=_("Child\'s Family Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Sayed')}), required=True
     )
     child_mother_fullname = forms.CharField(
         label=_("Mother Full Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Fatima Al Ali')}), required=True
     )
     child_gender = forms.ChoiceField(
         label=_("Child\'s Gender"),
@@ -83,7 +82,7 @@ class MainForm(forms.ModelForm):
     )
     child_nationality_other = forms.CharField(
         label=_('If Other, Please specify'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _('Specify other nationality')}), required=False
     )
     child_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -111,12 +110,13 @@ class MainForm(forms.ModelForm):
     )
     child_p_code = forms.CharField(
         label=_('Insert Pcode if the child lives in Internal Settlement/Camp'),
-        widget=forms.TextInput, required=False,
-        max_length=50
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. LB-01-001')}), required=False,
+        max_length=50,
+        help_text=_('Commonly used for mapping and settlement tracking.')
     )
     child_address = forms.CharField(
         label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Beirut, Hamra Street, Al Amal Bldg, Floor 2')}), required=False
     )
     child_living_arrangement = forms.ChoiceField(
         label=_("Living Arrangement"),
@@ -140,10 +140,11 @@ class MainForm(forms.ModelForm):
     )
     child_children_number = forms.IntegerField(
         label=_('If yes, How many?'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=False,
         initial=0,
-        min_value=0
+        min_value=0,
+        help_text=_('Enter 0 if the child has no children.')
     )
     child_have_sibling = forms.ChoiceField(
         label=_("Does the child have siblings?"),
@@ -177,7 +178,7 @@ class MainForm(forms.ModelForm):
     )
     source_of_identification_specify = forms.CharField(
         label=_('If Other, Please specify'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Community outreach team')}), required=False
     )
     cash_support_programmes = forms.MultipleChoiceField(
         label=_('Cash support programmes that the child is already benefiting from'),
@@ -213,7 +214,8 @@ class MainForm(forms.ModelForm):
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
         required=False,
-        label=_('Primary phone number')
+        label=_('Primary phone number'),
+        help_text=_('Enter a valid mobile number for the primary contact.')
     )
     first_phone_number_confirm = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
@@ -258,19 +260,19 @@ class MainForm(forms.ModelForm):
     )
     caregiver_first_name = forms.CharField(
         label=_("Caregiver First Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's first name")}), required=False
     )
     caregiver_middle_name = forms.CharField(
         label=_("Caregiver Middle Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's father's name")}), required=False
     )
     caregiver_last_name = forms.CharField(
         label=_("Caregiver Last Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's family name")}), required=False
     )
     caregiver_mother_name = forms.CharField(
         label=_("Caregiver Mother Full Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Full name of the caregiver's mother")}), required=False
     )
     have_labour = forms.ChoiceField(
         label=_('Does the child participate in work?'),
@@ -457,17 +459,14 @@ class MainForm(forms.ModelForm):
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
     student_old = forms.IntegerField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
-    type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(MainForm, self).__init__(*args, **kwargs)
 
-        display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('mscc:child_add')
         if instance:
-            display_registry = ' d-none'
             form_action = reverse('mscc:child_edit', kwargs={'pk': instance.id})
 
         self.helper = FormHelper()
@@ -517,68 +516,63 @@ class MainForm(forms.ModelForm):
         if source_of_identification == 'Other Sources' and not source_of_identification_specify:
             self.add_error('source_of_identification_specify', 'This field is required')
 
-        package_type = cleaned_data.get("type")
-        if package_type == 'Core-Package':
+        father_educational_level = cleaned_data.get("father_educational_level")
+        mother_educational_level = cleaned_data.get("mother_educational_level")
+        if not father_educational_level:
+            self.add_error('father_educational_level', 'This field is required')
+        if not mother_educational_level:
+            self.add_error('mother_educational_level', 'This field is required')
 
-            father_educational_level = cleaned_data.get("father_educational_level")
-            mother_educational_level = cleaned_data.get("mother_educational_level")
-            if not father_educational_level:
-                self.add_error('father_educational_level', 'This field is required')
-            if not mother_educational_level:
-                self.add_error('mother_educational_level', 'This field is required')
+        first_phone_owner = cleaned_data.get("first_phone_owner")
+        first_phone_number = cleaned_data.get("first_phone_number")
+        first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
+        second_phone_number = cleaned_data.get("second_phone_number")
+        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
+        if not first_phone_owner:
+            self.add_error('first_phone_owner', 'This field is required')
+        if not first_phone_number:
+            self.add_error('first_phone_number', 'This field is required')
+        if not first_phone_number_confirm:
+            self.add_error('first_phone_number_confirm', 'This field is required')
+        elif first_phone_number != first_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('first_phone_number_confirm', msg)
+        if second_phone_number != second_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('second_phone_number_confirm', msg)
 
-            first_phone_owner = cleaned_data.get("first_phone_owner")
-            first_phone_number = cleaned_data.get("first_phone_number")
-            first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
-            second_phone_number = cleaned_data.get("second_phone_number")
-            second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
-            if not first_phone_owner:
-                self.add_error('first_phone_owner', 'This field is required')
-            if not first_phone_number:
-                self.add_error('first_phone_number', 'This field is required')
-            if not first_phone_number_confirm:
-                self.add_error('first_phone_number_confirm', 'This field is required')
-            elif first_phone_number != first_phone_number_confirm:
-                msg = "The phone numbers are not matched"
-                self.add_error('first_phone_number_confirm', msg)
-            if second_phone_number != second_phone_number_confirm:
-                msg = "The phone numbers are not matched"
-                self.add_error('second_phone_number_confirm', msg)
+        main_caregiver = cleaned_data.get("main_caregiver")
+        main_caregiver_other = cleaned_data.get("main_caregiver_other")
 
-            main_caregiver = cleaned_data.get("main_caregiver")
-            main_caregiver_other = cleaned_data.get("main_caregiver_other")
-
-            if not main_caregiver:
-                self.add_error('main_caregiver', 'This field is required')
-            if main_caregiver == 'Other' and not main_caregiver_other:
-                self.add_error('main_caregiver_other', 'This field is required')
+        if not main_caregiver:
+            self.add_error('main_caregiver', 'This field is required')
+        if main_caregiver == 'Other' and not main_caregiver_other:
+            self.add_error('main_caregiver_other', 'This field is required')
 
 
-            children_number_under18 = cleaned_data.get("children_number_under18")
-            if not children_number_under18:
-                self.add_error('children_number_under18', 'This field is required')
+        children_number_under18 = cleaned_data.get("children_number_under18")
+        if not children_number_under18:
+            self.add_error('children_number_under18', 'This field is required')
 
-
-
-            have_labour = cleaned_data.get("have_labour")
-            labour_type = cleaned_data.get("labour_type")
-            labour_type_specify = cleaned_data.get("labour_type_specify")
-            labour_hours = cleaned_data.get("labour_hours")
-            labour_weekly_income = cleaned_data.get("labour_weekly_income")
-            labour_condition = cleaned_data.get("labour_condition")
-            if not have_labour:
-                self.add_error('have_labour', 'This field is required')
-            if have_labour != 'No':
-                if not labour_type:
-                    self.add_error('labour_type', 'This field is required')
-                elif labour_type == 'Other services' and not labour_type_specify:
-                    self.add_error('labour_type_specify', 'This field is required')
-                if not labour_hours:
-                    self.add_error('labour_hours', 'This field is required')
-                if not labour_weekly_income:
-                    self.add_error('labour_weekly_income', 'This field is required')
-                if not labour_condition:
-                    self.add_error('labour_condition', 'This field is required')
+        have_labour = cleaned_data.get("have_labour")
+        labour_type = cleaned_data.get("labour_type")
+        labour_type_specify = cleaned_data.get("labour_type_specify")
+        labour_hours = cleaned_data.get("labour_hours")
+        labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        labour_condition = cleaned_data.get("labour_condition")
+        if not have_labour:
+            self.add_error('have_labour', 'This field is required')
+        if have_labour != 'No':
+            if not labour_type:
+                self.add_error('labour_type', 'This field is required')
+            elif labour_type == 'Other services' and not labour_type_specify:
+                self.add_error('labour_type_specify', 'This field is required')
+            if not labour_hours:
+                self.add_error('labour_hours', 'This field is required')
+            if not labour_weekly_income:
+                self.add_error('labour_weekly_income', 'This field is required')
+            if not labour_condition:
+                self.add_error('labour_condition', 'This field is required')
 
             id_type = cleaned_data.get("id_type")
             case_number = cleaned_data.get("case_number")
@@ -732,18 +726,10 @@ class MainForm(forms.ModelForm):
         if instance:
             serializer = MainSerializer(instance, data=request.POST)
             if serializer.is_valid():
-                old_dob_year = instance.child.birthday_year
-                old_dob_month = instance.child.birthday_month
-                old_dob_age = instance.child_age
 
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
-
                 instance.modified_by = request.user
                 instance.save()
-
-                if (old_dob_year != instance.child.birthday_year or
-                    old_dob_month != instance.child.birthday_month) and old_dob_age != instance.child_age:
-                    regenerate_services(instance.child.age, instance, request.user)
 
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
@@ -758,16 +744,15 @@ class MainForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
+                if not instance.partner and instance.center and instance.center.partner_id:
+                    instance.partner_id = instance.center.partner_id
                 instance.center = request.user.center
                 if request.POST.get("student_old"):
                     instance.student_old = request.POST.get("student_old")
                 instance.save()
+
                 request.session['instance_id'] = instance.id
-                generate_services(instance.child.age, instance, request.user)
-                generate_education_history(instance.id, instance.child_id, instance.student_old)
-
                 messages.success(request, _('Your data has been sent successfully to the server'))
-
             else:
                 messages.warning(request, serializer.errors)
 
@@ -866,7 +851,6 @@ class MainForm(forms.ModelForm):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
-            'type'
         )
 
 
@@ -948,83 +932,80 @@ class ReferralForm(forms.ModelForm):
         if is_cbece == 'Yes':
             self.helper.layout = Layout(
                 Div(
-                    Div(
-                        Div('is_cbece', css_class='col-md-6'),
-                        css_class='row card-body d-none'
+                    Div('is_cbece', css_class='d-none'),
+                    Fieldset(
+                        _('Formal Education Referral'),
+                        Div(
+                            Div('referred_formal_education', css_class='col-md-6'),
+                            Div('referred_school', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('referred_formal_education', css_class='col-md-5'),
-                        Div('referred_school', css_class='col-md-6'),
-                        css_class='row card-body'
+                    Fieldset(
+                        _('Resources & Services'),
+                        Div(
+                            Div('receive_needed_material', css_class='col-md-12'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('referred_service', css_class='col-md-6'),
+                            Div('referred_service_other', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('receive_needed_material', css_class='col-md-11'),
-                        css_class='row card-body'
+                    Fieldset(
+                        _('Recommended Path'),
+                        Div(
+                            Div('recommended_learning_path', css_class='col-md-6'),
+                            Div('dropout_date', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('referred_service', css_class='col-md-5'),
-                        Div('referred_service_other', css_class='col-md-6'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('recommended_learning_path', css_class='col-md-5'),
-                        Div('dropout_date', css_class='col-md-6'),
-                        css_class='row card-body'
-                    ),
-
                     css_id='step-1'
                 ),
                 FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    Submit('save', _('Save Referral'),
+                           css_class='btn btn-primary px-5 fw-bold shadow-sm'),
+                    Reset('reset', _('Reset'),
+                          css_class='btn btn-outline-secondary ms-2'),
+                    css_class='d-flex justify-content-end border-top pt-4 mt-4'
                 ),
         )
         if is_cbece == 'No':
             self.helper.layout = Layout(
                 Div(
-                    Div(
-                        Div('is_cbece', css_class='col-md-6'),
-                        css_class='row card-body d-none'
+                    Div('is_cbece', css_class='d-none'),
+                    Fieldset(
+                        _('Referral Services'),
+                        Div(
+                            Div('receive_needed_material', css_class='col-md-12'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('referred_service', css_class='col-md-6'),
+                            Div('referred_service_other', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('referred_formal_education', css_class='col-md-5'),
-                        Div('referred_school', css_class='col-md-6'),
-                        css_class='row card-body d-none'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('receive_needed_material', css_class='col-md-11'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('referred_service', css_class='col-md-5'),
-                        Div('referred_service_other', css_class='col-md-6'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('recommended_learning_path', css_class='col-md-11'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        Div('dropout_date', css_class='col-md-5'),
-                        css_class='row card-body'
+                    Fieldset(
+                        _('Recommended Outcome'),
+                        Div(
+                            Div('recommended_learning_path', css_class='col-md-12'),
+                            css_class='row mb-3'
+                        ),
+                        Div(
+                            Div('dropout_date', css_class='col-md-6'),
+                            css_class='row mb-3'
+                        ),
                     ),
                     css_id='step-1'
                 ),
                 FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    Submit('save', _('Save Referral'),
+                           css_class='btn btn-primary px-5 fw-bold shadow-sm'),
+                    Reset('reset', _('Reset'),
+                          css_class='btn btn-outline-secondary ms-2'),
+                    css_class='d-flex justify-content-end border-top pt-4 mt-4'
                 ),
         )
 
@@ -1110,10 +1091,26 @@ class TeacherForm(forms.ModelForm):
         required=True,
         to_field_name='id',
     )
-    first_name = forms.CharField(label=_('First name'), widget=forms.TextInput, required=True)
-    father_name = forms.CharField(label=_('Father name'), widget=forms.TextInput, required=True)
-    last_name = forms.CharField(label=_('Last name'), widget=forms.TextInput, required=True)
-    mother_fullname = forms.CharField(label=_('Mother full name'), widget=forms.TextInput, required=False)
+    first_name = forms.CharField(
+        label=_('First name'),
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Mohamad')}),
+        required=True
+    )
+    father_name = forms.CharField(
+        label=_('Father name'),
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Ahmad')}),
+        required=True
+    )
+    last_name = forms.CharField(
+        label=_('Last name'),
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Sayed')}),
+        required=True
+    )
+    mother_fullname = forms.CharField(
+        label=_('Mother full name'),
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Fatima Al Ali')}),
+        required=False
+    )
     sex = forms.ChoiceField(
         label=_('Gender'),
         widget=forms.Select,
@@ -1147,9 +1144,11 @@ class TeacherForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
         label=_('Main Phone number'),
+        help_text=_('Format: XX-XXXXXX (e.g. 70-123456)')
     )
     email = forms.RegexField(
         regex=r'^\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b',
+        widget=forms.TextInput(attrs={'placeholder': _('teacher@example.com')}),
         required=False,
         label=_('Email'),
     )
@@ -1286,78 +1285,80 @@ class TeacherForm(forms.ModelForm):
         self.helper.form_action = form_action
 
         self.helper.layout = Layout(
-            Div(
-                Div(HTML('<span class="badge-form badge-pill">1</span>'), Div('center', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">2</span>'), Div('round', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">3</span>'), Div('birthdate', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">4</span>'), Div('first_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">5</span>'), Div('father_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">6</span>'), Div('last_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">7</span>'), Div('mother_fullname', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">8</span>'), Div('sex', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">9</span>'), Div('nationality', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">10</span>'), Div('id_type', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">11</span>'), Div('id_number', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">12</span>'),
-                    Div('primary_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">13</span>'),
-                    Div('email', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">14</span>'),
-                    Div('subjects_provided', css_class='col-md-3 multiple-choice'),
-                    HTML('<span class="badge-form badge-pill">15</span>'),
-                    Div('registration_level', css_class='col-md-3 multiple-choice'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('teacher_assignment', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_teaching_hours_private_school">17</span>'),
-                    Div('teaching_hours_private_school', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_teaching_hours_mscc">18</span>'),
-                    Div('teaching_hours_mscc', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                    Div('trainings', css_class='col-md-3 multiple-choice'),
-                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
-                    Div('training_sessions_attended', css_class='col-md-3'),
-                    css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">21</span>'),
-                    Div('extra_coaching', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_extra_coaching_specify">22</span>'),
-                    Div('extra_coaching_specify', css_class='col-md-3'),
-                    css_class='row card-body'),
-                css_id='step-1',
-            ),
-            Div(
-                Div(HTML('<span class="badge-form badge-pill">1</span>'), Div('attach_file_1', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">2</span>'), Div('attach_type_1', css_class='col-md-2'),
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('attach_short_description_1', css_class='col-md-4'), css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">4</span>'), Div('attach_file_2', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">5</span>'), Div('attach_type_2', css_class='col-md-2'),
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('attach_short_description_2', css_class='col-md-4'), css_class='row card-body'),
-                Div(HTML('<span class="badge-form badge-pill">7</span>'), Div('attach_file_3', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">8</span>'), Div('attach_type_3', css_class='col-md-2'),
-                    HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('attach_short_description_3', css_class='col-md-4'), css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">10</span>'), Div('attach_file_4', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'), Div('attach_type_4', css_class='col-md-2'),
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('attach_short_description_4', css_class='col-md-4'), css_class='row card-body'),
-                Div(HTML('<span class="badge-form-2 badge-pill">13</span>'), Div('attach_file_5', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'), Div('attach_type_5', css_class='col-md-2'),
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('attach_short_description_5', css_class='col-md-4'), css_class='row card-body'),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+            Fieldset(
+                _('Identity & Contact'),
+                Div(
+                    Div('first_name', css_class='col-md-4'),
+                    Div('father_name', css_class='col-md-4'),
+                    Div('last_name', css_class='col-md-4'),
+                    css_class='row mb-3'
                 ),
-                css_id='step-2',
+                Div(
+                    Div('mother_fullname', css_class='col-md-4'),
+                    Div('sex', css_class='col-md-4'),
+                    Div('birthdate', css_class='col-md-4'),
+                    css_class='row mb-3'
+                ),
+                Div(
+                    Div('nationality', css_class='col-md-4'),
+                    Div('id_type', css_class='col-md-4'),
+                    Div('id_number', css_class='col-md-4'),
+                    css_class='row mb-3'
+                ),
+                Div(
+                    Div('primary_phone_number', css_class='col-md-6'),
+                    Div('email', css_class='col-md-6'),
+                    css_class='row mb-3'
+                ),
+            ),
+            Fieldset(
+                _('Assignment & Qualifications'),
+                Div(
+                    Div('center', css_class='col-md-6'),
+                    Div('round', css_class='col-md-6'),
+                    css_class='row mb-3'
+                ),
+                Div(
+                    Div('teacher_assignment', css_class='col-md-4'),
+                    Div('teaching_hours_private_school', css_class='col-md-4'),
+                    Div('teaching_hours_mscc', css_class='col-md-4'),
+                    css_class='row mb-3'
+                ),
+                Div(
+                    Div('subjects_provided', css_class='col-md-6 bg-light p-3 rounded-3'),
+                    Div('registration_level', css_class='col-md-6 bg-light p-3 rounded-3'),
+                    css_class='row mb-3 mx-0'
+                ),
+                Div(
+                    Div('trainings', css_class='col-md-4'),
+                    Div('training_sessions_attended', css_class='col-md-4'),
+                    css_class='row mb-3'
+                ),
+                Div(
+                    Div('extra_coaching', css_class='col-md-4'),
+                    Div('extra_coaching_specify', css_class='col-md-4'),
+                    css_class='row mb-3'
+                ),
+            ),
+            Fieldset(
+                _('Required Documents'),
+                Div(
+                    Div('attach_file_1', css_class='col-md-6'),
+                    Div('attach_type_1', css_class='col-md-3'),
+                    Div('attach_short_description_1', css_class='col-md-3'),
+                    css_class='row mb-2 align-items-end'
+                ),
+                Div(
+                    Div('attach_file_2', css_class='col-md-6'),
+                    Div('attach_type_2', css_class='col-md-3'),
+                    Div('attach_short_description_2', css_class='col-md-3'),
+                    css_class='row mb-2 align-items-end'
+                ),
+            ),
+            FormActions(
+                Submit('save', _('Complete Registration'), css_class='btn btn-primary px-5 fw-bold shadow-sm'),
+                Reset('reset', _('Clear Form'), css_class='btn btn-outline-secondary ms-2'),
+                css_class='d-flex justify-content-end border-top pt-4 mt-4'
             ),
         )
 
@@ -1399,7 +1400,6 @@ class TeacherForm(forms.ModelForm):
             instance.save()
         else:
             messages.warning(request, serializer.errors)
-
         if instance:
             request.session['instance_id'] = instance.id
 

@@ -285,10 +285,15 @@ class Center(TimeStampedModel):
         return self.admin_staff_number if self.admin_staff_number is not None else 0
 
     @property
+    def total_teachers(self):
+        from student_registration.mscc.models import Teacher
+        return Teacher.objects.filter(center=self.id).count()
+
+    @property
     def total_staff(self):
         admin_staff = self.total_admin_staff
-        program_staff = self.total_program_staff
-        return admin_staff + program_staff
+        teachers = self.total_teachers
+        return admin_staff + teachers
 
     def __str__(self):
         return self.name

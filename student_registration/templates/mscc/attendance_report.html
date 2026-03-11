@@ -2,197 +2,170 @@
 {% load util_tags %}
 {% load custom_tags %}
 {% load static i18n %}
-{% load static i18n %}
-{% load django_bootstrap5 %}
 
-{% bootstrap_css %}
-
-{% block module_name %}NFR Sector - Attendance{% endblock %}
-{% block project_title %}Attendance Export{% endblock %}
+{% block module_name %}{% trans "Attendance Reports" %}{% endblock %}
+{% block project_title %}{% trans "Attendance Export" %}{% endblock %}
 
 {% block content %}
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-child"></i>
-                                        </span>
-                                        <span class="d-inline-block">
-                                          Daily Attendance
-                                        </span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">Home</a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.governorate }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.caza }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.name }} - {{ request.user.center.type }}
-                                                </li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="page-title-actions"></div>
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="fw-bold mb-1">{% trans "Attendance Export & Insights" %}</h3>
+            <p class="text-muted">{% trans "Generate and download attendance reports for your center or partner organization." %}</p>
+        </div>
+    </div>
 
+    <div class="row g-4">
+        <!-- Filters Card -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-funnel me-2 text-primary"></i> {% trans "Report Filters" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label for="month" class="form-label small fw-bold text-muted">{% trans "Month" %}</label>
+                            <select id="month" class="form-select">
+                                <option value="">{% trans "Select Month" %}</option>
+                                <option value="01">{% trans "January" %}</option>
+                                <option value="02">{% trans "February" %}</option>
+                                <option value="03">{% trans "March" %}</option>
+                                <option value="04">{% trans "April" %}</option>
+                                <option value="05">{% trans "May" %}</option>
+                                <option value="06">{% trans "June" %}</option>
+                                <option value="07">{% trans "July" %}</option>
+                                <option value="08">{% trans "August" %}</option>
+                                <option value="09">{% trans "September" %}</option>
+                                <option value="10">{% trans "October" %}</option>
+                                <option value="11">{% trans "November" %}</option>
+                                <option value="12">{% trans "December" %}</option>
+                            </select>
                         </div>
-</div>
-<section class="container-fluid" data-section="home">
-    <div class="row flex-row">
-        <!-- Filters Section -->
-        <div id="filters-section" class="col-md-6 flex-column ui-block-color01 light nopadding">
-            <div class="row flex-panel nopadding">
-                <!-- Filter Panel Left -->
-                <div class="col-md-6 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-green">
-                    <div class="flex-panel padding-44">
-                        <div class="p-icon green"></div>
-                        <span class="uppercase">Filters</span>
-
-                        <div class="form-group">
-                            <label for="month">Select Month</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                                </div>
-                                <select id="month" class="form-control">
-                                    <option value="">Select Month</option>
-                                    <option value="01">January</option>
-                                    <option value="02">February</option>
-                                    <option value="03">March</option>
-                                    <option value="04">April</option>
-                                    <option value="05">May</option>
-                                    <option value="06">June</option>
-                                    <option value="07">July</option>
-                                    <option value="08">August</option>
-                                    <option value="09">September</option>
-                                    <option value="10">October</option>
-                                    <option value="11">November</option>
-                                    <option value="12">December</option>
-                                </select>
-                            </div>
+                        <div class="col-6">
+                            <label for="year" class="form-label small fw-bold text-muted">{% trans "Year" %}</label>
+                            <select id="year" class="form-select">
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025" selected>2025</option>
+                                <option value="2026">2026</option>
+                            </select>
                         </div>
-
-                        <div class="form-group">
-                            <label for="year">Select Year</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                                </div>
-                                <select id="year" class="form-control">
-                                    <option value="">Select Year</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2025">2025</option>
-                                    <option value="2026">2026</option>
-<!--                                    <option value="2027">2027</option>-->
-<!--                                    <option value="2028">2028</option>-->
-<!--                                    <option value="2029">2029</option>-->
-<!--                                    <option value="2030">2030</option>-->
-                                </select>
-                            </div>
+                        <div class="col-12">
+                            <label for="partner" class="form-label small fw-bold text-muted">{% trans "Partner" %}</label>
+                            <select id="partner" class="form-select">
+                                <option value="">{% trans "All Partners" %}</option>
+                                {% for item in partner %}
+                                  {% if item != '' %}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                  {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label for="partner">Select Partner</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
-                                </div>
-
-                                <select id="partner" class="form-control">
-                                    <option value="">Select Partner</option>
-                                    {% for item in partner %}
-                                      {% if item != '' %}
-                                        <option value="{{ item.id }}" {% if partner == item.id %}selected{% endif %}>{{ item.name }}</option>
-                                      {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
+                        <div class="col-12">
+                            <label for="center" class="form-label small fw-bold text-muted">{% trans "Center" %}</label>
+                            <select id="center" class="form-select">
+                                <option value="">{% trans "All Centers" %}</option>
+                                {% for item in center %}
+                                  {% if item != '' %}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                  {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label for="center">Select Center</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
-                                </div>
-
-                                <select id="center" class="form-control">
-                                    <option value="">Select Center</option>
-                                    {% for item in center %}
-                                      {% if item != '' %}
-                                        <option value="{{ item.id }}" {% if center == item.id %}selected{% endif %}>{{ item.name }}</option>
-                                      {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
+                        <div class="col-12">
+                            <label for="education_program" class="form-label small fw-bold text-muted">{% trans "Education Program" %}</label>
+                            <select id="education_program" class="form-select">
+                                <option value="">{% trans "All Programs" %}</option>
+                                {% for item in education_program %}
+                                  {% if item != '' %}
+                                    <option value="{{ item }}">{{ item }}</option>
+                                  {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
-
-                        <div class="form-group">
-                            <label for="education_program">Select Education Program</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
-                                </div>
-
-                                <select id="education_program" class="form-control">
-                                    <option value="">Select Education Program</option>
-                                    {% for item in education_program %}
-                                      {% if item != '' %}
-                                        <option value="{{ item }}" {% if education_program == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
-                                      {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="mscc-section">Select Section</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
-                                </div>
-                                <select id="mscc-section" class="form-control">
-                                    <option value="">Select Section</option>
-                                    {% for item in class_section %}
-                                      {% if item != '' %}
-                                        <option value="{{ item }}" {% if class_section == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
-                                      {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3 download-report"
-                                onclick="generateAndOpenURL(event)">
-                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i> Export Raw Attendance
-                        </button>
-                        <div class="downloading-message" style="display:none">
-                            Loading...
-                        </div>
-                        <button id="generate-total-url" class="btn btn-primary btn-block btn-icon mt-3 download-total-report"
-                                onclick="generateAndOpenTotalURL(event)">
-                          <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Total Attendance
-                        </button>
-                        <div class="downloading-total-message" style="display:none">
-                            Loading...
+                        <div class="col-12">
+                            <label for="mscc-section" class="form-label small fw-bold text-muted">{% trans "Section" %}</label>
+                            <select id="mscc-section" class="form-select">
+                                <option value="">{% trans "All Sections" %}</option>
+                                {% for item in class_section %}
+                                  {% if item != '' %}
+                                    <option value="{{ item }}">{{ item }}</option>
+                                  {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
+        <!-- Export Actions -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-download me-2 text-success"></i> {% trans "Export Options" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-4 border rounded-3 bg-light-subtle h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-shape bg-primary text-white rounded-circle me-3 p-2">
+                                        <i class="bi bi-file-earmark-spreadsheet fs-4"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-0">{% trans "Raw Attendance" %}</h6>
+                                </div>
+                                <p class="small text-muted mb-4">{% trans "Detailed day-by-day attendance logs for all selected beneficiaries." %}</p>
+                                <button id="generate-url" class="btn btn-primary w-20 fw-bold download-report" onclick="generateAndOpenURL(event)">
+                                    <i class="bi bi-cloud-arrow-down me-2"></i> {% trans "Export Raw Data" %}
+                                </button>
+                                <div class="downloading-message text-center mt-2 small text-primary" style="display:none">
+                                    <span class="spinner-border spinner-border-sm me-2"></span> {% trans "Generating file..." %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-4 border rounded-3 bg-light-subtle h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-shape bg-success text-white rounded-circle me-3 p-2">
+                                        <i class="bi bi-calculator fs-4"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-0">{% trans "Total Attendance" %}</h6>
+                                </div>
+                                <p class="small text-muted mb-4">{% trans "Aggregated attendance totals, percentages, and absence counts per beneficiary." %}</p>
+                                <button id="generate-total-url" class="btn btn-success w-20 fw-bold download-total-report" onclick="generateAndOpenTotalURL(event)">
+                                    <i class="bi bi-file-earmark-check me-2"></i> {% trans "Export Totals" %}
+                                </button>
+                                <div class="downloading-total-message text-center mt-2 small text-success" style="display:none">
+                                    <span class="spinner-border spinner-border-sm me-2"></span> {% trans "Generating file..." %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Link Card -->
+            <div class="card border-0 shadow-sm bg-primary text-white overflow-hidden">
+                <div class="card-body p-4 position-relative">
+                    <div class="row align-items-center position-relative" style="z-index: 2;">
+                        <div class="col-md-8">
+                            <h4 class="fw-bold mb-2">{% trans "Looking for visual analytics?" %}</h4>
+                            <p class="mb-4 opacity-75">{% trans "Access the interactive Power BI dashboard for real-time monitoring and visual trends." %}</p>
+                            <a href="{% url 'mscc:dashboard' %}" class="btn btn-light fw-bold px-4 py-2">
+                                <i class="bi bi-speedometer2 me-2"></i> {% trans "Open Analytics Dashboard" %}
+                            </a>
+                        </div>
+                        <div class="col-md-4 d-none d-md-block text-end">
+                            <i class="bi bi-graph-up-arrow display-1 opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</section>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -200,9 +173,14 @@
 function generateAndOpenURL(event) {
     event.preventDefault();
 
-    requestHeaders = getHeader();
     var month = document.getElementById('month').value;
     var year = document.getElementById('year').value;
+
+    if (!month || !year) {
+        alert('Please select both month and year.');
+        return;
+    }
+
     var education_program = document.getElementById('education_program').value || 'none';
     var class_section = document.getElementById('mscc-section').value || 'none';
     var partner = document.getElementById('partner').value || 'none';
@@ -211,76 +189,61 @@ function generateAndOpenURL(event) {
     $(".downloading-message").show();
     $('.download-report').addClass('disabled');
 
-    if (month && year) {
-        let url = `/attendances/mscc-attendance-export/${encodeURIComponent(month)}/${encodeURIComponent(year)}/${encodeURIComponent(education_program)}/${encodeURIComponent(class_section)}/${encodeURIComponent(partner)}/${encodeURIComponent(center)}/`;
+    let url = `/attendances/mscc-attendance-export/${encodeURIComponent(month)}/${encodeURIComponent(year)}/${encodeURIComponent(education_program)}/${encodeURIComponent(class_section)}/${encodeURIComponent(partner)}/${encodeURIComponent(center)}/`;
 
-        $.ajax({
-            url: url,
-            type: "GET",
-            headers: requestHeaders,
-            success: function (data) {
-                $(".downloading-message").hide();
-                $('.download-report').removeClass('disabled');
-
-                // Open the file in a new tab
-                window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
-            },
-            error: function (error) {
-                alert("Error downloading file. Please try again.");
-                $(".downloading-message").hide();
-                $('.download-report').removeClass('disabled');
-            }
-        });
-
-    } else {
-        alert('Please select both month and year.');
-        $(".downloading-message").hide();
-        $('.download-report').removeClass('disabled');
-    }
+    $.ajax({
+        url: url,
+        type: "GET",
+        headers: getHeader(),
+        success: function (data) {
+            $(".downloading-message").hide();
+            $('.download-report').removeClass('disabled');
+            window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
+        },
+        error: function (error) {
+            alert("Error downloading file. Please try again.");
+            $(".downloading-message").hide();
+            $('.download-report').removeClass('disabled');
+        }
+    });
 }
-
 
 function generateAndOpenTotalURL(event) {
     event.preventDefault();
 
-    requestHeaders = getHeader();
     var month = document.getElementById('month').value;
     var year = document.getElementById('year').value;
+
+    if (!month || !year) {
+        alert('Please select both month and year.');
+        return;
+    }
+
     var education_program = document.getElementById('education_program').value || 'none';
     var class_section = document.getElementById('mscc-section').value || 'none';
     var partner = document.getElementById('partner').value || 'none';
     var center = document.getElementById('center').value || 'none';
 
-
     $(".downloading-total-message").show();
     $('.download-total-report').addClass('disabled');
 
-    if (month && year) {
-        let url = `/attendances/mscc-total-attendance-export/${encodeURIComponent(month)}/${encodeURIComponent(year)}/${encodeURIComponent(education_program)}/${encodeURIComponent(class_section)}/${encodeURIComponent(partner)}/${encodeURIComponent(center)}/`;
+    let url = `/attendances/mscc-total-attendance-export/${encodeURIComponent(month)}/${encodeURIComponent(year)}/${encodeURIComponent(education_program)}/${encodeURIComponent(class_section)}/${encodeURIComponent(partner)}/${encodeURIComponent(center)}/`;
 
-        $.ajax({
-            url: url,
-            type: "GET",
-            headers: requestHeaders,
-            success: function (data) {
-                $(".downloading-total-message").hide();
-                $('.download-total-report').removeClass('disabled');
-
-                window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
-            },
-            error: function (error) {
-                alert("Error downloading file. Please try again.");
-                $(".downloading-total-message").hide();
-                $('.download-total-report').removeClass('disabled');
-            }
-        });
-
-    } else {
-        alert('Please select both month and year.');
-        $(".downloading-total-message").hide();
-        $('.download-total-report').removeClass('disabled');
-    }
+    $.ajax({
+        url: url,
+        type: "GET",
+        headers: getHeader(),
+        success: function (data) {
+            $(".downloading-total-message").hide();
+            $('.download-total-report').removeClass('disabled');
+            window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
+        },
+        error: function (error) {
+            alert("Error downloading file. Please try again.");
+            $(".downloading-total-message").hide();
+            $('.download-total-report').removeClass('disabled');
+        }
+    });
 }
-
 </script>
 {% endblock %}

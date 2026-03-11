@@ -4,24 +4,18 @@ var host = protocol+window.location.host;
 
 $(document).ready(function() {
 
-    $('.attendance_day_off label').click(function(e) {
-        setTimeout(
-          function()
-          {
-                console.log($('input[name=attendance_day_off]:checked').val());
-                var attendance_day_off = $('input[name=attendance_day_off]:checked').val();
+    $('.attendance_day_off input').on('change', function() {
+        var attendance_day_off = $(this).val();
 
-                if (attendance_day_off == 'Yes') {
-                    $('#close_reason').removeClass('hidden');
-                    $('#load_attendance_children').addClass('disabled');
-                    $('#save_attendance_children').removeClass('disabled');
-                    $('#attendance_children').empty("");
-                }else {
-                    $('#close_reason').addClass('hidden');
-                    $('#load_attendance_children').removeClass('disabled');
-                }
-          }, 500);
-
+        if (attendance_day_off == 'Yes') {
+            $('#close_reason').removeClass('hidden');
+            $('#load_attendance_children').addClass('disabled');
+            $('#save_attendance_children').removeClass('disabled');
+            $('#attendance_children').empty("");
+        } else {
+            $('#close_reason').addClass('hidden');
+            $('#load_attendance_children').removeClass('disabled');
+        }
     });
 
     $(document).on('click', '#save_attendance_children', function(e){
@@ -176,16 +170,11 @@ $(document).ready(function() {
         });
     });
 
-    $('#attendance_date ').click(function(e) {
-        setTimeout(
-          function()
-          {
-            $('#attendance_children').empty("");
-            $('#load_attendance_children').removeClass('disabled');
-            $('#save_attendance_children').addClass('disabled');
-            $('#load_attendance_children').removeClass('disabled');
-          }, 500);
-
+    $('#attendance_date').on('change', function(e) {
+        $('#attendance_children').empty("");
+        $('#children_count').text(0);
+        $('#save_attendance_children').addClass('disabled');
+        $('#load_attendance_children').removeClass('disabled');
     });
 
 

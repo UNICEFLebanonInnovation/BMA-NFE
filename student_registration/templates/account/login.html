@@ -12,39 +12,53 @@
 
 <style>
   .app-logo-home {
-    height: 250px;
-    width: 500px;
-}
+    max-width: 400px;
+    margin: 0 auto;
+  }
   .app-logo-home img {
-    width: 500px;
-}
+    width: 100%;
+    height: auto;
+  }
+  .login-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  }
 </style>
 
-<div class="mx-auto app-login-box col-md-8">
-                        <div class="app-logo-home mx-auto mb-3"><img src="{% static 'images/clm_plus_logo.png' %}"></div>
-                        <div class="modal-dialog mx-auto" style="width: 500px;">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                    <div class="h5 modal-title text-center">
-                                        <h4 class="mt-2">
-                                          <div>Welcome to BMA</div>
-                                            <span>Please sign-in with your account.</span>
-                                        </h4>
-                                    </div>
-                                </div>
-                                <div class="modal-footer text-center">
-<form class="login" method="POST" action="{% url 'account_login' %}" style="width: 100%;">
-  {% csrf_token %}
-  {{ form|crispy }}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <!--<a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>-->
-  <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
-</form>                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="col-md-10 col-lg-6 col-xl-5">
+    <div class="app-logo-home mb-5 text-center">
+        <img src="{% static 'images/clm_plus_logo.png' %}" alt="BMA Logo" style="max-height: 80px;">
+    </div>
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-primary">{% trans "Sign In" %}</h2>
+                <p class="text-muted small">{% trans "UNICEF Beneficiary Monitoring & Assessment" %}</p>
+            </div>
+
+            <form class="login redesign-form" method="POST" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form|crispy }}
+                </div>
+
+                {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+
+                <div class="d-grid mt-5">
+                    <button class="primaryAction btn btn-primary btn-lg fw-bold py-3 shadow-sm" type="submit">
+                        {% trans "Access System" %} <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="text-center mt-4 text-muted small">
+        &copy; 2024 UNICEF BMA Redesign
+    </div>
+</div>
 
 {% endblock %}
 

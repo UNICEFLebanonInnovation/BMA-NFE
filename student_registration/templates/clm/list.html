@@ -5,14 +5,13 @@
 {% load render_table from django_tables2 %}
 {% load django_bootstrap5 %}
 
-{% bootstrap_css %}
 
 {% block extra_head %}
     <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
 {% endblock %}
 
-{% block content-full-page %}
-<section>
+{% block content %}
+<section class="container-fluid">
 
     <section id="page-title" class="inline-form inner-section ui-menu-color02">
         <div class="container-fluid nopadding">
@@ -82,9 +81,9 @@
             {% bootstrap_button _('reset') button_type="link" button_class="btn-warning" href='/registrations/list/' %}
         </form>
     </div>
-    <div class="">
+    <div class="table-responsive">
         {% csrf_token %}
-        {% render_table table 'django_tables2/bootstrap.html' %}
+        {% render_table table 'django_tables2/bootstrap5.html' %}
     </div>
 </section>
 

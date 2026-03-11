@@ -14,7 +14,7 @@ from crispy_forms.bootstrap import (
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 
-from .utils import update_service, validate_date, TrimmedDateField
+from .utils import validate_date, TrimmedDateField
 from .models import (
     PSSService,
     InclusionService,
@@ -54,7 +54,8 @@ class PSSServiceForm(forms.ModelForm):
     child_out_school_reasons = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=PSSService.OUT_SCHOOL_REASONS,
-        label=_("Reasons for a child being out of school")
+        label=_("Reasons for a child being out of school"),
+        help_text=_("Select the primary reason if multiple exist.")
     )
     caregivers_distress = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -177,8 +178,6 @@ class PSSServiceForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
-        update_service(registry_id=registry, service_name='PSS', service_id=instance.id)
-
         return instance
 
     def clean(self):
@@ -272,8 +271,6 @@ class InclusionServiceForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
-        update_service(registry_id=registry, service_name='Inclusion', service_id=instance.id)
-
         return instance
 
     class Meta:
@@ -293,7 +290,7 @@ class DigitalServiceForm(forms.ModelForm):
     )
     akelius_sessions_number = forms.IntegerField(
         label=_('Number of sessions per week'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=False,
         min_value=0
     )
@@ -329,7 +326,7 @@ class DigitalServiceForm(forms.ModelForm):
     )
     lp_sessions_number = forms.IntegerField(
         label=_('Number of sessions per week'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=False,
         min_value=0
     )
@@ -492,8 +489,6 @@ class DigitalServiceForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
-        update_service(registry_id=registry, service_name='Digital component', service_id=instance.id)
-
         return instance
 
     def clean(self):
@@ -595,7 +590,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
     # Caregivers of children 0-5 years
     vaccine_missing = forms.CharField(
         required=False,
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Polio, MMR')}),
         label=_('Write the name of vaccine missing')
     )
     # Caregivers of children 0-5 years
@@ -631,7 +626,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
     # Caregivers of children 6-18 years
     respond_stressful_events = forms.CharField(
         required=False,
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('Short description of observation')}),
         label=_('How children of different ages respond to and understand stressful and traumatic events?')
     )
     # Caregivers of children 6-18 years
@@ -700,7 +695,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
     # Caregivers of children 0-5 years
     missing_vaccine = forms.CharField(
         required=False,
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. DTP, HepB')}),
         label=_('Please mention if any vaccine is missing')
     )
     # Caregivers of children 6-18 years
@@ -712,7 +707,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
     # Caregivers of children 6-18 years
     health_nutrition_session_title = forms.CharField(
         required=False,
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Healthy Eating Habits')}),
         label=_('Title of the session')
     )
     # Caregivers of children 0-5 years
@@ -1089,8 +1084,6 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
-        update_service(registry_id=registry, service_name='Health and Nutrition', service_id=instance.id)
-
         return instance
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -1347,8 +1340,6 @@ class HealthNutritionReferralForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
-        update_service(registry_id=registry, service_name='Health and Nutrition', service_id=instance.id)
-
         return instance
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -1413,7 +1404,7 @@ class YouthKitServiceForm(forms.ModelForm):
     )
     enrollment_reason = forms.CharField(
         required=False,
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Skill development, social integration')}),
         label=_('What is the reason for the adolescent enrollment in the programme?')
     )
     pre_tests_administered = forms.ChoiceField(
@@ -1474,7 +1465,7 @@ class YouthKitServiceForm(forms.ModelForm):
     )
     community_initiatives_specify = forms.CharField(
         required=False,
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Local park cleanup')}),
         label=_('What is the initiative?')
     )
     adolescent_attendance = forms.ChoiceField(
@@ -1484,7 +1475,7 @@ class YouthKitServiceForm(forms.ModelForm):
     )
     adolescent_dropout_reason = forms.CharField(
         required=False,
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('Describe reason for dropout')}),
         label=_('Reason for dropout')
     )
     adolescent_dropout_date = forms.DateField(
@@ -1627,8 +1618,6 @@ class YouthKitServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='Adolescents kit', service_id=instance.id)
 
         return instance
 
@@ -1980,7 +1969,7 @@ class FollowUpServiceForm(forms.ModelForm):
     )
     dropout_reason = forms.CharField(
         required=False,
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'placeholder': _('Describe reason for dropout')}),
         label=_('Reason for dropout')
     )
     dropout_date = forms.DateField(
@@ -2146,8 +2135,6 @@ class FollowUpServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='Caregivers Package', service_id=instance.id)
 
         return instance
 
@@ -2709,8 +2696,6 @@ class LegoServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='LEGO', service_id=instance.id)
 
         return instance
 

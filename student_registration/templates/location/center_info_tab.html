@@ -4,307 +4,158 @@
 
 {% load simple_tags %}
 {% load util_tags %}
- <style>
-    .right-align {
-        text-align: right;
-    }
-</style>
-
-<div class="row staff-profile">
-<!--Center Data-->
-<div class="col-md-12 col-lg-6 col-xl-6">
-                            <div class="card-shadow-primary profile-responsive card-border mb-3 card">
-<div class="dropdown-menu-header">
-
-                                        <div class="dropdown-menu-header mt-0 mb-0">
-                                            <div class="dropdown-menu-header-inner bg-heavy-rain">
-                                                <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">Center Info.
-                                                      {% if request.user|has_group:"MSCC_CENTER" and  request.user.center %}
-                                                          <div style="float:right;">
-                                                                <a href="{% url 'locations:center_edit' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Center Info."><i class="pe-7s-pen"></i></a>
-                                                          </div>
-                                                      {% endif %}
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                </div>
-
-                                <ul class="list-group list-group-flush" style="height: 400px; overflow: scroll;">
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Name</div>
-                                                    <div class="widget-subheading">{{ instance.name }}</div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Governorate</div>
-                                                    <div class="widget-subheading">{{ instance.governorate.name  }}</div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Caza</div>
-                                                    <div class="widget-subheading">{{ instance.caza.name }}</div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Cadaster</div>
-                                                    <div class="widget-subheading">{{ instance.cadaster.name  }}</div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Longitude</div>
-                                                    <div class="widget-subheading">{{ instance.longitude }}</div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Latitude</div>
-                                                    <div class="widget-subheading"> {{ instance.latitude }} </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Manager Name</div>
-                                                    <div class="widget-subheading"> {{ instance.manager_name }} </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Phone Number</div>
-                                                    <div class="widget-subheading"> {{ instance.phone_number }} </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Email</div>
-                                                    <div class="widget-subheading"> {{ instance.email }} </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Type</div>
-                                                    <div class="widget-subheading">
-                                                        <div class="widget-subheading">{{ instance.type }}</div>
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Provided Services</div>
-                                                    <div class="widget-subheading">
-                                                      {% for pack in instance.provided_packages %}
-                                                        <div> {{pack}} </div>
-                                                      {% endfor %}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Programs</div>
-                                                    <div class="widget-subheading">
-                                                      {% for prog in instance.programs %}
-                                                        <div> {{prog}} </div>
-                                                      {% endfor %}
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Number of Admin staff</div>
-                                                    <div class="widget-subheading">{{ instance.admin_staff_number }}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">Is the center accessible for CWD</div>
-                                                    <div class="widget-subheading">{{ instance.cwd_accessible }}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
+<div class="row g-4">
+    <!-- Center Info Details -->
+    <div class="col-md-7">
+        <div class="card border h-100 shadow-none">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+                <h6 class="mb-0 fw-bold text-primary">{% trans "General Information" %}</h6>
+                {% if request.user|has_group:"MSCC_CENTER" and request.user.center %}
+                    <a href="{% url 'locations:center_edit' instance.id %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil me-1"></i> {% trans "Edit" %}
+                    </a>
+                {% endif %}
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-4 text-muted small fw-bold text-uppercase">{% trans "Center Name" %}</div>
+                            <div class="col-8 fw-semibold">{{ instance.name }}</div>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-4 text-muted small fw-bold text-uppercase">{% trans "Location" %}</div>
+                            <div class="col-8">
+                                <span class="d-block">{{ instance.governorate.name }}</span>
+                                <span class="d-block text-muted small">{{ instance.caza.name }} / {{ instance.cadaster.name }}</span>
                             </div>
                         </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-4 text-muted small fw-bold text-uppercase">{% trans "Coordinates" %}</div>
+                            <div class="col-8 text-muted">
+                                <i class="bi bi-geo-alt me-1"></i> {{ instance.longitude }}, {{ instance.latitude }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-4 text-muted small fw-bold text-uppercase">{% trans "Management" %}</div>
+                            <div class="col-8">
+                                <span class="d-block fw-semibold">{{ instance.manager_name }}</span>
+                                <span class="d-block text-muted small"><i class="bi bi-telephone me-1"></i> {{ instance.phone_number }}</span>
+                                <span class="d-block text-muted small"><i class="bi bi-envelope me-1"></i> {{ instance.email }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-4 text-muted small fw-bold text-uppercase">{% trans "Type & Services" %}</div>
+                            <div class="col-8">
+                                <span class="badge bg-info-subtle text-info mb-2">{{ instance.type }}</span>
+                                <div class="mt-1">
+                                    <span class="d-block text-muted small mb-1 fw-bold">{% trans "Provided Packages" %}:</span>
+                                    {% for pack in instance.provided_packages %}
+                                        <span class="badge bg-light text-dark border me-1">{{ pack }}</span>
+                                    {% empty %}
+                                        <span class="text-muted small">{% trans "None" %}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-4 text-muted small fw-bold text-uppercase">{% trans "Accessibility" %}</div>
+                            <div class="col-8">
+                                {% if instance.cwd_accessible %}
+                                    <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> {% trans "Accessible for CWD" %}</span>
+                                {% else %}
+                                    <span class="text-muted"><i class="bi bi-dash-circle me-1"></i> {% trans "Not Accessible" %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!--Calculated Info-->
-<div class="col-md-12 col-lg-6 col-xl-6">
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
-                                        <div class="dropdown-menu-header mt-0 mb-0">
-                                            <div class="dropdown-menu-header-inner bg-heavy-rain">
-                                                <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">Center Figures</h5>
-                                                </div>
-                                            </div>
+    <!-- Center Figures / Statistics -->
+    <div class="col-md-5">
+        <div class="card border h-100 shadow-none">
+            <div class="card-header bg-light py-3">
+                <h6 class="mb-0 fw-bold text-primary">{% trans "Center Figures" %}</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded-3 border-start border-primary border-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-muted small fw-bold text-uppercase">{% trans "Total Beneficiaries" %}</div>
+                                    <div class="h3 mb-0 fw-bold text-primary">{{ instance.total_children }}</div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary-subtle text-primary mb-1">M: {{ instance.total_male }}</span>
+                                    <br>
+                                    <span class="badge bg-success-subtle text-success">F: {{ instance.total_female }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded-3 border-start border-info border-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-muted small fw-bold text-uppercase">{% trans "Disabilities" %}</div>
+                                    <div class="h4 mb-0 fw-bold text-info">{{ instance.total_disability }}</div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="text-muted small d-block">M: {{ instance.total_disability_male }}</span>
+                                    <span class="text-muted small d-block">F: {{ instance.total_disability_female }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded-3 border-start border-warning border-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-muted small fw-bold text-uppercase">{% trans "Nationality" %}</div>
+                                    <div class="row g-2 mt-1">
+                                        <div class="col-auto">
+                                            <span class="text-muted small">Lebanese:</span> <span class="fw-bold">{{ instance.total_lebanese }}</span>
                                         </div>
-                                        <ul class="list-group list-group-flush" style="height: 400px; overflow: scroll;">
-                                          <li class="list-group-item">
-                                              <div class="widget-content p-0">
-                                                  <div class="widget-content-wrapper">
-                                                      <div class="widget-content-left">
-                                                          <div class="widget-heading">Number of children</div>
-                                                          <div class="widget-subheading">Male:</div>
-                                                          <div class="widget-subheading">Female:</div>
-                                                      </div>
-                                                      <div class="widget-content-right">
-                                                          <div class="widget-numbers widget-numbers-sm text-primary right-align"><span>{{ instance.total_children }}</span></div>
-                                                          <div class="widget-numbers  text-warning font-size-xlg right-align"><span>{{ instance.total_male }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_female }}</span></div>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </li>
-                                          <li class="list-group-item">
-                                              <div class="widget-content p-0">
-                                                  <div class="widget-content-wrapper">
-                                                      <div class="widget-content-left">
-                                                          <div class="widget-heading">Number of children with disabilities</div>
-                                                          <div class="widget-subheading">Male:</div>
-                                                          <div class="widget-subheading">Female:</div>
-                                                      </div>
-                                                      <div class="widget-content-right">
-                                                          <div class="widget-numbers widget-numbers-sm text-info right-align"><span>{{ instance.total_disability }}</span></div>
-                                                          <div class="widget-numbers  text-warning o font-size-xlg right-align"><span>{{ instance.total_disability_male }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_disability_female }}</span></div>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </li>
-                                          <li class="list-group-item">
-                                              <div class="widget-content p-0">
-                                                  <div class="widget-content-wrapper">
-                                                      <div class="widget-content-left">
-                                                          <div class="widget-heading">Total Number of children by Nationality</div>
-                                                          <div class="widget-subheading">Lebanese:</div>
-                                                          <div class="widget-subheading">Non-Lebanese:</div>
-                                                      </div>
-                                                      <div class="widget-content-right">
-                                                          <div class="widget-numbers widget-numbers-sm text-danger right-align"><span>{{ instance.total_children }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-warning font-size-xlg right-align"><span>{{ instance.total_lebanese }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_non_lebanese }}</span></div>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </li>
-
-                                          <li class="list-group-item">
-                                              <div class="widget-content p-0">
-                                                  <div class="widget-content-wrapper">
-                                                      <div class="widget-content-left">
-                                                          <div class="widget-heading">Total Number of staff</div>
-                                                          <div class="widget-subheading">Admin Staff:</div>
-                                                          <div class="widget-subheading">Program Staff:</div>
-                                                      </div>
-                                                      <div class="widget-content-right">
-                                                          <div class="widget-numbers widget-numbers-sm text-primary right-align"><span>{{ instance.total_staff }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-warning font-size-xlg right-align"><span>{{ instance.total_admin_staff }}</span></div>
-                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_program_staff }}</span></div>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </li>
-                                        </ul>
+                                        <div class="col-auto border-start ps-2">
+                                            <span class="text-muted small">Non-Lebanese:</span> <span class="fw-bold">{{ instance.total_non_lebanese }}</span>
+                                        </div>
                                     </div>
                                 </div>
-</div>
-
-
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded-3 border-start border-dark border-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-muted small fw-bold text-uppercase">{% trans "Human Resources" %}</div>
+                                    <div class="h4 mb-0 fw-bold">{{ instance.total_staff }}</div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="text-muted small d-block">Admin: {{ instance.total_admin_staff }}</span>
+                                    <span class="text-muted small d-block">Teachers: {{ instance.total_teachers }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 

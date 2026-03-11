@@ -1,8 +1,21 @@
 {% load static i18n %}
 {% load custom_tags %}
-
 {% load util_tags %}
-<a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-info">
-  <i class="icon-edit-sign icon-white"></i>
-  {% trans "Profile" %}
-</a>
+
+<div class="dropdown table-actions-dropdown">
+    <button class="btn btn-light border btn-actions dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-three-dots"></i> {% trans "Actions" %}
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+        <li>
+            <a class="dropdown-item" href="{{ column.attrs.url }}{{ record.id }}">
+                <i class="bi bi-building-gear text-primary"></i> {% trans "Manage Center" %}
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'locations:center_edit' record.id %}">
+                <i class="bi bi-pencil-square text-info"></i> {% trans "Edit Settings" %}
+            </a>
+        </li>
+    </ul>
+</div>
