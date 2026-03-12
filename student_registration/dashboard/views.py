@@ -386,6 +386,11 @@ def centers_geo_data(request):
             'latitude': float(center.latitude) if center.latitude is not None else None,
             'longitude': float(center.longitude) if center.longitude is not None else None,
             'total_children': center.total_children,
+            'total_male': center.total_male,
+            'total_female': center.total_female,
+            'total_teachers': center.total_teachers,
+            'total_teachers_male': center.total_teachers_male,
+            'total_teachers_female': center.total_teachers_female,
             'type': center.get_type_display() if center.type else 'N/A',
             'p_code': center.p_code or 'N/A',
             'profile_url': reverse('locations:center_profile', kwargs={'pk': center.id})

@@ -37,12 +37,19 @@ class CentersMapTests(TestCase):
         self.assertTemplateUsed(response, 'dashboard/centers_map.html')
 
     def test_centers_geo_data_api(self):
+        from student_registration.mscc.models import Teacher
+        Teacher.objects.create(name="Test Teacher", center=self.center)
+
         response = self.client.get(reverse('dashboard:centers_geo_data'))
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['name'], "Test Center")
         self.assertEqual(data[0]['latitude'], 33.8)
+        self.assertEqual(data[0]['total_teachers'], 1)
+        self.assertEqual(data[0]['total_teachers_male'], 0)
+        self.assertEqual(data[0]['total_teachers_female'], 0)
+        self.assertEqual(data[0]['total_children'], 0)
 
     def test_centers_geo_data_filter(self):
         other_partner = PartnerOrganization.objects.create(name="Other Partner")
