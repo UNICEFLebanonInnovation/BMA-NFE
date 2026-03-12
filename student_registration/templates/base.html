@@ -74,28 +74,63 @@
                 <div class="d-flex align-items-center">
                     <!-- Notifications -->
                     <div class="dropdown me-3">
+                        {% recent_export_history as exports %}
                         <button class="btn btn-link position-relative p-1" type="button" data-bs-toggle="dropdown">
                             <i class="bi bi-bell fs-5 text-dark"></i>
+                            {% if exports.count > 0 %}
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-count">
-                                0
+                                {{ exports.count }}
                             </span>
+                            {% endif %}
                         </button>
-                        <div class="dropdown-menu dropdown-menu-end p-0 shadow border-0" style="width: 320px;">
-                            <div class="p-3 border-bottom fw-bold">{% trans "Notifications" %}</div>
-                            <div class="list-group list-group-flush" id="notification-list">
-                                {% recent_export_history as exports %}
+                        <div class="dropdown-menu dropdown-menu-end p-0 shadow border-0" style="width: 350px;">
+                            <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">{% trans "Recent Exports" %}</span>
+                                <span class="badge bg-light text-dark border">{{ exports.count }}</span>
+                            </div>
+                            <div class="list-group list-group-flush" id="notification-list" style="max-height: 400px; overflow-y: auto;">
                                 {% for export in exports %}
-                                <a href="{{ export.file_url|default:'#' }}" class="list-group-item list-group-item-action py-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1 text-primary">NFE Export Ready</h6>
+                                <div class="list-group-item list-group-item-action py-3 border-start border-4 {% if export.status == 'done' %}border-success{% elif export.status == 'failed' %}border-danger{% else %}border-warning{% endif %}">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <h6 class="mb-1 fw-bold text-dark">
+                                            {% if export.status == 'done' %}
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            {% elif export.status == 'failed' %}
+                                                <i class="bi bi-x-circle-fill text-danger me-2"></i>
+                                            {% else %}
+                                                <i class="spinner-border spinner-border-sm text-warning me-2"></i>
+                                            {% endif %}
+                                            {{ export.export_type }}
+                                        </h6>
                                         <small class="text-muted">{{ export.created|timesince }}</small>
                                     </div>
-                                    <p class="mb-0 small text-muted">Your requested export file is now available for download.</p>
-                                </a>
+                                    <p class="mb-2 small text-muted">
+                                        {% if export.status == 'done' %}
+                                            {% trans "Export completed successfully." %} ({{ export.file_format|upper }})
+                                        {% elif export.status == 'failed' %}
+                                            {% trans "Export failed to process." %}
+                                        {% else %}
+                                            {% trans "Export is being processed..." %}
+                                        {% endif %}
+                                    </p>
+                                    {% if export.status == 'done' %}
+                                    <a href="{{ export.file_url }}" class="btn btn-sm btn-outline-primary fw-bold">
+                                        <i class="bi bi-download me-1"></i> {% trans "Download" %}
+                                    </a>
+                                    {% endif %}
+                                </div>
                                 {% empty %}
-                                <div class="p-3 text-center text-muted small">No new notifications</div>
+                                <div class="p-5 text-center text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
+                                    <p class="small mb-0">{% trans "No recent exports found" %}</p>
+                                </div>
                                 {% endfor %}
                             </div>
+                            {% if exports.count > 0 %}
+                            <div class="p-2 border-top text-center">
+                                <a href="#" class="btn btn-link btn-sm text-decoration-none text-muted">{% trans "View All History" %}</a>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
 

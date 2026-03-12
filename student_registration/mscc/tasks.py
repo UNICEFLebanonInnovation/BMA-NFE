@@ -151,14 +151,12 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
                     data={"type": "mscc_export_failed", "reason": str(e)},
                 )
 
-def _generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
-                                   father_name="", mother_fullname="", round=""):
+def _generate_filtered_mscc_export(export_id, filters=None, file_format='csv'):
     """Generate an MSCC export with optional filtering and notify the user.
 
-    Parameters are used to filter the SQL query in the same way the synchronous
-    view previously did.  Results are written to a ZIP file stored in Azure
-    storage.  A push notification containing the download URL is sent to the
-    requesting user when done.
+    Parameters are used to filter the SQL query. Results are written to a ZIP
+    file stored in Azure storage. A push notification containing the download
+    URL is sent to the requesting user when done.
     """
     export = ExportHistory.objects.get(id=export_id)
     try:
@@ -166,16 +164,18 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         cursor = connection.cursor()
         center_id = user.center_id
         partner_id = user.partner_id or 0
+        filters = filters or {}
+        round_id = filters.get('round')
 
         query_params = []
 
-        if not round:
-            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE id = 0"
-        elif round == "no_round":
+        if not round_id or round_id == 'All':
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE id > 0"
+        elif round_id == "no_round":
             vw_mscc_data_str = "SELECT * FROM vw_mscc_data_no_round WHERE id > 0"
         else:
             vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
-            query_params.append(round)
+            query_params.append(round_id)
 
         if has_group(user, 'MSCC_UNICEF'):
             vw_mscc_data_str += " AND id > 0"
@@ -188,25 +188,51 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         else:
             vw_mscc_data_str += " AND id = 0"
 
+        # Apply additional filters from the UI
+        if filters.get('child__first_name'):
+            vw_mscc_data_str += " AND first_name ILIKE %s"
+            query_params.append(f"%{filters['child__first_name']}%")
+        if filters.get('child__last_name'):
+            vw_mscc_data_str += " AND last_name ILIKE %s"
+            query_params.append(f"%{filters['child__last_name']}%")
+        if filters.get('child__father_name'):
+            vw_mscc_data_str += " AND father_name ILIKE %s"
+            query_params.append(f"%{filters['child__father_name']}%")
+        if filters.get('child__nationality'):
+            vw_mscc_data_str += " AND nationality_id = %s"
+            query_params.append(filters['child__nationality'])
+        if filters.get('child__gender'):
+            vw_mscc_data_str += " AND gender = %s"
+            query_params.append(filters['child__gender'])
+
         cursor.execute(vw_mscc_data_str, query_params)
         mscc_data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
 
-        zip_output = io.BytesIO()
-        with zipfile.ZipFile(zip_output, 'w') as zf:
+        file_ext = file_format or 'csv'
+        if file_ext == 'xlsx':
+            wb = Workbook()
+            ws = wb.active
+            ws.append(headers)
+            for row in mscc_data:
+                ws.append([smart_str(cell) for cell in row])
+            file_content_io = io.BytesIO()
+            wb.save(file_content_io)
+            data_bytes = file_content_io.getvalue()
+        else:
             csv_mscc_output = io.StringIO()
             csv_writer = csv.writer(csv_mscc_output)
-
-            # Add BOM to handle Arabic text correctly
             csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
-            csv_writer.writerow(headers)  # Write headers
-
+            csv_writer.writerow(headers)
             for row in mscc_data:
                 encoded_row = [smart_str(cell) for cell in row]
                 csv_writer.writerow(encoded_row)
+            data_bytes = csv_mscc_output.getvalue().encode('utf-8')
+            file_ext = 'csv'
 
-            # Add CSV to ZIP
-            zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            zf.writestr(f'mscc_data.{file_ext}', data_bytes)
 
             # Process followup_service_data
             registration_ids = [row[0] for row in mscc_data]
@@ -272,18 +298,13 @@ def queue_mscc_export(export_id, fields=None, file_format='csv'):
     )
 
 
-def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
-                               father_name="", mother_fullname="", round=""):
+def queue_filtered_mscc_export(export_id, filters=None, file_format='csv'):
     """Run the filtered MSCC export in a background thread."""
     executor = _get_executor()
     return executor.submit(
         _run_with_new_db_connection,
         _generate_filtered_mscc_export,
         export_id,
-        nationality,
-        first_name,
-        last_name,
-        father_name,
-        mother_fullname,
-        round,
+        filters,
+        file_format,
     )
