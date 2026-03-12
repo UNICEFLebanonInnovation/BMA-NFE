@@ -2,50 +2,129 @@
 {% load util_tags %}
 {% load custom_tags %}
 {% load static i18n %}
-{% load static i18n %}
-{% load render_table from django_tables2 %}
 {% load django_bootstrap5 %}
 
+{% block project_title %}{% trans "User Profile" %}{% endblock %}
+{% block module_name %}{% trans "User Profile" %}{% endblock %}
 
 {% block content %}
-
-<div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
-    Welcome {{ request.user }} to CLM<sup>+</sup>
-    <div class="page-title-subheading">
-                                    </div>
-</div></div><div class="page-title-actions">
-</div></div></div>
-
-
-    <section>
-
-
-      	<div class="profile-content">
-            <div class="container">
-                <div class="row">
-                      <br>
-        	           <div class="profile text-center">
-	                        <div class="avatar"><img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" alt="avatar"></a></div>
-
-    <div class="name text-center">
-      <blockquote>
-        <h4>{{ user }}</h4>
-        <!--<small><cite title="Source Title"><i class="icon-map-marker"></i></cite></small>-->
-      </blockquote>
-    </div>
-        <div class="description text-center">
-      <p>
-        <b>{% trans "Partner: " %}</b> {{ user.partner }}<br>
-        <b>{% trans "Email: " %}</b> {{ user.email }} <br>
-        <b>{% trans "Name: " %}</b> {{ user.first_name }}, {{ user.last_name }} <br>
-        <b>{% trans "Date Joined: " %}</b> {{ user.date_joined }}<br>
-      </p>
-    </div>
-    </div>
-
-</div>
-      </div>
+<div class="container-fluid">
+    <!-- Profile Header Summary -->
+    <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <div class="col-md-auto bg-primary d-flex align-items-center justify-content-center p-4" style="min-width: 150px;">
+                    <div class="text-white text-center">
+                        <i class="bi bi-person-circle display-3"></i>
+                        <div class="small mt-2 opacity-75">{% trans "User Account" %}</div>
+                    </div>
+                </div>
+                <div class="col-md p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h2 class="fw-bold mb-1 text-dark">{{ user.get_full_name|default:user.username }}</h2>
+                            <div class="d-flex flex-wrap gap-3 text-muted">
+                                <span><i class="bi bi-person me-1"></i> <span class="fw-bold text-dark">{{ user.username }}</span></span>
+                                <span><i class="bi bi-envelope me-1"></i> {{ user.email }}</span>
+                                {% if user.phone_number %}
+                                <span><i class="bi bi-telephone me-1"></i> {{ user.phone_number }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge rounded-pill bg-primary px-3 py-2 mb-2">
+                                <i class="bi bi-shield-check me-1"></i> {{ user.groups.first.name|default:"General User" }}
+                            </span>
+                            <div class="text-muted small">{% trans "Joined" %}: {{ user.date_joined|date:"M Y" }}</div>
+                        </div>
+                    </div>
+                    <div class="border-top pt-3 d-flex justify-content-between align-items-center">
+                        <div class="d-flex gap-4">
+                            {% if user.partner %}
+                            <div>
+                                <div class="text-muted small">{% trans "Partner" %}</div>
+                                <div class="fw-bold">{{ user.partner }}</div>
+                            </div>
+                            {% endif %}
+                            {% if user.center %}
+                            <div>
+                                <div class="text-muted small">{% trans "Center" %}</div>
+                                <div class="fw-bold">{{ user.center }}</div>
+                            </div>
+                            {% endif %}
+                            {% if user.location %}
+                            <div>
+                                <div class="text-muted small">{% trans "Location" %}</div>
+                                <div class="fw-bold">{{ user.location }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'account_change_password' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-lock me-2"></i> {% trans "Change Password" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-</section>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-person-lines-fill me-2 text-primary"></i>{% trans "Personal Details" %}</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">{% trans "First Name" %}</span>
+                            <span class="fw-medium">{{ user.first_name|default:"-" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">{% trans "Last Name" %}</span>
+                            <span class="fw-medium">{{ user.last_name|default:"-" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">{% trans "Email" %}</span>
+                            <span class="fw-medium">{{ user.email|default:"-" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">{% trans "Phone Number" %}</span>
+                            <span class="fw-medium">{{ user.phone_number|default:"-" }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-building me-2 text-primary"></i>{% trans "Organizational Access" %}</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">{% trans "Partner Organization" %}</span>
+                            <span class="fw-medium text-end">{{ user.partner|default:"None" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">{% trans "Assigned Center" %}</span>
+                            <span class="fw-medium text-end">{{ user.center|default:"None" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">{% trans "Assigned School" %}</span>
+                            <span class="fw-medium text-end">{{ user.school|default:"None" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-bottom-0">
+                            <span class="text-muted">{% trans "Primary Location" %}</span>
+                            <span class="fw-medium text-end">{{ user.location|default:"None" }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

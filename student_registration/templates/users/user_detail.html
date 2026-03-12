@@ -1,38 +1,91 @@
-{% extends "youth/base.html" %}
+{% extends "base.html" %}
 {% load util_tags %}
 {% load custom_tags %}
 {% load static i18n %}
 
-{% block title %}User: {{ object.username }}{% endblock %}
+{% block project_title %}{% trans "User Details" %}{% endblock %}
+{% block module_name %}{% trans "User Details" %}{% endblock %}
 
-{% block main_content %}
-<div class="container">
+{% block content %}
+<div class="container-fluid">
+    <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <div class="col-md-auto bg-primary d-flex align-items-center justify-content-center p-4" style="min-width: 150px;">
+                    <div class="text-white text-center">
+                        <i class="bi bi-person-badge display-3"></i>
+                        <div class="small mt-2 opacity-75">{% trans "User Profile" %}</div>
+                    </div>
+                </div>
+                <div class="col-md p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h2 class="fw-bold mb-1 text-dark">{{ object.get_full_name|default:object.username }}</h2>
+                            <div class="d-flex flex-wrap gap-3 text-muted">
+                                <span><i class="bi bi-person me-1"></i> <span class="fw-bold text-dark">{{ object.username }}</span></span>
+                                <span><i class="bi bi-envelope me-1"></i> {{ object.email }}</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge rounded-pill bg-primary px-3 py-2">
+                                <i class="bi bi-shield me-1"></i> {{ object.groups.first.name|default:"General User" }}
+                            </span>
+                        </div>
+                    </div>
 
-  <div class="row">
-    <div class="col-sm-12">
-
-      <h2>{{ object.email }}</h2>
-      {% if object.name %}
-        <p>{{ object.name }}</p>
-      {% endif %}
+                    {% if object == request.user %}
+                    <div class="border-top pt-3 d-flex gap-2">
+                        <a class="btn btn-primary" href="{% url 'users:update' %}">
+                            <i class="bi bi-pencil me-2"></i> {% trans "Edit My Info" %}
+                        </a>
+                        <a class="btn btn-outline-primary" href="{% url 'account_email' %}">
+                            <i class="bi bi-envelope-at me-2"></i> {% trans "E-Mail Settings" %}
+                        </a>
+                        <a class="btn btn-outline-secondary" href="{% url 'account_change_password' %}">
+                            <i class="bi bi-lock me-2"></i> {% trans "Change Password" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-{% if object == request.user %}
-<!-- Action buttons -->
-<div class="row">
-
-  <div class="col-sm-12 ">
-    <a class="btn btn-primary" href="{% url 'users:update' %}">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}">E-Mail</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
-
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-primary">{% trans "Contact Information" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="small text-muted text-uppercase fw-bold">{% trans "Email Address" %}</label>
+                        <div class="fw-medium">{{ object.email|default:"-" }}</div>
+                    </div>
+                    <div>
+                        <label class="small text-muted text-uppercase fw-bold">{% trans "Phone Number" %}</label>
+                        <div class="fw-medium">{{ object.phone_number|default:"-" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-primary">{% trans "Account Metadata" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="small text-muted text-uppercase fw-bold">{% trans "Member Since" %}</label>
+                        <div class="fw-medium">{{ object.date_joined|date:"F d, Y" }}</div>
+                    </div>
+                    <div>
+                        <label class="small text-muted text-uppercase fw-bold">{% trans "Last Login" %}</label>
+                        <div class="fw-medium">{{ object.last_login|date:"F d, Y H:i"|default:"Never" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<!-- End Action buttons -->
-{% endif %}
-
-
-</div>
-{% endblock main_content %}
-
+{% endblock %}
