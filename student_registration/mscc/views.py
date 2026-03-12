@@ -189,8 +189,32 @@ class DashboardView(LoginRequiredMixin,
     template_name = 'mscc/dashboard.html'
 
     def get_context_data(self, **kwargs):
+        """Collect contextual data for the dashboard view.
 
-        return {}
+        Args:
+            **kwargs: Keyword arguments passed by :class:`TemplateView`.
+
+        Returns:
+            dict: Context containing registration counts, center, partner,
+            and round collections for dashboard rendering.
+        """
+        from student_registration.locations.models import Center, Location
+        from student_registration.clm.models import PartnerOrganization
+        from .models import Round, Registration
+
+        instances = Registration.objects.filter(deleted=False)
+        centers = Center.objects.all()
+        governorates = Location.objects.filter(type_id=1)
+        partners = PartnerOrganization.objects.all()
+        rounds = Round.objects.all()
+
+        return {
+            'total': instances.count(),
+            'centers': centers,
+            'governorates': governorates,
+            'partners': partners,
+            'rounds': rounds,
+        }
 
 
 class DashboardCustomView(LoginRequiredMixin,
