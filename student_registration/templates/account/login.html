@@ -24,6 +24,20 @@
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
   }
+.password-toggle-btn {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #6c757d;
+    padding: 0;
+    line-height: 1;
+  }
+  .password-toggle-btn:hover {
+    color: #0d6efd;
+  }
 </style>
 
 <div class="col-md-10 col-lg-6 col-xl-5">
@@ -62,6 +76,39 @@
         <!--&copy; 2024 MEHE BMA Sector-->
     <!--</div>-->
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const passwordInput = document.querySelector('form.login input[type="password"]');
+    if (!passwordInput || passwordInput.dataset.toggleInitialized === 'true') {
+      return;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'position-relative';
+    passwordInput.parentNode.insertBefore(wrapper, passwordInput);
+    wrapper.appendChild(passwordInput);
+    passwordInput.classList.add('pe-5');
+
+    const toggleButton = document.createElement('button');
+    toggleButton.type = 'button';
+    toggleButton.className = 'password-toggle-btn';
+    toggleButton.setAttribute('aria-label', '{% trans "Show password" %}');
+    toggleButton.innerHTML = '<i class="bi bi-eye" aria-hidden="true"></i>';
+
+    toggleButton.addEventListener('click', function () {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      toggleButton.setAttribute('aria-label', isPassword ? '{% trans "Hide password" %}' : '{% trans "Show password" %}');
+      toggleButton.innerHTML = isPassword
+        ? '<i class="bi bi-eye-slash" aria-hidden="true"></i>'
+        : '<i class="bi bi-eye" aria-hidden="true"></i>';
+    });
+
+    wrapper.appendChild(toggleButton);
+    passwordInput.dataset.toggleInitialized = 'true';
+  });
+</script>
 
 {% endblock %}
 

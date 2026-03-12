@@ -862,7 +862,7 @@ class TeacherListView(LoginRequiredMixin,
     table_class = TeacherTable
     model = Teacher
     template_name = 'mscc/teacher_list.html'
-    table = BootstrapTable(Teacher.objects.none(), order_by='id')
+    table = TeacherTable(Teacher.objects.none(), order_by='id')
     group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
     filterset_class = TeacherFilter
 

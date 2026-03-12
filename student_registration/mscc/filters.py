@@ -176,10 +176,7 @@ class FullFilter(RedesignFilterSet):
 class TeacherFilter(RedesignFilterSet):
     NO_ROUND_OPTION = ('ALl', 'All Rounds')
 
-    round = ChoiceFilter(
-        empty_label='Round',
-        method='filter_round'
-    )
+    round = Round.objects.all().order_by('name').distinct()
     center = ModelChoiceFilter(queryset=Center.objects.all(), empty_label=_('Center'))
 
     class Meta:
@@ -195,21 +192,7 @@ class TeacherFilter(RedesignFilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._populate_round_choices()
 
-    def filter_round(self, queryset, name, value):
-        if value == 'All':
-            return queryset.filter()
-        return queryset.filter(**{name: value})
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
-
-    def _populate_round_choices(self):
-        try:
-            round_choices = list(
-                Round.objects.values_list('id', 'name').order_by('name').distinct()
-            )
-        except (ProgrammingError, OperationalError):
-            round_choices = []
-        self.filters['round'].extra['choices'] = [self.NO_ROUND_OPTION] + round_choices
