@@ -290,6 +290,16 @@ class Center(TimeStampedModel):
         return Teacher.objects.filter(center=self.id).count()
 
     @property
+    def total_teachers_male(self):
+        from student_registration.mscc.models import Teacher
+        return Teacher.objects.filter(center=self.id, sex='Male').count()
+
+    @property
+    def total_teachers_female(self):
+        from student_registration.mscc.models import Teacher
+        return Teacher.objects.filter(center=self.id, sex='Female').count()
+
+    @property
     def total_staff(self):
         admin_staff = self.total_admin_staff
         teachers = self.total_teachers
