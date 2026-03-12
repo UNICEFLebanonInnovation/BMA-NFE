@@ -15,60 +15,6 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 window.firebaseMessaging = messaging;
 
-function addNotificationToList(url, text) {
-  const list = $('#mscc-notification-list');
-  if (list.length) {
-    list.find('span:contains("No notifications")').closest('li').remove();
-    const li = $('<li/>', { class: 'nav-item' });
-    $('<a/>', { class: 'nav-link', href: url, target: '_blank', text: text }).appendTo(li);
-    list.prepend(li);
-    if (list.children('li').length > 5) {
-      list.children('li:last-child').remove();
-    }
-    const count = $('#mscc-unread-count');
-    if (count.length) {
-      const current = parseInt(count.text(), 10) || 0;
-      count.text(current + 1);
-    }
-  }
-}
-
-function saveNotification(url, text) {
-  let items = [];
-  try {
-    items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
-  } catch (e) {
-    items = [];
-  }
-  items.unshift({ url, text });
-  if (items.length > 5) {
-    items = items.slice(0, 5);
-  }
-  localStorage.setItem('msccNotifications', JSON.stringify(items));
-}
-
-$(function () {
-  let items = [];
-  try {
-    items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
-  } catch (e) {
-    items = [];
-  }
-  const list = $('#mscc-notification-list');
-  items
-    .slice()
-    .reverse()
-    .forEach((n) => addNotificationToList(n.url, n.text));
-  if (list.length && !list.children('li').length) {
-    list.append(
-      $('<li/>', {
-        class: 'nav-item',
-      }).append(
-        $('<span/>', { class: 'nav-link', text: 'No notifications' })
-      )
-    );
-  }
-});
 
 navigator.serviceWorker
   .register("/static/firebase-messaging-sw.js")
@@ -90,22 +36,34 @@ navigator.serviceWorker
   });
 
 onMessage(messaging, (payload) => {
-  if (payload.data && payload.data.type === "mscc_export_ready") {
+  if (payload.data && (payload.data.type === "mscc_export_ready" || payload.data.type === "mscc_export_failed")) {
+    const isSuccess = payload.data.type === "mscc_export_ready";
+
     if (!document.hidden) {
-      $('#downloadReadyModal .download-link').attr('href', payload.data.url);
-      $('#downloadReadyModal').modal('show');
+        if (isSuccess) {
+            $('#downloadReadyModal .download-link').attr('href', payload.data.url);
+            const downloadModal = new bootstrap.Modal(document.getElementById('downloadReadyModal'));
+            downloadModal.show();
+
+            // Reload on close to update the notification list
+            document.getElementById('downloadReadyModal').addEventListener('hidden.bs.modal', function () {
+                if (window.location.pathname.includes('/mscc/list/') || window.location.pathname.includes('/mscc/dashboard/')) {
+                    window.location.reload();
+                }
+            }, { once: true });
+        } else {
+            const reason = payload.data.reason || 'Unknown error';
+            alert('Export failed: ' + reason);
+            if (window.location.pathname.includes('/mscc/list/') || window.location.pathname.includes('/mscc/dashboard/')) {
+                window.location.reload();
+            }
+        }
+    } else {
+        // If document is hidden, just reload if needed when user comes back, or trust push notification
+        // For simplicity, we can reload next time they are on the page, but here we just check if we should have reloaded
+        if (window.location.pathname.includes('/mscc/list/') || window.location.pathname.includes('/mscc/dashboard/')) {
+             // We can't really reload if hidden effectively for the user, but it's okay.
+        }
     }
-    const timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
-    const text = 'NFR Sector export ' + timestamp;
-    saveNotification(payload.data.url, text);
-    addNotificationToList(payload.data.url, text);
-  } else if (payload.data && payload.data.type === "mscc_export_failed") {
-    const reason = payload.data.reason || 'Unknown error';
-    const text = 'NFR Sector export failed: ' + reason;
-    if (!document.hidden) {
-      alert(text);
-    }
-    saveNotification('#', text);
-    addNotificationToList('#', text);
   }
 });

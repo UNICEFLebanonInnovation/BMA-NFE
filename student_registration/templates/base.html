@@ -232,6 +232,9 @@
 
     <script type="text/javascript" src="{% static 'js/project.js' %}?v=2"></script>
     <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
+    {% if request.user.is_authenticated %}
+    <script type="module" src="{% static 'js/firebase-messaging.js' %}"></script>
+    {% endif %}
 
     <script type="text/javascript">
       $(function () {
@@ -290,6 +293,24 @@
                     <h4 class="fw-bold mb-3">{% trans "Verification Required" %}</h4>
                     <div id="swal2-content" class="text-muted mb-4">{% trans "Please check the form mandatory fields." %}</div>
                     <button type="button" class="btn btn-danger px-5 fw-bold" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="downloadReadyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-body p-5 text-center">
+                    <i class="bi bi-cloud-check text-primary display-1 mb-4"></i>
+                    <h4 class="fw-bold mb-3">{% trans "Export Ready" %}</h4>
+                    <p class="text-muted mb-4">{% trans "Your requested export file has been processed and is ready for download." %}</p>
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-primary btn-lg fw-bold download-link" target="_blank">
+                            <i class="bi bi-download me-2"></i> {% trans "Download Now" %}
+                        </a>
+                        <button type="button" class="btn btn-light border fw-bold" data-bs-dismiss="modal">{% trans "Close" %}</button>
+                    </div>
                 </div>
             </div>
         </div>
