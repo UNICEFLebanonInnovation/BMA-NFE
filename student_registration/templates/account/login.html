@@ -27,14 +27,17 @@
 </style>
 
 <div class="col-md-10 col-lg-6 col-xl-5">
-    <div class="app-logo-home mb-5 text-center">
-        <img src="{% static 'images/clm_plus_logo.png' %}" alt="BMA Logo" style="max-height: 80px;">
-    </div>
+    <!--<div class="app-logo-home mb-5 text-center">-->
+        <!--<img src="{% static 'images/clm_plus_logo.png' %}" alt="BMA Logo">-->
+    <!--</div>-->
     <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
         <div class="card-body p-4 p-md-5">
+            <div class="app-logo-home mb-3 text-center">
+                <img src="{% static 'images/clm_plus_logo.png' %}" alt="BMA Logo" style="width: 225px; height: 100px;">
+            </div>
             <div class="text-center mb-5">
                 <h2 class="fw-bold text-primary">{% trans "Sign In" %}</h2>
-                <p class="text-muted small">{% trans "UNICEF Beneficiary Monitoring & Assessment" %}</p>
+                <p class="text-muted small">{% trans "MEHE Beneficiary Monitoring & Assessment" %}</p>
             </div>
 
             <form class="login redesign-form" method="POST" action="{% url 'account_login' %}">
@@ -55,9 +58,9 @@
             </form>
         </div>
     </div>
-    <div class="text-center mt-4 text-muted small">
-        &copy; 2024 UNICEF BMA Redesign
-    </div>
+    <!--<div class="text-center mt-4 text-muted small">-->
+        <!--&copy; 2024 MEHE BMA Sector-->
+    <!--</div>-->
 </div>
 
 {% endblock %}

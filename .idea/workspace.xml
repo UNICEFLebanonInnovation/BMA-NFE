@@ -3,39 +3,17 @@
   <component name="ChangeListManager">
     <list default="true" id="d5e9b9cf-846c-4255-89de-6b055dcc58e2" name="Default" comment="">
       <change beforePath="" afterPath="$PROJECT_DIR$/../Compiler/student_registration/telemetry.py" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/student_registration/dashboard/views.py" afterPath="$PROJECT_DIR$/student_registration/dashboard/views.py" />
+      <change beforePath="$PROJECT_DIR$/DOCS_REDESIGN.md" afterPath="$PROJECT_DIR$/DOCS_REDESIGN.md" />
       <change beforePath="$PROJECT_DIR$/student_registration/mscc/education_form.py" afterPath="$PROJECT_DIR$/student_registration/mscc/education_form.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/education_view.py" afterPath="$PROJECT_DIR$/student_registration/mscc/education_view.py" />
       <change beforePath="$PROJECT_DIR$/student_registration/mscc/filters.py" afterPath="$PROJECT_DIR$/student_registration/mscc/filters.py" />
       <change beforePath="$PROJECT_DIR$/student_registration/mscc/forms.py" afterPath="$PROJECT_DIR$/student_registration/mscc/forms.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/models.py" afterPath="$PROJECT_DIR$/student_registration/mscc/models.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/serializers.py" afterPath="$PROJECT_DIR$/student_registration/mscc/serializers.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/services_form.py" afterPath="$PROJECT_DIR$/student_registration/mscc/services_form.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/tables.py" afterPath="$PROJECT_DIR$/student_registration/mscc/tables.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/urls.py" afterPath="$PROJECT_DIR$/student_registration/mscc/urls.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/utils.py" afterPath="$PROJECT_DIR$/student_registration/mscc/utils.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/mscc/views.py" afterPath="$PROJECT_DIR$/student_registration/mscc/views.py" />
-      <change beforePath="$PROJECT_DIR$/student_registration/static/css/base.css" afterPath="$PROJECT_DIR$/student_registration/static/css/base.css" />
       <change beforePath="$PROJECT_DIR$/student_registration/static/css/redesign.css" afterPath="$PROJECT_DIR$/student_registration/static/css/redesign.css" />
-      <change beforePath="$PROJECT_DIR$/student_registration/static/js/mscc/mscc.js" afterPath="$PROJECT_DIR$/student_registration/static/js/mscc/mscc.js" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/_sidebar_links.html" afterPath="$PROJECT_DIR$/student_registration/templates/_sidebar_links.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/account/login.html" afterPath="$PROJECT_DIR$/student_registration/templates/account/login.html" />
       <change beforePath="$PROJECT_DIR$/student_registration/templates/base.html" afterPath="$PROJECT_DIR$/student_registration/templates/base.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/dashboard/chart_builder.html" afterPath="$PROJECT_DIR$/student_registration/templates/dashboard/chart_builder.html" />
       <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/action_column.html" afterPath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/action_column.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/type_column.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/location/center_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/location/center_form.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/attendance.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/attendance.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/attendance_report.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/attendance_report.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/child_education_details.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/child_education_details.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/child_profile_preview.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/child_profile_preview.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/child_services_tab.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/child_services_tab.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/dashboard_d3.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/dashboard_d3.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/list.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/list.html" />
+      <change beforePath="$PROJECT_DIR$/student_registration/templates/footer.html" afterPath="$PROJECT_DIR$/student_registration/templates/footer.html" />
       <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/main_form.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/main_form.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/new_round.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/new_round.html" />
-      <change beforePath="$PROJECT_DIR$/student_registration/templates/mscc/profile.html" afterPath="$PROJECT_DIR$/student_registration/templates/mscc/profile.html" />
       <change beforePath="$PROJECT_DIR$/../Compiler/config/settings/base.py" afterPath="$PROJECT_DIR$/../Compiler/config/settings/base.py" />
       <change beforePath="$PROJECT_DIR$/../Compiler/config/settings/local.py" afterPath="$PROJECT_DIR$/../Compiler/config/settings/local.py" />
       <change beforePath="$PROJECT_DIR$/../Compiler/config/settings/production.py" afterPath="$PROJECT_DIR$/../Compiler/config/settings/production.py" />
@@ -53,11 +31,105 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
+      <file leaf-file-name="login.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/student_registration/templates/account/login.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="12" column="12" lean-forward="false" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
+            <state relative-caret-position="433">
+              <caret line="46" column="22" lean-forward="true" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
+              <folding>
+                <element signature="n#style#0;n#img#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="action_column.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/action_column.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="763">
+              <caret line="71" column="0" lean-forward="true" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="filters.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/student_registration/mscc/filters.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="317">
+              <caret line="189" column="40" lean-forward="true" selection-start-line="189" selection-start-column="40" selection-end-line="189" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="attendance.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/attendance.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="822">
+              <caret line="60" column="21" lean-forward="false" selection-start-line="60" selection-start-column="21" selection-end-line="60" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="attendance_children.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/attendance_children.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="669">
+              <caret line="45" column="105" lean-forward="true" selection-start-line="45" selection-start-column="105" selection-end-line="45" selection-end-column="105" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/student_registration/mscc/forms.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="465">
+              <caret line="70" column="67" lean-forward="false" selection-start-line="70" selection-start-column="67" selection-end-line="70" selection-end-column="67" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main_form.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/main_form.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="564">
+              <caret line="77" column="59" lean-forward="false" selection-start-line="77" selection-start-column="59" selection-end-line="77" selection-end-column="59" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="education_form.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/student_registration/mscc/education_form.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="295">
+              <caret line="470" column="33" lean-forward="false" selection-start-line="470" selection-start-column="33" selection-end-line="470" selection-end-column="33" />
+              <folding>
+                <element signature="e#0#66#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="redesign.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/student_registration/static/css/redesign.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="568">
+              <caret line="92" column="1" lean-forward="false" selection-start-line="92" selection-start-column="1" selection-end-line="92" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/student_registration/templates/base.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="531">
+              <caret line="110" column="103" lean-forward="false" selection-start-line="110" selection-start-column="103" selection-end-line="110" selection-end-column="103" />
               <folding />
             </state>
           </provider>
@@ -74,8 +146,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>ClearableFileInput</find>
-      <find>service_education_add</find>
       <find>sidebar</find>
       <find>education</find>
       <find>subjects_provided</find>
@@ -104,6 +174,8 @@
       <find>update_service</find>
       <find>package_type</find>
       <find>new</find>
+      <find>round</find>
+      <find>registration</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -125,9 +197,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/student_registration/locations/models.py" />
-        <option value="$PROJECT_DIR$/student_registration/locations/serializers.py" />
-        <option value="$PROJECT_DIR$/student_registration/locations/views.py" />
         <option value="$PROJECT_DIR$/config/urls.py" />
         <option value="$PROJECT_DIR$/student_registration/schools/views.py" />
         <option value="$PROJECT_DIR$/student_registration/clm/utils.py" />
@@ -143,13 +212,10 @@
         <option value="$PROJECT_DIR$/student_registration/students/templates/students/clearable_file_input.html" />
         <option value="$PROJECT_DIR$/student_registration/templates/students/clearable_file_input.html" />
         <option value="$PROJECT_DIR$/student_registration/templates/mscc/teacher_form.html" />
-        <option value="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/action_column.html" />
-        <option value="$PROJECT_DIR$/student_registration/templates/base.html" />
         <option value="$PROJECT_DIR$/student_registration/templates/mscc/child_info_tab.html" />
         <option value="$PROJECT_DIR$/student_registration/templates/mscc/attendance_report.html" />
         <option value="$PROJECT_DIR$/student_registration/templates/_sidebar_links.html" />
         <option value="$PROJECT_DIR$/student_registration/templates/location/center_form.html" />
-        <option value="$PROJECT_DIR$/student_registration/templates/mscc/main_form.html" />
         <option value="$PROJECT_DIR$/student_registration/static/css/base.css" />
         <option value="$PROJECT_DIR$/student_registration/mscc/serializers.py" />
         <option value="$PROJECT_DIR$/student_registration/mscc/tables.py" />
@@ -160,22 +226,28 @@
         <option value="$PROJECT_DIR$/student_registration/templates/mscc/list.html" />
         <option value="$PROJECT_DIR$/student_registration/templates/mscc/new_round.html" />
         <option value="$PROJECT_DIR$/student_registration/templates/mscc/dashboard_d3.html" />
-        <option value="$PROJECT_DIR$/student_registration/mscc/filters.py" />
         <option value="$PROJECT_DIR$/student_registration/mscc/models.py" />
-        <option value="$PROJECT_DIR$/student_registration/static/css/redesign.css" />
         <option value="$PROJECT_DIR$/student_registration/templates/dashboard/chart_builder.html" />
         <option value="$PROJECT_DIR$/student_registration/mscc/utils.py" />
         <option value="$PROJECT_DIR$/student_registration/templates/pages/home.html" />
-        <option value="$PROJECT_DIR$/student_registration/mscc/forms.py" />
         <option value="$PROJECT_DIR$/student_registration/mscc/services_form.py" />
         <option value="$PROJECT_DIR$/student_registration/mscc/urls.py" />
         <option value="$PROJECT_DIR$/student_registration/static/js/mscc/mscc.js" />
         <option value="$PROJECT_DIR$/student_registration/mscc/views.py" />
         <option value="$PROJECT_DIR$/student_registration/dashboard/views.py" />
         <option value="$PROJECT_DIR$/student_registration/mscc/education_view.py" />
-        <option value="$PROJECT_DIR$/student_registration/mscc/education_form.py" />
         <option value="$PROJECT_DIR$/student_registration/templates/mscc/profile.html" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/DOCS_REDESIGN.md" />
+        <option value="$PROJECT_DIR$/student_registration/templates/footer.html" />
+        <option value="$PROJECT_DIR$/student_registration/templates/account/login.html" />
+        <option value="$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/action_column.html" />
+        <option value="$PROJECT_DIR$/student_registration/static/css/redesign.css" />
+        <option value="$PROJECT_DIR$/student_registration/templates/base.html" />
+        <option value="$PROJECT_DIR$/student_registration/mscc/filters.py" />
+        <option value="$PROJECT_DIR$/student_registration/mscc/forms.py" />
+        <option value="$PROJECT_DIR$/student_registration/templates/mscc/main_form.html" />
+        <option value="$PROJECT_DIR$/student_registration/mscc/education_form.py" />
       </list>
     </option>
   </component>
@@ -201,6 +273,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -230,14 +304,19 @@
               <item name="BMA-NFE" type="462c0819:PsiDirectoryNode" />
               <item name="student_registration" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="attendances" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BMA-NFE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BMA-NFE" type="462c0819:PsiDirectoryNode" />
+              <item name="student_registration" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
               <item name="mscc" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -316,45 +395,12 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/student_registration/students/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="81" column="30" lean-forward="false" selection-start-line="81" selection-start-column="30" selection-end-line="81" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Compiler/student_registration/students/templates/students/clearable_file_input.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Compiler/student_registration/clm/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="127" column="30" lean-forward="false" selection-start-line="127" selection-start-column="30" selection-end-line="127" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Compiler/config/settings/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
-          <caret line="199" column="0" lean-forward="true" selection-start-line="199" selection-start-column="0" selection-end-line="199" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/templates/students/clearable_file_input.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="0" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/student_registration/students/templates/students/clearable_file_input.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -404,13 +450,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/action_column.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="57" column="8" lean-forward="false" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/child_attendance_tab.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="960">
@@ -453,24 +492,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="78" column="107" lean-forward="false" selection-start-line="78" selection-start-column="106" selection-end-line="78" selection-end-column="107" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/student_registration/templates/location/center_form.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="356">
           <caret line="42" column="28" lean-forward="false" selection-start-line="42" selection-start-column="28" selection-end-line="42" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/main_form.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="99" column="52" lean-forward="false" selection-start-line="99" selection-start-column="52" selection-end-line="99" selection-end-column="52" />
         </state>
       </provider>
     </entry>
@@ -516,13 +541,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/attendance.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="163" column="52" lean-forward="false" selection-start-line="163" selection-start-column="52" selection-end-line="163" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/child_profile_preview.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-80">
@@ -551,24 +569,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/mscc/filters.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="112" column="36" lean-forward="true" selection-start-line="112" selection-start-column="36" selection-end-line="112" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/student_registration/mscc/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1064">
           <caret line="879" column="0" lean-forward="false" selection-start-line="879" selection-start-column="0" selection-end-line="879" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/static/css/redesign.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="469" column="1" lean-forward="false" selection-start-line="469" selection-start-column="1" selection-end-line="469" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -598,13 +602,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="91">
           <caret line="34" column="52" lean-forward="false" selection-start-line="34" selection-start-column="52" selection-end-line="34" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/mscc/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10">
-          <caret line="729" column="105" lean-forward="false" selection-start-line="729" selection-start-column="105" selection-end-line="729" selection-end-column="105" />
         </state>
       </provider>
     </entry>
@@ -643,13 +640,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/student_registration/mscc/education_form.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="425" column="29" lean-forward="true" selection-start-line="425" selection-start-column="29" selection-end-line="425" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/profile.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="253">
@@ -666,9 +656,116 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="12" lean-forward="false" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
+        <state relative-caret-position="210">
+          <caret line="14" column="8" lean-forward="false" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DOCS_REDESIGN.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="53">
+          <caret line="19" column="88" lean-forward="true" selection-start-line="19" selection-start-column="88" selection-end-line="19" selection-end-column="88" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/account/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="43" lean-forward="true" selection-start-line="9" selection-start-column="43" selection-end-line="9" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/footer.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/account/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="433">
+          <caret line="46" column="22" lean-forward="true" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
+          <folding>
+            <element signature="n#style#0;n#img#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/django_tables2/mscc/action_column.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="763">
+          <caret line="71" column="0" lean-forward="true" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/static/css/redesign.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="568">
+          <caret line="92" column="1" lean-forward="false" selection-start-line="92" selection-start-column="1" selection-end-line="92" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="531">
+          <caret line="110" column="103" lean-forward="false" selection-start-line="110" selection-start-column="103" selection-end-line="110" selection-end-column="103" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/mscc/filters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="317">
+          <caret line="189" column="40" lean-forward="true" selection-start-line="189" selection-start-column="40" selection-end-line="189" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/attendance.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="822">
+          <caret line="60" column="21" lean-forward="false" selection-start-line="60" selection-start-column="21" selection-end-line="60" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/attendance_children.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="669">
+          <caret line="45" column="105" lean-forward="true" selection-start-line="45" selection-start-column="105" selection-end-line="45" selection-end-column="105" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/mscc/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="70" column="67" lean-forward="false" selection-start-line="70" selection-start-column="67" selection-end-line="70" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/templates/mscc/main_form.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="564">
+          <caret line="77" column="59" lean-forward="false" selection-start-line="77" selection-start-column="59" selection-end-line="77" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/student_registration/mscc/education_form.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="470" column="33" lean-forward="false" selection-start-line="470" selection-start-column="33" selection-end-line="470" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#66#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

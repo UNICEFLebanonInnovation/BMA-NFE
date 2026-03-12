@@ -88,6 +88,10 @@ body {
     z-index: 999;
 }
 
+.topbar .user-menu-dropdown {
+    z-index: 1200;
+}
+
 /* Typography & Components */
 h1, h2, h3, h4, h5 {
     font-weight: 600;

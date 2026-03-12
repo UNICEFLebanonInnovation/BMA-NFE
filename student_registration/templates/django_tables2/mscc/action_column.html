@@ -26,46 +26,46 @@
         </li>
         {% endif %}
 
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header small text-uppercase fw-bold text-muted">{% trans "Services & Assessments" %}</li>
+        <!--<li><hr class="dropdown-divider"></li>-->
+        <!--<li class="dropdown-header small text-uppercase fw-bold text-muted">{% trans "Services & Assessments" %}</li>-->
 
-        {% service_data 'EducationAssessment' record as result_ea %}
-        {% if result_ea %}
-        <li>
-            <a class="dropdown-item" href="{% url 'mscc:service_diagnostic_assessment_edit' record.id result_ea.id %}">
-                <i class="bi bi-clipboard-check text-success"></i> {% trans "Diagnostic Assessment" %}
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="{% url 'mscc:service_education_assessment_edit' record.id result_ea.id %}">
-                <i class="bi bi-book text-success"></i> {% trans "Education Assessment" %}
-            </a>
-        </li>
-        {% else %}
-        <li>
-            <a class="dropdown-item" href="{% url 'mscc:service_diagnostic_assessment_add' record.id %}">
-                <i class="bi bi-clipboard-plus text-success"></i> {% trans "Add Diagnostic Assessment" %}
-            </a>
-        </li>
-        {% endif %}
+        <!--{% service_data 'EducationAssessment' record as result_ea %}-->
+        <!--{% if result_ea %}-->
+        <!--<li>-->
+            <!--<a class="dropdown-item" href="{% url 'mscc:service_diagnostic_assessment_edit' record.id result_ea.id %}">-->
+                <!--<i class="bi bi-clipboard-check text-success"></i> {% trans "Diagnostic Assessment" %}-->
+            <!--</a>-->
+        <!--</li>-->
+        <!--<li>-->
+            <!--<a class="dropdown-item" href="{% url 'mscc:service_education_assessment_edit' record.id result_ea.id %}">-->
+                <!--<i class="bi bi-book text-success"></i> {% trans "Education Assessment" %}-->
+            <!--</a>-->
+        <!--</li>-->
+        <!--{% else %}-->
+        <!--<li>-->
+            <!--<a class="dropdown-item" href="{% url 'mscc:service_diagnostic_assessment_add' record.id %}">-->
+                <!--<i class="bi bi-clipboard-plus text-success"></i> {% trans "Add Diagnostic Assessment" %}-->
+            <!--</a>-->
+        <!--</li>-->
+        <!--{% endif %}-->
 
-        {% if record.child_age > 2 %}
-        {% service_data 'EducationService' record as result_es %}
-        <li>
-            <a class="dropdown-item{% if not record.type %} disabled{% endif %}"{% if record.type %} href="{% if result_es %}{% url 'mscc:service_education_edit' record.id result_es.id record.type %}{% else %}{% url 'mscc:service_education_add' record.id record.type %}{% endif %}"{% else %} href="#" aria-disabled="true" tabindex="-1"{% endif %}>
-                <i class="bi bi-mortarboard text-success"></i> {% trans "Education Situation" %}
-            </a>
-        </li>
-        {% endif %}
+        <!--{% if record.child_age > 2 %}-->
+        <!--{% service_data 'EducationService' record as result_es %}-->
+        <!--<li>-->
+            <!--<a class="dropdown-item{% if not record.type %} disabled{% endif %}"{% if record.type %} href="{% if result_es %}{% url 'mscc:service_education_edit' record.id result_es.id record.type %}{% else %}{% url 'mscc:service_education_add' record.id record.type %}{% endif %}"{% else %} href="#" aria-disabled="true" tabindex="-1"{% endif %}>-->
+                <!--<i class="bi bi-mortarboard text-success"></i> {% trans "Education Situation" %}-->
+            <!--</a>-->
+        <!--</li>-->
+        <!--{% endif %}-->
 
 
-        {% get_service_info services record 'Referral' as res_ref %}
-        {% if res_ref %}
-        <li>
-            <a class="dropdown-item" href="{% if res_ref.service_id %}{% url 'mscc:referral_edit' record.id res_ref.service_id %}{% else %}{% url 'mscc:referral_add' record.id %}{% endif %}">
-                <i class="bi bi-box-arrow-up-right text-success"></i> {% trans "Referral" %}
-            </a>
-        </li>
-        {% endif %}
+        <!--{% get_service_info services record 'Referral' as res_ref %}-->
+        <!--{% if res_ref %}-->
+        <!--<li>-->
+            <!--<a class="dropdown-item" href="{% if res_ref.service_id %}{% url 'mscc:referral_edit' record.id res_ref.service_id %}{% else %}{% url 'mscc:referral_add' record.id %}{% endif %}">-->
+                <!--<i class="bi bi-box-arrow-up-right text-success"></i> {% trans "Referral" %}-->
+            <!--</a>-->
+        <!--</li>-->
+        <!--{% endif %}-->
     </ul>
 </div>

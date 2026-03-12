@@ -75,7 +75,7 @@
                         </li>
                     </ul>
 
-                    <form method="post" action="{{ form.helper.form_action }}" id="registrationForm" novalidate>
+                    <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" novalidate>
                         {% csrf_token %}
                         {% for h in form.hidden_fields %}{{ h }}{% endfor %}
 

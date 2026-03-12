@@ -108,7 +108,7 @@
                             </span>
                             <i class="bi bi-chevron-down ms-1 small"></i>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 user-menu-dropdown">
                             {% if request.user.is_authenticated %}
                             <li><a class="dropdown-item py-2" href="{% url 'users:profile' %}"><i class="bi bi-person me-2"></i> {% trans "Profile" %}</a></li>
                             {% if request.user.is_superuser %}
@@ -151,8 +151,8 @@
             <!-- Footer -->
             <footer class="p-4 bg-white border-top mt-auto">
                 <div class="d-flex justify-content-between align-items-center small text-muted">
-                    <div>&copy; 2024 UNICEF BMA - Beneficiary Monitoring & Assessment</div>
-                    <div>Version 4.0 (Redesign)</div>
+                    <div>&copy; 2024 MEHE BMA - Beneficiary Monitoring & Assessment</div>
+                    <div>Version 1.0 </div>
                 </div>
             </footer>
         </main>

@@ -16,6 +16,7 @@ from crispy_forms.bootstrap import (
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 
 from student_registration.mscc.utils import validate_date
+from student_registration.mscc.widgets import DatePickerInput
 from .models import (
     Registration,
     EducationAssessment,
@@ -467,6 +468,7 @@ class EducationServiceForm(forms.ModelForm):
     )
     registration_date = forms.DateField(
         label=_("Date of registration in the round"),
+        widget=DatePickerInput(),
         required=False,
         help_text=_('The date the child joined the current round.')
     )

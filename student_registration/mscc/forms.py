@@ -56,19 +56,19 @@ class MainForm(forms.ModelForm):
     # )
     child_first_name = forms.CharField(
         label=_("Child\'s First Name"),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. Ahmad')}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _('مثال: محمد')}), required=True
     )
     child_father_name = forms.CharField(
         label=_("Child\'s Father Name"),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. Mohamad')}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _('مثال: أحمد')}), required=True
     )
     child_last_name = forms.CharField(
         label=_("Child\'s Family Name"),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Sayed')}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _('مثال: السيد')}), required=True
     )
     child_mother_fullname = forms.CharField(
         label=_("Mother Full Name"),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. Fatima Al Ali')}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _('مثال: الهام')}), required=True
     )
     child_gender = forms.ChoiceField(
         label=_("Child\'s Gender"),
