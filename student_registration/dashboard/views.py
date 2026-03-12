@@ -334,3 +334,61 @@ def analytics_export_csv(request):
     for row in rows.iterator(chunk_size=2000):
         writer.writerow(row)
     return response
+
+
+class CentersMapView(LoginRequiredMixin, TemplateView):
+    template_name = 'dashboard/centers_map.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context.update({
+            'partners': PartnerOrganization.objects.all(),
+            'default_partner_id': user.partner_id,
+            'default_center_id': user.center_id,
+        })
+        return context
+
+
+from django.urls import reverse
+
+@login_required
+def centers_geo_data(request):
+    """Return geographic data for all centers for mapping."""
+    user = request.user
+    qs = Center.objects.select_related('partner', 'governorate', 'caza', 'cadaster').filter(
+        latitude__isnull=False,
+        longitude__isnull=False
+    )
+
+    if not user.is_superuser:
+        if user.partner_id:
+            qs = qs.filter(partner_id=user.partner_id)
+        elif user.center_id:
+            qs = qs.filter(id=user.center_id)
+        else:
+            return JsonResponse([], safe=False)
+
+    # Simple filtering
+    partner_id = request.GET.get('partner_id')
+    if partner_id:
+        qs = qs.filter(partner_id=partner_id)
+
+    data = []
+    for center in qs:
+        data.append({
+            'id': center.id,
+            'name': center.name,
+            'partner': center.partner.name if center.partner else 'N/A',
+            'governorate': center.governorate.name if center.governorate else 'N/A',
+            'caza': center.caza.name if center.caza else 'N/A',
+            'cadaster': center.cadaster.name if center.cadaster else 'N/A',
+            'latitude': float(center.latitude) if center.latitude is not None else None,
+            'longitude': float(center.longitude) if center.longitude is not None else None,
+            'total_children': center.total_children,
+            'type': center.get_type_display() if center.type else 'N/A',
+            'p_code': center.p_code or 'N/A',
+            'profile_url': reverse('locations:center_profile', kwargs={'pk': center.id})
+        })
+
+    return JsonResponse(data, safe=False)

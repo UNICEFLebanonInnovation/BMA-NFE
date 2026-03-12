@@ -35,4 +35,7 @@
 <a href="{% url 'mscc:attendance_heatmap' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'attendance_heatmap' %}active{% endif %}">
     <i class="bi bi-calendar3"></i> <span>{% trans "Attendance Heatmap" %}</span>
 </a>
+<a href="{% url 'dashboard:centers_map' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'centers_map' %}active{% endif %}">
+    <i class="bi bi-geo-alt"></i> <span>{% trans "Centers Map" %}</span>
+</a>
 {% endif %}

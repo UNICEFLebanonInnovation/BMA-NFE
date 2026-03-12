@@ -17,4 +17,7 @@ urlpatterns = [
     re_path(r'^api/analytics/breakdown/$', view=views.analytics_breakdown, name='analytics_breakdown'),
     re_path(r'^api/analytics/crosstab/$', view=views.analytics_crosstab, name='analytics_crosstab'),
     re_path(r'^api/analytics/export.csv$', view=views.analytics_export_csv, name='analytics_export_csv'),
+
+    re_path(r'^centers-map/$', view=views.CentersMapView.as_view(), name='centers_map'),
+    re_path(r'^api/centers-geo-data/$', view=views.centers_geo_data, name='centers_geo_data'),
 ]
