@@ -1,24 +1,51 @@
-{% extends "youth/base.html" %}
+{% extends "base.html" %}
 {% load util_tags %}
 {% load custom_tags %}
 {% load static i18n %}
-{% block title %}Members{% endblock %}
 
-{% block main_content %}
+{% block project_title %}{% trans "User Management" %}{% endblock %}
+{% block module_name %}{% trans "System Users" %}{% endblock %}
 
-<div class="container">
-
-    <h2>Users</h2>
-
-    <div class="list-group">
-        {% for user in user_list %}
-          <a href="{% url 'users:detail' user.email %}" class="list-group-item">
-            <h4 class="list-group-item-heading">{{ user.name }}</h4>
-          </a>
-        {% endfor %}
-
+{% block content %}
+<div class="container-fluid">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-people me-2 text-primary"></i>{% trans "Members" %}</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+                {% for user in user_list %}
+                <a href="{% url 'users:detail' user.username %}" class="list-group-item list-group-item-action py-3 px-4">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle bg-light-blue p-3 text-primary">
+                                <i class="bi bi-person fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1 fw-bold">{{ user.get_full_name|default:user.username }}</h6>
+                                <small class="text-muted">{{ user.date_joined|date:"M Y" }}</small>
+                            </div>
+                            <p class="mb-0 small text-muted">
+                                <i class="bi bi-envelope me-1"></i> {{ user.email }}
+                                <span class="mx-2 text-silver">|</span>
+                                <i class="bi bi-shield me-1"></i> {{ user.groups.first.name|default:"No Group" }}
+                            </p>
+                        </div>
+                        <div class="ms-3">
+                            <i class="bi bi-chevron-right text-muted"></i>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="p-5 text-center">
+                    <i class="bi bi-people display-1 text-light mb-3"></i>
+                    <p class="text-muted">{% trans "No users found." %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-
 </div>
-
-{% endblock main_content %}
+{% endblock %}
