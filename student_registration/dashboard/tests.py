@@ -38,7 +38,7 @@ class CentersMapTests(TestCase):
 
     def test_centers_geo_data_api(self):
         from student_registration.mscc.models import Teacher
-        Teacher.objects.create(name="Test Teacher", center=self.center)
+        Teacher.objects.create(first_name="Test", last_name="Teacher", center=self.center)
 
         response = self.client.get(reverse('dashboard:centers_geo_data'))
         self.assertEqual(response.status_code, 200)
