@@ -1062,29 +1062,20 @@ class ChildProfilePreview(LoginRequiredMixin, TemplateView):
 @login_required(login_url='/users/login')
 def export_list_background(request):
     user = request.user
-    nationality = request.GET.get('nationality', '')
-    first_name = request.GET.get('first_name', '')
-    last_name = request.GET.get('last_name', '')
-    father_name = request.GET.get('father_name', '')
-    mother_fullname = request.GET.get('mother_fullname', '')
-    round = request.GET.get('round', '')
-    if not round:
-        return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
-                            status=400)
+    filters = request.GET.dict()
+    file_format = request.GET.get('format', 'csv')
 
     export_record = ExportHistory.objects.create(
         export_type='NFR Sector List',
         created_by=user,
-        partner_name=user.partner.name if user.partner else ''
+        partner_name=user.partner.name if user.partner else '',
+        file_format=file_format,
+        fields=filters
     )
     queue_filtered_mscc_export(
         export_record.id,
-        nationality,
-        first_name,
-        last_name,
-        father_name,
-        mother_fullname,
-        round,
+        filters=filters,
+        file_format=file_format
     )
     return JsonResponse({'status': 'started'})
 

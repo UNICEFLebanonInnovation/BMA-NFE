@@ -49,14 +49,6 @@ $(document).ready(function() {
         var format = $("input[name='export-format']:checked").val();
         var originalHtml = button.html();
 
-        if (checkRound) {
-            var round = $("#id_round").val();
-            if (!round) {
-                if (exportModal) exportModal.hide();
-                showModal('Please select a Round in the Advanced Search filters before exporting data.');
-                return;
-            }
-        }
 
         // Add format to params if not already there
         if (params.indexOf('format=') === -1) {
