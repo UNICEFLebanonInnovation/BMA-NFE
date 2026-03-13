@@ -2,6 +2,8 @@
 var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, " +
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
 
+var isDuplicateFound = false;
+
 $(document).ready(function() {
 
     $("#submit-id-save").click(function(e){
@@ -266,8 +268,11 @@ function old_child_search() {
 
 function child_duplication_check() {
 
+    isDuplicateFound = false;
     $('#child-duplication-error').hide();
     $('#submit-id-save').prop('disabled', false);
+    $('#next-btn').prop('disabled', false);
+    $('.col-lg-3 .card-header').removeClass('bg-danger').addClass('bg-primary');
 
     var birthday_year = $('#id_child_birthday_year').val();
     var birthday_month = $('#id_child_birthday_month').val();
@@ -311,14 +316,41 @@ function child_duplication_check() {
             dataType: 'json',
             success: function (response) {
                 if(response.result.length > 0){
+                    isDuplicateFound = true;
                     var text = ''
+                    var $container = $('#nfe_search_result');
+                    $container.empty();
+                    $('.col-lg-3 .card-header').removeClass('bg-primary').addClass('bg-danger');
+
                     $(response.result).each(function(i, item){
-                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/mscc/child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center: ' + item.center__name+'</br>';
+                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/mscc/child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC programme in the Center: ' + item.center__name+'</br>';
                         text = text + 'Click <a href="/mscc/new-round/'+item.id+'/">here</a> to register this child in a new Round.'
+
+                        var full_name = item.child__first_name + " " + item.child__father_name + " " + item.child__last_name;
+                        var html = `
+                            <div class="list-group-item p-3 border-danger border-start border-4 bg-danger bg-opacity-10 mb-2">
+                                <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                                    <h6 class="mb-0 fw-bold text-danger">${full_name}</h6>
+                                    <span class="badge bg-danger">DUPLICATE</span>
+                                </div>
+                                <p class="mb-1 small text-dark">
+                                    <i class="bi bi-calendar-event me-1"></i> ${item.child__birthday_day}/${item.child__birthday_month}/${item.child__birthday_year}
+                                    <br>
+                                    <i class="bi bi-person-heart me-1"></i> ${item.child__mother_fullname}
+                                </p>
+                                <div class="small text-muted mb-3">
+                                    <i class="bi bi-geo-alt me-1"></i> ${item.center__name}
+                                </div>
+                                <a href="/mscc/new-round/${item.id}/" class="btn btn-danger btn-sm w-100 fw-bold">
+                                    <i class="bi bi-person-plus-fill me-1"></i> Select & Re-register
+                                </a>
+                            </div>`;
+                        $container.prepend(html);
                     })
                     $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();
                     $('#submit-id-save').prop('disabled', true);
+                    $('#next-btn').prop('disabled', true);
                 }
             },
             error: function (response) {
@@ -329,6 +361,8 @@ function child_duplication_check() {
 }
 function append_old_result(data)
 {
+    if (isDuplicateFound) return;
+
     var $container = $('#nfe_search_result');
     $container.empty();
     $('#nfe_search_loader').addClass('d-none');
@@ -657,6 +691,14 @@ function validateField(field) {
 
 function validateMainForm(showModal, step) {
     if (showModal === undefined) showModal = true;
+
+    if (isDuplicateFound) {
+        if (showModal) {
+            $('#child-duplication-error').fadeIn().fadeOut().fadeIn();
+        }
+        return false;
+    }
+
     var valid = true;
 
     var requiredFields = [

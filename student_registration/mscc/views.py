@@ -819,7 +819,19 @@ def child_duplication_check(request):
             )
             if registration_id:
                 qs = qs.exclude(pk=registration_id)
-            qs = qs.values('id', 'center__name')
+            qs = qs.values(
+                'id',
+                'center__name',
+                'child__first_name',
+                'child__father_name',
+                'child__last_name',
+                'child__mother_fullname',
+                'child__birthday_day',
+                'child__birthday_month',
+                'child__birthday_year',
+                'child__gender',
+                'child__nationality__name'
+            )
             return JsonResponse({'result': list(qs)})
 
     return JsonResponse({'result': []})
