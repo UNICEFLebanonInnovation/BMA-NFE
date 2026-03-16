@@ -58,6 +58,7 @@ class Location(MPTTModel):
     class Meta:
         unique_together = ('name', 'type', 'p_code')
         ordering = ['name']
+        verbose_name = 'Location'
 
 
 class Center(TimeStampedModel):

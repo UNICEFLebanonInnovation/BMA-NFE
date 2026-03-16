@@ -299,7 +299,7 @@ class SchoolAdmin(ImportExportModelAdmin):
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
-admin.site.register(CLMRound, CLMRoundAdmin)
+# admin.site.register(CLMRound, CLMRoundAdmin)
 admin.site.register(EducationalLevel, EducationalLevelAdmin)
 admin.site.register(PublicHolidays)
 admin.site.register(ClubType, ClubTypeAdmin)

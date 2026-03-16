@@ -243,7 +243,7 @@ class AttachmentTypeAdmin(ImportExportModelAdmin):
     resource_class = AttachmentTypeResource
 
 
-admin.site.register(Student, StudentAdmin)
+# admin.site.register(Student, StudentAdmin)
 admin.site.register(Teacher, TeacherAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(IDType, IDTypeAdmin)

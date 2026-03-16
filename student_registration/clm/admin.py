@@ -167,6 +167,6 @@ class CenterAdmin(ImportExportModelAdmin):
     resource_class = CenterResource
 
 
-admin.site.register(Center, CenterAdmin)
-admin.site.register(Disability, DisabilityAdmin)
-admin.site.register(Bridging, BridgingAdmin)
+# admin.site.register(Center, CenterAdmin)
+# admin.site.register(Disability, DisabilityAdmin)
+# admin.site.register(Bridging, BridgingAdmin)

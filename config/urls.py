@@ -46,13 +46,13 @@ from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 
 api = routers.SimpleRouter()
 
-api.register(r'dirasa/list', BridgingListViewSet, basename='dirasa-list')
-api.register(r'dirasa/schools', SchoolListViewSet, basename='dirasa-schools')
-api.register(r'dirasa/teachers', TeacherListViewSet, basename='dirasa-teachers')
-api.register(r'dirasa/attendances', AttendanceListViewSet, basename='dirasa-attendances')
+# api.register(r'dirasa/list', BridgingListViewSet, basename='dirasa-list')
+# api.register(r'dirasa/schools', SchoolListViewSet, basename='dirasa-schools')
+# api.register(r'dirasa/teachers', TeacherListViewSet, basename='dirasa-teachers')
+# api.register(r'dirasa/attendances', AttendanceListViewSet, basename='dirasa-attendances')
 
-api.register(r'students', StudentViewSet, basename='students')
-api.register(r'students-search', StudentSearchViewSet, basename='students-search')
+# api.register(r'students', StudentViewSet, basename='students')
+# api.register(r'students-search', StudentSearchViewSet, basename='students-search')
 api.register(r'schools', SchoolViewSet, basename='schools')
 api.register(r'sections', SectionViewSet, basename='sections')
 api.register(r'teacher', TeacherViewSet, basename='teacher')
@@ -65,7 +65,7 @@ urlpatterns = [
     re_path(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
     re_path(r'^login-success/$', login_success, name='login_success'),
     re_path(r'^landing-page/$', LandingPage.as_view(), name='landing_page'),
-    re_path(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
+    # re_path(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
     re_path(r'^school-autocomplete/$', SchoolAutocomplete.as_view(), name='school_autocomplete'),
     re_path(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),
 

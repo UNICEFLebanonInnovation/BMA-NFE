@@ -113,7 +113,7 @@ class RoundPartner(TimeStampedModel):
 
 
 class Teacher(TimeStampedModel):
-    """Basic teacher profile stored for MSCC registrations."""
+    """Basic teacher profile stored for registrations."""
 
     GENDER = Choices(
         ('Male', _('Male')),
@@ -298,7 +298,7 @@ class Teacher(TimeStampedModel):
     )
     teaching_hours_mscc = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Number of teaching hours in MSCC')
+        verbose_name=_('Number of teaching hours')
     )
     trainings = models.ManyToManyField(
         Training,
@@ -433,8 +433,8 @@ class Teacher(TimeStampedModel):
     )
 
     class Meta:
-        verbose_name = 'MSCC Teacher'
-        verbose_name_plural = 'MSCC Teachers'
+        verbose_name = 'Teacher'
+        verbose_name_plural = 'Teachers'
 
 class Registration(TimeStampedModel):
 
@@ -597,7 +597,7 @@ class Registration(TimeStampedModel):
         blank=True,
         null=True,
         choices=IDENTIFICATION_SOURCE,
-        verbose_name=_('Source of referral of the child to MSCC')
+        verbose_name=_('Source of referral of the child')
     )
     source_of_identification_specify = models.TextField(
         blank=True, null=True,
@@ -623,7 +623,7 @@ class Registration(TimeStampedModel):
         ),
         blank=True,
         null=True,
-        verbose_name=_('Packages received/to be provided to child under MSCC')
+        verbose_name=_('Packages received/to be provided to child under')
     )
     type = models.CharField(
         max_length=100,
@@ -797,8 +797,8 @@ class Registration(TimeStampedModel):
 
     class Meta:
         ordering = ['-id']
-        verbose_name = "MSCC Registration"
-        verbose_name_plural = "MSCC Registrations"
+        verbose_name = "Registration"
+        verbose_name_plural = "Registrations"
 
 
 class EducationHistory(TimeStampedModel):
@@ -1547,8 +1547,8 @@ class EducationService(TimeStampedModel):
         ('Never registered in any formal school before', _('Never registered in any formal school before')),
         ('Was registered in formal school but didn\'t continue',
          _('Was registered in formal school but didn\'t continue')),
-        ('Was registered in non formal program and was referred to MSCC',
-         _('Was registered in non formal program and was referred to MSCC')),
+        ('Was registered in non formal program and was referred',
+         _('Was registered in non formal program and was referred')),
         ('Was registered in non formal program but didn\'t continue',
          _('Was registered in non formal program but didn\'t continue')),
         ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')),

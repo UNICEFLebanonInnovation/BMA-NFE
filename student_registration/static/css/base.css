@@ -46,7 +46,7 @@ form .radio {
 .form-filters .form-control {
     width: 200px;
 }
-.w-100 {
+/*.w-100 {
     width: 1500px !important;
 }
 
@@ -83,6 +83,8 @@ form .radio {
     width: 1800px !important;
 }
 }
+*/
+
 .table-container th {
     background: white;
     position: sticky;

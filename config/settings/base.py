@@ -151,7 +151,7 @@ EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.s
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = [
-    ("""UNICEF Lebanon Innovation""", 'achamseddine@unicef.org'),
+    ("""Lebanon Innovation""", 'achamseddine@unicef.org'),
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
@@ -391,10 +391,10 @@ SPECTACULAR_SETTINGS = {
 }
 
 JAZZMIN_SETTINGS = {
-    "site_title": "BMA",
-    "site_header": "BMA",
+    "site_title": "BMA  Sector",
+    "site_header": "BMA  Sector",
     "welcome_sign": "Welcome to BMA Admin",
-    "copyright": "UNICEF",
+    "copyright": "MEHE",
     "show_sidebar": True,
     "navigation_expanded": True,
     "hide_apps": [
@@ -412,14 +412,15 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"app": "mscc"},
-        {"app": "clm"},
+        # {"app": "clm"},
         {"app": "users"},
         {"app": "schools"},
         {"app": "locations"},
+
     ],
     "order_with_respect_to": [
         "mscc",
-        "clm",
+        # "clm",
         "attendances",
         "child",
         "students",
@@ -435,7 +436,7 @@ JAZZMIN_SETTINGS = {
         "mscc.Teacher": "fas fa-chalkboard-teacher",
         "mscc.Round": "fas fa-sync",
         "mscc.ProvidedServices": "fas fa-concierge-bell",
-        "clm.Bridging": "fas fa-bridge",
+        # "clm.Bridging": "fas fa-bridge",
         "child.Child": "fas fa-child",
         "students.Student": "fas fa-user-graduate",
         "schools.School": "fas fa-school",

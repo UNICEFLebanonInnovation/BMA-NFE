@@ -1176,7 +1176,7 @@ class TeacherForm(forms.ModelForm):
         required=False,
     )
     teaching_hours_mscc = forms.IntegerField(
-        label=_('Number of teaching hours in MSCC'),
+        label=_('Number of teaching hours'),
         widget=forms.TextInput,
         required=False,
     )

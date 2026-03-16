@@ -146,10 +146,10 @@ class MSCCAttendanceChildAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(CLMAttendance, CLMAttendanceAdmin)
-admin.site.register(CLMAttendanceStudent, CLMAttendanceStudentAdmin)
-admin.site.register(CLMStudentTotalAttendance, CLMStudentTotalAttendanceAdmin)
-admin.site.register(CLMStudentAbsences, CLMStudentAbsencesAdmin)
+# admin.site.register(CLMAttendance, CLMAttendanceAdmin)
+# admin.site.register(CLMAttendanceStudent, CLMAttendanceStudentAdmin)
+# admin.site.register(CLMStudentTotalAttendance, CLMStudentTotalAttendanceAdmin)
+# admin.site.register(CLMStudentAbsences, CLMStudentAbsencesAdmin)
 admin.site.register(MSCCAttendance, MSCCAttendanceAdmin)
 admin.site.register(MSCCAttendanceChild, MSCCAttendanceChildAdmin)
 
