@@ -27,8 +27,8 @@ from django.utils.encoding import smart_str
 import traceback
 
 from rest_framework import status
-from django.db.models import F, Q, OuterRef, Exists, Subquery, IntegerField
-from django.db.models.functions import Coalesce
+from django.db.models import F, Q, OuterRef, Exists, Subquery, IntegerField, Avg, FloatField
+from django.db.models.functions import Coalesce, NullIf, Cast
 from django.urls import reverse, reverse_lazy
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -66,7 +66,12 @@ from .tables import (
 from .models import (
     Round,
     ProvidedServices,
+    Registration,
     Teacher,
+    PSSService,
+    EducationAssessment,
+    HealthNutritionService,
+    EducationService,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -1205,3 +1210,266 @@ def get_file_csv(request, file_name):
     if is_valid_filename(file_name, 'csv'):
         return download_file(file_name, 'exported_data.csv', content_type='text/csv')
     return HttpResponse("Invalid file.", status=400)
+
+
+class WellbeingDashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'mscc/wellbeing_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.locations.models import Center, Location
+        from student_registration.clm.models import PartnerOrganization
+
+        user = self.request.user
+        centers = Center.objects.all()
+        governorates = Location.objects.filter(type_id=1)
+        partners = PartnerOrganization.objects.all()
+        rounds = Round.objects.all()
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                centers = centers.filter(partner_id=user.partner_id)
+                partners = partners.filter(id=user.partner_id)
+            if user.center_id:
+                centers = centers.filter(id=user.center_id)
+
+        return {
+            'centers': centers,
+            'governorates': governorates,
+            'partners': partners,
+            'rounds': rounds,
+        }
+
+
+class WellbeingDashboardDataView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        qs = Registration.objects.filter(deleted=False)
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                qs = qs.filter(partner_id=user.partner_id)
+            if user.center_id:
+                qs = qs.filter(center_id=user.center_id)
+
+        # Apply Filters
+        centers = request.GET.getlist('centers')
+        if centers:
+            qs = qs.filter(center_id__in=centers)
+        rounds = request.GET.getlist('rounds')
+        if rounds:
+            qs = qs.filter(round_id__in=rounds)
+        governorates = request.GET.getlist('governorates')
+        if governorates:
+            qs = qs.filter(center__governorate_id__in=governorates)
+        partners = request.GET.getlist('partners')
+        if partners:
+            qs = qs.filter(partner_id__in=partners)
+
+        total_registrations = qs.count() or 1
+
+        # 1. Socio-Economic Data
+        labor_participation = (
+            qs.values(name=F('have_labour'))
+            .annotate(y=Count('id'))
+            .order_by('-y')
+        )
+        labor_participation = [
+            {'name': item['name'] or 'Unknown', 'y': item['y']}
+            for item in labor_participation
+        ]
+
+        labor_income = (
+            qs.exclude(have_labour='No')
+            .values('labour_type', 'labour_weekly_income')
+            .annotate(count=Count('id'))
+            .order_by('labour_type', 'labour_weekly_income')
+        )
+        labor_income_matrix = [
+            {
+                'type': item['labour_type'] or 'Other',
+                'income': item['labour_weekly_income'] or 'Unknown',
+                'count': item['count']
+            }
+            for item in labor_income
+        ]
+
+        cash_counts = Counter()
+        for programs in qs.values_list('cash_support_programmes', flat=True):
+            if programs:
+                cash_counts.update(programs)
+        cash_support = [
+            {'name': name, 'y': count}
+            for name, count in cash_counts.items()
+        ]
+
+        # 2. Wellbeing & Family (PSS)
+        pss_qs = PSSService.objects.filter(registration__in=qs)
+        living_arrangements = (
+            pss_qs.values(name=F('child_living_arrangement'))
+            .annotate(y=Count('id'))
+            .order_by('-y')
+        )
+        living_arrangements = [
+            {'name': item['name'] or 'N/A', 'y': item['y']}
+            for item in living_arrangements
+        ]
+
+        birth_reg = (
+            pss_qs.values(name=F('child_registered'))
+            .annotate(y=Count('id'))
+            .order_by('-y')
+        )
+        birth_reg = [
+            {'name': item['name'] or 'Unknown', 'y': item['y']}
+            for item in birth_reg
+        ]
+
+        vulnerabilities = (
+            pss_qs.values(name=F('child_vulnerability'))
+            .annotate(y=Count('id'))
+            .order_by('-y')
+        )
+        vulnerabilities = [
+            {'name': item['name'] or 'None Identified', 'y': item['y']}
+            for item in vulnerabilities
+        ]
+
+        pss_indicators = {
+            'caregiver_distress': pss_qs.filter(caregivers_distress='Yes').count(),
+            'child_distress': pss_qs.filter(child_distress='Yes').count(),
+            'protection_concern': pss_qs.exclude(child_protection_concern__in=['', None]).count(),
+        }
+
+        # 3. Education
+        edu_qs = EducationService.objects.filter(registration__in=qs)
+        edu_status = (
+            edu_qs.values(name=F('education_status'))
+            .annotate(y=Count('id'))
+            .order_by('-y')
+        )
+        edu_status = [
+            {'name': item['name'] or 'Unknown', 'y': item['y']}
+            for item in edu_status
+        ]
+
+        assess_qs = EducationAssessment.objects.filter(registration__in=qs)
+        avg_improvement = assess_qs.aggregate(
+            arabic=Avg(Cast(F('post_arabic_grade') - F('pre_arabic_grade'), FloatField()) / NullIf(Cast(F('pre_arabic_grade'), FloatField()), 0.0) * 100),
+            math=Avg(Cast(F('post_math_grade') - F('pre_math_grade'), FloatField()) / NullIf(Cast(F('pre_math_grade'), FloatField()), 0.0) * 100),
+            language=Avg(Cast(F('post_language_grade') - F('pre_language_grade'), FloatField()) / NullIf(Cast(F('pre_language_grade'), FloatField()), 0.0) * 100),
+        )
+
+        # 4. Impact Analysis & KPIs
+        # Attendance logic (simplified: use the annotated property if possible or aggregate)
+        # For performance, let's just get the average of the annotated _total_absent_days if we were in a ListView,
+        # but here we need a raw count.
+        total_absences = MSCCAttendanceChild.objects.filter(registration__in=qs, attended='No').count()
+        # We don't have total_attendance_days easily without another join.
+        # Let's assume a standard 100 days for rate display or just show raw absences if needed.
+        # Actually, let's try to get a better proxy.
+        total_possible_days = MSCCAttendanceChild.objects.filter(registration__in=qs).count() or 1
+        avg_attendance_rate = ((total_possible_days - total_absences) / total_possible_days) * 100
+
+        labor_rate = (qs.exclude(have_labour='No').count() / total_registrations) * 100
+        overall_improvement = (
+            (avg_improvement['arabic'] or 0) +
+            (avg_improvement['math'] or 0) +
+            (avg_improvement['language'] or 0)
+        ) / 3
+
+        protection_rate = (pss_indicators['protection_concern'] / total_registrations) * 100
+
+        # Barriers
+        barriers = (
+            assess_qs.values(name=F('barriers'))
+            .annotate(y=Count('id'))
+            .order_by('-y')
+        )
+        barriers = [
+            {'name': item['name'] or 'No barriers', 'y': item['y']}
+            for item in barriers
+        ]
+
+        # Impact: Attendance vs Improvement
+        # High attendance (>90%) vs Low attendance (<90%)
+        # This requires per-registration attendance calculation.
+        # For a simplified view, let's look at children with labor vs without labor impact on attendance.
+        labor_yes_qs = qs.exclude(have_labour='No')
+        labor_no_qs = qs.filter(have_labour='No')
+
+        def get_attendance_rate(sub_qs):
+            absences = MSCCAttendanceChild.objects.filter(registration__in=sub_qs, attended='No').count()
+            total = MSCCAttendanceChild.objects.filter(registration__in=sub_qs).count() or 1
+            return round(((total - absences) / total) * 100, 1)
+
+        labor_impact_attendance = {
+            'with_labor': get_attendance_rate(labor_yes_qs),
+            'without_labor': get_attendance_rate(labor_no_qs)
+        }
+
+        # Impact: Attendance on Improvement
+        # Children with 0 absences vs children with > 5 absences
+        no_absences_ids = (
+            MSCCAttendanceChild.objects.filter(registration__in=qs)
+            .values('registration')
+            .annotate(absences=Count('id', filter=Q(attended='No')))
+            .filter(absences=0)
+            .values_list('registration', flat=True)
+        )
+        high_absences_ids = (
+            MSCCAttendanceChild.objects.filter(registration__in=qs)
+            .values('registration')
+            .annotate(absences=Count('id', filter=Q(attended='No')))
+            .filter(absences__gt=5)
+            .values_list('registration', flat=True)
+        )
+
+        def get_avg_imp(ids):
+            agg = EducationAssessment.objects.filter(registration_id__in=ids).aggregate(
+                avg=Avg(
+                    (Cast(F('post_arabic_grade') - F('pre_arabic_grade'), FloatField()) / NullIf(Cast(F('pre_arabic_grade'), FloatField()), 0.0) * 100 +
+                     Cast(F('post_math_grade') - F('pre_math_grade'), FloatField()) / NullIf(Cast(F('pre_math_grade'), FloatField()), 0.0) * 100 +
+                     Cast(F('post_language_grade') - F('pre_language_grade'), FloatField()) / NullIf(Cast(F('pre_language_grade'), FloatField()), 0.0) * 100) / 3
+                )
+            )
+            return round(agg['avg'] or 0, 1)
+
+        attendance_impact_improvement = {
+            'high_attendance': get_avg_imp(no_absences_ids),
+            'low_attendance': get_avg_imp(high_absences_ids)
+        }
+
+        data = {
+            'kpis': {
+                'avg_attendance': round(avg_attendance_rate, 1),
+                'labor_rate': round(labor_rate, 1),
+                'avg_improvement': round(overall_improvement, 1),
+                'protection_concerns': round(protection_rate, 1),
+            },
+            'socio_economic': {
+                'labor_participation': labor_participation,
+                'labor_income': labor_income_matrix,
+                'cash_support': cash_support,
+            },
+            'wellbeing': {
+                'living_arrangements': living_arrangements,
+                'birth_registration': birth_reg,
+                'vulnerabilities': vulnerabilities,
+                'pss_indicators': pss_indicators,
+            },
+            'education': {
+                'status': edu_status,
+                'improvement': [
+                    {'name': 'Arabic', 'value': round(avg_improvement['arabic'] or 0, 1)},
+                    {'name': 'Math', 'value': round(avg_improvement['math'] or 0, 1)},
+                    {'name': 'Language', 'value': round(avg_improvement['language'] or 0, 1)},
+                ]
+            },
+            'impact': {
+                'barriers': barriers,
+                'attendance_impact_improvement': attendance_impact_improvement,
+                'labor_impact_attendance': labor_impact_attendance,
+            }
+        }
+
+        return JsonResponse(data, safe=False)

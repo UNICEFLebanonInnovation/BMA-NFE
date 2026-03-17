@@ -380,4 +380,14 @@ urlpatterns = [
         view=views.chart_data,
         name='chart_data'
     ),
+    re_path(
+        r'^wellbeing-dashboard/$',
+        view=views.WellbeingDashboardView.as_view(),
+        name='wellbeing_dashboard'
+    ),
+    re_path(
+        r'^wellbeing-dashboard-data/$',
+        view=views.WellbeingDashboardDataView.as_view(),
+        name='wellbeing_dashboard_data'
+    ),
 ]
