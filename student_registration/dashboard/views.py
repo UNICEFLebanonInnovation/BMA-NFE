@@ -42,13 +42,23 @@ class ChartBuilderView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/chart_builder.html'
 
     def get_context_data(self, **kwargs):
-
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+        partners = PartnerOrganization.objects.all()
+        centers = Center.objects.all()
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                partners = partners.filter(id=user.partner_id)
+                centers = centers.filter(partner_id=user.partner_id)
+            if user.center_id:
+                centers = centers.filter(id=user.center_id)
+
         context.update(
             {
-                "partners": PartnerOrganization.objects.all(),
+                "partners": partners,
                 "rounds": Round.objects.all(),
-                "centers": Center.objects.all(),
+                "centers": centers,
                 "governorates": Location.objects.filter(type_id=1),
                 "cazas": Location.objects.filter(type_id=2),
                 "cadasters": Location.objects.filter(type_id=3),
@@ -77,9 +87,17 @@ def pivot_data(request):
         .values_list("programme_type", flat=True)[:1]
     )
 
+    user = request.user
+    qs = Registration.objects.filter(deleted=False)
+
+    if not (user.is_superuser or user.is_staff):
+        if user.partner_id:
+            qs = qs.filter(partner_id=user.partner_id)
+        if user.center_id:
+            qs = qs.filter(center_id=user.center_id)
+
     qs = (
-        Registration.objects.filter(deleted=False)
-        .annotate(
+        qs.annotate(
             programme_type=Subquery(latest_prog_type),
             center_name=F("center__name"),
             partner_name=F("center__partner__name"),
@@ -118,10 +136,20 @@ class AdvancedAnalyticsDashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        partners = PartnerOrganization.objects.all()
+        centers = Center.objects.select_related('partner').all()
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                partners = partners.filter(id=user.partner_id)
+                centers = centers.filter(partner_id=user.partner_id)
+            if user.center_id:
+                centers = centers.filter(id=user.center_id)
+
         context.update(
             {
-                'partners': PartnerOrganization.objects.all(),
-                'centers': Center.objects.select_related('partner').all(),
+                'partners': partners,
+                'centers': centers,
                 'programmes': list(EducationService.EDUCATION_PROGRAM),
                 'default_partner_id': user.partner_id,
                 'default_center_id': user.center_id,
@@ -200,7 +228,7 @@ def analytics_base_queryset(user, params):
     )
     qs = _annotate_age(qs)
 
-    if not user.is_superuser:
+    if not (user.is_superuser or user.is_staff):
         if user.partner_id:
             qs = qs.filter(partner_id=user.partner_id)
         if user.center_id:
@@ -342,8 +370,14 @@ class CentersMapView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        partners = PartnerOrganization.objects.all()
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                partners = partners.filter(id=user.partner_id)
+
         context.update({
-            'partners': PartnerOrganization.objects.all(),
+            'partners': partners,
             'default_partner_id': user.partner_id,
             'default_center_id': user.center_id,
         })
@@ -361,7 +395,7 @@ def centers_geo_data(request):
         longitude__isnull=False
     )
 
-    if not user.is_superuser:
+    if not (user.is_superuser or user.is_staff):
         if user.partner_id:
             qs = qs.filter(partner_id=user.partner_id)
         elif user.center_id:

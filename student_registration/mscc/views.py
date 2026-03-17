@@ -94,8 +94,15 @@ def chart_data(request):
         JsonResponse: A list of label/value pairs representing the grouped
         registration counts.
     """
+    user = request.user
     metric = request.GET.get('chart', 'nationality')
     qs = Registration.objects.filter(deleted=False)
+
+    if not (user.is_superuser or user.is_staff):
+        if user.partner_id:
+            qs = qs.filter(partner_id=user.partner_id)
+        if user.center_id:
+            qs = qs.filter(center_id=user.center_id)
 
     partner = request.GET.get('partner')
     if partner:
@@ -202,11 +209,21 @@ class DashboardView(LoginRequiredMixin,
         from student_registration.clm.models import PartnerOrganization
         from .models import Round, Registration
 
+        user = self.request.user
         instances = Registration.objects.filter(deleted=False)
         centers = Center.objects.all()
         governorates = Location.objects.filter(type_id=1)
         partners = PartnerOrganization.objects.all()
         rounds = Round.objects.all()
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                instances = instances.filter(partner_id=user.partner_id)
+                centers = centers.filter(partner_id=user.partner_id)
+                partners = partners.filter(id=user.partner_id)
+            if user.center_id:
+                instances = instances.filter(center_id=user.center_id)
+                centers = centers.filter(id=user.center_id)
 
         return {
             'total': instances.count(),
@@ -235,11 +252,21 @@ class DashboardCustomView(LoginRequiredMixin,
         from student_registration.clm.models import PartnerOrganization
         from .models import Round
 
+        user = self.request.user
         instances = Registration.objects.filter(deleted=False)
         centers = Center.objects.all()
         governorates = Location.objects.filter(type_id=1)
         partners = PartnerOrganization.objects.all()
         rounds = Round.objects.all()
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                instances = instances.filter(partner_id=user.partner_id)
+                centers = centers.filter(partner_id=user.partner_id)
+                partners = partners.filter(id=user.partner_id)
+            if user.center_id:
+                instances = instances.filter(center_id=user.center_id)
+                centers = centers.filter(id=user.center_id)
 
         # Children registered in more than one round
         moved_qs = (
@@ -285,9 +312,16 @@ class DashboardDataView(LoginRequiredMixin, View):
             YouthKitService,
             PSSService,
         )
+        user = request.user
         cash_support_programmes = Registration.CASH_SUPPORT_PROGRAMMES
 
         qs = Registration.objects.filter(deleted=False)
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                qs = qs.filter(partner_id=user.partner_id)
+            if user.center_id:
+                qs = qs.filter(center_id=user.center_id)
 
         centers = request.GET.getlist('centers')
         if centers:
