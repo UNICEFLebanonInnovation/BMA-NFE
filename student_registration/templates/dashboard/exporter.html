@@ -33,9 +33,9 @@
                       {% trans "Export" %}
                   </button>
                   <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift&current=true" target="_blank">Export All</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_2ndshift&current=true" target="_blank">Export All</a>
                     {% for item in classrooms %}
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift&current=true&classroom={{ item.id }}" target="_blank">Export level {{ item.name }}</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_2ndshift&current=true&classroom={{ item.id }}" target="_blank">Export level {{ item.name }}</a>
                     {% endfor %}
                   </div>
                 </div>
@@ -56,12 +56,12 @@
                       {% trans "Export" %}
                   </button>
                   <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true" target="_blank">Export all terms</a>
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true&term=1" target="_blank">Export term 1</a>
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true&term=2" target="_blank">Export term 2</a>
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true&term=3" target="_blank">Export term 3</a>
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true&term=4" target="_blank">Export term 4-[current year]</a>
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=false&term=4" target="_blank">Export term 4-[last year]</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_2ndshift_gradings&current=true" target="_blank">Export all terms</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_2ndshift_gradings&current=true&term=1" target="_blank">Export term 1</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_2ndshift_gradings&current=true&term=2" target="_blank">Export term 2</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_2ndshift_gradings&current=true&term=3" target="_blank">Export term 3</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_2ndshift_gradings&current=true&term=4" target="_blank">Export term 4-[current year]</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_2ndshift_gradings&current=false&term=4" target="_blank">Export term 4-[last year]</a>
                   </div>
                 </div>
 
@@ -74,7 +74,7 @@
               <div class="card-block">
                 <h3 class="card-title">2nd shift registration full data</h3>
                 <p class="card-text">Export the full data for 2nd shift registration for all school years.</p>
-                <a href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift" class="btn btn-primary">Export</a>
+                <a href="{% url 'dashboard:advanced_exporter' %}?report=export_2ndshift" class="btn btn-primary">Export</a>
               </div>
             </div>
           </div>
@@ -92,7 +92,7 @@
                   </button>
                   <div class="dropdown-menu">
                     {% for item in alp_rounds %}
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_alp&pre_test=true&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_alp&pre_test=true&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
                     {% endfor %}
                   </div>
                 </div>
@@ -114,7 +114,7 @@
                   </button>
                   <div class="dropdown-menu">
                     {% for item in alp_rounds %}
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_alp&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_alp&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
                     {% endfor %}
                   </div>
                 </div>
@@ -136,7 +136,7 @@
                   </button>
                   <div class="dropdown-menu">
                     {% for item in alp_rounds %}
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_alp&post_test=true&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:advanced_exporter' %}?report=export_alp&post_test=true&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
                     {% endfor %}
                   </div>
                 </div>
@@ -150,7 +150,7 @@
               <div class="card-block">
                 <h3 class="card-title">ALP full data</h3>
                 <p class="card-text">Export ALP full data for all rounds.</p>
-                <a href="{% url 'dashboard:run-exporter' %}?report=export_alp" class="btn btn-primary">Export</a>
+                <a href="{% url 'dashboard:advanced_exporter' %}?report=export_alp" class="btn btn-primary">Export</a>
               </div>
             </div>
           </div>
