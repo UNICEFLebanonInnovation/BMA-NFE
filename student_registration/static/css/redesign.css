@@ -310,6 +310,25 @@ h1, h2, h3, h4, h5 {
     font-weight: 500;
 }
 
+.has-error .form-label {
+    color: #dc3545;
+}
+
+.asteriskField {
+    color: #dc3545;
+    margin-inline-start: 4px;
+}
+
+.step.error .step-icon {
+    border-color: #dc3545;
+    color: #dc3545;
+    background-color: #fff1f2;
+}
+
+.step.error .small {
+    color: #dc3545 !important;
+}
+
 .summary-card {
     background: #fff;
     border-inline-start: 4px solid var(--unicef-blue);

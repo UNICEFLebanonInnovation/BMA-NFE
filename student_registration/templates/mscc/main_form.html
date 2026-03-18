@@ -427,14 +427,27 @@
             updateWizard(1);
 
             // If there are server-side errors, find the first step with an error and navigate to it
-            const firstErrorField = document.querySelector('.is-invalid');
-            if (firstErrorField) {
-                const stepContent = firstErrorField.closest('.step-content');
-                if (stepContent) {
-                    const stepNum = parseInt(stepContent.id.split('-')[1]);
-                    currentStep = stepNum;
-                    updateWizard(stepNum);
-                }
+            const errorFields = document.querySelectorAll('.is-invalid');
+            if (errorFields.length > 0) {
+                let firstStepWithError = totalSteps;
+                errorFields.forEach(field => {
+                    // Highlight the parent container
+                    const mb3 = field.closest('.mb-3');
+                    if (mb3) mb3.classList.add('has-error');
+
+                    const stepContent = field.closest('.step-content');
+                    if (stepContent) {
+                        const stepNum = parseInt(stepContent.id.split('-')[1]);
+                        // Mark step in stepper as error
+                        $(`.step[data-step="${stepNum}"]`).addClass('error');
+                        if (stepNum < firstStepWithError) {
+                            firstStepWithError = stepNum;
+                        }
+                    }
+                });
+
+                currentStep = firstStepWithError;
+                updateWizard(firstStepWithError);
             }
 
             // Draft saving logic
