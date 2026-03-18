@@ -405,7 +405,10 @@
             $('input, select').on('change input', function() {
                 const formData = {};
                 $('#registrationForm').serializeArray().forEach(item => {
-                    formData[item.name] = item.value;
+                    // Exclude CSRF token from being saved in draft
+                    if (item.name !== 'csrfmiddlewaretoken') {
+                        formData[item.name] = item.value;
+                    }
                 });
                 localStorage.setItem(formId, JSON.stringify(formData));
             });
@@ -415,7 +418,10 @@
             if (draft && !{{ form.instance.id|default:"null" }}) {
                 const data = JSON.parse(draft);
                 Object.keys(data).forEach(key => {
-                    $(`[name="${key}"]`).val(data[key]).trigger('change');
+                    // Exclude CSRF token from being restored from draft
+                    if (key !== 'csrfmiddlewaretoken') {
+                        $(`[name="${key}"]`).val(data[key]).trigger('change');
+                    }
                 });
             }
 
