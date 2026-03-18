@@ -22,6 +22,7 @@ from student_registration.schools.models import PartnerOrganization
 
 from .utils import load_child_attendance, create_attendance
 from student_registration.users.templatetags.custom_tags import has_group
+from student_registration.users.utils import MSCCAccessMixin, mscc_access_required
 
 
 SERVICE_PROGRAM_MAPPING = [
@@ -117,6 +118,7 @@ def _aggregate_attendance(queryset, *group_fields):
 
 
 class AttendanceView(LoginRequiredMixin,
+                     MSCCAccessMixin,
                      GroupRequiredMixin,
                      TemplateView):
 
@@ -175,6 +177,7 @@ class AttendanceView(LoginRequiredMixin,
         }
 
 
+@mscc_access_required
 def save_attendance_children(request):
     """Persist attendance for MSCC children.
 
@@ -209,6 +212,7 @@ def save_attendance_children(request):
 
 
 class LoadAttendanceChildren(LoginRequiredMixin,
+                             MSCCAccessMixin,
                              TemplateView):
 
     template_name = 'mscc/attendance_children.html'
@@ -253,7 +257,27 @@ class LoadAttendanceChildren(LoginRequiredMixin,
 
 
 class LoadAttendanceChild(LoginRequiredMixin,
+                          MSCCAccessMixin,
                           TemplateView):
+
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        child_id = kwargs["child"]
+        from student_registration.child.models import Child
+        child = Child.objects.get(id=child_id)
+        # Check if child is in user's scoped data
+        from student_registration.mscc.models import Registration
+        registrations = Registration.objects.filter(child=child, deleted=False)
+
+        if not (user.is_superuser or user.is_staff):
+            if has_group(user, 'MSCC_PARTNER'):
+                if not registrations.filter(partner_id=user.partner_id).exists():
+                    return HttpResponseForbidden("You do not have permission to view this child's attendance.")
+            if has_group(user, 'MSCC_CENTER'):
+                if not registrations.filter(center_id=user.center_id).exists():
+                    return HttpResponseForbidden("You do not have permission to view this child's attendance.")
+
+        return super(LoadAttendanceChild, self).dispatch(request, *args, **kwargs)
 
     template_name = 'mscc/child_attendance_month.html'
 
@@ -275,7 +299,7 @@ class LoadAttendanceChild(LoginRequiredMixin,
         }
 
 
-class AttendanceReport(LoginRequiredMixin, TemplateView):
+class AttendanceReport(LoginRequiredMixin, MSCCAccessMixin, TemplateView):
     template_name = 'mscc/attendance_report.html'
 
     def get_context_data(self, **kwargs):
@@ -311,7 +335,7 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
         return context
 
 
-class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
+class AttendanceHeatmap(LoginRequiredMixin, MSCCAccessMixin, TemplateView):
     template_name = 'mscc/attendance_heatmap.html'
 
     def get_context_data(self, **kwargs):

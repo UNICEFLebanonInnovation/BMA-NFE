@@ -1274,8 +1274,13 @@ class TeacherForm(forms.ModelForm):
             form_action = reverse('mscc:teacher_edit', kwargs={'pk': instance.id})
 
         center_queryset = Center.objects.all()
-        if self.request and self.request.user.center_id:
-            center_queryset = Center.objects.filter(id=self.request.user.center_id)
+        if self.request:
+            user = self.request.user
+            if not (user.is_superuser or user.is_staff):
+                if user.center_id:
+                    center_queryset = Center.objects.filter(id=user.center_id)
+                elif user.partner_id:
+                    center_queryset = Center.objects.filter(partner_id=user.partner_id)
 
         self.fields['center'] = forms.ModelChoiceField(
             queryset=center_queryset,

@@ -19,6 +19,7 @@ from django.utils.dateparse import parse_date
 from django.utils import timezone
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from student_registration.users.utils import MSCCAccessMixin, mscc_access_required
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +37,7 @@ def _today():
     return timezone.now().date()
 
 
-class ChartBuilderView(LoginRequiredMixin, TemplateView):
+class ChartBuilderView(LoginRequiredMixin, MSCCAccessMixin, TemplateView):
     """Interactive page for end users to create D3 charts."""
 
     template_name = 'dashboard/chart_builder.html'
@@ -68,12 +69,13 @@ class ChartBuilderView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class PivotDashboardView(LoginRequiredMixin, TemplateView):
+class PivotDashboardView(LoginRequiredMixin, MSCCAccessMixin, TemplateView):
     """Display a PivotTable.js dashboard for MSCC registrations."""
 
     template_name = 'dashboard/pivot_dashboard.html'
 
 
+@mscc_access_required
 def pivot_data(request):
     """Return minimal MSCC registration data for the pivot table."""
     if not request.user.is_authenticated:
@@ -130,7 +132,7 @@ def pivot_data(request):
     return JsonResponse(data, safe=False)
 
 
-class AdvancedAnalyticsDashboardView(LoginRequiredMixin, TemplateView):
+class AdvancedAnalyticsDashboardView(LoginRequiredMixin, MSCCAccessMixin, TemplateView):
     template_name = 'dashboard/advanced_analytics.html'
 
     def get_context_data(self, **kwargs):
@@ -261,6 +263,7 @@ def analytics_base_queryset(user, params):
 
 
 @login_required
+@mscc_access_required
 def analytics_summary(request):
     def builder(params):
         qs = analytics_base_queryset(request.user, params)
@@ -275,6 +278,7 @@ def analytics_summary(request):
 
 
 @login_required
+@mscc_access_required
 def analytics_trend(request):
     def builder(params):
         qs = analytics_base_queryset(request.user, params)
@@ -310,6 +314,7 @@ def analytics_trend(request):
 
 
 @login_required
+@mscc_access_required
 def analytics_breakdown(request):
     def builder(params):
         dimension = request.GET.get('dimension', 'gender')
@@ -328,6 +333,7 @@ def analytics_breakdown(request):
 
 
 @login_required
+@mscc_access_required
 def analytics_crosstab(request):
     def builder(params):
         x = request.GET.get('x', 'partner')
@@ -350,6 +356,7 @@ def analytics_crosstab(request):
 
 
 @login_required
+@mscc_access_required
 def analytics_export_csv(request):
     qs = analytics_base_queryset(request.user, request.GET.dict())
     response = HttpResponse(content_type='text/csv')
@@ -364,7 +371,7 @@ def analytics_export_csv(request):
     return response
 
 
-class CentersMapView(LoginRequiredMixin, TemplateView):
+class CentersMapView(LoginRequiredMixin, MSCCAccessMixin, TemplateView):
     template_name = 'dashboard/centers_map.html'
 
     def get_context_data(self, **kwargs):
@@ -387,6 +394,7 @@ class CentersMapView(LoginRequiredMixin, TemplateView):
 from django.urls import reverse
 
 @login_required
+@mscc_access_required
 def centers_geo_data(request):
     """Return geographic data for all centers for mapping."""
     user = request.user

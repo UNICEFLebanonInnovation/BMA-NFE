@@ -86,12 +86,14 @@ from .serializers import (
 )
 
 from .utils import *
+from student_registration.users.utils import MSCCAccessMixin, mscc_access_required
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
 
 
+@mscc_access_required
 def chart_data(request):
     """Return aggregated MSCC registration data for charts.
 
@@ -155,8 +157,21 @@ def chart_data(request):
 
 
 class ProfileView(LoginRequiredMixin,
+                  MSCCAccessMixin,
                   TemplateView):
     template_name = 'mscc/profile.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        instance = Registration.objects.get(id=self.kwargs['pk'])
+
+        if not (user.is_superuser or user.is_staff):
+            if has_group(user, 'MSCC_PARTNER') and instance.partner_id != user.partner_id:
+                return HttpResponseForbidden("You do not have permission to view this record.")
+            if has_group(user, 'MSCC_CENTER') and instance.center_id != user.center_id:
+                return HttpResponseForbidden("You do not have permission to view this record.")
+
+        return super(ProfileView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """Build the profile context for the requested registration.
@@ -197,6 +212,7 @@ class ProfileView(LoginRequiredMixin,
 
 
 class DashboardView(LoginRequiredMixin,
+                    MSCCAccessMixin,
                     TemplateView):
     template_name = 'mscc/dashboard.html'
 
@@ -240,6 +256,7 @@ class DashboardView(LoginRequiredMixin,
 
 
 class DashboardCustomView(LoginRequiredMixin,
+                    MSCCAccessMixin,
                     TemplateView):
     template_name = 'mscc/dashboard_d3.html'
 
@@ -307,7 +324,7 @@ class DashboardCustomView(LoginRequiredMixin,
         }
 
 
-class DashboardDataView(LoginRequiredMixin, View):
+class DashboardDataView(LoginRequiredMixin, MSCCAccessMixin, View):
     """Return aggregated data for dashboard charts."""
 
     def get(self, request):
@@ -413,17 +430,13 @@ class DashboardDataView(LoginRequiredMixin, View):
 
 
 class MainAddView(LoginRequiredMixin,
+                  MSCCAccessMixin,
                   GroupRequiredMixin,
                   FormView):
     template_name = 'mscc/main_form.html'
     form_class = MainForm
     success_url = reverse_lazy('mscc:list')
-    group_required = [u"MSCC", u"MSCC_CENTER"]
-
-    def dispatch(self, request, *args, **kwargs):
-        if has_group(request.user, 'MSCC_CENTER') and not request.user.partner:
-            return redirect('mscc:list')
-        return super(MainAddView, self).dispatch(request, *args, **kwargs)
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER"]
 
     def get_success_url(self):
         return reverse('mscc:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
@@ -455,12 +468,25 @@ class MainAddView(LoginRequiredMixin,
 
 
 class MainEditView(LoginRequiredMixin,
+                   MSCCAccessMixin,
                    GroupRequiredMixin,
                    FormView):
     template_name = 'mscc/main_form.html'
     form_class = MainForm
     success_url = reverse_lazy('mscc:list')
-    group_required = [u"MSCC", u"MSCC_CENTER"]
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER"]
+
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        instance = Registration.objects.get(id=self.kwargs['pk'])
+
+        if not (user.is_superuser or user.is_staff):
+            if has_group(user, 'MSCC_PARTNER') and instance.partner_id != user.partner_id:
+                return HttpResponseForbidden("You do not have permission to edit this record.")
+            if has_group(user, 'MSCC_CENTER') and instance.center_id != user.center_id:
+                return HttpResponseForbidden("You do not have permission to edit this record.")
+
+        return super(MainEditView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse('mscc:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
@@ -547,6 +573,7 @@ def main_mark_delete_view(request, pk):
 
 
 class MainListView(LoginRequiredMixin,
+                   MSCCAccessMixin,
                    GroupRequiredMixin,
                    FilterView,
                    ExportMixin,
@@ -556,8 +583,7 @@ class MainListView(LoginRequiredMixin,
     table_class = MainTable
     model = Registration
     template_name = 'mscc/list.html'
-    table = BootstrapTable(Registration.objects.all(), order_by='id')
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER"]
 
     filterset_class = MainFilter
 
@@ -929,6 +955,7 @@ def quick_search(request):
 
 
 class TeacherListView(LoginRequiredMixin,
+                  MSCCAccessMixin,
                   GroupRequiredMixin,
                   FilterView,
                   ExportMixin,
@@ -960,6 +987,7 @@ class TeacherListView(LoginRequiredMixin,
 
 
 class TeacherAddView(LoginRequiredMixin,
+                 MSCCAccessMixin,
                  GroupRequiredMixin,
                  FormView):
     template_name = 'mscc/teacher_form.html'
@@ -991,12 +1019,25 @@ class TeacherAddView(LoginRequiredMixin,
 
 
 class TeacherEditView(LoginRequiredMixin,
+                  MSCCAccessMixin,
                   GroupRequiredMixin,
                   FormView):
     template_name = 'mscc/teacher_form.html'
     form_class = TeacherForm
     success_url = reverse_lazy('mscc:teacher_list')
     group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
+
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        instance = Teacher.objects.get(id=self.kwargs['pk'])
+
+        if not (user.is_superuser or user.is_staff):
+            if has_group(user, 'MSCC_PARTNER') and instance.center.partner_id != user.partner_id:
+                return HttpResponseForbidden("You do not have permission to edit this teacher.")
+            if has_group(user, 'MSCC_CENTER') and instance.center_id != user.center_id:
+                return HttpResponseForbidden("You do not have permission to edit this teacher.")
+
+        return super(TeacherEditView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
@@ -1111,6 +1152,7 @@ class ChildProfilePreview(LoginRequiredMixin, TemplateView):
 
 
 @login_required(login_url='/users/login')
+@mscc_access_required
 def export_list_background(request):
     user = request.user
     filters = request.GET.dict()
@@ -1172,6 +1214,7 @@ def export_child_list_background(request):
 
 
 @login_required(login_url='/users/login')
+@mscc_access_required
 def export_list_async(request):
     fields = None
     file_format = 'csv'
@@ -1212,7 +1255,7 @@ def get_file_csv(request, file_name):
     return HttpResponse("Invalid file.", status=400)
 
 
-class WellbeingDashboardView(LoginRequiredMixin, TemplateView):
+class WellbeingDashboardView(LoginRequiredMixin, MSCCAccessMixin, TemplateView):
     template_name = 'mscc/wellbeing_dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -1240,7 +1283,7 @@ class WellbeingDashboardView(LoginRequiredMixin, TemplateView):
         }
 
 
-class WellbeingDashboardDataView(LoginRequiredMixin, View):
+class WellbeingDashboardDataView(LoginRequiredMixin, MSCCAccessMixin, View):
     def get(self, request):
         user = request.user
         qs = Registration.objects.filter(deleted=False)
