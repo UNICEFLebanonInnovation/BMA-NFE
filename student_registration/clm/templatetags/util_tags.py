@@ -326,7 +326,16 @@ def get_item_by_key(dictionary, level, age):
 
 @register.filter
 def get_item(dictionary, key):
+    if not dictionary:
+        return None
     return dictionary.get(key)
+
+
+@register.filter
+def get_label(field):
+    if not field:
+        return ''
+    return getattr(field, 'label', '')
 
 
 @register.filter
