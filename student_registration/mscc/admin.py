@@ -515,6 +515,13 @@ admin.site.register(EducationHistory, EducationHistoryAdmin)
 # admin.site.register(HealthNutritionService, HealthNutritionServiceAdmin)
 # admin.site.register(HealthNutritionReferral, HealthNutritionReferralAdmin)
 admin.site.register(EducationService, EducationServiceAdmin)
+@admin.register(EducationProgramAgeMapping)
+class EducationProgramAgeMappingAdmin(admin.ModelAdmin):
+    list_display = ('education_program', 'min_age', 'max_age')
+    search_fields = ('education_program',)
+    list_filter = ('education_program',)
+
+
 admin.site.register(EducationRSService, EducationRSServiceAdmin)
 admin.site.register(EducationProgrammeAssessment, EducationProgrammeAssessmentAdmin)
 # admin.site.register(YouthKitService, YouthKitServiceAdmin)

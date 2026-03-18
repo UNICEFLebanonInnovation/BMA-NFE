@@ -1540,6 +1540,33 @@ class HealthNutritionReferral(TimeStampedModel):
         verbose_name_plural = "Health & Nutrition Referrals"
 
 
+class EducationProgramAgeMapping(TimeStampedModel):
+    education_program = models.CharField(
+        max_length=200,
+        blank=False,
+        null=False,
+        unique=True,
+        verbose_name=_('Education Program')
+    )
+    min_age = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Minimum Age')
+    )
+    max_age = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Maximum Age')
+    )
+
+    def __str__(self):
+        return self.education_program
+
+    class Meta:
+        verbose_name = 'Education Program Age Mapping'
+        verbose_name_plural = 'Education Program Age Mappings'
+
+
 class EducationService(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(
