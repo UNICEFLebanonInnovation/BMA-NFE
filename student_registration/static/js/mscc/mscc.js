@@ -1104,6 +1104,7 @@ $(document).ready(function() {
         return validateMainForm(true, step);
     };
 
+
     $('#formErrorModal').on('hidden.bs.modal', function(){
         $('#formErrorModal #swal2-content').text('Please check the form mandatory fields.');
     });

@@ -41,6 +41,28 @@
         </div>
     </div>
 
+    {% if form and form.errors %}
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <div class="d-flex">
+            <i class="bi bi-exclamation-octagon-fill fs-4 me-3"></i>
+            <div>
+                <h5 class="alert-heading fw-bold">{% trans "Registration Failed" %}</h5>
+                <p class="mb-2">{% trans "Please correct the following errors across the registration steps:" %}</p>
+                <ul class="mb-0 small">
+                    {% for field, errors in form.errors.items %}
+                        {% if field != '__all__' %}
+                            <li><strong>{{ form.fields|get_item:field|get_label }}:</strong> {{ errors|striptags }}</li>
+                        {% else %}
+                            <li>{{ errors|striptags }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
     {% if form.instance.id == None %}
     <!-- Duplication Alert -->
     <div class="" style="display:none;" id="child-duplication-error">
@@ -397,8 +419,23 @@
                 }
             });
 
+            // Expose updateWizard globally so it can be called from mscc.js
+            window.updateWizard = updateWizard;
+            window.currentStep = currentStep;
+
             // Initial call
             updateWizard(1);
+
+            // If there are server-side errors, find the first step with an error and navigate to it
+            const firstErrorField = document.querySelector('.is-invalid');
+            if (firstErrorField) {
+                const stepContent = firstErrorField.closest('.step-content');
+                if (stepContent) {
+                    const stepNum = parseInt(stepContent.id.split('-')[1]);
+                    currentStep = stepNum;
+                    updateWizard(stepNum);
+                }
+            }
 
             // Draft saving logic
             const formId = "nfe_reg_draft";
