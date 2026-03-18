@@ -21,3 +21,10 @@ urlpatterns = [
     re_path(r'^centers-map/$', view=views.CentersMapView.as_view(), name='centers_map'),
     re_path(r'^api/centers-geo-data/$', view=views.centers_geo_data, name='centers_geo_data'),
 ]
+
+# Added for Advanced Exporter
+from .advanced_exporter_views import AdvancedExporterDashboardView, queue_advanced_export
+urlpatterns += [
+    re_path(r'^advanced-exporter/$', view=AdvancedExporterDashboardView.as_view(), name='advanced_exporter'),
+    re_path(r'^api/queue-advanced-export/$', view=queue_advanced_export, name='queue_advanced_export'),
+]
