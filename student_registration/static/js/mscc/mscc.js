@@ -630,12 +630,21 @@ var regexMap = {
 function clearErrors() {
     $('.is-invalid').removeClass('is-invalid');
     $('.is-valid').removeClass('is-valid');
+    $('.mb-3').removeClass('has-error');
+    $('.step').removeClass('error');
     $('.invalid-feedback').text('');
 }
 
 function showError(selector, message) {
     var field = $(selector);
     field.addClass('is-invalid').removeClass('is-valid');
+    field.closest('.mb-3').addClass('has-error');
+
+    var stepDiv = field.closest('.step-content');
+    if (stepDiv.length) {
+        var stepNum = stepDiv.attr('id').split('-')[1];
+        $(`.step[data-step="${stepNum}"]`).addClass('error');
+    }
 
     // For checkboxes/radios, handle group validation
     if (field.attr('type') === 'checkbox' || field.attr('type') === 'radio') {
@@ -661,12 +670,22 @@ function showSuccess(selector) {
     var field = $(selector);
     if (field.val() && !field.hasClass('is-invalid')) {
         field.addClass('is-valid').removeClass('is-invalid');
+        field.closest('.mb-3').removeClass('has-error');
+
+        var stepDiv = field.closest('.step-content');
+        if (stepDiv.length) {
+            var stepNum = stepDiv.attr('id').split('-')[1];
+            if ($(`#step-${stepNum}`).find('.is-invalid').length === 0) {
+                $(`.step[data-step="${stepNum}"]`).removeClass('error');
+            }
+        }
     }
 }
 
 function validateField(field) {
     var selector = '#' + field.attr('id');
     field.removeClass('is-invalid is-valid');
+    field.closest('.mb-3').removeClass('has-error');
     field.siblings('.invalid-feedback').text('');
 
     if (field.prop('required') && field.is(':visible') && (!field.val() || field.val().trim() === '')) {
