@@ -485,37 +485,6 @@ class EducationServiceForm(forms.ModelForm):
 
         self.fields['registration_id'].initial = registry
 
-        all_choices = [
-            ('BLN Level 1', _('BLN Level 1')),
-            ('BLN Level 2', _('BLN Level 2')),
-            ('BLN Level 3', _('BLN Level 3')),
-            ('BLN Catch-up', _('BLN Catch-up')),
-            ('CBECE Level 1', _('CBECE Level 1')),
-            ('CBECE Level 2', _('CBECE Level 2')),
-            ('CBECE Level 3', _('CBECE Level 3')),
-            ('CBECE Catch-up', _('CBECE Catch-up')),
-            ('ABLN Level 1', _('ABLN Level 1')),
-            ('ABLN Level 2', _('ABLN Level 2')),
-            ('ABLN Catch-up', _('ABLN Catch-up')),
-            ('RS Grade 1', _('RS Grade 1')),
-            ('RS Grade 2', _('RS Grade 2')),
-            ('RS Grade 3', _('RS Grade 3')),
-            ('RS Grade 4', _('RS Grade 4')),
-            ('RS Grade 5', _('RS Grade 5')),
-            ('RS Grade 6', _('RS Grade 6')),
-            ('RS Grade 7', _('RS Grade 7')),
-            ('RS Grade 8', _('RS Grade 8')),
-            ('RS Grade 9', _('RS Grade 9')),
-            ('YBLN Level 1', _('YBLN Level 1')),
-            ('YBLN Level 2', _('YBLN Level 2')),
-            ('YBLN Catch-up', _('YBLN Catch-up')),
-            ('YFS Level 1', _('YFS Level 1')),
-            ('YFS Level 2', _('YFS Level 2')),
-            ('ECD', _('ECD')),
-            ('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')),
-            ('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')),
-        ]
-
         child_age = None
         if registry:
             try:
@@ -525,19 +494,19 @@ class EducationServiceForm(forms.ModelForm):
                 pass
 
         choices = []
-        age_mappings = {m.education_program: m for m in EducationProgramAgeMapping.objects.all()}
 
-        for value, label in all_choices:
-            if value in age_mappings and child_age is not None:
-                mapping = age_mappings[value]
-                # If mapping min/max are defined, check against child_age
-                min_valid = mapping.min_age is None or child_age >= mapping.min_age
-                max_valid = mapping.max_age is None or child_age <= mapping.max_age
-                if min_valid and max_valid:
+        if child_age is not None:
+            # Programs that are invalid for this child's age
+            invalid_programs = EducationProgramAgeMapping.objects.filter(
+                Q(min_age__gt=child_age) | Q(max_age__lt=child_age)
+            ).values_list('education_program', flat=True)
+
+            for value, label in EducationService.EDUCATION_PROGRAM:
+                if value not in invalid_programs:
                     choices.append((value, label))
-            else:
-                # If no mapping exists for this program, or age is unknown, include it by default
-                choices.append((value, label))
+        else:
+            # If age is unknown, include all by default
+            choices = list(EducationService.EDUCATION_PROGRAM)
 
         if not choices:
             choices = [('', '---------')]
