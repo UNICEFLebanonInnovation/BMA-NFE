@@ -28,37 +28,6 @@
     </div>
     {% endif %}
 
-    <!-- Education Service -->
-    {% service_data 'EducationService' instance as edu_svc %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Education" %}</h6>
-                    {% if edu_svc %}
-                        <a href="{% url 'mscc:service_education_edit' instance.id edu_svc.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                    {% else %}
-                        <a href="{% url 'mscc:service_education_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                    {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <div class="small text-muted text-uppercase fw-bold">{% trans "Program" %}</div>
-                    <div class="fw-bold">{{ edu_svc.education_program|default:"Not enrolled" }}</div>
-                </div>
-                <div class="row g-2">
-                    <div class="col-6">
-                        <div class="small text-muted text-uppercase fw-bold">{% trans "Status" %}</div>
-                        <div class="small">{{ edu_svc.education_status|default:"N/A" }}</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="small text-muted text-uppercase fw-bold">{% trans "Round" %}</div>
-                        <div class="small text-primary fw-bold">{{ edu_svc.round|default:"N/A" }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- PSS Service -->
     {% get_service instance 'PSS' as has_pss %}
     {% if has_pss %}
