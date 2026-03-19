@@ -152,18 +152,6 @@ class LandingPage(LoginRequiredMixin,
 
         today_count = registrations.filter(created__date=today).count()
         week_count = registrations.filter(created__date__gte=week_start).count()
-        active_learners = registrations.values('child_id').distinct().count()
-        pending_validation = registrations.filter(
-            Q(child__birthday_year__isnull=True)
-            | Q(child__birthday_year='')
-            | Q(child__birthday_month__isnull=True)
-            | Q(child__birthday_month='')
-            | Q(child__birthday_day__isnull=True)
-            | Q(child__birthday_day='')
-            | Q(child__gender__isnull=True)
-            | Q(child__gender='')
-            | Q(child__nationality__isnull=True)
-        ).count()
         centers_reporting = registrations.filter(
             created__date__gte=today - timezone.timedelta(days=30),
             center__isnull=False,
@@ -222,8 +210,6 @@ class LandingPage(LoginRequiredMixin,
         context.update({
             'kpi_today': today_count,
             'kpi_week': week_count,
-            'kpi_active': active_learners,
-            'kpi_pending': pending_validation,
             'kpi_centers': centers_reporting,
             'kpi_attendance': attendance_percent,
             'trend_data': json.dumps(trend_data),

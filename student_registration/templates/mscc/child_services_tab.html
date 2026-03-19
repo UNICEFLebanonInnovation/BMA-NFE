@@ -132,7 +132,7 @@
             <div class="card-body">
                 <div class="mb-2">
                     <div class="small text-muted text-uppercase fw-bold">{% trans "Recommended Path" %}</div>
-                    <div class="fw-bold text-success">{{ ref_svc.recommended_learning_path|default:"Pending" }}</div>
+                    <div class="fw-bold text-success">{{ ref_svc.recommended_learning_path|default:"N/A" }}</div>
                 </div>
                 <div class="small">
                     <span class="text-muted fw-bold">{% trans "Materials" %}:</span> {{ ref_svc.receive_needed_material|default:"N/A" }}

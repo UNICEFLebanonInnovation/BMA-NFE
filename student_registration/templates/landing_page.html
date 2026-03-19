@@ -14,42 +14,28 @@
 
 <!-- Metric Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-md-4 col-lg-2">
+    <div class="col-md-6 col-lg-3">
         <div class="card metric-card">
             <div class="metric-label">{% trans "Today" %}</div>
             <div class="metric-value">{{ kpi_today }}</div>
             <div class="small text-success"><i class="bi bi-arrow-up"></i> {% trans "Registrations" %}</div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
+    <div class="col-md-6 col-lg-3">
         <div class="card metric-card">
             <div class="metric-label">{% trans "This Week" %}</div>
             <div class="metric-value">{{ kpi_week }}</div>
             <div class="small text-primary">{% trans "Total new" %}</div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="card metric-card">
-            <div class="metric-label">{% trans "Active Children" %}</div>
-            <div class="metric-value">{{ kpi_active }}</div>
-            <div class="small text-muted">{% trans "In database" %}</div>
-        </div>
-    </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="card metric-card border-start border-warning border-4">
-            <div class="metric-label">{% trans "Pending" %}</div>
-            <div class="metric-value text-warning">{{ kpi_pending }}</div>
-            <div class="small text-muted">{% trans "Needs validation" %}</div>
-        </div>
-    </div>
-    <div class="col-md-4 col-lg-2">
+    <div class="col-md-6 col-lg-3">
         <div class="card metric-card">
             <div class="metric-label">{% trans "Centers" %}</div>
             <div class="metric-value">{{ kpi_centers }}</div>
             <div class="small text-muted">{% trans "Reporting" %}</div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
+    <div class="col-md-6 col-lg-3">
         <div class="card metric-card">
             <div class="metric-label">{% trans "Attendance" %}</div>
             <div class="metric-value">{{ kpi_attendance }}%</div>
