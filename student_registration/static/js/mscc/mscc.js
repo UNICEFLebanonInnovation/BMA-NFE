@@ -16,6 +16,7 @@ $(document).ready(function() {
 
         if (valid) {
             $(this).prop('disabled', true);
+            $(form).triggerHandler('submit');
             form.submit();
         } else {
             if (typeof form.reportValidity === 'function') {
