@@ -914,7 +914,7 @@ class ReferralForm(forms.ModelForm):
         if is_cbece == 'Yes':
             self.fields['referred_formal_education'].required = True
 
-        education_program = get_education_service(registry)
+        education_program_name = get_education_service(registry)
         choices = list()
         choices.append(('Transition to Dirasa', _('Transition to Dirasa')))
         choices.append(('Repeat same level in next  school year', _('Repeat same level in next  school year')))
@@ -925,7 +925,7 @@ class ReferralForm(forms.ModelForm):
         choices.append(('Referred to YBLN', _('Referred to YBLN')))
         choices.append(('Progress to  Higher Level  in next school year', _('Progress to  Higher Level  in next school year')))
 
-        if education_program == "CBECE Level 2":
+        if education_program_name == "CBECE Level 2":
             choices.append(('Referred to CBECE Higher Level in next school year',
                             _('Referred to CBECE Higher Level in next school year')))
 

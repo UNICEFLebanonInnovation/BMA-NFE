@@ -196,7 +196,7 @@ def _latest_programme_subquery():
     return (
         EducationService.objects.filter(registration=OuterRef('pk'))
         .order_by('-id')
-        .values_list('education_program', flat=True)[:1]
+        .values_list('education_program__name', flat=True)[:1]
     )
 
 

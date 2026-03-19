@@ -343,11 +343,10 @@ class MSCCAttendance(TimeStampedModel):
         on_delete=models.SET_NULL,
         verbose_name=_('Center')
     )
-    education_program = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-        choices=EDUCATION_PROGRAM,
+    education_program = models.ForeignKey(
+        'mscc.EducationProgram',
+        blank=True, null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Education Program')
     )
     class_section = models.CharField(

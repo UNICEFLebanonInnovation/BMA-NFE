@@ -57,7 +57,7 @@ class CommonTable(tables.Table):
         return record.child.birthday
 
     def render_education_program(self, record):
-        return record.education_program
+        return record.education_program.name if record.education_program else ''
 
     def render_class_section(self, record):
         return record.class_section

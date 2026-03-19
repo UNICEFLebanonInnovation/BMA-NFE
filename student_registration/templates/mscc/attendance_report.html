@@ -77,9 +77,9 @@
                             <label for="education_program" class="form-label small fw-bold text-muted">{% trans "Education Program" %}</label>
                             <select id="education_program" class="form-select">
                                 <option value="">{% trans "All Programs" %}</option>
-                                {% for item in education_program %}
-                                  {% if item != '' %}
-                                    <option value="{{ item }}">{{ item }}</option>
+                                {% for pk, name in education_program.items %}
+                                  {% if pk != '' %}
+                                    <option value="{{ pk }}">{{ name }}</option>
                                   {% endif %}
                                 {% endfor %}
                             </select>

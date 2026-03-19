@@ -219,12 +219,15 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
 
 
 def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
+    from .models import EducationProgram
+    prog = EducationProgram.objects.filter(id=education_program).first() if str(education_program).isdigit() else EducationProgram.objects.filter(name=education_program).first()
+
     try:
         with transaction.atomic():
             children = list(
                 MSCCAttendanceChild.objects.filter(
                     registration_id=registration_id,
-                    attendance_day__education_program=education_program,
+                    attendance_day__education_program=prog,
                     attendance_day__class_section=old_class_section,
                 ).select_related('attendance_day__center')
             )
@@ -240,7 +243,7 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
                     .filter(
                         center_id=center_id,
                         attendance_date=attendance_date,
-                        education_program=education_program,
+                        education_program=prog,
                         class_section=new_class_section,
                     )
                     .order_by('id')

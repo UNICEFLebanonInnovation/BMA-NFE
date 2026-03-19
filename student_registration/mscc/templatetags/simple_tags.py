@@ -152,7 +152,7 @@ def get_education_service(registry):
         education_service = EducationService.objects.filter(registration_id=registry).last()
     education_service = EducationService.objects.filter( registration=registry).last()
     if education_service:
-        return education_service.education_program
+        return education_service.education_program.name if education_service.education_program else None
     else:
         return None
 

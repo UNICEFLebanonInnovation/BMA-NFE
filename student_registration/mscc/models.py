@@ -1540,13 +1540,13 @@ class HealthNutritionReferral(TimeStampedModel):
         verbose_name_plural = "Health & Nutrition Referrals"
 
 
-class EducationProgramAgeMapping(TimeStampedModel):
-    education_program = models.CharField(
+class EducationProgram(TimeStampedModel):
+    name = models.CharField(
         max_length=200,
         blank=False,
         null=False,
         unique=True,
-        verbose_name=_('Education Program')
+        verbose_name=_('Program Name')
     )
     min_age = models.IntegerField(
         blank=True,
@@ -1560,11 +1560,11 @@ class EducationProgramAgeMapping(TimeStampedModel):
     )
 
     def __str__(self):
-        return self.education_program
+        return self.name
 
     class Meta:
-        verbose_name = 'Education Program Age Mapping'
-        verbose_name_plural = 'Education Program Age Mappings'
+        verbose_name = 'Education Program'
+        verbose_name_plural = 'Education Programs'
 
 
 class EducationService(TimeStampedModel):
@@ -1683,11 +1683,10 @@ class EducationService(TimeStampedModel):
         null=True,
         verbose_name=_('Please Specify dropout date from school')
     )
-    education_program = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-        choices=EDUCATION_PROGRAM,
+    education_program = models.ForeignKey(
+        EducationProgram,
+        blank=True, null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Education Program')
     )
     catch_up_registered = models.CharField(
@@ -2061,10 +2060,10 @@ class EducationProgrammeAssessment(TimeStampedModel):
     pre_test = JSONField(default=dict)
     post_test = JSONField(default=dict)
     school_test = JSONField(default=dict)
-    programme_type = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
+    programme_type = models.ForeignKey(
+        EducationProgram,
+        blank=True, null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Education Programme Type')
     )
 

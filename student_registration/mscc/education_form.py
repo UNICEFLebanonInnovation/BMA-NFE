@@ -21,7 +21,7 @@ from .models import (
     Registration,
     EducationAssessment,
     EducationService,
-    EducationProgramAgeMapping,
+    EducationProgram,
     EducationRSService,
     EducationProgrammeAssessment,
     YES_NO,
@@ -457,10 +457,10 @@ class EducationServiceForm(forms.ModelForm):
         empty_label='-------',
         required=True, to_field_name='id',
     )
-    education_program = forms.ChoiceField(
+    education_program = forms.ModelChoiceField(
+        queryset=EducationProgram.objects.all(),
         label=_("Program"),
         widget=forms.Select, required=True,
-        choices=EducationService.EDUCATION_PROGRAM,
     )
     catch_up_registered = forms.ChoiceField(
         label=_("Is the child registered in catch-up program"),
@@ -493,25 +493,10 @@ class EducationServiceForm(forms.ModelForm):
             except Registration.DoesNotExist:
                 pass
 
-        choices = []
-
         if child_age is not None:
-            # Programs that are invalid for this child's age
-            invalid_programs = EducationProgramAgeMapping.objects.filter(
+            self.fields['education_program'].queryset = EducationProgram.objects.exclude(
                 Q(min_age__gt=child_age) | Q(max_age__lt=child_age)
-            ).values_list('education_program', flat=True)
-
-            for value, label in EducationService.EDUCATION_PROGRAM:
-                if value not in invalid_programs:
-                    choices.append((value, label))
-        else:
-            # If age is unknown, include all by default
-            choices = list(EducationService.EDUCATION_PROGRAM)
-
-        if not choices:
-            choices = [('', '---------')]
-
-        self.fields['education_program'].choices = choices
+            )
 
         display_edu_section = ''
 

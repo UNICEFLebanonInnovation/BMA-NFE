@@ -145,7 +145,8 @@ class AttendanceView(LoginRequiredMixin,
         close_reason = ''
         round = Round.objects.filter(current_year=True)
 
-        education_programs = EducationService.EDUCATION_PROGRAM
+        from .models import EducationProgram
+        education_programs = [(p.id, p.name) for p in EducationProgram.objects.all()]
         sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
         education_program_dict = OrderedDict(sorted_education_programs)
 
@@ -285,7 +286,8 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
 
         context['rounds'] = Round.objects.filter(current_year=True).all()
 
-        education_programs = EducationService.EDUCATION_PROGRAM
+        from .models import EducationProgram
+        education_programs = [(p.id, p.name) for p in EducationProgram.objects.all()]
         sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
         education_program_dict = OrderedDict(sorted_education_programs)
         context['education_program'] = education_program_dict

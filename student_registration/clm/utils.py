@@ -779,9 +779,12 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
         bool: ``True`` when the transfer completes without errors; ``False`` on failure.
     """
 
+    from student_registration.mscc.models import EducationProgram
+    prog = EducationProgram.objects.filter(id=education_program).first() if str(education_program).isdigit() else EducationProgram.objects.filter(name=education_program).first()
+
     child_attendances = CLMAttendanceStudent.objects.filter(
         registration_id=registration_id,
-        attendance_day__education_program=education_program,
+        attendance_day__education_program=prog,
         attendance_day__class_section=old_class_section
     )
 
@@ -795,7 +798,7 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
                 new_attendance = CLMAttendance.objects.filter(
                     center_id=center_id,
                     attendance_date=attendance_date,
-                    education_program=education_program,
+                    education_program=prog,
                     class_section=new_class_section
                 ).last()
 

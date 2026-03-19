@@ -40,7 +40,7 @@ function reorganizeForm()
     }
 
 //   Education Program
-   var education_program = $('select#id_education_program').val();
+   var education_program = $('select#id_education_program option:selected').text();
     $('div#div_id_catch_up_registered').addClass('d-none');
     $('#span_catch_up_registered').addClass('d-none');
 
