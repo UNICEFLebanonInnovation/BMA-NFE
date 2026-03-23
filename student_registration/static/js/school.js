@@ -20,22 +20,22 @@ $(document).ready(function() {
         reorganizeForm();
 
     if($(document).find('#id_academic_year_start').length == 1) {
-        $('#id_academic_year_start').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_academic_year_start').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
      if($(document).find('#id_academic_year_end').length == 1) {
-        $('#id_academic_year_end').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_academic_year_end').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
      if($(document).find('#id_meeting_date').length == 1) {
-        $('#id_meeting_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_meeting_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
      if($(document).find('#id_date_first_visit').length == 1) {
-        $('#id_date_first_visit').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_date_first_visit').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
      if($(document).find('#id_date_last_visit').length == 1) {
-        $('#id_date_last_visit').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_date_last_visit').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     $(document).on('change', 'select#id_benefit_wfp_service', function(){

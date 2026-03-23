@@ -446,3 +446,51 @@ $(window).on('load', function() {
     });
 });
 
+
+$(document).ready(function() {
+    $('input[type="date"]').attr('placeholder', 'YYYY-MM-DD');
+    $('input.datepicker').attr('placeholder', 'YYYY-MM-DD');
+});
+
+$(document).ready(function() {
+    $(document).on('change blur', 'input[type="date"], input.datepicker, .hasDatepicker', function() {
+        var val = $(this).val();
+        if (val && val.trim() !== '') {
+            var regex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!regex.test(val)) {
+                if (!$(this).parent().find('.date-error').length) {
+                    $(this).after('<div class="invalid-feedback date-error" style="display:block;">Date is not valid. Please use the format YYYY-MM-DD.</div>');
+                }
+                $(this).addClass('is-invalid');
+            } else {
+                $(this).parent().find('.date-error').remove();
+                $(this).removeClass('is-invalid');
+            }
+        } else {
+            $(this).parent().find('.date-error').remove();
+            $(this).removeClass('is-invalid');
+        }
+    });
+
+    $('form').on('submit', function(e) {
+        var valid = true;
+        $(this).find('input[type="date"], input.datepicker, .hasDatepicker').each(function() {
+            var val = $(this).val();
+            if (val && val.trim() !== '') {
+                var regex = /^\d{4}-\d{2}-\d{2}$/;
+                if (!regex.test(val)) {
+                    if (!$(this).parent().find('.date-error').length) {
+                        $(this).after('<div class="invalid-feedback date-error" style="display:block;">Date is not valid. Please use the format YYYY-MM-DD.</div>');
+                    }
+                    $(this).addClass('is-invalid');
+                    valid = false;
+                }
+            }
+        });
+        if (!valid) {
+            e.preventDefault();
+            $('#formErrorModal #swal2-content').html('Date is not valid. Please use the format YYYY-MM-DD.');
+            $('#formErrorModal').modal('show');
+        }
+    });
+});

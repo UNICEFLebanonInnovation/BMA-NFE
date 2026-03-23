@@ -4,7 +4,7 @@ $(document).ready(function(){
     reorganizeForm();
 
     if($(document).find('#id_dropout_date').length == 1) {
-        $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     $(document).on('change', 'select#id_follow_up_type, select#id_follow_up_result, select#id_parent_attended_meeting, select#id_caregiver_attended, select#id_pfss_sessions' , function(){

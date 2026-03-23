@@ -4,10 +4,10 @@ $(document).ready(function() {
     reorganizeForm();
 
     if($(document).find('#id_dropout_date').length == 1) {
-        $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
      if($(document).find('#id_registration_date').length == 1) {
-        $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     $(document).on('change', '#id_education_program', function(){

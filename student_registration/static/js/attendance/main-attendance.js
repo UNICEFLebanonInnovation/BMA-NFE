@@ -3,7 +3,7 @@ $(document).ready(
    function()
    {
         if($(document).find('#id_attendance_date').length == 1) {
-            $('#id_attendance_date').datepicker({dateFormat: "yy-mm-dd"});
+            $('#id_attendance_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
         }
 
 //      show reason if day_off is yes

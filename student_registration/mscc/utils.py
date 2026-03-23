@@ -380,6 +380,22 @@ class TrimmedDateField(forms.DateField):
     def to_python(self, value):
         if hasattr(value, 'strip'):
             value = value.strip()
+
+        # Django's default DateField does its own validation based on `input_formats`.
+        # However, to enforce a specific error message for YYYY-MM-DD:
+        if value in self.empty_values:
+            return None
+
+        if isinstance(value, datetime):
+            return value.date()
+        if isinstance(value, date):
+            return value
+
+        try:
+            return datetime.strptime(value, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            raise ValidationError("Date is not valid. Please use the format YYYY-MM-DD.")
+
         return super().to_python(value)
 
 

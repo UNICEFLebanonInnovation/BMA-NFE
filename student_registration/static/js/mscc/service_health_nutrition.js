@@ -5,19 +5,19 @@ $(document).ready(function(){
 //    age_questions();
     reorganizeForm();
      if($(document).find('#id_counselling_date').length == 1) {
-        $('#id_counselling_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_counselling_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
      if($(document).find('#id_next_counselling_date').length == 1) {
-        $('#id_next_counselling_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_next_counselling_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
      if($(document).find('#id_ecd_counselling_date').length == 1) {
-        $('#id_ecd_counselling_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_ecd_counselling_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
      if($(document).find('#id_next_ecd_counselling_date').length == 1) {
-        $('#id_next_ecd_counselling_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_next_ecd_counselling_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
      if($(document).find('#id_health_nutrition_session_date').length == 1) {
-        $('#id_health_nutrition_session_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_health_nutrition_session_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     $(document).on('change', 'select#id_baby_breastfed, select#id_eat_solid_food, select#id_caregiver_counselling, select#id_caregiver_ecd_counselling, select#id_child_screened_malnutrition, select#id_child_immunization_screened, select#id_attended_health_nutrition_session' , function(){

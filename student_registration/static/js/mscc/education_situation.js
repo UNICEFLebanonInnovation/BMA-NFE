@@ -4,10 +4,10 @@ $(document).ready(function() {
     reorganizeForm();
 
     if($(document).find('#id_miss_school_date').length == 1) {
-        $('#id_miss_school_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_miss_school_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
      if($(document).find('#id_first_attendance_date').length == 1) {
-        $('#id_first_attendance_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_first_attendance_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     $(document).on('change', 'select#id_education_status', function(){

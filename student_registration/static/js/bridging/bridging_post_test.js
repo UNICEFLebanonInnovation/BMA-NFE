@@ -4,7 +4,7 @@ $(document).ready(function () {
     });
 
     if ($('#id_dropout_date').length) {
-        $('#id_dropout_date').datepicker({ dateFormat: "yy-mm-dd" });
+        $('#id_dropout_date').datepicker({ dateFormat: "yy-mm-dd" }).attr("placeholder", "YYYY-MM-DD");
     }
 
     learning_result_next_level();

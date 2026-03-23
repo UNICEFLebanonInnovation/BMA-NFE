@@ -4,7 +4,7 @@ $(document).ready(function(){
     reorganizeForm();
 
     if($(document).find('#id_adolescent_dropout_date').length == 1) {
-        $('#id_adolescent_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_adolescent_dropout_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     $(document).on('change', 'select#id_participate_volunteering, select#id_yfs_course_completed, select#id_participate_community_initiatives, select#id_adolescent_attendance' , function(){

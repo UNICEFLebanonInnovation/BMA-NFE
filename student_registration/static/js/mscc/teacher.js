@@ -16,7 +16,7 @@ $(document).ready(function() {
 
     organize_form();
     if($(document).find('#id_birthdate').length == 1) {
-        $('#id_birthdate').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_birthdate').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     $(document).on('click', '.cancel-button', function(e){

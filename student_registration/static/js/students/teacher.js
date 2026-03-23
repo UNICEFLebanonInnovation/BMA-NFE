@@ -19,10 +19,10 @@ $(document).ready(function() {
 
     organize_form();
     if($(document).find('#id_academic_year_start').length == 1) {
-        $('#id_academic_year_start').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_academic_year_start').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
      if($(document).find('#id_academic_year_end').length == 1) {
-        $('#id_academic_year_end').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_academic_year_end').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     $(document).on('click', '.justify-button', function(){

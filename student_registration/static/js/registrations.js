@@ -68,50 +68,50 @@ $(document).ready(function() {
     } );
 
     if($(document).find('#id_registration_date').length == 1) {
-        $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('#id_signature_cert_date').length == 1) {
-        $('#id_signature_cert_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_signature_cert_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('#id_first_attendance_date').length == 1) {
-        $('#id_first_attendance_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_first_attendance_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('#id_miss_school_date').length == 1) {
-        $('#id_miss_school_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_miss_school_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('#id_round_start_date').length == 1) {
-        $('#id_round_start_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_round_start_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     if($(document).find('#id_referral_date_1').length == 1) {
-        $('#id_referral_date_1').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_referral_date_1').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('#id_confirmation_date_1').length == 1) {
-        $('#id_confirmation_date_1').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_confirmation_date_1').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     if($(document).find('#id_referral_date_2').length == 1) {
-        $('#id_referral_date_2').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_referral_date_2').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('#id_confirmation_date_2').length == 1) {
-        $('#id_confirmation_date_2').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_confirmation_date_2').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     if($(document).find('#id_referral_date_3').length == 1) {
-        $('#id_referral_date_3').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_referral_date_3').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('#id_confirmation_date_3').length == 1) {
-        $('#id_confirmation_date_3').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_confirmation_date_3').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     if($(document).find('#id_followup_call_date_1').length == 1) {
-        $('#id_followup_call_date_1').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_followup_call_date_1').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('#id_followup_call_date_2').length == 1) {
-        $('#id_followup_call_date_2').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_followup_call_date_2').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('#id_followup_visit_date_1').length == 1) {
-        $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 
     $(document).on('change', 'select#id_source_of_identification', function(){
@@ -220,13 +220,13 @@ $(document).ready(function() {
     });
 
     if($(document).find('.moving-date-input').length >= 1) {
-        $('.moving-date-input').datepicker({dateFormat: "yy-mm-dd"});
+        $('.moving-date-input').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('.dropout-date-input').length >= 1) {
-        $('.dropout-date-input').datepicker({dateFormat: "yy-mm-dd"});
+        $('.dropout-date-input').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     if($(document).find('.justify-date-input').length >= 1) {
-        $('.justify-date-input').datepicker({dateFormat: "yy-mm-dd"});
+        $('.justify-date-input').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     $("td[class='student.first_name']").addClass('font-bolder');
     $("td[class='student.father_name']").addClass('font-bolder');

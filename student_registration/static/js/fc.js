@@ -28,7 +28,7 @@ $(document).ready(function () {
 //    }
 
     if ($(document).find('#id_date_of_monitoring').length == 1) {
-        $('#id_date_of_monitoring').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_date_of_monitoring').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
     reorganizeForm();
     activities_reported();

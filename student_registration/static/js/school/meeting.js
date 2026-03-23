@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
     if($('#id_meeting_date').length == 1) {
-        $('#id_meeting_date').datepicker({dateFormat: "yy-mm-dd"});
+        $('#id_meeting_date').datepicker({dateFormat: "yy-mm-dd"}).attr("placeholder", "YYYY-MM-DD");
     }
 });
