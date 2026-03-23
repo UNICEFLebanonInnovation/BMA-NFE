@@ -273,7 +273,7 @@ function child_duplication_check() {
     $('#child-duplication-error').hide();
     $('#submit-id-save').prop('disabled', false);
     $('#next-btn').prop('disabled', false);
-    $('.col-lg-3 .card-header').removeClass('bg-danger').addClass('bg-primary');
+    $('#nfe_search_result').closest('.card').find('.card-header').removeClass('bg-danger').addClass('bg-primary');
 
     var birthday_year = $('#id_child_birthday_year').val();
     var birthday_month = $('#id_child_birthday_month').val();
@@ -321,7 +321,7 @@ function child_duplication_check() {
                     var text = ''
                     var $container = $('#nfe_search_result');
                     $container.empty();
-                    $('.col-lg-3 .card-header').removeClass('bg-primary').addClass('bg-danger');
+                    $('#nfe_search_result').closest('.card').find('.card-header').removeClass('bg-primary').addClass('bg-danger');
 
                     $(response.result).each(function(i, item){
                         text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/mscc/child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC programme in the Center: ' + item.center__name+'</br>';
