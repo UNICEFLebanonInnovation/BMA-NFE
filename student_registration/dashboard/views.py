@@ -19,6 +19,11 @@ from django.utils.dateparse import parse_date
 from django.utils import timezone
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+import os
+import markdown
+from django.conf import settings
+from django.http import Http404
+from django.utils.safestring import mark_safe
 
 logger = logging.getLogger(__name__)
 
@@ -431,3 +436,33 @@ def centers_geo_data(request):
         })
 
     return JsonResponse(data, safe=False)
+
+
+class WikiPageView(LoginRequiredMixin, TemplateView):
+    template_name = 'wiki/page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        page_name = self.kwargs.get('page_name', 'index')
+
+        # Ensure only allowed characters in page name to prevent path traversal
+        if not page_name.replace('_', '').replace('-', '').isalnum():
+            raise Http404('Invalid page name')
+
+        file_path = os.path.join(str(settings.ROOT_DIR.path('docs').path('wiki')), f'{page_name}.md')
+
+        if not os.path.exists(file_path):
+            raise Http404('Wiki page not found')
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # Convert markdown to HTML
+        html_content = markdown.markdown(
+            content,
+            extensions=['extra', 'toc']
+        )
+
+        context['wiki_content'] = mark_safe(html_content)
+        context['page_name'] = page_name
+        return context

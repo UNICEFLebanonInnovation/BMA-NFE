@@ -28,3 +28,8 @@ urlpatterns += [
     re_path(r'^advanced-exporter/$', view=AdvancedExporterDashboardView.as_view(), name='advanced_exporter'),
     re_path(r'^api/queue-advanced-export/$', view=queue_advanced_export, name='queue_advanced_export'),
 ]
+
+urlpatterns += [
+    re_path(r'^wiki/(?P<page_name>[\w\-]+)/$', view=views.WikiPageView.as_view(), name='wiki_page'),
+    re_path(r'^wiki/$', views.WikiPageView.as_view(), {'page_name': 'index'}, name='wiki_index'),
+]

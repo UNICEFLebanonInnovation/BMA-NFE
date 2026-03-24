@@ -44,4 +44,9 @@
 <a href="{% url 'dashboard:centers_map' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'centers_map' %}active{% endif %}">
     <i class="bi bi-geo-alt"></i> <span>{% trans "Centers Map" %}</span>
 </a>
+
+<div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Documentation" %}</div>
+<a href="{% url 'dashboard:wiki_index' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_index' or request.resolver_match.url_name == 'wiki_page' %}active{% endif %}">
+    <i class="bi bi-book"></i> <span>{% trans "Wiki" %}</span>
+</a>
 {% endif %}
