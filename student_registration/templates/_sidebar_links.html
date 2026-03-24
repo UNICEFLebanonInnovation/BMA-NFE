@@ -1,9 +1,9 @@
 {% load i18n custom_tags %}
-<a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+<a id="tour-home" href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
     <i class="bi bi-house-door"></i> <span>{% trans "Home" %}</span>
 </a>
 
-<a href="{% url 'mscc:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+<a id="tour-dashboard" href="{% url 'mscc:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
     <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
 </a>
 
@@ -11,10 +11,10 @@
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Operations" %}</div>
 
 {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
-<a href="{% url 'mscc:list' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'list' or request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'child_add' or request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'child_edit' or request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'child_profile' %}active{% endif %}">
+<a id="tour-registration" href="{% url 'mscc:list' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'list' or request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'child_add' or request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'child_edit' or request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'child_profile' %}active{% endif %}">
     <i class="bi bi-person-plus"></i> <span>{% trans "Registration" %}</span>
 </a>
-<a href="{% url 'mscc:attendance' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and 'attendance' in request.resolver_match.url_name %}active{% endif %}">
+<a id="tour-attendance" href="{% url 'mscc:attendance' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and 'attendance' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-calendar-check"></i> <span>{% trans "Attendance" %}</span>
 </a>
 <a href="{% url 'locations:center_list' %}" class="nav-link {% if request.resolver_match.app_name == 'locations' %}active{% endif %}">
@@ -25,7 +25,7 @@
 </a>
 {% endif %}
 
-<div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Analytics" %}</div>
+<div id="tour-analytics" class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Analytics" %}</div>
 <a href="{% url 'dashboard:pivot_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'pivot_dashboard' %}active{% endif %}">
     <i class="bi bi-graph-up"></i> <span>{% trans "Pivot Builder" %}</span>
 </a>

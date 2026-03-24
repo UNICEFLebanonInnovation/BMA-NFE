@@ -29,6 +29,9 @@
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/redesign.css' %}" rel="stylesheet">
 
+    <!-- Intro.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css" rel="stylesheet">
+
     {% block extra_head %}{% endblock %}
 
     <!-- Google tag (gtag.js) -->
@@ -72,6 +75,11 @@
                 <h5 class="mb-0 me-auto">{% block module_name %}{% endblock %}</h5>
 
                 <div class="d-flex align-items-center">
+                    <!-- Training Wizard / Tour Trigger -->
+                    <button class="btn btn-link p-1 me-3 text-dark text-decoration-none" type="button" id="startTourBtn" title="{% trans 'Help & Training' %}">
+                        <i class="bi bi-question-circle fs-5"></i>
+                    </button>
+
                     <!-- Notifications -->
                     <div class="dropdown me-3">
                         {% recent_export_history as exports %}
@@ -230,6 +238,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Intro.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
+
     <script type="text/javascript" src="{% static 'js/project.js' %}?v=2"></script>
     <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
     {% if request.user.is_authenticated %}
@@ -272,6 +283,106 @@
             updateSidebarIcon();
         }
       });
+
+      {% if request.user.is_authenticated %}
+      $(document).ready(function() {
+          function startTour() {
+              const intro = introJs();
+
+              // Base steps that always apply
+              {% trans "Welcome!" as t_welcome %}
+              {% trans "Welcome to BMA (Beneficiary Monitoring & Assessment). Let us give you a quick tour of the system." as t_welcome_desc %}
+              let steps = [
+                  {
+                      title: '{{ t_welcome|escapejs }}',
+                      intro: '{{ t_welcome_desc|escapejs }}'
+                  }
+              ];
+
+              // Only add steps if elements exist in the DOM (e.g. if user has permission)
+              {% trans "Home" as t_home %}
+              {% trans "This is your starting point, showing a high-level overview of daily activities and recent exports." as t_home_desc %}
+              if (document.querySelector('#tour-home')) {
+                  steps.push({
+                      element: document.querySelector('#tour-home'),
+                      title: '{{ t_home|escapejs }}',
+                      intro: '{{ t_home_desc|escapejs }}'
+                  });
+              }
+
+              {% trans "Dashboard" as t_dashboard %}
+              {% trans "Access interactive Power BI and D3 dashboards for deep insights into NFE sectors and beneficiary wellbeing." as t_dashboard_desc %}
+              if (document.querySelector('#tour-dashboard')) {
+                  steps.push({
+                      element: document.querySelector('#tour-dashboard'),
+                      title: '{{ t_dashboard|escapejs }}',
+                      intro: '{{ t_dashboard_desc|escapejs }}'
+                  });
+              }
+
+              {% trans "Registration" as t_registration %}
+              {% trans "Here you can register new children, search for existing beneficiaries, and manage their profiles, education, and health records." as t_registration_desc %}
+              if (document.querySelector('#tour-registration')) {
+                  steps.push({
+                      element: document.querySelector('#tour-registration'),
+                      title: '{{ t_registration|escapejs }}',
+                      intro: '{{ t_registration_desc|escapejs }}'
+                  });
+              }
+
+              {% trans "Attendance" as t_attendance %}
+              {% trans "Log daily or monthly attendance for active groups of students quickly and efficiently." as t_attendance_desc %}
+              if (document.querySelector('#tour-attendance')) {
+                  steps.push({
+                      element: document.querySelector('#tour-attendance'),
+                      title: '{{ t_attendance|escapejs }}',
+                      intro: '{{ t_attendance_desc|escapejs }}'
+                  });
+              }
+
+              {% trans "Analytics" as t_analytics %}
+              {% trans "Use these advanced tools to build pivots, generate crosstabs, map centers geographically, and run massive exports." as t_analytics_desc %}
+              if (document.querySelector('#tour-analytics')) {
+                  steps.push({
+                      element: document.querySelector('#tour-analytics'),
+                      title: '{{ t_analytics|escapejs }}',
+                      intro: '{{ t_analytics_desc|escapejs }}'
+                  });
+              }
+
+              {% trans "You are all set!" as t_done %}
+              {% trans "You can restart this tour anytime by clicking the help icon at the top right." as t_done_desc %}
+              steps.push({
+                  title: '{{ t_done|escapejs }}',
+                  intro: '{{ t_done_desc|escapejs }}'
+              });
+
+              intro.setOptions({
+                  steps: steps,
+                  showProgress: true,
+                  showBullets: false,
+                  exitOnOverlayClick: false,
+                  disableInteraction: true
+              });
+
+              intro.start();
+          }
+
+          // Trigger on button click
+          $('#startTourBtn').on('click', function() {
+              startTour();
+          });
+
+          // Trigger automatically on first login (uses localStorage to track)
+          const tourCompletedKey = 'bma_tour_completed_{{ request.user.username }}';
+          if (!localStorage.getItem(tourCompletedKey)) {
+              // Mark as completed right away to prevent infinite loops if they refresh during tour
+              localStorage.setItem(tourCompletedKey, 'true');
+              // Short timeout to let the page render fully
+              setTimeout(startTour, 500);
+          }
+      });
+      {% endif %}
     </script>
 
     {% block extra_js %}{% endblock %}
