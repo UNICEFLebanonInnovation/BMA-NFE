@@ -456,7 +456,10 @@
 
             // Draft saving logic
             const formId = "nfe_reg_draft";
+            let isSubmitting = false;
+
             $('input, select').on('change input', function() {
+                if (isSubmitting) return;
                 const formData = {};
                 $('#registrationForm').serializeArray().forEach(item => {
                     // Exclude CSRF token from being saved in draft
@@ -481,6 +484,13 @@
 
             // Clear draft on submit
             $('#registrationForm').on('submit', function() {
+                isSubmitting = true;
+                localStorage.removeItem(formId);
+            });
+
+            // In case submission is done programmatically via mscc.js triggering button click
+            $('#submit-id-save').on('click', function() {
+                isSubmitting = true;
                 localStorage.removeItem(formId);
             });
 
