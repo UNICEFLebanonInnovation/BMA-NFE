@@ -17,16 +17,7 @@ from django.views import defaults as default_views
 from rest_framework_nested import routers
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from student_registration.clm.api_views import (
-    BridgingListViewSet,
-    SchoolListViewSet,
-    TeacherListViewSet,
-    AttendanceListViewSet
-)
 from student_registration.students.views import (
-    StudentViewSet,
-    StudentSearchViewSet,
-    StudentAutocomplete,
     TeacherViewSet
 )
 from student_registration.schools.views import (
@@ -45,11 +36,6 @@ from student_registration.students.views import serve_file
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 
 api = routers.SimpleRouter()
-
-# api.register(r'dirasa/list', BridgingListViewSet, basename='dirasa-list')
-# api.register(r'dirasa/schools', SchoolListViewSet, basename='dirasa-schools')
-# api.register(r'dirasa/teachers', TeacherListViewSet, basename='dirasa-teachers')
-# api.register(r'dirasa/attendances', AttendanceListViewSet, basename='dirasa-attendances')
 
 # api.register(r'students', StudentViewSet, basename='students')
 # api.register(r'students-search', StudentSearchViewSet, basename='students-search')

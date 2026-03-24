@@ -457,7 +457,7 @@ function reorganizeForm()
 
 //    Child Nationality
     var child_nationality = $('select#id_child_nationality').val();
-    $('div#div_id_child_nationality_other').addClass('d-none').hide();
+    //$('div#div_id_child_nationality_other').addClass('d-none').hide();
 
     if(child_nationality == 6){
         $('#div_id_child_nationality_other').removeClass('d-none').show();
@@ -470,7 +470,7 @@ function reorganizeForm()
         $('#child_fe_unique_id_block').removeClass('d-none').show();
     }
     else{
-        $('#child_fe_unique_id_block').addClass('d-none').hide();
+//        $('#child_fe_unique_id_block').addClass('d-none').hide();
         $('#id_child_fe_unique_id').val('');
     }
 
@@ -481,7 +481,7 @@ function reorganizeForm()
         $('div#div_id_child_children_number').removeClass('d-none').show();
     }
     else{
-        $('div#div_id_child_children_number').addClass('d-none').hide();
+//        $('div#div_id_child_children_number').addClass('d-none').hide();
         $('#id_child_children_number').val('');
     }
 
@@ -492,13 +492,13 @@ function reorganizeForm()
         $('div#div_id_child_siblings_have_disability').removeClass('d-none').show();
     }
     else{
-        $('div#div_id_child_siblings_have_disability').addClass('d-none').hide();
+//        $('div#div_id_child_siblings_have_disability').addClass('d-none').hide();
         $('#id_child_siblings_have_disability').val('');
     }
 
 //   Source of Identification
     var source_of_identification = $('select#id_source_of_identification').val();
-    $('div#div_id_source_of_identification_specify').addClass('d-none').hide();
+//    $('div#div_id_source_of_identification_specify').addClass('d-none').hide();
 
     if(source_of_identification == 'Other Sources'){
         $('#div_id_source_of_identification_specify').removeClass('d-none').show();
@@ -506,7 +506,7 @@ function reorganizeForm()
 
 //    Main Caregiver
     var main_caregiver = $('select#id_main_caregiver').val();
-    $('div#div_id_main_caregiver_other').addClass('d-none').hide();
+//    $('div#div_id_main_caregiver_other').addClass('d-none').hide();
     if(main_caregiver == 'Other'){
         $('#div_id_main_caregiver_other').removeClass('d-none').show();
     }
@@ -517,7 +517,7 @@ function reorganizeForm()
 
 //    Main Caregiver Nationality
     var main_caregiver_nationality = $('select#id_main_caregiver_nationality').val();
-    $('div#div_id_main_caregiver_nationality_other').addClass('d-none').hide();
+//    $('div#div_id_main_caregiver_nationality_other').addClass('d-none').hide();
     if(main_caregiver_nationality == 6){
         $('#div_id_main_caregiver_nationality_other').removeClass('d-none').show();
     }
@@ -570,11 +570,11 @@ function reorganizeForm()
     //  Labour
     var have_labour = $('select#id_have_labour').val();
     if(have_labour == '' || have_labour == 'No'){
-        $('div#div_id_labour_type').addClass('d-none').hide();
-        $('#labour_details_1').addClass('d-none').hide();
-        $('#labour_details_2').addClass('d-none').hide();
-        $('#labour_details_2_alt').addClass('d-none').hide();
-        $('#labour_details_3').addClass('d-none').hide();
+//        $('div#div_id_labour_type').addClass('d-none').hide();
+//        $('#labour_details_1').addClass('d-none').hide();
+//        $('#labour_details_2').addClass('d-none').hide();
+//        $('#labour_details_2_alt').addClass('d-none').hide();
+//        $('#labour_details_3').addClass('d-none').hide();
         $('#id_labour_type').val('');
         $('#id_labour_type_specify').val('');
         $('#id_labour_hours').val('');
@@ -596,7 +596,7 @@ function reorganizeForm()
     }
     else
     {
-        $('div#div_id_labour_type_specify').addClass('d-none').hide();
+//        $('div#div_id_labour_type_specify').addClass('d-none').hide();
         $('#id_labour_type_specify').val('');
     }
 }

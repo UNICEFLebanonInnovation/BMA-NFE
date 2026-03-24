@@ -95,40 +95,6 @@ def login_success(request):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
 
-    user = request.user
-    modules = []
-
-    # MSCC access
-    if user.is_superuser or user.groups.filter(name__in=[
-        'MSCC_UNICEF', 'MSCC_PARTNER', 'MSCC_CENTER', 'MSCC'
-    ]).exists():
-        modules.append('mscc')
-
-    # Dirasa / Bridging
-    if user.is_superuser or user.groups.filter(name='CLM_Bridging').exists():
-        modules.append('clm_bridging')
-
-    # Disability specialized inclusion
-    if user.is_superuser or user.groups.filter(name='CLM_Inclusion').exists():
-        modules.append('clm_inclusion')
-
-    # Youth
-    if user.is_superuser or user.groups.filter(name__in=[
-        'YOUTH_UNICEF', 'YOUTH_PARTNER', 'YOUTH'
-    ]).exists():
-        modules.append('youth')
-
-    if len(modules) == 1:
-        module = modules[0]
-        if module == 'mscc':
-            return redirect('mscc:list')
-        if module == 'clm_bridging':
-            return redirect('clm:bridging_page')
-        if module == 'clm_inclusion':
-            return redirect('clm:inclusion_list')
-        if module == 'youth':
-            return redirect('youth:list')
-
     # Default to landing page if multiple modules or no specific match
     return redirect('/landing-page/')
 
