@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            <div class="page-title-icon">
+                <i class="icon pe-7s-info icon-gradient bg-ripe-malin"></i>
+            </div>
+            <div>
+                About CLM<sup>+</sup>
+                <div class="page-title-subheading">
+                    System Information and Capabilities
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="main-card mb-3 card">
+            <div class="card-body">
+                <h5 class="card-title">What is CLM<sup>+</sup>?</h5>
+                <p>
+                    CLM<sup>+</sup> (Child Labour Monitoring System) is a comprehensive platform designed for the integration of student and beneficiary registration, education tracking, well-being analysis, and attendance monitoring. It empowers centers, partners, and administrators to seamlessly manage data related to education services, child protection, and psychosocial support.
+                </p>
+
+                <h5 class="card-title mt-4">Key Features</h5>
+                <ul>
+                    <li><strong>Registration Flow:</strong> Secure, role-based, multi-step registration wizard for beneficiaries.</li>
+                    <li><strong>Education & Attendance:</strong> Real-time tracking of classes, educational progress, and daily attendance.</li>
+                    <li><strong>Wellbeing Analysis:</strong> Integrated dashboard visualizations tracking psychological support, educational improvements, and the impact of child labor on attendance.</li>
+                    <li><strong>Role-Based Access Control:</strong> Distinct access levels ensuring data privacy and correct scope for Centers, Partners, and Global Administrators.</li>
+                    <li><strong>Geographic Mapping:</strong> Interactive maps for visualizing center locations and metadata.</li>
+                    <li><strong>Data Export & Reporting:</strong> Advanced asynchronous data export capabilities in both CSV and XLSX formats.</li>
+                </ul>
+
+                <h5 class="card-title mt-4">Support</h5>
+                <p>
+                    For technical support or inquiries, please contact your system administrator or refer to the internal documentation.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
