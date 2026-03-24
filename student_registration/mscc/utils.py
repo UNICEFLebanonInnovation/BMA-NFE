@@ -44,7 +44,15 @@ def parse_date_flexible(date_str):
 
 def create_attendance(data, center_id):
     from datetime import datetime
-    round_id = data["round_id"]
+    round_id = data.get("round_id")
+    if round_id:
+        try:
+            round_id = int(round_id)
+        except ValueError:
+            round_id = None
+    else:
+        round_id = None
+
     education_program = data["education_program"]
     class_section = data["class_section"]
 

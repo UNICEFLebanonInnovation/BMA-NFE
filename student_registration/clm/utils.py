@@ -715,7 +715,15 @@ def create_attendance(data):
     attendance_date = datetime.strptime(data["attendance_date"], '%m/%d/%Y')
     day_off = data["attendance_day_off"]
     close_reason = data["close_reason"]
-    round_id = data["round_id"]
+    round_id = data.get("round_id")
+    if round_id:
+        try:
+            round_id = int(round_id)
+        except ValueError:
+            round_id = None
+    else:
+        round_id = None
+
     school_id = data["school_id"]
     registration_level = data["registration_level"]
     children_attendance = data["children_attendance"]
