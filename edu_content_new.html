@@ -1,36 +1,4 @@
-{% load static i18n %}
-{% load custom_tags %}
-{% load simple_tags %}
-{% load util_tags %}
-
-<div class="row g-4">
-    <!-- Retention Support (RS) -->
-    {% get_service instance 'RS' as result_rs %}
-    {% service_data 'EducationService' instance as es_result %}
-
-    {% if result_rs and es_result.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
-    {% service_data 'EducationRSService' instance as result %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Retention Support" %}</h6>
-                {% if result %}
-                    <a href="{% url 'mscc:service_education_rs_edit' instance.id result.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:service_education_rs_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2 small text-muted text-uppercase fw-bold">{% trans "Public School" %}</div>
-                <div class="fw-bold">{{ result.school.name|default:"N/A" }}</div>
-                <div class="badge bg-info-subtle text-info mt-1">{{ result.shift }}</div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-
-  <!-- Education -->
+<!-- Education -->
 {% service_data 'EducationService' instance as result1 %}
 {% have_education_programme result1.education_program as result3 %}
 
@@ -55,7 +23,7 @@
                             {% trans "Pre Grading" %}
                         </button>
                     </li>
-                    {% if not result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9' or instance.type != 'Walk-in' %}
+                    {% if not (result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9' and instance.type == 'Walk-in') %}
                     <li class="nav-item" role="presentation">
                         <button class="nav-link rounded-0 border-top-0 border-start-0 border-end-0 fw-bold text-muted" id="tab-c-12" data-bs-toggle="tab" data-bs-target="#tab-animated-12" type="button" role="tab" aria-selected="false">
                             {% trans "Post Grading" %}
@@ -1005,86 +973,3 @@
 
 {% endif %}
 
-
-    <!-- PSS Service -->
-    {% get_service instance 'PSS' as has_pss %}
-    {% if has_pss %}
-    {% service_data 'PSSService' instance as pss_svc %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Psychosocial (PSS)" %}</h6>
-                {% if pss_svc %}
-                    <a href="{% url 'mscc:service_pss_edit' instance.id pss_svc.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:service_pss_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Distress" %}:</span>
-                    <span class="ms-1 {% if pss_svc.child_distress == 'Yes' %}text-danger fw-bold{% endif %}">{{ pss_svc.child_distress|default:"N/A" }}</span>
-                </div>
-                <div class="mb-2">
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Arrangement" %}:</span>
-                    <span class="ms-1">{{ pss_svc.child_living_arrangement|default:"N/A" }}</span>
-                </div>
-                <div class="small text-muted text-uppercase fw-bold mb-1">{% trans "Vulnerabilities" %}</div>
-                <div class="small text-truncate" title="{{ pss_svc.child_vulnerability }}">{{ pss_svc.child_vulnerability|default:"None" }}</div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Inclusion -->
-    {% get_service instance 'Inclusion' as has_inc %}
-    {% if has_inc %}
-    {% service_data 'InclusionService' instance as inc_svc %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Inclusion" %}</h6>
-                {% if inc_svc %}
-                    <a href="{% url 'mscc:service_inclusion_edit' instance.id inc_svc.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:service_inclusion_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Parental Engagement" %}:</span>
-                    <span class="ms-1">{{ inc_svc.parental_engagement|default:"N/A" }}</span>
-                </div>
-                <div>
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Dropout" %}:</span>
-                    <span class="ms-1">{{ inc_svc.dropout|default:"No" }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Referral -->
-    {% service_data 'Referral' instance as ref_svc %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Referral" %}</h6>
-                {% if ref_svc %}
-                    <a href="{% url 'mscc:referral_edit' instance.id ref_svc.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:referral_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <div class="small text-muted text-uppercase fw-bold">{% trans "Recommended Path" %}</div>
-                    <div class="fw-bold text-success">{{ ref_svc.recommended_learning_path|default:"N/A" }}</div>
-                </div>
-                <div class="small">
-                    <span class="text-muted fw-bold">{% trans "Materials" %}:</span> {{ ref_svc.receive_needed_material|default:"N/A" }}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

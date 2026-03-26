@@ -1,106 +1,92 @@
-{% load static i18n %}
-{% load custom_tags %}
-{% load simple_tags %}
-{% load util_tags %}
-
-<div class="row g-4">
-    <!-- Retention Support (RS) -->
-    {% get_service instance 'RS' as result_rs %}
-    {% service_data 'EducationService' instance as es_result %}
-
-    {% if result_rs and es_result.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
-    {% service_data 'EducationRSService' instance as result %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Retention Support" %}</h6>
-                {% if result %}
-                    <a href="{% url 'mscc:service_education_rs_edit' instance.id result.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:service_education_rs_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2 small text-muted text-uppercase fw-bold">{% trans "Public School" %}</div>
-                <div class="fw-bold">{{ result.school.name|default:"N/A" }}</div>
-                <div class="badge bg-info-subtle text-info mt-1">{{ result.shift }}</div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-
-  <!-- Education -->
+<!-- Education -->
 {% service_data 'EducationService' instance as result1 %}
 {% have_education_programme result1.education_program as result3 %}
 
   {% if result1 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
   {% if result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up' %}
-    <div class="col-md-12 col-xl-8">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">
-                    {% if result and es_result.education_program in 'YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
-                        {% trans "RS Grade 9 - Grading" %}
-                    {% else %}
-                        {{ result1.education_program }} - {% trans "Grading" %}
-                    {% endif %}
-                </h6>
-            </div>
-            <div class="card-body p-0">
-                <ul class="nav nav-tabs nav-fill border-bottom-0 bg-light" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active rounded-0 border-top-0 border-start-0 border-end-0 fw-bold" id="tab-c-11" data-bs-toggle="tab" data-bs-target="#tab-animated-11" type="button" role="tab" aria-selected="true">
-                            {% trans "Pre Grading" %}
-                        </button>
-                    </li>
-                    {% if not result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9' or instance.type != 'Walk-in' %}
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-0 border-top-0 border-start-0 border-end-0 fw-bold text-muted" id="tab-c-12" data-bs-toggle="tab" data-bs-target="#tab-animated-12" type="button" role="tab" aria-selected="false">
-                            {% trans "Post Grading" %}
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-0 border-top-0 border-start-0 border-end-0 fw-bold text-muted" id="tab-c-15" data-bs-toggle="tab" data-bs-target="#tab-animated-15" type="button" role="tab" aria-selected="false">
-                            {% trans "Improvement" %}
-                        </button>
-                    </li>
-                    {% endif %}
-                    {% if result1.education_program in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-0 border-top-0 border-start-0 border-end-0 fw-bold text-muted" id="tab-c-16" data-bs-toggle="tab" data-bs-target="#tab-animated-16" type="button" role="tab" aria-selected="false">
-                            {% trans "School Grading" %}
-                        </button>
-                    </li>
-                    {% endif %}
-                    {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-0 border-top-0 border-start-0 border-end-0 fw-bold text-muted" id="tab-c-17" data-bs-toggle="tab" data-bs-target="#tab-animated-17" type="button" role="tab" aria-selected="false">
-                            {% trans "School Grading" %}
-                        </button>
-                    </li>
-                    {% endif %}
-                </ul>
+    <div class="col-md-12 col-lg-6 col-xl-4">
+
+                                <div class="mb-3 card">
+                                    <!--<div class="card-header-tab card-header">-->
+                                        <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
+                                            <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
+                                            <!--Details-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <div class="p-0 card-body">
+                                        <div class="dropdown-menu-header mt-0 mb-0">
+                                            <div class="dropdown-menu-header-inner bg-heavy-rain">
+                                                <div class="menu-header-image opacity-1"></div>
+                                                <div class="menu-header-content text-dark">
+                                                  {% if result and es_result.education_program  in 'YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
+                                                    <h5 class="menu-header-title">RS Grade 9 - Grading</h5>
+                                                  {% else %}
+                                                      <h5 class="menu-header-title">{{ result1.education_program }} - Grading</h5>
+                                                  {% endif %}
+                                                    <!--<h6 class="menu-header-subtitle">-->
+                                                        <!--You have-->
+                                                        <!--<b class="text-info">21 </b>-->
+                                                        <!--unread messages-->
+                                                    <!--</h6>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link mb-2 mr-2 active show" id="tab-c-11" data-toggle="tab" href="#tab-animated-11" aria-selected="true">
+                                                  <span>Pre Grading</span>
+                                                </a>
+                                            </li>
+                                          {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9' and instance.type == 'Walk-in' %}
+                                          {% else %}
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-12" data-toggle="tab" href="#tab-animated-12">
+                                                    <span>Post Grading </span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-15" data-toggle="tab" href="#tab-animated-15">
+                                                    <span>Improvement</span>
+                                                </a>
+                                            </li>
+
+                                            {% endif %}
+                                          {% if result1.education_program in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-16" data-toggle="tab" href="#tab-animated-16">
+                                                    <span>School Grading</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+
+                                          {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-17" data-toggle="tab" href="#tab-animated-17">
+                                                    <span>School Grading</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
 
                                         <div class="tab-content">
 
                                           <!-- Pre Test -->
-                                          <div class="tab-pane fade show active" id="tab-animated-11" role="tabpanel">
-                                                    <div class="d-flex justify-content-end p-2 border-bottom bg-light">
+                                          <div class="tab-pane active show" id="tab-animated-11" role="tabpanel">
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       {% if result %}
-                                                        <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'pre' result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades"><i class="bi bi-pencil me-1"></i> {% trans "Edit" %}</a>
+                                                        <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'pre' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades">Edit</a>
                                                       {% else %}
-                                                        <a href="{% url 'mscc:service_education_grading_add' instance.id result1.education_program %}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades"><i class="bi bi-plus me-1"></i> {% trans "Add" %}</a>
+                                                        <a href="{% url 'mscc:service_education_grading_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades">Add</a>
                                                       {% endif %}
                                                     </div>
 
-                                                <div class="overflow-auto" style="max-height: 250px;">
-
-                                                        <div class="p-0">
+                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                    <div class="scrollbar-container ps ps--active-y">
+                                                        <div class="p-3">
                                                            {% if result1.education_program  == 'BLN Level 1'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Arabic Language Development  / 68</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.arabic_grade}}</span>
 </li>
@@ -119,11 +105,11 @@
     <span class="text-muted fw-bold small">Mathematics  / 22</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.math_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
                                                            {% if result1.education_program  == 'BLN Level 2'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Arabic Language Development  / 70</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.arabic_grade}}</span>
 </li>
@@ -142,11 +128,11 @@
     <span class="text-muted fw-bold small">Mathematics  / 32</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.math_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
                                                            {% if result1.education_program  == 'BLN Level 3'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Arabic Language Development  / 69</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.arabic_grade}}</span>
 </li>
@@ -165,11 +151,11 @@
     <span class="text-muted fw-bold small">Mathematics  / 32</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.math_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
                                                            {% if result1.education_program  == 'ABLN Level 1'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Arabic Language Development  / 46</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.arabic_grade}}</span>
 </li>
@@ -185,11 +171,11 @@
     <span class="text-muted fw-bold small">Artistic Development  / 10</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.artistic_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
                                                           {% if result1.education_program  == 'ABLN Level 2'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Arabic Language Development  / 56</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.arabic_grade}}</span>
 </li>
@@ -205,11 +191,11 @@
     <span class="text-muted fw-bold small">Artistic Development  / 10</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.artistic_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 1'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Language Development  / 48</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.language_grade}}</span>
 </li>
@@ -233,11 +219,11 @@
     <span class="text-muted fw-bold small">Artistic Development  / 10</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.artistic_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 2'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Language Development  / 66</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.language_grade}}</span>
 </li>
@@ -261,12 +247,12 @@
     <span class="text-muted fw-bold small">Artistic Development  / 16</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.artistic_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
 
                                                           {% if result1.education_program  == 'CBECE Level 3'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Language Development  / 74</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.language_grade}}</span>
 </li>
@@ -290,12 +276,12 @@
     <span class="text-muted fw-bold small">Artistic Development  / 16</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.artistic_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
 
                                                           {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Arabic Development  / 20</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.arabic_grade}}</span>
 </li>
@@ -319,11 +305,11 @@
     <span class="text-muted fw-bold small">Physics  / 20</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.physics_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
                                                           {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6'  %}
                                                             <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Arabic Development  / 20</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.arabic_grade}}</span>
 </li>
@@ -339,27 +325,27 @@
     <span class="text-muted fw-bold small">Science  / 20</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.pre_test.science_grade}}</span>
 </li>
-</ul>
+                                                            </div>
                                                           {% endif %}
                                                         </div>
 
-                                                    <div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
                                                 </div>
                                             </div>
 
                                           <!-- Post Test -->
-                                          <div class="tab-pane fade" id="tab-animated-12" role="tabpanel">
-                                                    <div class="d-flex justify-content-end p-2 border-bottom bg-light">
+                                          <div class="tab-pane" id="tab-animated-12" role="tabpanel">
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       {% if result %}
-                                                        <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'post' result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades"><i class="bi bi-pencil me-1"></i> {% trans "Edit" %}</a>
+                                                        <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'post' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
 
-                                                <div class="overflow-auto" style="max-height: 250px;">
-
-                                                        <div class="p-0">
+                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                    <div class="scrollbar-container ps ps--active-y">
+                                                        <div class="p-3">
                                                         <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                            <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Child Level of participation / Absence</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{ result.post_test.participation }}</span>
 </li>
@@ -617,16 +603,16 @@
                                                         {% endif %}
                                                         </div>
                                                         </div>
-                                                    <div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
                                                 </div>
                                             </div>
 
                                           <!-- Improvement -->
-                                          <div class="tab-pane fade" id="tab-animated-15" role="tabpanel">
+                                          <div class="tab-pane" id="tab-animated-15" role="tabpanel">
 
-                                                <div class="overflow-auto" style="max-height: 250px;">
-
-                                                        <div class="p-0">
+                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                    <div class="scrollbar-container ps ps--active-y">
+                                                        <div class="p-3">
                                                           <ul class="list-group list-group-flush mb-0">
 
                                                            {% if result1.education_program  == 'BLN Level 1'  %}
@@ -911,22 +897,22 @@
                                                           {% endif %}
                                                         </div>
                                                         </div>
-                                                    <div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
                                                 </div>
 
                                           </div>
 
                                         {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
-                                          <div class="tab-pane fade" id="tab-animated-16" role="tabpanel">
-                                                    <div class="d-flex justify-content-end p-2 border-bottom bg-light">
+                                          <div class="tab-pane" id="tab-animated-16" role="tabpanel">
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if result %}
-                                                       <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades"><i class="bi bi-pencil me-1"></i> {% trans "Edit" %}</a>
+                                                       <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
 
-                                                <div class="overflow-auto" style="max-height: 250px;">
-
-                                                        <div class="p-0">
+                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                    <div class="scrollbar-container ps ps--active-y">
+                                                        <div class="p-3">
 
                                                         <ul class="list-group list-group-flush mb-0">
                                                                 <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
@@ -954,25 +940,26 @@
     <span class="text-muted fw-bold small">Physics</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.school_test.physics_grade}}</span>
 </li>
-</ul>
-                                                    <div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
+                                                        </div>
+                                                        </div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
                                                 </div>
                                             </div>
                                         {% endif %}
 
                                             {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
-                                          <div class="tab-pane fade" id="tab-animated-17" role="tabpanel">
-                                                    <div class="d-flex justify-content-end p-2 border-bottom bg-light">
+                                          <div class="tab-pane" id="tab-animated-17" role="tabpanel">
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if result %}
-                                                        <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades"><i class="bi bi-pencil me-1"></i> {% trans "Edit" %}</a>
+                                                        <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
-                                                <div class="overflow-auto" style="max-height: 250px;">
-
-                                                        <div class="p-0">
+                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                    <div class="scrollbar-container ps ps--active-y">
+                                                        <div class="p-3">
 
                                                         <ul class="list-group list-group-flush mb-0">
-<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 border-0 border-bottom">
     <span class="text-muted fw-bold small">Arabic Development</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.school_test.arabic_grade}}</span>
 </li>
@@ -989,15 +976,23 @@
     <span class="text-muted fw-bold small">Science</span>
     <span class="badge bg-info-subtle text-info fw-bold">{{result.school_test.science_grade}}</span>
 </li>
-</ul>
-                                                    <div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
+                                                        </div>
+                                                        </div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
                                                 </div>
                                             </div>
                                         {% endif %}
 
 
                                         </div>
-
+                                        <ul class="nav flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
+                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                                    <!--View All Messages-->
+                                                <!--</button>-->
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -1005,86 +1000,3 @@
 
 {% endif %}
 
-
-    <!-- PSS Service -->
-    {% get_service instance 'PSS' as has_pss %}
-    {% if has_pss %}
-    {% service_data 'PSSService' instance as pss_svc %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Psychosocial (PSS)" %}</h6>
-                {% if pss_svc %}
-                    <a href="{% url 'mscc:service_pss_edit' instance.id pss_svc.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:service_pss_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Distress" %}:</span>
-                    <span class="ms-1 {% if pss_svc.child_distress == 'Yes' %}text-danger fw-bold{% endif %}">{{ pss_svc.child_distress|default:"N/A" }}</span>
-                </div>
-                <div class="mb-2">
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Arrangement" %}:</span>
-                    <span class="ms-1">{{ pss_svc.child_living_arrangement|default:"N/A" }}</span>
-                </div>
-                <div class="small text-muted text-uppercase fw-bold mb-1">{% trans "Vulnerabilities" %}</div>
-                <div class="small text-truncate" title="{{ pss_svc.child_vulnerability }}">{{ pss_svc.child_vulnerability|default:"None" }}</div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Inclusion -->
-    {% get_service instance 'Inclusion' as has_inc %}
-    {% if has_inc %}
-    {% service_data 'InclusionService' instance as inc_svc %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Inclusion" %}</h6>
-                {% if inc_svc %}
-                    <a href="{% url 'mscc:service_inclusion_edit' instance.id inc_svc.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:service_inclusion_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Parental Engagement" %}:</span>
-                    <span class="ms-1">{{ inc_svc.parental_engagement|default:"N/A" }}</span>
-                </div>
-                <div>
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Dropout" %}:</span>
-                    <span class="ms-1">{{ inc_svc.dropout|default:"No" }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Referral -->
-    {% service_data 'Referral' instance as ref_svc %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Referral" %}</h6>
-                {% if ref_svc %}
-                    <a href="{% url 'mscc:referral_edit' instance.id ref_svc.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:referral_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <div class="small text-muted text-uppercase fw-bold">{% trans "Recommended Path" %}</div>
-                    <div class="fw-bold text-success">{{ ref_svc.recommended_learning_path|default:"N/A" }}</div>
-                </div>
-                <div class="small">
-                    <span class="text-muted fw-bold">{% trans "Materials" %}:</span> {{ ref_svc.receive_needed_material|default:"N/A" }}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
