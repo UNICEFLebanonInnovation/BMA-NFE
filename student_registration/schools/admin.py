@@ -257,49 +257,10 @@ class SchoolAdmin(ImportExportModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    # actions = []
-    # list_filter = (
-    #     GovernorateFilter,
-    #     'location',
-    #     'is_closed',
-    # )
-    # date_hierarchy = 'academic_year_start'
-
-    # actions = ('open_attendance_90_days', 'open_attendance_60_days',
-    #            'open_attendance_30_days', 'open_attendance_20_days',
-    #            'open_attendance_10_days', 'open_attendance_from_beginning',
-    #            'close_attendance_from_beginning', )
-
-    # def open_attendance_90_days(self, request, queryset):
-    #     queryset.update(attendance_range=90)
-    #
-    # def open_attendance_60_days(self, request, queryset):
-    #     queryset.update(attendance_range=60)
-    #
-    # def open_attendance_30_days(self, request, queryset):
-    #     queryset.update(attendance_range=30)
-    #
-    # def open_attendance_20_days(self, request, queryset):
-    #     queryset.update(attendance_range=20)
-    #
-    # def open_attendance_10_days(self, request, queryset):
-    #     queryset.update(attendance_range=10)
-    #
-    # def open_attendance_from_beginning(self, request, queryset):
-    #     queryset.update(attendance_from_beginning=True)
-    #
-    # def close_attendance_from_beginning(self, request, queryset):
-    #     queryset.update(attendance_from_beginning=False)
-
-    # def get_export_formats(self):
-    #     from student_registration.users.utils import get_default_export_formats
-    #     return get_default_export_formats()
-
 
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
-# admin.site.register(CLMRound, CLMRoundAdmin)
 admin.site.register(EducationalLevel, EducationalLevelAdmin)
 admin.site.register(PublicHolidays)
 admin.site.register(ClubType, ClubTypeAdmin)
