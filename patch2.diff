@@ -1,0 +1,9 @@
+--- student_registration/mscc/views.py
++++ student_registration/mscc/views.py
+@@ -860,6 +860,7 @@
+             if registration_id:
+                 try:
+                     current_reg = Registration.objects.get(pk=registration_id)
+                     qs = qs.exclude(child_id=current_reg.child_id)
+                 except Registration.DoesNotExist:
+                     qs = qs.exclude(pk=registration_id)
