@@ -467,8 +467,8 @@ DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'
 UNIQUE_ID_API_TOKEN_URL = env('UNIQUE_ID_API_TOKEN_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/auth/getAccessToken')
 UNIQUE_ID_API_URL = env('UNIQUE_ID_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsUniqueIDs')
 UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsProgrammes')
-UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
-UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
+UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='unicefict')
+UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='!ct-ph0n3t!cs-24')
 
 # import firebase_admin
 # from firebase_admin import credentials

@@ -190,10 +190,10 @@ $(document).ready(function() {
           $('#nfe_search_loader').removeClass('d-none');
 
           if (typeof outreach_child_search === 'function') outreach_child_search();
-          old_child_search();
-          if ( mother_fullname && sex && nationality) {
-            child_duplication_check();
-        }
+
+          if (mother_fullname && sex && nationality) {
+                child_duplication_check();
+            }
         }
       }
     );
@@ -227,45 +227,6 @@ $(document).ready(function() {
 
 
 });
-
-
-//old student
-function old_child_search() {
-
-    if (typeof isAddPage === 'function' && isAddPage()) {
-
-        var birthday_year = $('#id_child_birthday_year').val();
-        var birthday_month = $('#id_child_birthday_month').val();
-        var birthday_day = $('#id_child_birthday_day').val();
-        var first_name = $('#id_child_first_name').val();
-        var father_name = $('#id_child_father_name').val();
-        var last_name = $('#id_child_last_name').val();
-
-        var data = {
-            birthday_year: birthday_year,
-            birthday_month: birthday_month,
-            birthday_day: birthday_day,
-            first_name: first_name,
-            father_name: father_name,
-            last_name: last_name,
-        };
-
-        $.ajax({
-            url: '/mscc/old-child-search/',
-            dataType: "json",
-            data: data,
-            cache: false,
-            async: true,
-            success: function (response) {
-                append_old_result(response);
-            },
-            error: function (response) {
-                console.log(response);
-                $('#nfe_search_loader').addClass('hidden');
-            }
-        });
-    }
-}
 
 function child_duplication_check() {
 

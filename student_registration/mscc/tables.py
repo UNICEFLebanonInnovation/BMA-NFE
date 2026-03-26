@@ -85,7 +85,6 @@ class MainTable(CommonTable):
             'action_column',
             'absence_column',
             'round',
-            'child.number',
             'child.unicef_id',
             'child.first_name',
             'child.father_name',
@@ -123,7 +122,6 @@ class FullTable(CommonTable):
             'action_column',
             'absence_column',
             'round',
-            'child.number',
             'child.unicef_id',
             'child.first_name',
             'child.father_name',
@@ -197,7 +195,6 @@ class PartnerTable(CommonTable):
             'action_column',
             'absence_column',
             'round',
-            'child.number',
             'child.unicef_id',
             'child.first_name',
             'child.father_name',
@@ -232,7 +229,6 @@ class YouthMainTable(CommonTable):
         model = Registration
         fields = (
             'action_column',
-            'child.number',
             'child.unicef_id',
             'child.first_name',
             'child.father_name',

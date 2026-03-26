@@ -55,7 +55,6 @@ class MainFilter(RedesignFilterSet):
     child__father_name = CharFilter(lookup_expr='icontains')
     child__last_name = CharFilter(lookup_expr='icontains')
     child__mother_fullname = CharFilter(lookup_expr='icontains')
-    child__number = CharFilter(lookup_expr='icontains')
     child__unicef_id = CharFilter(lookup_expr='icontains')
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
@@ -134,7 +133,6 @@ class FullFilter(RedesignFilterSet):
     child__father_name = CharFilter(lookup_expr='icontains')
     child__last_name = CharFilter(lookup_expr='icontains')
     child__mother_fullname = CharFilter(lookup_expr='icontains')
-    child__number = CharFilter(lookup_expr='icontains')
     child__unicef_id = CharFilter(lookup_expr='icontains')
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
@@ -192,7 +190,6 @@ class TeacherFilter(RedesignFilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)

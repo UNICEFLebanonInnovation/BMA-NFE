@@ -244,11 +244,6 @@ urlpatterns = [
         name='referral_edit'
     ),
     re_path(
-        'old-child-search/$',
-        views.old_child_search,
-        name='old_child_search'
-    ),
-    re_path(
         'child-duplication-check/$',
         views.child_duplication_check,
         name='child_duplication_check'
