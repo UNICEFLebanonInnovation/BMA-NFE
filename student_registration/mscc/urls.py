@@ -79,26 +79,6 @@ urlpatterns = [
         name='school_autocomplete'
     ),
     re_path(
-        r'^services/education-assessment-add/(?P<registry>[\w.@+-]+)/$',
-        view=education_view.EducationAssessmentFormView.as_view(),
-        name='service_education_assessment_add'
-    ),
-    re_path(
-        r'^services/education-assessment-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
-        view=education_view.EducationAssessmentFormView.as_view(),
-        name='service_education_assessment_edit'
-    ),
-    re_path(
-        r'^services/diagnostic-assessment-add/(?P<registry>[\w.@+-]+)/$',
-        view=education_view.DiagnosticAssessmentFormView.as_view(),
-        name='service_diagnostic_assessment_add'
-    ),
-    re_path(
-        r'^services/diagnostic-assessment-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
-        view=education_view.DiagnosticAssessmentFormView.as_view(),
-        name='service_diagnostic_assessment_edit'
-    ),
-    re_path(
         r'^services/education-add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_add'

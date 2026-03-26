@@ -63,9 +63,7 @@ The application uses Django's authentication system and custom role checks (via 
 - AttendanceView
 - CenterFormView
 - CenterListView
-- DiagnosticAssessmentFormView
 - DigitalFormView
-- EducationAssessmentFormView
 - EducationGradingFormView
 - EducationRSServiceFormView
 - EducationSchoolGradingFormView
@@ -99,9 +97,7 @@ The application uses Django's authentication system and custom role checks (via 
 - AttendanceView
 - CenterFormView
 - CenterListView (filtered)
-- DiagnosticAssessmentFormView
 - DigitalFormView
-- EducationAssessmentFormView
 - EducationGradingFormView
 - EducationRSServiceFormView
 - EducationSchoolGradingFormView

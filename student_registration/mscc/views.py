@@ -69,7 +69,6 @@ from .models import (
     Registration,
     Teacher,
     PSSService,
-    EducationAssessment,
     HealthNutritionService,
     EducationService,
 )
@@ -1352,13 +1351,6 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             for item in edu_status
         ]
 
-        assess_qs = EducationAssessment.objects.filter(registration__in=qs)
-        avg_improvement = assess_qs.aggregate(
-            arabic=Avg(Cast(F('post_arabic_grade') - F('pre_arabic_grade'), FloatField()) / NullIf(Cast(F('pre_arabic_grade'), FloatField()), 0.0) * 100),
-            math=Avg(Cast(F('post_math_grade') - F('pre_math_grade'), FloatField()) / NullIf(Cast(F('pre_math_grade'), FloatField()), 0.0) * 100),
-            language=Avg(Cast(F('post_language_grade') - F('pre_language_grade'), FloatField()) / NullIf(Cast(F('pre_language_grade'), FloatField()), 0.0) * 100),
-        )
-
         # 4. Impact Analysis & KPIs
         # Attendance logic (simplified: use the annotated property if possible or aggregate)
         # For performance, let's just get the average of the annotated _total_absent_days if we were in a ListView,
@@ -1371,24 +1363,12 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         avg_attendance_rate = ((total_possible_days - total_absences) / total_possible_days) * 100
 
         labor_rate = (qs.exclude(have_labour='No').count() / total_registrations) * 100
-        overall_improvement = (
-            (avg_improvement['arabic'] or 0) +
-            (avg_improvement['math'] or 0) +
-            (avg_improvement['language'] or 0)
-        ) / 3
+        overall_improvement = 0.0
 
         protection_rate = (pss_indicators['protection_concern'] / total_registrations) * 100
 
-        # Barriers
-        barriers = (
-            assess_qs.values(name=F('barriers'))
-            .annotate(y=Count('id'))
-            .order_by('-y')
-        )
-        barriers = [
-            {'name': item['name'] or 'No barriers', 'y': item['y']}
-            for item in barriers
-        ]
+        # Barriers (Removed)
+        barriers = []
 
         # Impact: Attendance vs Improvement
         # High attendance (>90%) vs Low attendance (<90%)
@@ -1407,36 +1387,10 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             'without_labor': get_attendance_rate(labor_no_qs)
         }
 
-        # Impact: Attendance on Improvement
-        # Children with 0 absences vs children with > 5 absences
-        no_absences_ids = (
-            MSCCAttendanceChild.objects.filter(registration__in=qs)
-            .values('registration')
-            .annotate(absences=Count('id', filter=Q(attended='No')))
-            .filter(absences=0)
-            .values_list('registration', flat=True)
-        )
-        high_absences_ids = (
-            MSCCAttendanceChild.objects.filter(registration__in=qs)
-            .values('registration')
-            .annotate(absences=Count('id', filter=Q(attended='No')))
-            .filter(absences__gt=5)
-            .values_list('registration', flat=True)
-        )
-
-        def get_avg_imp(ids):
-            agg = EducationAssessment.objects.filter(registration_id__in=ids).aggregate(
-                avg=Avg(
-                    (Cast(F('post_arabic_grade') - F('pre_arabic_grade'), FloatField()) / NullIf(Cast(F('pre_arabic_grade'), FloatField()), 0.0) * 100 +
-                     Cast(F('post_math_grade') - F('pre_math_grade'), FloatField()) / NullIf(Cast(F('pre_math_grade'), FloatField()), 0.0) * 100 +
-                     Cast(F('post_language_grade') - F('pre_language_grade'), FloatField()) / NullIf(Cast(F('pre_language_grade'), FloatField()), 0.0) * 100) / 3
-                )
-            )
-            return round(agg['avg'] or 0, 1)
-
+        # Impact: Attendance on Improvement (Removed)
         attendance_impact_improvement = {
-            'high_attendance': get_avg_imp(no_absences_ids),
-            'low_attendance': get_avg_imp(high_absences_ids)
+            'high_attendance': 0.0,
+            'low_attendance': 0.0
         }
 
         data = {
