@@ -124,9 +124,15 @@
   function renderImprovementChart(selector, data) {
     const root = d3.select(selector);
     root.selectAll('*').remove();
-    const margin = { top: 30, right: 30, bottom: 40, left: 100 };
+
+    if (!data || data.length === 0) {
+        root.append('div').attr('class', 'text-muted text-center p-5').text('No data available');
+        return;
+    }
+
+    const margin = { top: 30, right: 30, bottom: 60, left: 120 };
     const width = root.node().getBoundingClientRect().width - margin.left - margin.right;
-    const height = 250 - margin.top - margin.bottom;
+    const height = 400 - margin.top - margin.bottom;
 
     const svg = root.append('svg')
       .attr('width', width + margin.left + margin.right)
@@ -134,30 +140,65 @@
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([0, d3.max(data, d => d.value) || 20]).range([0, width]);
-    const y = d3.scaleBand().range([0, height]).domain(data.map(d => d.name)).padding(0.4);
+    const programs = Array.from(new Set(data.map(d => d.programme)));
+    const materials = Array.from(new Set(data.map(d => d.material)));
 
-    svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x).ticks(5).tickFormat(d => d + '%'));
-    svg.append('g').call(d3.axisLeft(y));
+    const x0 = d3.scaleBand()
+      .domain(programs)
+      .rangeRound([0, width])
+      .paddingInner(0.1);
 
-    svg.selectAll('rect')
-      .data(data)
-      .enter()
-      .append('rect')
-      .attr('x', x(0))
-      .attr('y', d => y(d.name))
-      .attr('width', d => x(d.value))
-      .attr('height', y.bandwidth())
-      .attr('fill', '#28a745')
+    const x1 = d3.scaleBand()
+      .domain(materials)
+      .rangeRound([0, x0.bandwidth()])
+      .padding(0.05);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.improvement) || 20]).nice()
+      .rangeRound([height, 0]);
+
+    const color = d3.scaleOrdinal(d3.schemeCategory10).domain(materials);
+
+    svg.append('g')
+      .selectAll('g')
+      .data(programs)
+      .enter().append('g')
+      .attr('transform', d => `translate(${x0(d)},0)`)
+      .selectAll('rect')
+      .data(d => data.filter(item => item.programme === d))
+      .enter().append('rect')
+      .attr('x', d => x1(d.material))
+      .attr('y', d => y(d.improvement))
+      .attr('width', x1.bandwidth())
+      .attr('height', d => height - y(d.improvement))
+      .attr('fill', d => color(d.material))
       .on("mouseover", function(event, d) {
         tooltip.transition().duration(200).style("opacity", .9);
-        tooltip.html(`${d.name}: ${d.value}%`)
+        tooltip.html(`<strong>${d.programme}</strong><br>${d.material}: ${d.improvement}%`)
           .style("left", (event.pageX) + "px")
           .style("top", (event.pageY - 28) + "px");
       })
       .on("mouseout", function() {
         tooltip.transition().duration(500).style("opacity", 0);
       });
+
+    svg.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x0))
+      .selectAll('text')
+      .attr('transform', 'translate(-10,0)rotate(-25)')
+      .style('text-anchor', 'end');
+
+    svg.append('g')
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + '%'));
+
+    // Legend
+    const legend = root.append('div').attr('class', 'mt-3 d-flex flex-wrap justify-content-center gap-3');
+    materials.forEach(m => {
+      const item = legend.append('div').attr('class', 'small d-flex align-items-center');
+      item.append('span').style('display', 'inline-block').style('width', '12px').style('height', '12px').style('background-color', color(m)).attr('class', 'me-1');
+      item.append('span').text(m);
+    });
   }
 
   function renderPSSIndicators(selector, data) {
@@ -210,7 +251,7 @@
     renderPSSIndicators('#chart_pss_indicators', data.wellbeing.pss_indicators);
 
     renderBarChart('#chart_education_status', data.education.status);
-    renderImprovementChart('#chart_grade_improvement', data.education.improvement);
+    renderImprovementChart('#chart_programme_improvements', data.education.programme_improvements);
 
     renderBarChart('#chart_barriers', data.impact.barriers);
 

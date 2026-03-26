@@ -72,6 +72,7 @@ from .models import (
     EducationAssessment,
     HealthNutritionService,
     EducationService,
+    EducationProgrammeAssessment,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -1312,6 +1313,43 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             'without_labor': get_attendance_rate(labor_no_qs)
         }
 
+        # New Education Grading Analysis
+        programme_assessments = EducationProgrammeAssessment.objects.filter(registration__in=qs).values(
+            'programme_type', 'pre_test', 'post_test'
+        )
+
+        improvements = {}
+        for p in programme_assessments:
+            ptype = p.get('programme_type') or 'Unknown'
+            pre = p.get('pre_test') or {}
+            post = p.get('post_test') or {}
+
+            if ptype not in improvements:
+                improvements[ptype] = {}
+
+            for key in post.keys():
+                if key.endswith('_grade') or key in ['life_skills', 'english_development', 'financial_development', 'it_development']:
+                    try:
+                        post_val = float(post[key])
+                        pre_val = float(pre.get(key, 0))
+                        if pre_val > 0:
+                            imp = ((post_val - pre_val) / pre_val) * 100
+                            if key not in improvements[ptype]:
+                                improvements[ptype][key] = []
+                            improvements[ptype][key].append(imp)
+                    except (ValueError, TypeError):
+                        pass
+
+        programme_improvements = []
+        for ptype, metrics in improvements.items():
+            for metric, vals in metrics.items():
+                if vals:
+                    programme_improvements.append({
+                        'programme': ptype,
+                        'material': metric.replace('_grade', '').replace('_', ' ').title(),
+                        'improvement': round(sum(vals) / len(vals), 1)
+                    })
+
         # Impact: Attendance on Improvement
         # Children with 0 absences vs children with > 5 absences
         no_absences_ids = (
@@ -1368,7 +1406,8 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
                     {'name': 'Arabic', 'value': round(avg_improvement['arabic'] or 0, 1)},
                     {'name': 'Math', 'value': round(avg_improvement['math'] or 0, 1)},
                     {'name': 'Language', 'value': round(avg_improvement['language'] or 0, 1)},
-                ]
+                ],
+                'programme_improvements': programme_improvements,
             },
             'impact': {
                 'barriers': barriers,
