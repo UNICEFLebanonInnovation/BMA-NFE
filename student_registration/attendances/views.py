@@ -120,28 +120,6 @@
 #         return super(AttendanceViewSet, self).partial_update(request)
 #
 #
-# class AbsenteeViewSet(mixins.ListModelMixin,
-#                       viewsets.GenericViewSet):
-#     model = Absentee
-#     queryset = Absentee.objects.all()
-#     serializer_class = AbsenteeSerializer
-#     permission_classes = (permissions.IsAuthenticated,)
-#
-#     def get_queryset(self):
-#         if self.request.GET.get('days', None):
-#             return self.queryset.filter(absent_days__lte=self.request.GET.get('days', None), absent_days__gte=5)
-#         return []
-#
-#
-# class AbsenteeView(ListAPIView):
-#     """
-#     API endpoint for validated absentees
-#     """
-#     queryset = Absentee.objects.filter(
-#         school__location=True
-#     )
-#     serializer_class = AbsenteeSerializer
-#     permission_classes = (permissions.IsAdminUser,)
 #
 #
 # class AttendancesExportViewSet(mixins.ListModelMixin,

@@ -52,18 +52,3 @@ class MSCCAttendanceChildSerializer(serializers.ModelSerializer):
         )
 
 
-# class AbsenteeSerializer(serializers.ModelSerializer):
-#     student_id = serializers.IntegerField(source='student.id', read_only=True)
-#
-#     class Meta:
-#         model = Absentee
-#         fields = (
-#             'student_id',
-#             'absence_type',
-#             'absent_days',
-#             'last_attendance_date',
-#             'last_absent_date',
-#             'total_absent_days',
-#             'total_attended_days',
-#             'last_modification_date',
-#         )
