@@ -875,7 +875,21 @@ def child_duplication_check(request):
                 'child__gender',
                 'child__nationality__name'
             )
-            return JsonResponse({'result': list(qs)})
+            qs_list = list(qs)
+            if qs_list:
+                return JsonResponse({'result': qs_list})
+            else:
+                from student_registration.child.models import Child
+                child_qs = Child.objects.filter(unicef_id=unicef_id)
+                if registration_id:
+                    try:
+                        current_reg = Registration.objects.get(pk=registration_id)
+                        child_qs = child_qs.exclude(id=current_reg.child_id)
+                    except Registration.DoesNotExist:
+                        pass
+
+                if child_qs.exists():
+                    return JsonResponse({'child_exists_error': True})
 
     return JsonResponse({'result': []})
 

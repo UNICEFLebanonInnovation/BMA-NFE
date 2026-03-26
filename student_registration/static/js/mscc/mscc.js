@@ -316,7 +316,7 @@ function child_duplication_check() {
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
-                if(response.result.length > 0){
+                if(response.result && response.result.length > 0){
                     isDuplicateFound = true;
                     var text = ''
                     var $container = $('#nfe_search_result');
@@ -348,6 +348,25 @@ function child_duplication_check() {
                             </div>`;
                         $container.prepend(html);
                     })
+                    $('#child-duplication-error-text').html(text);
+                    $('#child-duplication-error').show();
+                    $('#submit-id-save').prop('disabled', true);
+                    $('#next-btn').prop('disabled', true);
+                } else if (response.child_exists_error) {
+                    isDuplicateFound = true;
+                    var text = 'This child is already registered in the system but does not have an active MSCC registration. Please use the Old Child Search to find and register this child.';
+                    var $container = $('#nfe_search_result');
+                    $container.empty();
+                    $('#nfe_search_result').closest('.card').find('.card-header').removeClass('bg-primary').addClass('bg-danger');
+                    var html = `
+                        <div class="list-group-item p-3 border-danger border-start border-4 bg-danger bg-opacity-10 mb-2">
+                            <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0 fw-bold text-danger">Child Already Exists</h6>
+                                <span class="badge bg-danger">DUPLICATE</span>
+                            </div>
+                            <p class="mb-1 small text-dark">${text}</p>
+                        </div>`;
+                    $container.prepend(html);
                     $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();
                     $('#submit-id-save').prop('disabled', true);
