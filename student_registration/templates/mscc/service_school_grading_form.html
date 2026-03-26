@@ -3,9 +3,7 @@
 {% load custom_tags %}
 {% load static i18n %}
 {% load crispy_forms_tags %}
-{% load static i18n %}
 {% load django_bootstrap5 %}
-
 {% load simple_tags %}
 
 {% block project_title %}Education School Grading{% endblock %}
@@ -15,77 +13,45 @@
 {% endblock %}
 
 {% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'mscc:list' %}">Home</a></li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname registry %}</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">School Grading</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-primary">School Grading</h2>
+            <p class="text-muted">Record education school grades for the beneficiary.</p>
+        </div>
+    </div>
 
-<div class="app-page-title">
-      <div class="page-title-wrapper">
-          <div class="page-title-heading">
-              <div>
-                  <div class="page-title-head center-elem page-title-heading">
-                      <span class="d-inline-block pr-2">
-                          <i class="fa fa-id-card"></i>
-                      </span>
-                      <span class="d-inline-block">
-                        Grading
-                      </span>
-                  </div>
-                  <div class="page-title-subheading opacity-10">
-                      <nav class="" aria-label="breadcrumb">
-                          <ol class="breadcrumb">
-                              <li class="breadcrumb-item">
-                                  <a href="{% url 'mscc:list' %}">Home</a>
-                              </li>
-                              <li class="breadcrumb-item">
-                                    <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname  registry %}</a>
-                              </li>
-                               <li class="breadcrumb-item">
-                                     School Grading
-                              </li>
-                          </ol>
-                      </nav>
-                  </div>
-              </div>
-          </div>
-          <div class="page-title-actions"></div>
-      </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-journal-text fs-4 text-primary me-2"></i>
+                <h5 class="mb-0">Grading Form</h5>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            {% crispy form %}
+
+            <div class="mt-4 pt-3 border-top d-flex justify-content-start">
+                <a href="{% url 'mscc:list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Back to list
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
-        <!--{{ form.errors }}-->
-
-<div class="main-card mb-3 card">
-                                <div class="card-body">
-                                    <div id="smartwizard3" class="forms-wizard">
-                                        <ul class="forms-wizard">
-                                            <li>
-                                                <a href="#step-1">
-                                                    <em>1</em><span>School Grading</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                        <div class="form-wizard-content">
-
-                                           {% crispy form %}
-                                        </div>
-                                    </div>
-                                    <div class="divider"></div>
-
-                                    <div class="clearfix">
-                                        <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
-                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
-
-                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
-                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
-
-                                        <!--<button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>-->
-                                        <!--<button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>-->
-                                    </div>
-                                </div>
-                            </div>
-
 {% endblock %}
 
 {% block extra_js %}
-
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
-
 {% endblock %}
