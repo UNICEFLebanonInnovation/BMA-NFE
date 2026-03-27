@@ -37,16 +37,13 @@
   {% if result1 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
   {% if result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up' %}
-    <div class="col-md-12 col-lg-6 col-xl-4">
+    <div class="col-md-12 col-lg-6 col-xl-6">
 
-                                <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
-                                        <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
-                                            <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
-                                            <!--Details-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                    <div class="p-0 card-body">
+        <div class="card border h-100 shadow-none">
+            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold text-primary">{% trans "Education Programme Assessment" %}</h6>
+            </div>
+            <div class="card-body p-0">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
@@ -113,13 +110,13 @@
                                                       {% endif %}
                                                     </div>
 
-                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                <div class="scroll-area-sm" style="min-height: 250px;">
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
                                                            {% if result1.education_program  == 'BLN Level 1'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 68</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.arabic_grade}}</p></div>
@@ -128,7 +125,7 @@
 </div>
                                                                 {% if request.user.center.provide_french_language == 'Yes' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="French Language Development ">French Language Development  <span class="text-muted small">/ 43</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.french_grade}}</p></div>
@@ -137,7 +134,7 @@
 </div>
                                                                 {% else %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="English Language Development ">English Language Development  <span class="text-muted small">/ 43</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.english_grade}}</p></div>
@@ -146,7 +143,7 @@
 </div>
                                                                 {% endif %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 22</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -156,9 +153,9 @@
                                                             </div>
                                                           {% endif %}
                                                            {% if result1.education_program  == 'BLN Level 2'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 70</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.arabic_grade}}</p></div>
@@ -167,7 +164,7 @@
 </div>
                                                                 {% if request.user.center.provide_french_language == 'Yes' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="French Language Development ">French Language Development  <span class="text-muted small">/ 65</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.french_grade}}</p></div>
@@ -176,7 +173,7 @@
 </div>
                                                                 {% else %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="English Language Development ">English Language Development  <span class="text-muted small">/ 65</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.english_grade}}</p></div>
@@ -185,7 +182,7 @@
 </div>
                                                                 {% endif %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 32</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -195,9 +192,9 @@
                                                             </div>
                                                           {% endif %}
                                                            {% if result1.education_program  == 'BLN Level 3'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 69</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.arabic_grade}}</p></div>
@@ -206,7 +203,7 @@
 </div>
                                                                 {% if request.user.center.provide_french_language == 'Yes' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="French Language Development ">French Language Development  <span class="text-muted small">/ 59</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.french_grade}}</p></div>
@@ -215,7 +212,7 @@
 </div>
                                                                 {% else %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="English Language Development ">English Language Development  <span class="text-muted small">/ 64</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.english_grade}}</p></div>
@@ -224,7 +221,7 @@
 </div>
                                                                 {% endif %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 32</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -234,9 +231,9 @@
                                                             </div>
                                                           {% endif %}
                                                            {% if result1.education_program  == 'ABLN Level 1'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 46</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.arabic_grade}}</p></div>
@@ -244,7 +241,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -252,7 +249,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 24</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.social_emotional_grade}}</p></div>
@@ -260,7 +257,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 10</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.artistic_grade}}</p></div>
@@ -270,9 +267,9 @@
                                                             </div>
                                                           {% endif %}
                                                           {% if result1.education_program  == 'ABLN Level 2'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 56</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.arabic_grade}}</p></div>
@@ -280,7 +277,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 36</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -288,7 +285,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 24</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.social_emotional_grade}}</p></div>
@@ -296,7 +293,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 10</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.artistic_grade}}</p></div>
@@ -306,9 +303,9 @@
                                                             </div>
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 1'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Language Development ">Language Development  <span class="text-muted small">/ 48</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.language_grade}}</p></div>
@@ -316,7 +313,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Mathematics ">Cognitive Development - Mathematics  <span class="text-muted small">/ 24</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -324,7 +321,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Science ">Cognitive Development - Science  <span class="text-muted small">/ 18</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.science_grade}}</p></div>
@@ -332,7 +329,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 14</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.social_emotional_grade}}</p></div>
@@ -340,7 +337,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Psychomotor Development ">Psychomotor Development  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.psychomotor_grade}}</p></div>
@@ -348,7 +345,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 10</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.artistic_grade}}</p></div>
@@ -358,9 +355,9 @@
                                                             </div>
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 2'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Language Development ">Language Development  <span class="text-muted small">/ 66</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.language_grade}}</p></div>
@@ -368,7 +365,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Mathematics ">Cognitive Development - Mathematics  <span class="text-muted small">/ 48</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -376,7 +373,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Science ">Cognitive Development - Science  <span class="text-muted small">/ 38</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.science_grade}}</p></div>
@@ -384,7 +381,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 40</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.social_emotional_grade}}</p></div>
@@ -392,7 +389,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Psychomotor Development ">Psychomotor Development  <span class="text-muted small">/ 40</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.psychomotor_grade}}</p></div>
@@ -400,7 +397,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 16</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.artistic_grade}}</p></div>
@@ -411,9 +408,9 @@
                                                           {% endif %}
 
                                                           {% if result1.education_program  == 'CBECE Level 3'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Language Development ">Language Development  <span class="text-muted small">/ 74</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.language_grade}}</p></div>
@@ -421,7 +418,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Mathematics ">Cognitive Development - Mathematics  <span class="text-muted small">/ 50</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -429,7 +426,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Science ">Cognitive Development - Science  <span class="text-muted small">/ 38</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.science_grade}}</p></div>
@@ -437,7 +434,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 40</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.social_emotional_grade}}</p></div>
@@ -445,7 +442,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Psychomotor Development ">Psychomotor Development  <span class="text-muted small">/ 42</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.psychomotor_grade}}</p></div>
@@ -453,7 +450,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 16</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.artistic_grade}}</p></div>
@@ -464,9 +461,9 @@
                                                           {% endif %}
 
                                                           {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Development ">Arabic Development  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.arabic_grade}}</p></div>
@@ -474,7 +471,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language ">Foreign Language  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.language_grade}}</p></div>
@@ -482,7 +479,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -490,7 +487,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Biology ">Biology  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.biology_grade}}</p></div>
@@ -498,7 +495,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Chemistry ">Chemistry  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.chemistry_grade}}</p></div>
@@ -506,7 +503,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Physics ">Physics  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.physics_grade}}</p></div>
@@ -516,9 +513,9 @@
                                                             </div>
                                                           {% endif %}
                                                           {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6'  %}
-                                                            <div class="row g-3 mb-3">
+                                                            <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Development ">Arabic Development  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.arabic_grade}}</p></div>
@@ -526,7 +523,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language ">Foreign Language  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.language_grade}}</p></div>
@@ -534,7 +531,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.math_grade}}</p></div>
@@ -542,7 +539,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Science ">Science  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.pre_test.science_grade}}</p></div>
@@ -565,12 +562,12 @@
                                                       {% endif %}
                                                     </div>
 
-                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                <div class="scroll-area-sm" style="min-height: 250px;">
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
-                                                        <div class="row g-3 mb-3">
+                                                        <div class="row g-3 mb-3 p-3">
                                                             <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Child Level of participation">Child Level of participation <span class="text-muted small">/ Absence</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{ result.post_test.participation }}</p></div>
@@ -578,7 +575,7 @@
     </div>
 </div>
                                                             <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Main barriers affecting attendance/participation, performance, or causing drop-out">Main barriers affecting attendance/participation, performance, or causing drop-out </div>
             <div class="fs-5 fw-bold text-primary">{% if result.post_test.barriers == 'Yes'  %}
@@ -590,7 +587,7 @@
     </div>
 </div>
                                                             <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Undertake the Post tests ?">Undertake the Post tests ? </div>
             <div class="fs-5 fw-bold text-primary"><p> {{ result.post_test.post_test_done }}</p></div>
@@ -598,7 +595,7 @@
     </div>
 </div>
                                                             <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Did the child fully complete the school year?">Did the child fully complete the school year? </div>
             <div class="fs-5 fw-bold text-primary"><p> {{ result.post_test.school_year_completed }}</p></div>
@@ -608,7 +605,7 @@
                                                           {% if result.post_test.post_test_done == "Yes" %}
                                                            {% if result1.education_program  == 'BLN Level 1'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 68</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.arabic_grade}}</p></div>
@@ -617,7 +614,7 @@
 </div>
                                                                 {% if request.user.center.provide_french_language == 'Yes' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="French Language Development ">French Language Development  <span class="text-muted small">/ 43</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.french_grade}}</p></div>
@@ -626,7 +623,7 @@
 </div>
                                                                 {% else %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="English Language Development ">English Language Development  <span class="text-muted small">/ 43</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.english_grade}}</p></div>
@@ -635,7 +632,7 @@
 </div>
                                                                 {% endif %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 22</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -645,7 +642,7 @@
                                                           {% endif %}
                                                            {% if result1.education_program  == 'BLN Level 2'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 70</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.arabic_grade}}</p></div>
@@ -654,7 +651,7 @@
 </div>
                                                                 {% if request.user.center.provide_french_language == 'Yes' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="French Language Development ">French Language Development  <span class="text-muted small">/ 65</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.french_grade}}</p></div>
@@ -663,7 +660,7 @@
 </div>
                                                                 {% else %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="English Language Development ">English Language Development  <span class="text-muted small">/ 65</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.english_grade}}</p></div>
@@ -672,7 +669,7 @@
 </div>
                                                                 {% endif %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 32</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -682,7 +679,7 @@
                                                           {% endif %}
                                                            {% if result1.education_program  == 'BLN Level 3'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 69</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.arabic_grade}}</p></div>
@@ -691,7 +688,7 @@
 </div>
                                                                 {% if request.user.center.provide_french_language == 'Yes' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="French Language Development ">French Language Development  <span class="text-muted small">/ 59</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.french_grade}}</p></div>
@@ -700,7 +697,7 @@
 </div>
                                                                 {% else %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="English Language Development ">English Language Development  <span class="text-muted small">/ 64</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.english_grade}}</p></div>
@@ -709,7 +706,7 @@
 </div>
                                                                 {% endif %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 32</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -719,7 +716,7 @@
                                                           {% endif %}
                                                            {% if result1.education_program  == 'ABLN Level 1'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 46</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.arabic_grade}}</p></div>
@@ -727,7 +724,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -735,7 +732,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 24</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.social_emotional_grade}}</p></div>
@@ -743,7 +740,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 10</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.artistic_grade}}</p></div>
@@ -753,7 +750,7 @@
                                                           {% endif %}
                                                           {% if result1.education_program  == 'ABLN Level 2'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 56</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.arabic_grade}}</p></div>
@@ -761,7 +758,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 36</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -769,7 +766,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 24</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.social_emotional_grade}}</p></div>
@@ -777,7 +774,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 10</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.artistic_grade}}</p></div>
@@ -787,7 +784,7 @@
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 1'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Language Development ">Language Development  <span class="text-muted small">/ 48</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.language_grade}}</p></div>
@@ -795,7 +792,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Mathematics ">Cognitive Development - Mathematics  <span class="text-muted small">/ 24</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -803,7 +800,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Science ">Cognitive Development - Science  <span class="text-muted small">/ 18</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.science_grade}}</p></div>
@@ -811,7 +808,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 14</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.social_emotional_grade}}</p></div>
@@ -819,7 +816,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Psychomotor Development ">Psychomotor Development  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.psychomotor_grade}}</p></div>
@@ -827,7 +824,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 10</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.artistic_grade}}</p></div>
@@ -837,7 +834,7 @@
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 2'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 66</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.arabic_grade}}</p></div>
@@ -845,7 +842,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language Development ">Foreign Language Development  <span class="text-muted small">/ 66</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.language_grade}}</p></div>
@@ -853,7 +850,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Mathematics ">Cognitive Development - Mathematics  <span class="text-muted small">/ 48</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -861,7 +858,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Science ">Cognitive Development - Science  <span class="text-muted small">/ 36</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.science_grade}}</p></div>
@@ -869,7 +866,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 34</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.social_emotional_grade}}</p></div>
@@ -877,7 +874,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Psychomotor Development ">Psychomotor Development  <span class="text-muted small">/ 40</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.psychomotor_grade}}</p></div>
@@ -885,7 +882,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 14</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.artistic_grade}}</p></div>
@@ -895,7 +892,7 @@
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 3'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development ">Arabic Language Development  <span class="text-muted small">/ 74</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.arabic_grade}}</p></div>
@@ -903,7 +900,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language Development ">Foreign Language Development  <span class="text-muted small">/ 74</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.language_grade}}</p></div>
@@ -911,7 +908,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Mathematics ">Cognitive Development - Mathematics  <span class="text-muted small">/ 50</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -919,7 +916,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Science ">Cognitive Development - Science  <span class="text-muted small">/ 34</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.science_grade}}</p></div>
@@ -927,7 +924,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development ">Social-Emotional Development  <span class="text-muted small">/ 40</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.social_emotional_grade}}</p></div>
@@ -935,7 +932,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Psychomotor Development ">Psychomotor Development  <span class="text-muted small">/ 42</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.psychomotor_grade}}</p></div>
@@ -943,7 +940,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development ">Artistic Development  <span class="text-muted small">/ 16</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.artistic_grade}}</p></div>
@@ -954,7 +951,7 @@
 
                                                           {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Development ">Arabic Development  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.arabic_grade}}</p></div>
@@ -962,7 +959,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language ">Foreign Language  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.language_grade}}</p></div>
@@ -970,7 +967,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -978,7 +975,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Biology ">Biology  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.biology_grade}}</p></div>
@@ -986,7 +983,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Chemistry ">Chemistry  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.chemistry_grade}}</p></div>
@@ -994,7 +991,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Physics ">Physics  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.physics_grade}}</p></div>
@@ -1005,7 +1002,7 @@
 
                                                           {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Development ">Arabic Development  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.arabic_grade}}</p></div>
@@ -1013,7 +1010,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language ">Foreign Language  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.language_grade}}</p></div>
@@ -1021,7 +1018,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics ">Mathematics  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.math_grade}}</p></div>
@@ -1029,7 +1026,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Science ">Science  <span class="text-muted small">/ 20</span></div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.post_test.science_grade}}</p></div>
@@ -1047,14 +1044,14 @@
                                           <!-- Improvement -->
                                           <div class="tab-pane" id="tab-animated-15" role="tabpanel">
 
-                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                <div class="scroll-area-sm" style="min-height: 250px;">
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
-                                                          <div class="row g-3 mb-3">
+                                                          <div class="row g-3 mb-3 p-3">
 
                                                            {% if result1.education_program  == 'BLN Level 1'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development">Arabic Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'arabic_grade' as grade %}
@@ -1065,7 +1062,7 @@
 </div>
                                                                 {% if request.user.center.provide_french_language == 'Yes' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="French Language Development">French Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'french_grade' as grade %}
@@ -1076,7 +1073,7 @@
 </div>
                                                                 {% else %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="English Language Development">English Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'english_grade' as grade %}
@@ -1087,7 +1084,7 @@
 </div>
                                                                 {% endif %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics">Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1099,7 +1096,7 @@
                                                           {% endif %}
                                                            {% if result1.education_program  == 'BLN Level 2'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development">Arabic Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'arabic_grade' as grade %}
@@ -1110,7 +1107,7 @@
 </div>
                                                                 {% if request.user.center.provide_french_language == 'Yes' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="French Language Development">French Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'french_grade' as grade %}
@@ -1121,7 +1118,7 @@
 </div>
                                                                 {% else %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="English Language Development">English Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'english_grade' as grade %}
@@ -1132,7 +1129,7 @@
 </div>
                                                                 {% endif %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics">Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1144,7 +1141,7 @@
                                                           {% endif %}
                                                            {% if result1.education_program  == 'BLN Level 3'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development">Arabic Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'arabic_grade' as grade %}
@@ -1155,7 +1152,7 @@
 </div>
                                                                 {% if request.user.center.provide_french_language == 'Yes' %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="French Language Development">French Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'french_grade' as grade %}
@@ -1166,7 +1163,7 @@
 </div>
                                                                 {% else %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="English Language Development">English Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'english_grade' as grade %}
@@ -1177,7 +1174,7 @@
 </div>
                                                                 {% endif %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics">Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1189,7 +1186,7 @@
                                                           {% endif %}
                                                            {% if result1.education_program  == 'ABLN Level 1'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development">Arabic Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'arabic_grade' as grade %}
@@ -1199,7 +1196,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics">Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1209,7 +1206,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development">Social-Emotional Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'social_emotional_grade' as grade %}
@@ -1219,7 +1216,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development">Artistic Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'artistic_grade' as grade %}
@@ -1231,7 +1228,7 @@
                                                           {% endif %}
                                                           {% if result1.education_program  == 'ABLN Level 2'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development">Arabic Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'arabic_grade' as grade %}
@@ -1241,7 +1238,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics">Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1251,7 +1248,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development">Social-Emotional Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'social_emotional_grade' as grade %}
@@ -1261,7 +1258,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development">Artistic Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'artistic_grade' as grade %}
@@ -1273,7 +1270,7 @@
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 1'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Language Development">Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'language_grade' as grade %}
@@ -1283,7 +1280,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Mathematics">Cognitive Development - Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1293,7 +1290,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Science">Cognitive Development - Science </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'science_grade' as grade %}
@@ -1303,7 +1300,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development">Social-Emotional Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'social_emotional_grade' as grade %}
@@ -1313,7 +1310,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Psychomotor Development">Psychomotor Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'psychomotor_grade' as grade %}
@@ -1323,7 +1320,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development">Artistic Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'artistic_grade' as grade %}
@@ -1335,7 +1332,7 @@
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 2'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development">Arabic Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'arabic_grade' as grade %}
@@ -1345,7 +1342,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language Development">Foreign Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'language_grade' as grade %}
@@ -1355,7 +1352,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Mathematics">Cognitive Development - Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1365,7 +1362,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Science">Cognitive Development - Science </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'science_grade' as grade %}
@@ -1375,7 +1372,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development">Social-Emotional Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'social_emotional_grade' as grade %}
@@ -1385,7 +1382,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Psychomotor Development">Psychomotor Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'psychomotor_grade' as grade %}
@@ -1395,7 +1392,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development">Artistic Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'artistic_grade' as grade %}
@@ -1407,7 +1404,7 @@
                                                           {% endif %}
                                                           {% if result1.education_program  == 'CBECE Level 3'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Language Development">Arabic Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'arabic_grade' as grade %}
@@ -1417,7 +1414,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language Development">Foreign Language Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'language_grade' as grade %}
@@ -1427,7 +1424,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Mathematics">Cognitive Development - Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1437,7 +1434,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Cognitive Development - Science">Cognitive Development - Science </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'science_grade' as grade %}
@@ -1447,7 +1444,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Social-Emotional Development">Social-Emotional Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'social_emotional_grade' as grade %}
@@ -1457,7 +1454,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Psychomotor Development">Psychomotor Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'psychomotor_grade' as grade %}
@@ -1467,7 +1464,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Artistic Development">Artistic Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'artistic_grade' as grade %}
@@ -1479,7 +1476,7 @@
                                                           {% endif %}
                                                           {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Development">Arabic Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'arabic_grade' as grade %}
@@ -1489,7 +1486,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language">Foreign Language </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'language_grade' as grade %}
@@ -1499,7 +1496,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics">Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1509,7 +1506,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Biology">Biology </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'biology_grade' as grade %}
@@ -1519,7 +1516,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Chemistry">Chemistry </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'chemistry_grade' as grade %}
@@ -1529,7 +1526,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Physics">Physics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'physics_grade' as grade %}
@@ -1542,7 +1539,7 @@
 
                                                           {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6'  %}
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Development">Arabic Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'arabic_grade' as grade %}
@@ -1552,7 +1549,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language">Foreign Language </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'language_grade' as grade %}
@@ -1562,7 +1559,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics">Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'math_grade' as grade %}
@@ -1572,7 +1569,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Science">Science </div>
             <div class="fs-5 fw-bold text-primary"><p> {% grading_improvement result 'science_grade' as grade %}
@@ -1597,13 +1594,13 @@
                                                       {% endif %}
                                                     </div>
 
-                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                <div class="scroll-area-sm" style="min-height: 250px;">
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
 
-                                                        <div class="row g-3 mb-3">
+                                                        <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Development">Arabic Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.arabic_grade}}</p></div>
@@ -1611,7 +1608,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language">Foreign Language </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.language_grade}}</p></div>
@@ -1619,7 +1616,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics">Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.math_grade}}</p></div>
@@ -1628,7 +1625,7 @@
 </div>
 
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Biology">Biology </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.biology_grade}}</p></div>
@@ -1636,7 +1633,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Chemistry">Chemistry </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.chemistry_grade}}</p></div>
@@ -1644,7 +1641,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Physics">Physics </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.physics_grade}}</p></div>
@@ -1665,13 +1662,13 @@
                                                         <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
-                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                <div class="scroll-area-sm" style="min-height: 250px;">
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
 
-                                                        <div class="row g-3 mb-3">
+                                                        <div class="row g-3 mb-3 p-3">
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Arabic Development">Arabic Development </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.arabic_grade}}</p></div>
@@ -1679,7 +1676,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Foreign Language">Foreign Language </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.language_grade}}</p></div>
@@ -1687,7 +1684,7 @@
     </div>
 </div>
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Mathematics">Mathematics </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.math_grade}}</p></div>
@@ -1696,7 +1693,7 @@
 </div>
 
                                                                 <div class="col-sm-6 col-md-4">
-    <div class="card h-100 border shadow-none bg-light">
+    <div class="card h-100 border shadow-sm bg-white">
         <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
             <div class="text-muted small fw-bold text-uppercase mb-2" title="Science">Science </div>
             <div class="fs-5 fw-bold text-primary"><p> {{result.school_test.science_grade}}</p></div>
