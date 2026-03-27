@@ -45,11 +45,21 @@ class ExportHistoryAdmin(admin.ModelAdmin):
         export_stats = list(queryset.values('export_type').annotate(count=Count('id')).order_by('-count'))
         partner_stats = list(queryset.values('partner_name').annotate(count=Count('id')).order_by('-count'))
 
+        # Determine the most frequently exported data fields based on 'fields' JSON
+        field_stats = {}
+        for record in queryset.exclude(fields__isnull=True).exclude(fields=''):
+            if isinstance(record.fields, dict):
+                for key in record.fields.keys():
+                    field_stats[key] = field_stats.get(key, 0) + 1
+
+        sorted_field_stats = sorted([{'field': k, 'count': v} for k, v in field_stats.items()], key=lambda x: x['count'], reverse=True)[:15]
+
         context = dict(
             self.admin_site.each_context(request),
             title='Export History Dashboard',
             export_stats=export_stats,
             partner_stats=partner_stats,
+            field_stats=sorted_field_stats,
             total=queryset.count(),
         )
         return TemplateResponse(request, 'admin/export_history_dashboard.html', context)
