@@ -1382,6 +1382,34 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             'low_attendance': get_avg_imp(high_absences_ids)
         }
 
+        # NEW CORRELATION: Psychological distress vs attendance rates
+        distressed_ids = pss_qs.filter(
+            Q(caregivers_distress='Yes') | Q(child_distress='Yes')
+        ).values_list('registration_id', flat=True)
+
+        not_distressed_ids = pss_qs.exclude(
+            Q(caregivers_distress='Yes') | Q(child_distress='Yes')
+        ).values_list('registration_id', flat=True)
+
+        distress_impact_attendance = {
+            'with_distress': get_attendance_rate(qs.filter(id__in=distressed_ids)),
+            'without_distress': get_attendance_rate(qs.filter(id__in=not_distressed_ids))
+        }
+
+        # NEW CORRELATION: Cash support programs vs child labor
+        cash_support_yes_ids = qs.exclude(Q(cash_support_programmes__isnull=True) | Q(cash_support_programmes=[])).values_list('id', flat=True)
+        cash_support_no_ids = qs.filter(Q(cash_support_programmes__isnull=True) | Q(cash_support_programmes=[])).values_list('id', flat=True)
+
+        def get_labor_rate(sub_qs):
+            total = sub_qs.count() or 1
+            labor = sub_qs.exclude(have_labour='No').count()
+            return round((labor / total) * 100, 1)
+
+        cash_impact_labor = {
+            'with_cash_support': get_labor_rate(qs.filter(id__in=cash_support_yes_ids)),
+            'without_cash_support': get_labor_rate(qs.filter(id__in=cash_support_no_ids))
+        }
+
         data = {
             'kpis': {
                 'avg_attendance': round(avg_attendance_rate, 1),
@@ -1413,6 +1441,8 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
                 'barriers': barriers,
                 'attendance_impact_improvement': attendance_impact_improvement,
                 'labor_impact_attendance': labor_impact_attendance,
+                'distress_impact_attendance': distress_impact_attendance,
+                'cash_impact_labor': cash_impact_labor,
             }
         }
 

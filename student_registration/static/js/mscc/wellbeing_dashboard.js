@@ -266,6 +266,21 @@
         { name: 'With Labor', y: data.impact.labor_impact_attendance.with_labor },
         { name: 'Without Labor', y: data.impact.labor_impact_attendance.without_labor }
     ]);
+
+    // NEW CORRELATIONS
+    if (document.getElementById('impact_distress_attendance')) {
+        renderBarChart('#impact_distress_attendance', [
+            { name: 'With Distress', y: data.impact.distress_impact_attendance.with_distress },
+            { name: 'Without Distress', y: data.impact.distress_impact_attendance.without_distress }
+        ]);
+    }
+
+    if (document.getElementById('impact_cash_labor')) {
+        renderBarChart('#impact_cash_labor', [
+            { name: 'With Cash Support', y: data.impact.cash_impact_labor.with_cash_support },
+            { name: 'Without Cash Support', y: data.impact.cash_impact_labor.without_cash_support }
+        ]);
+    }
   }
 
   document.getElementById('applyFilters').addEventListener('click', refresh);

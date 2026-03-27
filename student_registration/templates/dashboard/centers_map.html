@@ -128,13 +128,32 @@
                     const bounds = L.latLngBounds();
 
                     data.forEach(center => {
-                        const marker = L.marker([center.latitude, center.longitude]);
+                        // Color coding based on vulnerability score
+                        let fillColor = '#28a745'; // Green for low vulnerability
+                        if (center.vulnerability_score >= 8) {
+                            fillColor = '#dc3545'; // Red for high vulnerability
+                        } else if (center.vulnerability_score >= 4) {
+                            fillColor = '#ffc107'; // Yellow/Orange for medium
+                        }
+
+                        // Radius based on total children, min 5, max 30
+                        let radius = 5 + Math.min(25, (center.total_children / 10));
+
+                        const marker = L.circleMarker([center.latitude, center.longitude], {
+                            radius: radius,
+                            fillColor: fillColor,
+                            color: '#000',
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        });
 
                         const popupContent = `
                             <div class="map-popup-header">${escapeHtml(center.name)}</div>
                             <div class="map-popup-body">
                                 <div class="map-popup-item"><span class="map-popup-label">{% trans "Partner" %}:</span> ${escapeHtml(center.partner)}</div>
                                 <div class="map-popup-item"><span class="map-popup-label">{% trans "Governorate" %}:</span> ${escapeHtml(center.governorate)}</div>
+                                <div class="map-popup-item"><span class="map-popup-label">{% trans "Vulnerability Score" %}:</span> <span style="color:${fillColor}; font-weight:bold;">${center.vulnerability_score}/10</span></div>
                                 <div class="map-popup-item"><span class="map-popup-label">{% trans "Caza" %}:</span> ${escapeHtml(center.caza)}</div>
                                 <div class="map-popup-item"><span class="map-popup-label">{% trans "Cadaster" %}:</span> ${escapeHtml(center.cadaster)}</div>
                                 <div class="map-popup-item"><span class="map-popup-label">{% trans "Type" %}:</span> ${escapeHtml(center.type)}</div>

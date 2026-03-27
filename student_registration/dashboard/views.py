@@ -415,6 +415,13 @@ def centers_geo_data(request):
 
     data = []
     for center in qs:
+        # Calculate a simple vulnerability score based on registered children in the center
+        # For this demonstration, we use a proxy if total_children exists.
+        # In a real scenario, this might query PSSServices or child_vulnerability fields.
+        vulnerability_score = 0
+        if center.total_children > 0:
+            vulnerability_score = min(10, max(1, int(center.total_children / 50)))
+
         data.append({
             'id': center.id,
             'name': center.name,
@@ -432,7 +439,8 @@ def centers_geo_data(request):
             'total_teachers_female': center.total_teachers_female,
             'type': center.get_type_display() if center.type else 'N/A',
             'p_code': center.p_code or 'N/A',
-            'profile_url': reverse('locations:center_profile', kwargs={'pk': center.id})
+            'profile_url': reverse('locations:center_profile', kwargs={'pk': center.id}),
+            'vulnerability_score': vulnerability_score,
         })
 
     return JsonResponse(data, safe=False)
