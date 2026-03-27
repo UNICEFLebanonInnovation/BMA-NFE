@@ -317,6 +317,7 @@ class DashboardDataView(LoginRequiredMixin, View):
             Registration,
             YouthKitService,
             PSSService,
+            Referral,
         )
         user = request.user
         cash_support_programmes = Registration.CASH_SUPPORT_PROGRAMMES
@@ -352,6 +353,7 @@ class DashboardDataView(LoginRequiredMixin, View):
 
         pss_qs = PSSService.objects.filter(registration__in=qs)
         ys_qs = YouthKitService.objects.filter(registration__in=qs)
+        ref_qs = Referral.objects.filter(registration__in=qs)
 
         data = {
             'children_per_gender': aggregate(qs, 'child__gender'),
@@ -361,6 +363,7 @@ class DashboardDataView(LoginRequiredMixin, View):
             'children_per_source': aggregate(qs, 'source_of_identification'),
             'children_per_disability': aggregate(qs, 'child__disability__name'),
             'children_per_vulnerability': aggregate(pss_qs, 'child_vulnerability'),
+            'children_referred_formal_education': aggregate(ref_qs, 'referred_formal_education'),
         }
 
         programme_counts = Counter()
