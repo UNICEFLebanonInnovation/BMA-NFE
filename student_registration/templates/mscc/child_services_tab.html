@@ -36,31 +36,15 @@
 
   {% if result1 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
-  {% if result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up' %}
     <div class="col-md-12 col-lg-6 col-xl-4">
 
                                 <div class="mb-3 card">
-                                    <!--<div class="card-header-tab card-header">-->
-                                        <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
-                                            <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
-                                            <!--Details-->
-                                        <!--</div>-->
-                                    <!--</div>-->
                                     <div class="p-0 card-body">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
-                                                  {% if result and es_result.education_program  in 'YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
-                                                    <h5 class="menu-header-title">RS Grade 9 - Grading</h5>
-                                                  {% else %}
                                                       <h5 class="menu-header-title">{{ result1.education_program }} - Grading</h5>
-                                                  {% endif %}
-                                                    <!--<h6 class="menu-header-subtitle">-->
-                                                        <!--You have-->
-                                                        <!--<b class="text-info">21 </b>-->
-                                                        <!--unread messages-->
-                                                    <!--</h6>-->
                                                 </div>
                                             </div>
                                         </div>
@@ -1561,67 +1545,8 @@
                                     </div>
                                 </div>
                             </div>
-    {% endif %}
 
 {% endif %}
-
-    <!-- PSS Service -->
-    {% get_service instance 'PSS' as has_pss %}
-    {% if has_pss %}
-    {% service_data 'PSSService' instance as pss_svc %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Psychosocial (PSS)" %}</h6>
-                {% if pss_svc %}
-                    <a href="{% url 'mscc:service_pss_edit' instance.id pss_svc.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:service_pss_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Distress" %}:</span>
-                    <span class="ms-1 {% if pss_svc.child_distress == 'Yes' %}text-danger fw-bold{% endif %}">{{ pss_svc.child_distress|default:"N/A" }}</span>
-                </div>
-                <div class="mb-2">
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Arrangement" %}:</span>
-                    <span class="ms-1">{{ pss_svc.child_living_arrangement|default:"N/A" }}</span>
-                </div>
-                <div class="small text-muted text-uppercase fw-bold mb-1">{% trans "Vulnerabilities" %}</div>
-                <div class="small text-truncate" title="{{ pss_svc.child_vulnerability }}">{{ pss_svc.child_vulnerability|default:"None" }}</div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Inclusion -->
-    {% get_service instance 'Inclusion' as has_inc %}
-    {% if has_inc %}
-    {% service_data 'InclusionService' instance as inc_svc %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card border h-100 shadow-none">
-            <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-primary">{% trans "Inclusion" %}</h6>
-                {% if inc_svc %}
-                    <a href="{% url 'mscc:service_inclusion_edit' instance.id inc_svc.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                {% else %}
-                    <a href="{% url 'mscc:service_inclusion_add' instance.id %}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i></a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Parental Engagement" %}:</span>
-                    <span class="ms-1">{{ inc_svc.parental_engagement|default:"N/A" }}</span>
-                </div>
-                <div>
-                    <span class="small text-muted text-uppercase fw-bold">{% trans "Dropout" %}:</span>
-                    <span class="ms-1">{{ inc_svc.dropout|default:"No" }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 
     <!-- Referral -->
     {% service_data 'Referral' instance as ref_svc %}
