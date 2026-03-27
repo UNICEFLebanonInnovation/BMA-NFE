@@ -33,6 +33,7 @@
 
   function renderPieChart(selector, data) {
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
     const containerWidth = root.node().getBoundingClientRect().width;
     const width = containerWidth, height = 300, radius = Math.min(width, height) / 2 - 40;
@@ -78,6 +79,7 @@
 
   function renderBarChart(selector, data, isHorizontal = false) {
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
     const margin = { top: 20, right: 30, bottom: 60, left: 60 };
     const width = root.node().getBoundingClientRect().width - margin.left - margin.right;
@@ -123,6 +125,7 @@
 
   function renderImprovementChart(selector, data) {
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
 
     if (!data || data.length === 0) {
@@ -203,6 +206,7 @@
 
   function renderPSSIndicators(selector, data) {
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
     const items = [
         { label: 'Caregiver Distress', value: data.caregiver_distress, color: '#ffc107' },
@@ -221,6 +225,7 @@
   function renderGroupedBar(selector, matrix) {
     // For Labor Type & Income
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
     // Simplified: show top types
     const types = Array.from(new Set(matrix.map(d => d.type))).slice(0, 5);
@@ -235,10 +240,17 @@
     const data = await fetchData();
 
     // Update KPIs
-    document.getElementById('kpi_avg_attendance').innerText = `${data.kpis.avg_attendance}%`;
-    document.getElementById('kpi_labor_rate').innerText = `${data.kpis.labor_rate}%`;
-    document.getElementById('kpi_avg_improvement').innerText = `${data.kpis.avg_improvement}%`;
-    document.getElementById('kpi_protection_concerns').innerText = `${data.kpis.protection_concerns}%`;
+    const kpiAvgAttendance = document.getElementById('kpi_avg_attendance');
+    if (kpiAvgAttendance) kpiAvgAttendance.innerText = `${data.kpis.avg_attendance}%`;
+
+    const kpiLaborRate = document.getElementById('kpi_labor_rate');
+    if (kpiLaborRate) kpiLaborRate.innerText = `${data.kpis.labor_rate}%`;
+
+    const kpiAvgImprovement = document.getElementById('kpi_avg_improvement');
+    if (kpiAvgImprovement) kpiAvgImprovement.innerText = `${data.kpis.avg_improvement}%`;
+
+    const kpiProtectionConcerns = document.getElementById('kpi_protection_concerns');
+    if (kpiProtectionConcerns) kpiProtectionConcerns.innerText = `${data.kpis.protection_concerns}%`;
 
     // Render Charts
     renderPieChart('#chart_child_labor', data.socio_economic.labor_participation);
@@ -283,8 +295,11 @@
     }
   }
 
-  document.getElementById('applyFilters').addEventListener('click', refresh);
-  document.getElementById('refreshData').addEventListener('click', refresh);
+  const applyFiltersBtn = document.getElementById('applyFilters');
+  if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', refresh);
+
+  const refreshDataBtn = document.getElementById('refreshData');
+  if (refreshDataBtn) refreshDataBtn.addEventListener('click', refresh);
 
   refresh();
 
