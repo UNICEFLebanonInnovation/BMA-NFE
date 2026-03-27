@@ -2,6 +2,7 @@ from django import template
 
 register = template.Library()
 
+
 @register.simple_tag
 def get_education_programme_assessments(result1, result, request=None):
     if not result1 or not result1.education_program:

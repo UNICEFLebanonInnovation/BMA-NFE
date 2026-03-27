@@ -849,6 +849,18 @@ class EducationGradingForm(forms.ModelForm):
         required=False,
         initial=0
     )
+    english_grade = forms.IntegerField(
+        label=_('English Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    french_grade = forms.IntegerField(
+        label=_('French Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
     math_grade = forms.IntegerField(
         label=_('Mathematics Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -909,6 +921,10 @@ class EducationGradingForm(forms.ModelForm):
 
         super(EducationGradingForm, self).__init__(*args, **kwargs)
 
+        center = getattr(getattr(self.request, 'user', None), 'center', None)
+        provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
+        self.provide_french_language = provide_french_language
+
         form_action = reverse('mscc:service_education_grading_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
@@ -920,11 +936,22 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['programme_type'].initial = programme_type
 
         if programme_type == "BLN Level 1":
-            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 48)
-            field_init(self.fields['language_grade'], 'Foreign Language Development', 40)
-            field_init(self.fields['math_grade'], 'Mathematics', 18)
-            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 24)
-            field_init(self.fields['artistic_grade'], 'Artistic Development', 10)
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 68)
+            field_init(self.fields['english_grade'], 'English Language Development', 43)
+            field_init(self.fields['french_grade'], 'French Language Development', 43)
+            field_init(self.fields['math_grade'], 'Mathematics', 22)
+            if provide_french_language:
+                self.fields['english_grade'].hidden_widget()
+                self.fields['english_grade'].required = False
+            else:
+                self.fields['french_grade'].hidden_widget()
+                self.fields['french_grade'].required = False
+            self.fields['social_emotional_grade'].hidden_widget()
+            self.fields['social_emotional_grade'].required = False
+            self.fields['artistic_grade'].hidden_widget()
+            self.fields['artistic_grade'].required = False
+            self.fields['language_grade'].hidden_widget()
+            self.fields['language_grade'].required = False
             self.fields['science_grade'].hidden_widget()
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
@@ -932,11 +959,22 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['psychomotor_grade'].hidden_widget()
 
         if programme_type == "BLN Level 2":
-            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 56)
-            field_init(self.fields['language_grade'], 'Foreign Language Development', 58)
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 70)
+            field_init(self.fields['english_grade'], 'English Language Development', 65)
+            field_init(self.fields['french_grade'], 'French Language Development', 65)
             field_init(self.fields['math_grade'], 'Mathematics', 32)
-            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 24)
-            field_init(self.fields['artistic_grade'], 'Artistic Development Grade', 10)
+            if provide_french_language:
+                self.fields['english_grade'].hidden_widget()
+                self.fields['english_grade'].required = False
+            else:
+                self.fields['french_grade'].hidden_widget()
+                self.fields['french_grade'].required = False
+            self.fields['social_emotional_grade'].hidden_widget()
+            self.fields['social_emotional_grade'].required = False
+            self.fields['artistic_grade'].hidden_widget()
+            self.fields['artistic_grade'].required = False
+            self.fields['language_grade'].hidden_widget()
+            self.fields['language_grade'].required = False
             self.fields['science_grade'].hidden_widget()
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
@@ -944,11 +982,22 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['psychomotor_grade'].hidden_widget()
 
         if programme_type == "BLN Level 3":
-            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 60)
-            field_init(self.fields['language_grade'], 'Foreign Language Development', 62)
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 69)
+            field_init(self.fields['english_grade'], 'English Language Development', 64)
+            field_init(self.fields['french_grade'], 'French Language Development', 59)
             field_init(self.fields['math_grade'], 'Mathematics', 32)
-            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 24)
-            field_init(self.fields['artistic_grade'], 'Artistic Development', 10)
+            if provide_french_language:
+                self.fields['english_grade'].hidden_widget()
+                self.fields['english_grade'].required = False
+            else:
+                self.fields['french_grade'].hidden_widget()
+                self.fields['french_grade'].required = False
+            self.fields['social_emotional_grade'].hidden_widget()
+            self.fields['social_emotional_grade'].required = False
+            self.fields['artistic_grade'].hidden_widget()
+            self.fields['artistic_grade'].required = False
+            self.fields['language_grade'].hidden_widget()
+            self.fields['language_grade'].required = False
             self.fields['science_grade'].hidden_widget()
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
@@ -966,6 +1015,9 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
             self.fields['psychomotor_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
+
 
         if programme_type == "ABLN Level 2":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development ', 56)
@@ -978,6 +1030,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
             self.fields['psychomotor_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type == "CBECE Level 1":
             field_init(self.fields['language_grade'], 'Language Development', 48)
@@ -990,6 +1044,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type == "CBECE Level 2":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 66)
@@ -1002,6 +1058,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type == "CBECE Level 3":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 74)
@@ -1014,6 +1072,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
             field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
@@ -1026,6 +1086,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['social_emotional_grade'].hidden_widget()
             self.fields['psychomotor_grade'].hidden_widget()
             self.fields['artistic_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
             field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
@@ -1039,6 +1101,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['social_emotional_grade'].hidden_widget()
             self.fields['psychomotor_grade'].hidden_widget()
             self.fields['artistic_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         display_post_fields_css = 'd-none'
         display_pre_fields_css = ''
@@ -1061,50 +1125,44 @@ class EducationGradingForm(forms.ModelForm):
         self.helper.form_action = form_action
 
         if programme_type in ["BLN Level 1", "BLN Level 2", "BLN Level 3"]:
+            language_field = 'french_grade' if provide_french_language else 'english_grade'
             self.helper.layout = Layout(
                 Div(
-                    Fieldset(
-                        _('Engagement & Barriers'),
-                        Div(
-                            Div('participation', css_class='col-md-4'),
-                            css_class='row mb-3'
-                        ),
-                        Div(
-                            Div('barriers', css_class='col-md-7'),
-                            Div('barriers_other', css_class='col-md-5'),
-                            css_class='row mb-3'
-                        ),
-                        Div(
-                            Div('post_test_done', css_class='col-md-6'),
-                            Div('school_year_completed', css_class='col-md-6'),
-                            css_class='row mb-3'
-                        ),
-                        css_class=display_post_fields_css
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participation', css_class='col-md-4'),
+                        css_class='row card-body ' + display_post_fields_css
                     ),
-                    Fieldset(
-                        _('Subject Grades'),
-                        Div(
-                            Div('arabic_grade', css_class='col-md-6'),
-                            Div('language_grade', css_class='col-md-6'),
-                            css_class='row mb-3'
-                        ),
-                        Div(
-                            Div('math_grade', css_class='col-md-6'),
-                            Div('social_emotional_grade', css_class='col-md-6'),
-                            css_class='row mb-3'
-                        ),
-                        Div(
-                            Div('artistic_grade', css_class='col-md-6'),
-                            css_class='row mb-3'
-                        ),
-                        css_class=grade_field_css + display_pre_fields_css
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('barriers', css_class='col-md-8'),
+                        Div('barriers_other', css_class='col-md-3'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('post_test_done', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('school_year_completed', css_class='col-md-5'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">' + str(1 + ctr) + '</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">' + str(2 + ctr) + '</span>'),
+                        Div(language_field, css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">' + str(3 + ctr) + '</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
                     ),
                     FormActions(
-                        Submit('save', _('Save Grades'),
-                               css_class='btn btn-primary px-5 fw-bold shadow-sm'),
-                        Reset('reset', _('Reset'),
-                              css_class='btn btn-outline-secondary ms-2'),
-                        css_class='d-flex justify-content-end border-top pt-4 mt-4'
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-1'
                 ),
@@ -1360,6 +1418,7 @@ class EducationGradingForm(forms.ModelForm):
             )
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
+
         if not instance:
             instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
             instance.pre_test = request.POST
@@ -1385,22 +1444,25 @@ class EducationGradingForm(forms.ModelForm):
         # Validation thresholds for each programme type
         thresholds = {
             "BLN Level 1": {
-                "arabic_grade": 48,
-                "language_grade": 40,
-                "math_grade": 18,
+                "arabic_grade": 68,
+                "english_grade": 43,
+                "french_grade": 43,
+                "math_grade": 22,
                 "social_emotional_grade": 24,
                 "artistic_grade": 10,
             },
             "BLN Level 2": {
-                "arabic_grade": 56,
-                "language_grade": 58,
+                "arabic_grade": 70,
+                "english_grade": 65,
+                "french_grade": 65,
                 "math_grade": 32,
                 "social_emotional_grade": 24,
                 "artistic_grade": 10,
             },
             "BLN Level 3": {
-                "arabic_grade": 60,
-                "language_grade": 62,
+                "arabic_grade": 69,
+                "english_grade": 64,
+                "french_grade": 59,
                 "math_grade": 32,
                 "social_emotional_grade": 24,
                 "artistic_grade": 10,

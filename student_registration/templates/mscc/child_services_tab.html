@@ -11,7 +11,7 @@
 
     {% if result_rs and es_result.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
     {% service_data 'EducationRSService' instance as result %}
-    <div class="col-md-6 col-xl-4">
+    <div class="col-md-6 col-xl-6">
         <div class="card border h-100 shadow-none">
             <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
                 <h6 class="mb-0 fw-bold text-primary">{% trans "Retention Support" %}</h6>
@@ -37,7 +37,7 @@
 
   {% if result1 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
-    <div class="col-md-12 col-lg-6 col-xl-4">
+    <div class="col-md-12 col-lg-6 col-xl-6">
         <div class="card border h-100 shadow-none">
             <div class="card-header bg-light py-3 border-bottom d-flex flex-column align-items-start">
                 <h6 class="mb-2 fw-bold text-primary">{{ result1.education_program }} - {% trans "Grading" %}</h6>
@@ -282,7 +282,7 @@
 
     <!-- Referral -->
     {% service_data 'Referral' instance as ref_svc %}
-    <div class="col-md-6 col-xl-4">
+    <div class="col-md-6 col-xl-6">
         <div class="card border h-100 shadow-none">
             <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
                 <h6 class="mb-0 fw-bold text-primary">{% trans "Referral" %}</h6>
