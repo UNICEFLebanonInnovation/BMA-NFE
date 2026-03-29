@@ -4,6 +4,8 @@ from .models import (
     Student,
     Teacher
 )
+from datetime import date
+
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -14,6 +16,30 @@ class StudentSerializer(serializers.ModelSerializer):
     place_of_birth = serializers.CharField(required=False)
     have_children = serializers.CharField(required=False)
     p_code = serializers.CharField(required=False)
+    
+    def validate(self, attrs):
+        birthday_year = attrs.get('birthday_year')
+        birthday_month = attrs.get('birthday_month')
+        birthday_day = attrs.get('birthday_day')
+
+        if birthday_year and birthday_month and birthday_day:
+            try:
+                birth_date = date(
+                    int(birthday_year),
+                    int(birthday_month),
+                    int(birthday_day)
+                )
+            except ValueError:
+                raise serializers.ValidationError({
+                    'birthday_day': 'Invalid birth date.'
+                })
+
+            if birth_date > date.today():
+                raise serializers.ValidationError({
+                    'birthday_day': 'Birth date cannot be in the future.'
+                })
+
+        return attrs
 
     def create(self, validated_data):
 
