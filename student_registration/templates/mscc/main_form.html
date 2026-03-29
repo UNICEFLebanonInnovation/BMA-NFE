@@ -345,8 +345,8 @@
     <script type="text/javascript">
         window.isAddPage = function() { return {% if not form.instance.id %}true{% else %}false{% endif %}; };
     </script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=41"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=41"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=40"></script>
     <script type="text/javascript">
         $(function() {
             let currentStep = 1;
@@ -454,6 +454,35 @@
                 updateWizard(firstStepWithError);
             }
 
+            // Draft saving logic
+            const formId = "nfe_reg_draft";
+            $('input, select').on('change input', function() {
+                const formData = {};
+                $('#registrationForm').serializeArray().forEach(item => {
+                    // Exclude CSRF token from being saved in draft
+                    if (item.name !== 'csrfmiddlewaretoken') {
+                        formData[item.name] = item.value;
+                    }
+                });
+                localStorage.setItem(formId, JSON.stringify(formData));
+            });
+
+            // Load draft if exists
+            const draft = localStorage.getItem(formId);
+            if (draft && !{{ form.instance.id|default:"null" }}) {
+                const data = JSON.parse(draft);
+                Object.keys(data).forEach(key => {
+                    // Exclude CSRF token from being restored from draft
+                    if (key !== 'csrfmiddlewaretoken') {
+                        $(`[name="${key}"]`).val(data[key]).trigger('change');
+                    }
+                });
+            }
+
+            // Clear draft on submit
+            $('#registrationForm').on('submit', function() {
+                localStorage.removeItem(formId);
+            });
 
             window.isAddPage = function() { return true; };
         });

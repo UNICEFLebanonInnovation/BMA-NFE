@@ -720,26 +720,15 @@ function validateMainForm(showModal, step) {
     });
 
     // Date validation
-    var year = parseInt($('#id_child_birthday_year').val(), 10) || 0;
-    var month = parseInt($('#id_child_birthday_month').val(), 10) || 0;
-    var day = parseInt($('#id_child_birthday_day').val(), 10) || 0;
-
+    var year = parseInt($('#id_child_birthday_year').val()) || 0;
+    var month = parseInt($('#id_child_birthday_month').val()) || 0;
+    var day = parseInt($('#id_child_birthday_day').val()) || 0;
     if (year && month && day) {
         var dt = new Date(year, month - 1, day);
-
-    if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) {
-        showError('#id_child_birthday_year', 'The date is not valid.');
-        valid = false;
-    } else {
-        var today = new Date();
-        today.setHours(0, 0, 0, 0);
-        dt.setHours(0, 0, 0, 0);
-
-        if (dt > today) {
-            showError('#id_child_birthday_year', 'Birth date cannot be after today.');
+        if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) {
+            showError('#id_child_birthday_year', 'The date is not valid.');
             valid = false;
         }
-    }
     } else {
         if (!year) showError('#id_child_birthday_year', 'This field is required');
         if (!month) showError('#id_child_birthday_month', 'This field is required');

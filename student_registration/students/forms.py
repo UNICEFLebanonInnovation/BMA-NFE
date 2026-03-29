@@ -3,7 +3,6 @@ from __future__ import unicode_literals, absolute_import, division
 from django.utils.translation import gettext as _
 from django import forms
 from django.urls import reverse
-from datetime import date
 from django.contrib import messages
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import (
@@ -55,30 +54,6 @@ class StudentEnrollmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(StudentEnrollmentForm, self).__init__(*args, **kwargs)
-    
-    def clean(self):
-        cleaned_data = super(StudentEnrollmentForm, self).clean()
-
-        birthday_year = cleaned_data.get('birthday_year')
-        birthday_month = cleaned_data.get('birthday_month')
-        birthday_day = cleaned_data.get('birthday_day')
-
-        # Validate birthday only if all parts are present
-        if birthday_year and birthday_month and birthday_day:
-            try:
-                birth_date = date(
-                    int(birthday_year),
-                    int(birthday_month),
-                    int(birthday_day)
-                )
-            except (ValueError, TypeError):
-                self.add_error('birthday_day', 'Invalid birth date.')
-                return cleaned_data
-
-            if birth_date > date.today():
-                self.add_error('birthday_year', 'Birth date cannot be after today.')
-
-        return cleaned_data
 
     class Meta:
         model = Student
