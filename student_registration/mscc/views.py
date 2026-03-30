@@ -1252,7 +1252,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         pss_indicators = {
             'caregiver_distress': pss_qs.filter(caregivers_distress='Yes').count(),
             'child_distress': pss_qs.filter(child_distress='Yes').count(),
-            'protection_concern': pss_qs.exclude(child_protection_concern__in=['', None]).count(),
+            'protection_concern': pss_qs.exclude(child_protection_concern__in=['', None]).exclude(child_protection_concern='No').count(),
         }
 
         # 3. Education
@@ -1286,17 +1286,13 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         avg_attendance_rate = ((total_possible_days - total_absences) / total_possible_days) * 100
 
         labor_rate = (qs.exclude(have_labour='No').count() / total_registrations) * 100
-        overall_improvement = (
-            (avg_improvement['arabic'] or 0) +
-            (avg_improvement['math'] or 0) +
-            (avg_improvement['language'] or 0)
-        ) / 3
 
         protection_rate = (pss_indicators['protection_concern'] / total_registrations) * 100
 
         # Barriers
         barriers = (
             assess_qs.values(name=F('barriers'))
+            .exclude(name__in=['', None])
             .annotate(y=Count('id'))
             .order_by('-y')
         )
@@ -1384,14 +1380,21 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         )
 
         def get_avg_imp(ids):
-            agg = EducationAssessment.objects.filter(registration_id__in=ids).aggregate(
-                avg=Avg(
-                    (Cast(F('post_arabic_grade') - F('pre_arabic_grade'), FloatField()) / NullIf(Cast(F('pre_arabic_grade'), FloatField()), 0.0) * 100 +
-                     Cast(F('post_math_grade') - F('pre_math_grade'), FloatField()) / NullIf(Cast(F('pre_math_grade'), FloatField()), 0.0) * 100 +
-                     Cast(F('post_language_grade') - F('pre_language_grade'), FloatField()) / NullIf(Cast(F('pre_language_grade'), FloatField()), 0.0) * 100) / 3
-                )
-            )
-            return round(agg['avg'] or 0, 1)
+            prog_assessments = EducationProgrammeAssessment.objects.filter(registration_id__in=ids).values('pre_test', 'post_test')
+            improvements_list = []
+            for p in prog_assessments:
+                pre = p.get('pre_test') or {}
+                post = p.get('post_test') or {}
+                for key in post.keys():
+                    if key.endswith('_grade') or key in ['life_skills', 'english_development', 'financial_development', 'it_development']:
+                        try:
+                            post_val = float(post[key])
+                            pre_val = float(pre.get(key, 0))
+                            if pre_val > 0:
+                                improvements_list.append(((post_val - pre_val) / pre_val) * 100)
+                        except (ValueError, TypeError):
+                            pass
+            return round(sum(improvements_list) / len(improvements_list), 1) if improvements_list else 0.0
 
         attendance_impact_improvement = {
             'high_attendance': get_avg_imp(no_absences_ids),
@@ -1472,7 +1475,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             'kpis': {
                 'avg_attendance': round(avg_attendance_rate, 1),
                 'labor_rate': round(labor_rate, 1),
-                'avg_improvement': round(overall_improvement, 1),
+                'avg_improvement': round(avg_nfe_grade, 1),
                 'protection_concerns': round(protection_rate, 1),
             },
             'socio_economic': {
@@ -1488,11 +1491,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             },
             'education': {
                 'status': edu_status,
-                'improvement': [
-                    {'name': 'Arabic', 'value': round(avg_improvement['arabic'] or 0, 1)},
-                    {'name': 'Math', 'value': round(avg_improvement['math'] or 0, 1)},
-                    {'name': 'Language', 'value': round(avg_improvement['language'] or 0, 1)},
-                ],
+                'improvement': [],
                 'programme_improvements': programme_improvements,
             },
             'impact': {
