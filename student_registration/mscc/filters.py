@@ -59,6 +59,11 @@ class MainFilter(RedesignFilterSet):
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                 .order_by('name').distinct(), empty_label='Nationality')
+    referred_to_fe = ChoiceFilter(
+        choices=(('Yes', 'Referred to Formal Education'), ('No', 'Not Referred to Formal Education')),
+        method='filter_referred_to_fe',
+        empty_label='Referred to FE Status'
+    )
     partner = ChoiceFilter(
         choices=PartnerOrganization.objects.values_list('id', 'name')
         .order_by('name').distinct(),
@@ -98,6 +103,13 @@ class MainFilter(RedesignFilterSet):
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
+
+    def filter_referred_to_fe(self, queryset, name, value):
+        if value == 'Yes':
+            return queryset.filter(referral__recommended_learning_path='Progress to FE')
+        elif value == 'No':
+            return queryset.exclude(referral__recommended_learning_path='Progress to FE')
+        return queryset
 
     def _populate_round_choices(self):
         try:

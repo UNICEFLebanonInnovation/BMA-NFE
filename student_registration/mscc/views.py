@@ -599,9 +599,15 @@ class MainListView(LoginRequiredMixin,
                 .values('count')
         )
 
+        referred_to_fe_subquery = Referral.objects.filter(
+            registration_id=OuterRef('pk'),
+            recommended_learning_path='Progress to FE'
+        )
+
         qs = qs.annotate(
             has_previous=Exists(previous_registration),
             _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
+            is_referred_to_fe=Exists(referred_to_fe_subquery),
         )
 
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
