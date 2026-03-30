@@ -236,6 +236,34 @@
     renderBarChart(selector, summary);
   }
 
+  function renderFeChildrenTable(selector, data) {
+    const table = document.querySelector(selector);
+    if (!table) return;
+    const tbody = table.querySelector('tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted p-4">No children found</td></tr>';
+        return;
+    }
+
+    data.forEach(child => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="fw-bold">${child.name}</td>
+            <td>${child.center}</td>
+            <td class="text-end">
+                <a href="/mscc/child-profile/${child.id}/" class="btn btn-sm btn-outline-primary" target="_blank">
+                    <i class="bi bi-person me-1"></i> View Profile
+                </a>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+  }
+
   async function refresh() {
     const data = await fetchData();
 
@@ -278,6 +306,9 @@
     if (document.getElementById('chart_nfe_platforms')) {
         renderBarChart('#chart_nfe_platforms', data.transitions.nfe_platforms);
     }
+
+    // Children to be moved to FE table
+    renderFeChildrenTable('#table_fe_children', data.transitions.fe_children);
 
     renderBarChart('#chart_barriers', data.impact.barriers);
 

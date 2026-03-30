@@ -1428,10 +1428,20 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
 
         # NEW INDICATOR: NFE to FE transition
         # Count referrals with 'Progress to FE'
-        nfe_to_fe_count = Referral.objects.filter(
+        nfe_to_fe_qs = Referral.objects.filter(
             registration__in=qs,
-            recommended_learning_path='Progress to FE'
-        ).count()
+            recommended_learning_path__in=['Progress to FE', 'Transition to FE']
+        ).select_related('registration__child', 'registration__center')
+
+        nfe_to_fe_count = nfe_to_fe_qs.count()
+
+        fe_children = []
+        for ref in nfe_to_fe_qs:
+            fe_children.append({
+                'id': ref.registration.id,
+                'name': f"{ref.registration.child.first_name or ''} {ref.registration.child.last_name or ''}".strip(),
+                'center': ref.registration.center.name if ref.registration.center else 'N/A'
+            })
 
         # NEW INDICATOR: Monitor children grades and transition between NFE platforms
         # E.g. other pathways or transition rates between NFE platforms
@@ -1504,6 +1514,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             },
             'transitions': {
                 'nfe_to_fe': nfe_to_fe_count,
+                'fe_children': fe_children,
                 'nfe_platforms': nfe_transitions,
                 'dropout_rate': round(avg_dropout_rate, 1),
                 'avg_nfe_grade': round(avg_nfe_grade, 1)
