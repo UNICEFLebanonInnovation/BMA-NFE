@@ -1540,6 +1540,31 @@ class HealthNutritionReferral(TimeStampedModel):
         verbose_name_plural = "Health & Nutrition Referrals"
 
 
+class NFEToFEReferralMapping(TimeStampedModel):
+    """Dynamic mapping to restrict FE referrals based on NFE program components and age."""
+
+    education_component = models.CharField(
+        max_length=100,
+        verbose_name=_('NFE Component Name (e.g. ECE, BLN, ALP)')
+    )
+    min_age = models.IntegerField(
+        verbose_name=_('Minimum Age'),
+        default=0
+    )
+    max_age = models.IntegerField(
+        verbose_name=_('Maximum Age'),
+        default=99
+    )
+
+    class Meta:
+        verbose_name = _('NFE to FE Referral Mapping')
+        verbose_name_plural = _('NFE to FE Referral Mappings')
+        ordering = ['education_component']
+
+    def __str__(self):
+        return f"{self.education_component} ({self.min_age}-{self.max_age} yrs)"
+
+
 class EducationService(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(

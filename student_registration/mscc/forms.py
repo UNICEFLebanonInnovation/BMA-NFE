@@ -930,21 +930,35 @@ class ReferralForm(forms.ModelForm):
 
         allow_fe = False
         if registry:
-            from student_registration.mscc.models import Registration
+            from student_registration.mscc.models import Registration, NFEToFEReferralMapping
             registration_obj = Registration.objects.filter(id=registry).first()
             if registration_obj and education_program:
                 age = registration_obj.child_age
                 ep = education_program.upper()
-                if 'ECE' in ep and 3 <= age <= 6:
-                    allow_fe = True
-                elif 'YBLN' in ep and 15 <= age <= 18:
-                    allow_fe = True
-                elif 'BLN' in ep and 'YBLN' not in ep and 'ABLN' not in ep and 10 <= age <= 14:
-                    allow_fe = True
-                elif 'ALP' in ep and 7 <= age <= 14:
-                    allow_fe = True
-                elif 'RS' in ep and 7 <= age <= 15:
-                    allow_fe = True
+                mappings = NFEToFEReferralMapping.objects.all()
+
+                # Check dynamic mappings first
+                if mappings.exists():
+                    for mapping in mappings:
+                        if mapping.education_component.upper() in ep and mapping.min_age <= age <= mapping.max_age:
+                            # Special handling if needed to distinguish YBLN from BLN
+                            # E.g. If component is 'BLN', ensure 'YBLN' or 'ABLN' is not what is actually matching
+                            if mapping.education_component.upper() == 'BLN' and ('YBLN' in ep or 'ABLN' in ep):
+                                continue
+                            allow_fe = True
+                            break
+                else:
+                    # Fallback to hardcoded defaults if no mappings exist in DB
+                    if 'ECE' in ep and 3 <= age <= 6:
+                        allow_fe = True
+                    elif 'YBLN' in ep and 15 <= age <= 18:
+                        allow_fe = True
+                    elif 'BLN' in ep and 'YBLN' not in ep and 'ABLN' not in ep and 10 <= age <= 14:
+                        allow_fe = True
+                    elif 'ALP' in ep and 7 <= age <= 14:
+                        allow_fe = True
+                    elif 'RS' in ep and 7 <= age <= 15:
+                        allow_fe = True
 
         if allow_fe:
             choices.append(('Progress to FE', _('Progress to FE')))
