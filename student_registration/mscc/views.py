@@ -599,10 +599,19 @@ class MainListView(LoginRequiredMixin,
                 .values('count')
         )
 
+        mapping_q = Q()
+        mappings = NFEToFEReferralMapping.objects.all()
+        for mapping in mappings:
+            mapping_q |= Q(
+                registration__education_service__education_program=mapping.education_component,
+                registration__child__age__gte=mapping.min_age,
+                registration__child__age__lte=mapping.max_age
+            )
+
         referred_to_fe_subquery = Referral.objects.filter(
             registration_id=OuterRef('pk'),
-            recommended_learning_path='Progress to FE'
-        )
+            recommended_learning_path__in=['Progress to FE', 'Transition to FE']
+        ).filter(mapping_q)
 
         qs = qs.annotate(
             has_previous=Exists(previous_registration),
@@ -1428,10 +1437,19 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
 
         # NEW INDICATOR: NFE to FE transition
         # Count referrals with 'Progress to FE'
+        mapping_q = Q()
+        mappings = NFEToFEReferralMapping.objects.all()
+        for mapping in mappings:
+            mapping_q |= Q(
+                registration__education_service__education_program=mapping.education_component,
+                registration__child__age__gte=mapping.min_age,
+                registration__child__age__lte=mapping.max_age
+            )
+
         nfe_to_fe_count = Referral.objects.filter(
             registration__in=qs,
-            recommended_learning_path='Progress to FE'
-        ).count()
+            recommended_learning_path__in=['Progress to FE', 'Transition to FE']
+        ).filter(mapping_q).count()
 
         # NEW INDICATOR: Monitor children grades and transition between NFE platforms
         # E.g. other pathways or transition rates between NFE platforms

@@ -105,10 +105,26 @@ class MainFilter(RedesignFilterSet):
         return queryset.filter(education_service__education_program=value)
 
     def filter_referred_to_fe(self, queryset, name, value):
+        from student_registration.mscc.models import NFEToFEReferralMapping
+        from django.db.models import Q
+
+        mapping_q = Q()
+        mappings = NFEToFEReferralMapping.objects.all()
+        for mapping in mappings:
+            mapping_q |= Q(
+                education_service__education_program=mapping.education_component,
+                child__age__gte=mapping.min_age,
+                child__age__lte=mapping.max_age
+            )
+
         if value == 'Yes':
-            return queryset.filter(referral__recommended_learning_path='Progress to FE')
+            return queryset.filter(
+                referral__recommended_learning_path__in=['Progress to FE', 'Transition to FE']
+            ).filter(mapping_q)
         elif value == 'No':
-            return queryset.exclude(referral__recommended_learning_path='Progress to FE')
+            return queryset.exclude(
+                Q(referral__recommended_learning_path__in=['Progress to FE', 'Transition to FE']) & mapping_q
+            )
         return queryset
 
     def _populate_round_choices(self):
