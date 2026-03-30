@@ -453,7 +453,25 @@
                 currentStep = firstStepWithError;
                 updateWizard(firstStepWithError);
             };
-            window.isAddPage = function() { return true; };
         });
     </script>
+    <script>
+    $(function () {
+        const $cashChecks = $('#div_id_cash_support_programmes input[type="checkbox"]');
+
+        $cashChecks.on('change', function () {
+            const $changed = $(this);
+            const value = $changed.val();
+            const checked = $changed.is(':checked');
+
+            if (!checked) return;
+
+            if (value === 'None') {
+                $cashChecks.not($changed).prop('checked', false);
+            } else {
+                $cashChecks.filter('[value="None"]').prop('checked', false);
+            }
+        });
+    });
+</script>
 {% endblock %}

@@ -480,7 +480,15 @@ class MainForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
+        cash_support_programmes = cleaned_data.get("cash_support_programmes") or []
 
+        if not cash_support_programmes:
+            self.add_error('cash_support_programmes', 'This field is required')
+        elif 'None' in cash_support_programmes and len(cash_support_programmes) > 1:
+            self.add_error(
+            'cash_support_programmes',
+            'Select either "None" or one or more other options, not both.'
+            )
         child_p_code = cleaned_data.get("child_p_code")
         if child_p_code and len(child_p_code) > 50:
             self.add_error('child_p_code', _('P-Code must not exceed 50 characters.'))
