@@ -13,6 +13,9 @@ class BootstrapTable(tables.Table):
         model = Registration
         template = 'django_tables2/bootstrap5.html'
         attrs = {'class': 'table table-hover'}
+        row_attrs = {
+            'class': lambda record: 'table-success border-success bg-success bg-opacity-10' if getattr(record, 'is_referred_to_fe', False) else ''
+        }
 
 
 class CommonTable(tables.Table):
@@ -48,6 +51,9 @@ class CommonTable(tables.Table):
         model = Registration
         template = 'django_tables2/bootstrap5.html'
         attrs = {'class': 'table table-hover'}
+        row_attrs = {
+            'class': lambda record: 'table-success border-success bg-success bg-opacity-10' if getattr(record, 'is_referred_to_fe', False) else ''
+        }
         fields = ()
 
     def render_child_age(self, record):
@@ -81,6 +87,9 @@ class MainTable(CommonTable):
 
     class Meta:
         model = Registration
+        row_attrs = {
+            'class': lambda record: 'table-success border-success bg-success bg-opacity-10' if getattr(record, 'is_referred_to_fe', False) else ''
+        }
         fields = (
             'action_column',
             'absence_column',
@@ -118,6 +127,9 @@ class FullTable(CommonTable):
 
     class Meta:
         model = Registration
+        row_attrs = {
+            'class': lambda record: 'table-success border-success bg-success bg-opacity-10' if getattr(record, 'is_referred_to_fe', False) else ''
+        }
         fields = (
             'action_column',
             'absence_column',

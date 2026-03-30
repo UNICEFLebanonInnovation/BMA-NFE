@@ -252,6 +252,15 @@
     const kpiProtectionConcerns = document.getElementById('kpi_protection_concerns');
     if (kpiProtectionConcerns) kpiProtectionConcerns.innerText = `${data.kpis.protection_concerns}%`;
 
+    const kpiNfeToFe = document.getElementById('kpi_nfe_to_fe');
+    if (kpiNfeToFe) kpiNfeToFe.innerText = `${data.transitions.nfe_to_fe}`;
+
+    const kpiAvgNfeGrade = document.getElementById('kpi_avg_nfe_grade');
+    if (kpiAvgNfeGrade) kpiAvgNfeGrade.innerText = `${data.transitions.avg_nfe_grade}%`;
+
+    const kpiDropoutRate = document.getElementById('kpi_dropout_rate');
+    if (kpiDropoutRate) kpiDropoutRate.innerText = `${data.transitions.dropout_rate}%`;
+
     // Render Charts
     renderPieChart('#chart_child_labor', data.socio_economic.labor_participation);
     renderGroupedBar('#chart_labor_income', data.socio_economic.labor_income);
@@ -264,6 +273,11 @@
 
     renderBarChart('#chart_education_status', data.education.status);
     renderImprovementChart('#chart_programme_improvements', data.education.programme_improvements);
+
+    // NFE platforms transition
+    if (document.getElementById('chart_nfe_platforms')) {
+        renderBarChart('#chart_nfe_platforms', data.transitions.nfe_platforms);
+    }
 
     renderBarChart('#chart_barriers', data.impact.barriers);
 

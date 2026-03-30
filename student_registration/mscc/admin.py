@@ -505,7 +505,19 @@ class RoundAdmin(admin.ModelAdmin):
     inlines = (RoundPartnerInline,)
 
 
+class NFEToFEReferralMappingAdmin(admin.ModelAdmin):
+    list_display = (
+        'education_component',
+        'min_age',
+        'max_age',
+    )
+    search_fields = (
+        'education_component',
+    )
+
 admin.site.register(Registration, RegistrationAdmin)
+from student_registration.mscc.models import NFEToFEReferralMapping
+admin.site.register(NFEToFEReferralMapping, NFEToFEReferralMappingAdmin)
 admin.site.register(EducationHistory, EducationHistoryAdmin)
 # admin.site.register(ProvidedServices, ProvidedServicesAdmin)
 # admin.site.register(Packages, PackagesAdmin)

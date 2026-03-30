@@ -599,9 +599,15 @@ class MainListView(LoginRequiredMixin,
                 .values('count')
         )
 
+        referred_to_fe_subquery = Referral.objects.filter(
+            registration_id=OuterRef('pk'),
+            recommended_learning_path='Progress to FE'
+        )
+
         qs = qs.annotate(
             has_previous=Exists(previous_registration),
             _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
+            is_referred_to_fe=Exists(referred_to_fe_subquery),
         )
 
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
@@ -1344,14 +1350,21 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
                         pass
 
         programme_improvements = []
+        all_nfe_improvements = []
         for ptype, metrics in improvements.items():
             for metric, vals in metrics.items():
                 if vals:
+                    imp_val = round(sum(vals) / len(vals), 1)
                     programme_improvements.append({
                         'programme': ptype,
                         'material': metric.replace('_grade', '').replace('_', ' ').title(),
-                        'improvement': round(sum(vals) / len(vals), 1)
+                        'improvement': imp_val
                     })
+                    all_nfe_improvements.extend(vals)
+
+        avg_nfe_grade = 0
+        if all_nfe_improvements:
+            avg_nfe_grade = sum(all_nfe_improvements) / len(all_nfe_improvements)
 
         # Impact: Attendance on Improvement
         # Children with 0 absences vs children with > 5 absences
@@ -1413,6 +1426,48 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             'without_cash_support': get_labor_rate(qs.filter(id__in=cash_support_no_ids))
         }
 
+        # NEW INDICATOR: NFE to FE transition
+        # Count referrals with 'Progress to FE'
+        nfe_to_fe_count = Referral.objects.filter(
+            registration__in=qs,
+            recommended_learning_path='Progress to FE'
+        ).count()
+
+        # NEW INDICATOR: Monitor children grades and transition between NFE platforms
+        # E.g. other pathways or transition rates between NFE platforms
+        nfe_transitions = (
+            Referral.objects.filter(registration__in=qs)
+            .exclude(recommended_learning_path__in=[None, '', 'Progress to FE', 'Drop out'])
+            .values(name=F('recommended_learning_path'))
+            .annotate(y=Count('id'))
+            .order_by('-y')
+        )
+        nfe_transitions = [
+            {'name': item['name'] or 'Unknown', 'y': item['y']}
+            for item in nfe_transitions
+        ]
+
+        # NEW INDICATOR: Dropout rate based on attendance (< 45 days)
+        # 1. Total registrations that could drop out
+        # 2. Number of children whose attended days < 45
+        attended_counts = MSCCAttendanceChild.objects.filter(registration__in=qs, attended='Yes').values('registration').annotate(attended_days=Count('id'))
+
+        # Determine dropout based on < 45 attended days
+        dropped_out_registrations = [
+            item['registration'] for item in attended_counts if item['attended_days'] < 45
+        ]
+
+        # Registrations with 0 attendance could also be dropouts depending on how you look at it,
+        # but let's just count those with < 45 days or no attendance at all.
+        registrations_with_attendance = MSCCAttendanceChild.objects.filter(registration__in=qs).values_list('registration', flat=True).distinct()
+        no_attendance_registrations = qs.exclude(id__in=registrations_with_attendance).values_list('id', flat=True)
+
+        total_dropouts = len(dropped_out_registrations) + len(no_attendance_registrations)
+
+        avg_dropout_rate = 0
+        if total_registrations > 0:
+            avg_dropout_rate = (total_dropouts / total_registrations) * 100
+
         data = {
             'kpis': {
                 'avg_attendance': round(avg_attendance_rate, 1),
@@ -1446,6 +1501,12 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
                 'labor_impact_attendance': labor_impact_attendance,
                 'distress_impact_attendance': distress_impact_attendance,
                 'cash_impact_labor': cash_impact_labor,
+            },
+            'transitions': {
+                'nfe_to_fe': nfe_to_fe_count,
+                'nfe_platforms': nfe_transitions,
+                'dropout_rate': round(avg_dropout_rate, 1),
+                'avg_nfe_grade': round(avg_nfe_grade, 1)
             }
         }
 

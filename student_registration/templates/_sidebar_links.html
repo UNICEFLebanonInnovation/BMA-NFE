@@ -36,7 +36,7 @@
     <i class="bi bi-cloud-download"></i> <span>{% trans "Advanced Exporter" %}</span>
 </a>
 <a href="{% url 'mscc:wellbeing_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'wellbeing_dashboard' %}active{% endif %}">
-    <i class="bi bi-heart-pulse"></i> <span>{% trans "Wellbeing Analysis" %}</span>
+    <i class="bi bi-heart-pulse"></i> <span>{% trans "Learning Outcome" %}</span>
 </a>
 <a href="{% url 'mscc:attendance_heatmap' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'attendance_heatmap' %}active{% endif %}">
     <i class="bi bi-calendar3"></i> <span>{% trans "Attendance Heatmap" %}</span>
