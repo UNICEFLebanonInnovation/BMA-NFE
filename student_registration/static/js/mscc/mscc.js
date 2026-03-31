@@ -695,7 +695,8 @@ function validateMainForm(showModal, step) {
         '#id_child_have_children',
         '#id_child_have_sibling',
         '#id_child_mother_pregnant_expecting',
-        '#id_source_of_identification'
+        '#id_source_of_identification',
+        '#id_child_living_arrangement'
     ];
 
     var minValueMap = {
@@ -775,7 +776,10 @@ function validateMainForm(showModal, step) {
     if (step === 1) {
         return valid;
     }
-
+    if ($('#id_id_type').is(':visible') && (!$('#id_id_type').val() || $('#id_id_type').val().trim() === '')) {
+        showError('#id_id_type', 'This field is required');
+        valid = false;
+    }
         if ($('#id_father_educational_level').is(':visible') && (!$('#id_father_educational_level').val() || $('#id_father_educational_level').val().trim() === '')) {
             showError('#id_father_educational_level', 'This field is required');
             valid = false;
