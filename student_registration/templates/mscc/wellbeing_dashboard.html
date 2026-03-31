@@ -74,7 +74,7 @@
     <!-- Summary KPIs -->
     <div class="row g-3 mb-5">
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm metric-card h-100 bg-white">
+            <div class="card border-0 shadow-sm metric-card h-100 bg-white" data-indicator="avg_attendance" style="cursor: pointer;">
                 <div class="card-body">
                     <div class="kpi-label" style="font-size: 0.7rem;">{% trans "Avg Attendance Rate" %}</div>
                     <div class="d-flex align-items-end">
@@ -84,7 +84,7 @@
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm metric-card h-100 bg-white">
+            <div class="card border-0 shadow-sm metric-card h-100 bg-white" data-indicator="labor_rate" style="cursor: pointer;">
                 <div class="card-body">
                     <div class="kpi-label" style="font-size: 0.7rem;">{% trans "Child Labor Rate" %}</div>
                     <div class="d-flex align-items-end">
@@ -94,7 +94,7 @@
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm metric-card h-100 bg-white">
+            <div class="card border-0 shadow-sm metric-card h-100 bg-white" data-indicator="protection_concerns" style="cursor: pointer;">
                 <div class="card-body">
                     <div class="kpi-label" style="font-size: 0.7rem;">{% trans "Protection Concerns" %}</div>
                     <div class="d-flex align-items-end">
@@ -104,7 +104,7 @@
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm metric-card h-100 bg-white">
+            <div class="card border-0 shadow-sm metric-card h-100 bg-white" data-indicator="nfe_to_fe" style="cursor: pointer;">
                 <div class="card-body">
                     <div class="kpi-label" style="font-size: 0.7rem;">{% trans "Transition NFE to FE" %}</div>
                     <div class="d-flex align-items-end">
@@ -114,7 +114,7 @@
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm metric-card h-100 bg-white">
+            <div class="card border-0 shadow-sm metric-card h-100 bg-white" data-indicator="avg_nfe_grade" style="cursor: pointer;">
                 <div class="card-body">
                     <div class="kpi-label" style="font-size: 0.7rem;">{% trans "Avg NFE Grade Impr." %}</div>
                     <div class="d-flex align-items-end">
@@ -124,7 +124,7 @@
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm metric-card h-100 bg-white">
+            <div class="card border-0 shadow-sm metric-card h-100 bg-white" data-indicator="dropout_rate" style="cursor: pointer;">
                 <div class="card-body">
                     <div class="kpi-label" style="font-size: 0.7rem;">{% trans "Avg Drop Out Rate" %}</div>
                     <div class="d-flex align-items-end">
@@ -274,6 +274,41 @@
 
 </div>
 
+
+<!-- Children List Modal -->
+<div class="modal fade" id="indicatorChildrenModal" tabindex="-1" aria-labelledby="indicatorChildrenModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="indicatorChildrenModalLabel">{% trans "Children List" %}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0" id="indicatorChildrenTable">
+                <thead class="table-light sticky-top">
+                    <tr>
+                        <th scope="col">{% trans "Case Number" %}</th>
+                        <th scope="col">{% trans "Child Name" %}</th>
+                        <th scope="col">{% trans "Age" %}</th>
+                        <th scope="col" class="text-end">{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody id="indicatorChildrenTableBody">
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                            {% trans "Loading data..." %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Filters Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="dashboardFilters" aria-labelledby="dashboardFiltersLabel" style="width: 400px;">
     <div class="offcanvas-header border-bottom">
@@ -329,7 +364,8 @@
 <script>
 window.wellbeingDashboardConfig = {
     urls: {
-        data: "{% url 'mscc:wellbeing_dashboard_data' %}"
+        data: "{% url 'mscc:wellbeing_dashboard_data' %}",
+        indicator_children_data: "{% url 'mscc:wellbeing_indicator_children_data' %}"
     }
 };
 

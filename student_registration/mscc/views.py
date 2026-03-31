@@ -1569,3 +1569,59 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         }
 
         return JsonResponse(data, safe=False)
+
+
+class WellbeingIndicatorChildrenDataView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        qs = Registration.objects.filter(deleted=False)
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                qs = qs.filter(partner_id=user.partner_id)
+            if user.center_id:
+                qs = qs.filter(center_id=user.center_id)
+
+        # Apply Filters
+        centers = request.GET.getlist('centers')
+        if centers:
+            qs = qs.filter(center_id__in=centers)
+        rounds = request.GET.getlist('rounds')
+        if rounds:
+            qs = qs.filter(round_id__in=rounds)
+        governorates = request.GET.getlist('governorates')
+        if governorates:
+            qs = qs.filter(center__governorate_id__in=governorates)
+        partners = request.GET.getlist('partners')
+        if partners:
+            qs = qs.filter(partner_id__in=partners)
+
+        indicator = request.GET.get('indicator')
+
+        if indicator == 'labor_rate':
+            qs = qs.exclude(have_labour='No')
+        elif indicator == 'protection_concerns':
+            pss_qs = PSSService.objects.filter(registration__in=qs).exclude(child_protection_concern__in=['', None]).exclude(child_protection_concern='No')
+            qs = qs.filter(id__in=pss_qs.values_list('registration_id', flat=True))
+        elif indicator == 'nfe_to_fe':
+            ref_qs = Referral.objects.filter(registration__in=qs, recommended_learning_path='Progress to FE')
+            qs = qs.filter(id__in=ref_qs.values_list('registration_id', flat=True))
+        elif indicator == 'avg_nfe_grade':
+            ass_qs = EducationProgrammeAssessment.objects.filter(registration__in=qs)
+            qs = qs.filter(id__in=ass_qs.values_list('registration_id', flat=True))
+        elif indicator == 'dropout_rate':
+            attended_counts = MSCCAttendanceChild.objects.filter(registration__in=qs, attended='Yes').values('registration').annotate(attended_days=Count('id'))
+            dropped_out_registrations = [item['registration'] for item in attended_counts if item['attended_days'] < 45]
+            registrations_with_attendance = MSCCAttendanceChild.objects.filter(registration__in=qs).values_list('registration', flat=True).distinct()
+            no_attendance_registrations = list(qs.exclude(id__in=registrations_with_attendance).values_list('id', flat=True))
+            qs = qs.filter(id__in=dropped_out_registrations + no_attendance_registrations)
+        elif indicator == 'avg_attendance':
+            registrations_with_attendance = MSCCAttendanceChild.objects.filter(registration__in=qs).values_list('registration', flat=True).distinct()
+            qs = qs.filter(id__in=registrations_with_attendance)
+        else:
+            qs = qs.none()
+
+        fe_qs = qs.select_related('child').only('id', 'child__first_name', 'child__last_name', 'child__unicef_id', 'child__birthday_year', 'child__birthday_month', 'child__birthday_day')[:1000]
+        children_list = [{'reg_id': reg.id, 'case_number': getattr(reg.child, 'unicef_id', 'N/A'), 'child_name': f"{getattr(reg.child, 'first_name', '') or ''} {getattr(reg.child, 'last_name', '') or ''}".strip(), 'age': reg.child_age} for reg in fe_qs]
+
+        return JsonResponse({'children': children_list}, safe=False)

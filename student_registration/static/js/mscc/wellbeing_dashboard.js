@@ -399,4 +399,85 @@
 
   window.addEventListener('resize', refresh);
 
+
+  // Handle metric-card clicks
+  document.querySelectorAll('.metric-card').forEach(card => {
+    card.addEventListener('click', async function() {
+      const indicator = this.dataset.indicator;
+      if (!indicator) return;
+
+      const titleMap = {
+          'avg_attendance': 'Avg Attendance Rate',
+          'labor_rate': 'Child Labor Rate',
+          'protection_concerns': 'Protection Concerns',
+          'nfe_to_fe': 'Transition NFE to FE',
+          'avg_nfe_grade': 'Avg NFE Grade Impr.',
+          'dropout_rate': 'Avg Drop Out Rate'
+      };
+
+      const modalTitle = document.getElementById('indicatorChildrenModalLabel');
+      if (modalTitle) modalTitle.innerText = `Children List: ${titleMap[indicator] || indicator}`;
+
+      const tbody = document.getElementById('indicatorChildrenTableBody');
+      if (tbody) {
+          tbody.innerHTML = `
+              <tr>
+                  <td colspan="4" class="text-center py-4 text-muted">
+                      <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                      Loading data...
+                  </td>
+              </tr>
+          `;
+      }
+
+      // Show modal
+      const modalEl = document.getElementById('indicatorChildrenModal');
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+
+      // Fetch data
+      const filters = getFilters();
+      const params = new URLSearchParams();
+      for (const key in filters) {
+        filters[key].forEach(v => params.append(key, v));
+      }
+      params.append('indicator', indicator);
+
+      try {
+          const response = await fetch(`${config.urls.indicator_children_data}?${params.toString()}`);
+          const data = await response.json();
+
+          if (tbody) {
+              if (data.children && data.children.length > 0) {
+                  tbody.innerHTML = data.children.map(child => `
+                      <tr>
+                          <td class="align-middle">${child.case_number || 'N/A'}</td>
+                          <td class="align-middle fw-medium">${child.child_name || 'N/A'}</td>
+                          <td class="align-middle text-muted">${child.age !== null ? child.age : '-'}</td>
+                          <td class="align-middle text-end">
+                              <a href="/mscc/child-profile/${child.reg_id}/" target="_blank" class="btn btn-sm btn-outline-primary">
+                                  <i class="bi bi-eye"></i> View
+                              </a>
+                          </td>
+                      </tr>
+                  `).join('');
+              } else {
+                  tbody.innerHTML = `
+                      <tr>
+                          <td colspan="4" class="text-center py-4 text-muted">No children found for this indicator.</td>
+                      </tr>
+                  `;
+              }
+          }
+      } catch (e) {
+          if (tbody) {
+              tbody.innerHTML = `
+                  <tr>
+                      <td colspan="4" class="text-center py-4 text-danger">Failed to load data.</td>
+                  </tr>
+              `;
+          }
+      }
+    });
+  });
 })();
