@@ -516,8 +516,14 @@ class MainForm(forms.ModelForm):
 
         child_have_children = cleaned_data.get("child_have_children")
         child_children_number = cleaned_data.get("child_children_number")
-        if child_have_children == "Yes" and not child_children_number:
-            self.add_error('child_children_number', 'This field is required')
+        if child_have_children == "Yes":
+            if not child_children_number or child_children_number < 1:
+                self.add_error('child_children_number', 'Must be at least 1')
+        elif child_have_children == "No":
+            cleaned_data['child_children_number'] = 0
+        elif child_have_children == "Child pregnant or expecting children":
+            if not child_children_number or child_children_number < 1:
+                self.add_error('child_children_number', 'Must be at least 1')
 
         child_have_sibling = cleaned_data.get("child_have_sibling")
         child_siblings_have_disability = cleaned_data.get("child_siblings_have_disability")

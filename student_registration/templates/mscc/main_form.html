@@ -489,4 +489,33 @@
         });
     });
 </script>
+<script>
+$(function () {
+    const $haveChildren = $('#id_child_have_children');
+    const $childrenDiv = $('#div_id_child_children_number');
+    const $childrenInput = $('#id_child_children_number');
+
+    function toggleChildrenField() {
+        const value = $haveChildren.val();
+
+        if (value === "Yes" || value === "Child pregnant or expecting children") {
+            $childrenDiv.removeClass('d-none');
+
+            if (!$childrenInput.val() || $childrenInput.val() == 0) {
+                $childrenInput.val(1);
+            }
+
+        } else {
+            $childrenDiv.addClass('d-none');
+            $childrenInput.val(0);
+        }
+    }
+
+    // Run on page load
+    toggleChildrenField();
+
+    // Run on change
+    $haveChildren.on('change', toggleChildrenField);
+});
+</script>
 {% endblock %}
