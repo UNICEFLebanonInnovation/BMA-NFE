@@ -313,6 +313,34 @@
     const kpiDropoutRate = document.getElementById('kpi_dropout_rate');
     if (kpiDropoutRate) kpiDropoutRate.innerText = `${data.transitions.dropout_rate}%`;
 
+    const kpiEligibleForFe = document.getElementById('kpi_eligible_for_fe');
+    if (kpiEligibleForFe) kpiEligibleForFe.innerText = `${data.transitions.eligible_for_fe_count}`;
+
+    // Populate FE Eligible List Modal
+    const feTableBody = document.getElementById('feEligibleTableBody');
+    if (feTableBody) {
+        if (data.transitions.eligible_for_fe_list && data.transitions.eligible_for_fe_list.length > 0) {
+            feTableBody.innerHTML = data.transitions.eligible_for_fe_list.map(child => `
+                <tr>
+                    <td class="align-middle">${child.case_number || 'N/A'}</td>
+                    <td class="align-middle fw-medium">${child.child_name || 'N/A'}</td>
+                    <td class="align-middle text-muted">${child.age !== null ? child.age : '-'}</td>
+                    <td class="align-middle text-end">
+                        <a href="/mscc/child-profile/${child.reg_id}/" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            feTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">No children eligible for Formal Education at this time.</td>
+                </tr>
+            `;
+        }
+    }
+
     // Render Charts
     renderPieChart('#chart_child_labor', data.socio_economic.labor_participation);
     renderGroupedBar('#chart_labor_income', data.socio_economic.labor_income);
