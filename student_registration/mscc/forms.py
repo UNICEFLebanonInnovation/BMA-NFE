@@ -125,7 +125,7 @@ class MainForm(forms.ModelForm):
     )
     child_living_arrangement = forms.ChoiceField(
         label=_("Living Arrangement"),
-        widget=forms.Select, required=False,
+        widget=forms.Select, required=True,
         choices=Child.LIVING_ARRANGEMENT
     )
     child_disability = forms.ModelChoiceField(
@@ -201,31 +201,31 @@ class MainForm(forms.ModelForm):
     father_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
         label=_('What is the father\'s educational level?'),
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
     )
     mother_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
         label=_('What is the mother\'s educational level?'),
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
     )
     first_phone_owner = forms.ChoiceField(
         label=_("Who will be answering the phone?"),
         widget=forms.Select,
-        required=False,
+        required=True,
         choices=Child.PHONE_OWNER,
         initial=''
     )
     first_phone_number = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
-        required=False,
+        required=True,
         label=_('Primary phone number'),
         help_text=_('Enter a valid mobile number for the primary contact.')
     )
     first_phone_number_confirm = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
-        required=False,
+        required=True,
         label=_('Confirm primary phone number')
     )
     second_phone_owner = forms.ChoiceField(
@@ -249,7 +249,7 @@ class MainForm(forms.ModelForm):
     )
     main_caregiver = forms.ChoiceField(
         label=_("Who is the Child\'s primary caregiver?"),
-        widget=forms.Select, required=False,
+        widget=forms.Select, required=True,
         choices=Child.MAIN_CAREGIVER
     )
     main_caregiver_other = forms.CharField(
@@ -259,25 +259,25 @@ class MainForm(forms.ModelForm):
     children_number_under18 = forms.IntegerField(
         label=_('Number of children under 18'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        required=False,
+        required=True,
         initial=0,
         min_value=0
     )
     caregiver_first_name = forms.CharField(
         label=_("Caregiver First Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's first name")}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's first name")}), required=True
     )
     caregiver_middle_name = forms.CharField(
         label=_("Caregiver Middle Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's father's name")}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's father's name")}), required=True
     )
     caregiver_last_name = forms.CharField(
         label=_("Caregiver Last Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's family name")}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's family name")}), required=True
     )
     caregiver_mother_name = forms.CharField(
         label=_("Caregiver Mother Full Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Full name of the caregiver's mother")}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Full name of the caregiver's mother")}), required=True
     )
     have_labour = forms.ChoiceField(
         label=_('Does the child participate in work?'),
@@ -318,7 +318,7 @@ class MainForm(forms.ModelForm):
         queryset=IDType.objects.filter(active=True),
         widget=forms.Select,
         label=_('ID type of the caregiver'),
-        required=False, to_field_name='id'
+        required=True, to_field_name='id'
     )
     case_number = forms.RegexField(
         regex=UNHCR_CASE_REGEX,

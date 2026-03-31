@@ -447,6 +447,7 @@ class EducationServiceForm(forms.ModelForm):
     dropout_date = forms.DateField(
         label=_("Please Specify dropout date from school"),
         required=False,
+        widget=DatePickerInput(),
         help_text=_('Last date the child attended formal school.')
     )
     round = forms.ModelChoiceField(

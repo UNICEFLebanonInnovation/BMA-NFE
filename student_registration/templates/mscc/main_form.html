@@ -409,7 +409,22 @@
                 } else if (typeof validateMainForm === 'function') {
                    if (!validateMainForm(true, currentStep)) return;
                 }
+    if (currentStep === 2) {
+        const idTypeVal = $('#id_id_type').val();
 
+        if (!idTypeVal) {
+            $('#id_id_type').addClass('is-invalid');
+
+            // scroll to field
+            $('html, body').animate({
+                scrollTop: $('#id_id_type').offset().top - 150
+            }, 200);
+
+            return; 
+        } else {
+            $('#id_id_type').removeClass('is-invalid');
+        }
+    }
                 if (currentStep < totalSteps) {
                     currentStep++;
                     updateWizard(currentStep);
