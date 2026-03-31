@@ -21,6 +21,7 @@ from .models import (
     Registration,
     EducationAssessment,
     EducationService,
+    Packages,
     EducationRSService,
     EducationProgrammeAssessment,
     YES_NO,
@@ -485,34 +486,49 @@ class EducationServiceForm(forms.ModelForm):
         self.fields['registration_id'].initial = registry
 
         choices = list()
-        choices.append(('BLN Level 1', _('BLN Level 1')))
-        choices.append(('BLN Level 2', _('BLN Level 2')))
-        choices.append(('BLN Level 3', _('BLN Level 3')))
-        choices.append(('BLN Catch-up', _('BLN Catch-up')))
-        choices.append(('CBECE Level 1', _('CBECE Level 1')))
-        choices.append(('CBECE Level 2', _('CBECE Level 2')))
-        choices.append(('CBECE Level 3', _('CBECE Level 3')))
-        choices.append(('CBECE Catch-up', _('CBECE Catch-up')))
-        choices.append(('ABLN Level 1', _('ABLN Level 1')))
-        choices.append(('ABLN Level 2', _('ABLN Level 2')))
-        choices.append(('ABLN Catch-up', _('ABLN Catch-up')))
-        choices.append(('RS Grade 1', _('RS Grade 1')))
-        choices.append(('RS Grade 2', _('RS Grade 2')))
-        choices.append(('RS Grade 3', _('RS Grade 3')))
-        choices.append(('RS Grade 4', _('RS Grade 4')))
-        choices.append(('RS Grade 5', _('RS Grade 5')))
-        choices.append(('RS Grade 6', _('RS Grade 6')))
-        choices.append(('RS Grade 7', _('RS Grade 7')))
-        choices.append(('RS Grade 8', _('RS Grade 8')))
-        choices.append(('RS Grade 9', _('RS Grade 9')))
-        choices.append(('YBLN Level 1', _('YBLN Level 1')))
-        choices.append(('YBLN Level 2', _('YBLN Level 2')))
-        choices.append(('YBLN Catch-up', _('YBLN Catch-up')))
-        choices.append(('YFS Level 1', _('YFS Level 1')))
-        choices.append(('YFS Level 2', _('YFS Level 2')))
-        choices.append(('ECD', _('ECD')))
-        choices.append(('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')))
-        choices.append(('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')))
+        # choices.append(('BLN Level 1', _('BLN Level 1')))
+        # choices.append(('BLN Level 2', _('BLN Level 2')))
+        # choices.append(('BLN Level 3', _('BLN Level 3')))
+        # choices.append(('BLN Catch-up', _('BLN Catch-up')))
+        # choices.append(('CBECE Level 1', _('CBECE Level 1')))
+        # choices.append(('CBECE Level 2', _('CBECE Level 2')))
+        # choices.append(('CBECE Level 3', _('CBECE Level 3')))
+        # choices.append(('CBECE Catch-up', _('CBECE Catch-up')))
+        # choices.append(('ABLN Level 1', _('ABLN Level 1')))
+        # choices.append(('ABLN Level 2', _('ABLN Level 2')))
+        # choices.append(('ABLN Catch-up', _('ABLN Catch-up')))
+        # choices.append(('RS Grade 1', _('RS Grade 1')))
+        # choices.append(('RS Grade 2', _('RS Grade 2')))
+        # choices.append(('RS Grade 3', _('RS Grade 3')))
+        # choices.append(('RS Grade 4', _('RS Grade 4')))
+        # choices.append(('RS Grade 5', _('RS Grade 5')))
+        # choices.append(('RS Grade 6', _('RS Grade 6')))
+        # choices.append(('RS Grade 7', _('RS Grade 7')))
+        # choices.append(('RS Grade 8', _('RS Grade 8')))
+        # choices.append(('RS Grade 9', _('RS Grade 9')))
+        # choices.append(('YBLN Level 1', _('YBLN Level 1')))
+        # choices.append(('YBLN Level 2', _('YBLN Level 2')))
+        # choices.append(('YBLN Catch-up', _('YBLN Catch-up')))
+        # choices.append(('YFS Level 1', _('YFS Level 1')))
+        # choices.append(('YFS Level 2', _('YFS Level 2')))
+        # choices.append(('ECD', _('ECD')))
+        # choices.append(('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')))
+        # choices.append(('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')))
+
+        available_service_names = ()
+        if registry:
+            registry_obj = Registration.objects.select_related('child').filter(id=registry).first()
+            if registry_obj:
+                available_service_names = set(
+                    Packages.objects.filter(
+                        age=registry_obj.child_age
+                    ).values_list('name', flat=True)
+                )
+
+        print(available_service_names)
+
+        for option in available_service_names:
+            choices.append((option, option))
 
         self.fields['education_program'].choices = choices
 

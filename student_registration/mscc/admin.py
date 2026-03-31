@@ -520,7 +520,7 @@ from student_registration.mscc.models import NFEToFEReferralMapping
 admin.site.register(NFEToFEReferralMapping, NFEToFEReferralMappingAdmin)
 admin.site.register(EducationHistory, EducationHistoryAdmin)
 # admin.site.register(ProvidedServices, ProvidedServicesAdmin)
-# admin.site.register(Packages, PackagesAdmin)
+admin.site.register(Packages, PackagesAdmin)
 # admin.site.register(InclusionService, InclusionServiceAdmin)
 # admin.site.register(DigitalService, DigitalServiceAdmin)
 # admin.site.register(PSSService, PSSServiceAdmin)
