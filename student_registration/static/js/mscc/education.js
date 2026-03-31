@@ -24,8 +24,8 @@ function reorganizeForm()
 //    Education Status
    var education_status = $('select#id_education_status').val();
 
-    $('div#div_id_dropout_date').addClass('d-none');
-    $('#span_dropout_date').addClass('d-none');
+//    $('div#div_id_dropout_date').addClass('d-none');
+//    $('#span_dropout_date').addClass('d-none');
 
     if(education_status == 'Currently registered in Formal Education school but not attending'){
         $('#div_id_dropout_date').removeClass('d-none');
@@ -34,15 +34,15 @@ function reorganizeForm()
     }
     else
     {
-        $('div#div_id_dropout_date').addClass('d-none');
+//        $('div#div_id_dropout_date').addClass('d-none');
         $('#id_dropout_date').removeClass('error-field');
         $('#id_dropout_date').val('');
     }
 
 //   Education Program
    var education_program = $('select#id_education_program').val();
-    $('div#div_id_catch_up_registered').addClass('d-none');
-    $('#span_catch_up_registered').addClass('d-none');
+//    $('div#div_id_catch_up_registered').addClass('d-none');
+//    $('#span_catch_up_registered').addClass('d-none');
 
     const CatchUpPrograms = [
       'BLN Catch-up',

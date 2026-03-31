@@ -588,8 +588,8 @@ class EducationServiceForm(forms.ModelForm):
                 Fieldset(
                     _('Current Educational Status'),
                     Div(
-                        Div('education_status', css_class='col-md-7'),
-                        Div('dropout_date', css_class='col-md-5'),
+                        Div('education_status', css_class='col-md-6'),
+                        Div('dropout_date', css_class='col-md-6'),
                         css_class='row mb-3'
                     ),
                     Div(
