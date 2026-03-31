@@ -116,8 +116,11 @@
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    const yMin = d3.min(data, d => d.y);
+    const yMax = d3.max(data, d => d.y) || 10;
+
     const x = d3.scaleBand().range([0, width]).domain(data.map(d => d.name)).padding(0.3);
-    const y = d3.scaleLinear().range([height, 0]).domain([0, d3.max(data, d => d.y) || 10]);
+    const y = d3.scaleLinear().range([height, 0]).domain([Math.min(0, yMin), Math.max(0, yMax)]);
 
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
@@ -133,8 +136,8 @@
       .append('rect')
       .attr('x', d => x(d.name))
       .attr('width', x.bandwidth())
-      .attr('y', d => y(d.y))
-      .attr('height', d => height - y(d.y))
+      .attr('y', d => y(Math.max(0, d.y)))
+      .attr('height', d => Math.abs(y(d.y) - y(0)))
       .attr('fill', '#00adef')
       .on("mouseover", function(event, d) {
         tooltip.transition().duration(200).style("opacity", .9);
@@ -145,6 +148,17 @@
       .on("mouseout", function() {
         tooltip.transition().duration(500).style("opacity", 0);
       });
+
+    // Add zero line if there are negative values
+    if (yMin < 0) {
+      svg.append('line')
+        .attr('x1', 0)
+        .attr('x2', width)
+        .attr('y1', y(0))
+        .attr('y2', y(0))
+        .attr('stroke', '#000')
+        .attr('stroke-width', 1);
+    }
   }
 
   function renderImprovementChart(selector, data) {
@@ -180,8 +194,11 @@
       .rangeRound([0, x0.bandwidth()])
       .padding(0.05);
 
+    const yMin = d3.min(data, d => d.improvement);
+    const yMax = d3.max(data, d => d.improvement) || 20;
+
     const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.improvement) || 20]).nice()
+      .domain([Math.min(0, yMin), Math.max(0, yMax)]).nice()
       .rangeRound([height, 0]);
 
     const color = d3.scaleOrdinal(d3.schemeCategory10).domain(materials);
@@ -195,9 +212,9 @@
       .data(d => data.filter(item => item.programme === d))
       .enter().append('rect')
       .attr('x', d => x1(d.material))
-      .attr('y', d => y(d.improvement))
+      .attr('y', d => y(Math.max(0, d.improvement)))
       .attr('width', x1.bandwidth())
-      .attr('height', d => height - y(d.improvement))
+      .attr('height', d => Math.abs(y(d.improvement) - y(0)))
       .attr('fill', d => color(d.material))
       .on("mouseover", function(event, d) {
         tooltip.transition().duration(200).style("opacity", .9);
@@ -208,6 +225,17 @@
       .on("mouseout", function() {
         tooltip.transition().duration(500).style("opacity", 0);
       });
+
+    // Add zero line if there are negative values
+    if (yMin < 0) {
+      svg.append('line')
+        .attr('x1', 0)
+        .attr('x2', width)
+        .attr('y1', y(0))
+        .attr('y2', y(0))
+        .attr('stroke', '#000')
+        .attr('stroke-width', 1);
+    }
 
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
