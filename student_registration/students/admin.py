@@ -247,6 +247,6 @@ class AttachmentTypeAdmin(ImportExportModelAdmin):
 admin.site.register(Teacher, TeacherAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(IDType, IDTypeAdmin)
-admin.site.register(Labour)
+# admin.site.register(Labour)
 admin.site.register(Training, TrainingAdmin)
 admin.site.register(AttachmentType, AttachmentTypeAdmin)
