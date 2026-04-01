@@ -1,9 +1,6 @@
 {% load static i18n %}
-{% load static i18n %}
 {% load custom_tags %}
-
 {% load simple_tags %}
-
 {% load util_tags %}
 {% child_attendance_history instance.child_id as result %}
 
@@ -19,6 +16,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
         <div class="card metric-card border-0 shadow-sm border-start border-success border-4 h-100">
             <div class="card-body">
@@ -30,6 +28,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
         <div class="card metric-card border-0 shadow-sm border-start border-danger border-4 h-100">
             <div class="card-body">
@@ -41,6 +40,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
         <div class="card metric-card border-0 shadow-sm border-start border-warning border-4 h-100">
             <div class="card-body">
@@ -54,18 +54,36 @@
     </div>
 </div>
 
+<style>
+    .attendance-month-btn.active {
+        background: #eaf3ff !important;
+        border-left: 3px solid #1f78d1 !important;
+        font-weight: 600;
+    }
+
+    .attendance-loading {
+        padding: 40px 20px;
+        text-align: center;
+    }
+</style>
+
 <div class="row g-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm overflow-hidden h-100">
             <div class="card-header bg-light py-3">
                 <h6 class="mb-0 fw-bold">{% trans "Monthly History" %}</h6>
             </div>
+
             <div class="list-group list-group-flush" id="attendanceMonths">
                 {% with months="January February March April May June July August September October November December" %}
                 {% for month in months.split %}
-                <button class="list-group-item list-group-item-action attendance_month py-3 border-0 d-flex justify-content-between align-items-center"
-                        data-href="{% url 'mscc:attendance_child' instance.child_id %}?month={{ forloop.counter }}">
-                    <span><i class="bi bi-calendar4-range me-2 text-muted"></i> {{ month }}</span>
+                <button
+                    type="button"
+                    class="list-group-item list-group-item-action attendance_month attendance-month-btn py-3 border-0 d-flex justify-content-between align-items-center"
+                    data-href="{% url 'mscc:attendance_child' instance.child_id %}?month={{ forloop.counter }}">
+                    <span>
+                        <i class="bi bi-calendar4-range me-2 text-muted"></i> {{ month }}
+                    </span>
                     <i class="bi bi-chevron-right small opacity-50"></i>
                 </button>
                 {% endfor %}
@@ -73,11 +91,13 @@
             </div>
         </div>
     </div>
+
     <div class="col-md-9">
         <div class="card border-0 shadow-sm h-100" id="attendance-details-container">
             <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
                 <h6 class="mb-0 fw-bold text-primary">{% trans "Attendance Details" %}</h6>
             </div>
+
             <div class="card-body p-5 text-center" id="attendance-details-body">
                 <div class="empty-state">
                     <i class="bi bi-calendar-check display-4 text-muted mb-3"></i>
@@ -88,3 +108,67 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const monthButtons = document.querySelectorAll(".attendance_month");
+    const detailsBody = document.getElementById("attendance-details-body");
+
+    monthButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const url = this.getAttribute("data-href");
+            console.log("Clicked month URL:", url);
+
+            monthButtons.forEach(function (btn) {
+                btn.classList.remove("active", "bg-light");
+            });
+            this.classList.add("active", "bg-light");
+
+            detailsBody.innerHTML = `
+                <div class="attendance-loading">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-3 mb-0">Loading attendance...</p>
+                </div>
+            `;
+
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(function (response) {
+                console.log("Fetch status:", response.status);
+
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+
+                return response.text();
+            })
+            .then(function (html) {
+                console.log("Response HTML:", html);
+
+                if (!html || html.trim() === "") {
+                    detailsBody.innerHTML = `
+                        <div class="alert alert-warning mb-0">
+                            No attendance data was returned for this month.
+                        </div>
+                    `;
+                    return;
+                }
+
+                detailsBody.innerHTML = html;
+            })
+            .catch(function (error) {
+                console.error("Attendance load error:", error);
+                detailsBody.innerHTML = `
+                    <div class="alert alert-danger mb-0">
+                        Failed to load attendance data.
+                    </div>
+                `;
+            });
+        });
+    });
+});
+</script>
