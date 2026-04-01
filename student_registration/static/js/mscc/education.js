@@ -4,11 +4,11 @@ $(document).ready(function() {
     reorganizeForm();
 
 if ($('#id_dropout_date').length === 1 && $.fn.datepicker) {
-    $('#id_dropout_date').datepicker({ dateFormat: "yy-mm-dd" });
+    $('#id_dropout_date').datepicker({ dateFormat: "yy-mm-dd" ,maxDate: new Date()});
 }
 
 if ($('#id_registration_date').length === 1 && $.fn.datepicker) {
-    $('#id_registration_date').datepicker({ dateFormat: "yy-mm-dd" });
+    $('#id_registration_date').datepicker({ dateFormat: "yy-mm-dd" ,maxDate: new Date()});
 }
 
     $(document).on('change', '#id_education_program', function(){

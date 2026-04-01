@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import, division
+from datetime import date, datetime
 
 from django.utils.translation import gettext as _
 from django import forms
@@ -99,7 +100,6 @@ class DiagnosticAssessmentForm(forms.ModelForm):
         if instance:
             form_action = reverse('mscc:service_diagnostic_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
-
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -469,9 +469,17 @@ class EducationServiceForm(forms.ModelForm):
     )
     registration_date = forms.DateField(
         label=_("Date of registration in the round"),
-        widget=DatePickerInput(),
-        required=False,
+        widget=forms.DateInput(attrs={
+            'type': 'date',
+        }),
+        required=True,
         help_text=_('The date the child joined the current round.')
+    )
+    class_section = forms.ChoiceField(
+        label=_("Class Section"),
+        widget=forms.Select,
+        required=True,
+        choices=EducationService._meta.get_field('class_section').choices,
     )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -482,9 +490,15 @@ class EducationServiceForm(forms.ModelForm):
         instance = kwargs.pop('instance', None)
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
+        self.fields['class_section'].required = True
+        self.fields['registration_date'].required = True
 
+        self.fields['class_section'].widget.attrs['required'] = 'required'
+        self.fields['registration_date'].widget.attrs['required'] = 'required'
+        self.fields['registration_date'].widget.attrs['max'] = date.today().strftime('%Y-%m-%d')
         self.fields['registration_id'].initial = registry
-
+        self.fields['class_section'].label = _("Class Section *")
+        self.fields['registration_date'].label = _("Date of registration in the round *")
         choices = list()
         choices.append(('BLN Level 1', _('BLN Level 1')))
         choices.append(('BLN Level 2', _('BLN Level 2')))
@@ -608,7 +622,7 @@ class EducationServiceForm(forms.ModelForm):
                 css_class='d-flex justify-content-end border-top pt-4 mt-4'
             ),
         )
-
+ 
     def save(self, request=None, instance=None, registry=None):
         validated_data = request.POST
 
@@ -650,59 +664,39 @@ class EducationServiceForm(forms.ModelForm):
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance
-
     def clean(self):
-
         cleaned_data = super(EducationServiceForm, self).clean()
 
-        dropout_date_str = cleaned_data.get("dropout_date")
-        if dropout_date_str:
+        class_section = cleaned_data.get("class_section")
+        registration_date = cleaned_data.get("registration_date")
+        dropout_date = cleaned_data.get("dropout_date")
+        education_status = cleaned_data.get("education_status")
+
+        if not class_section:
+            self.add_error("class_section", "This field is required")
+
+        if not registration_date:
+            self.add_error("registration_date", "This field is required")
+        elif registration_date > date.today():
+            self.add_error("registration_date", "Date of registration in the round cannot be in the future")
+
+        if dropout_date:
             try:
-                validate_date(dropout_date_str)
+                validate_date(dropout_date)
             except ValidationError as e:
                 self.add_error("dropout_date", str(e))
 
-        registration_date_str = cleaned_data.get("registration_date")
-        if registration_date_str:
+        if registration_date:
             try:
-                validate_date(registration_date_str)
+                validate_date(registration_date)
             except ValidationError as e:
                 self.add_error("registration_date", str(e))
 
-        education_status = cleaned_data.get("education_status")
-        dropout_date = cleaned_data.get("dropout_date")
-
-        if education_status and education_status == 'Currently registered in Formal Education school but not attending'\
-            and not dropout_date:
+        if education_status == 'Currently registered in Formal Education school but not attending' and not dropout_date:
             self.add_error('dropout_date', 'This field is required')
 
         return cleaned_data
 
-        # instance = self.instance
-
-        # if not instance.pk:
-        #     registration_id = cleaned_data.get("registration_id")
-        #     round_id = cleaned_data.get("round").id
-        #
-        #     registration = Registration.objects.get(id=registration_id)
-        #     child = registration.child
-        #
-        #     # Count the number of registrations for the same child and round
-        #     count = Registration.objects.filter(
-        #         child=child,
-        #         round__id=round_id
-        #     ).exclude(id=registration_id).count()
-        #
-        #     last_registration = Registration.objects.filter(
-        #         child=child,
-        #         round__id=round_id
-        #     ).exclude(id=registration_id).values(
-        #         'center__name'
-        #     ).order_by('-id').first()
-        #
-        #     if count > 0:
-        #         center_name = last_registration['center__name']
-        #         self.add_error('round', 'This child is already registered in the Center: ' + center_name)
 
     class Meta:
         model = EducationService
@@ -752,7 +746,6 @@ class EducationRSServiceForm(forms.ModelForm):
         if pk:
             form_action = reverse('mscc:service_education_rs_edit',
                                   kwargs={'registry': registry, 'pk': pk})
-
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
