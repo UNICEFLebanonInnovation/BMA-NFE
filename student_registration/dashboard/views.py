@@ -21,6 +21,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 import os
 import markdown
+import bleach
 from django.conf import settings
 from django.http import Http404
 from django.utils.safestring import mark_safe
@@ -471,6 +472,27 @@ class WikiPageView(LoginRequiredMixin, TemplateView):
             extensions=['extra', 'toc']
         )
 
-        context['wiki_content'] = mark_safe(html_content)
+        # Sanitize HTML to prevent XSS
+        allowed_tags = [
+            'a', 'abbr', 'acronym', 'b', 'blockquote', 'br', 'code',
+            'dd', 'del', 'div', 'dl', 'dt', 'em', 'h1', 'h2', 'h3',
+            'h4', 'h5', 'h6', 'hr', 'i', 'img', 'li', 'ol', 'p', 'pre',
+            's', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td',
+            'tfoot', 'th', 'thead', 'tr', 'tt', 'u', 'ul'
+        ]
+        allowed_attributes = {
+            '*': ['class', 'id', 'title'],
+            'a': ['href', 'title', 'target'],
+            'img': ['src', 'alt', 'title', 'width', 'height'],
+        }
+
+        clean_html = bleach.clean(
+            html_content,
+            tags=allowed_tags,
+            attributes=allowed_attributes,
+            strip=True
+        )
+
+        context['wiki_content'] = mark_safe(clean_html)
         context['page_name'] = page_name
         return context
