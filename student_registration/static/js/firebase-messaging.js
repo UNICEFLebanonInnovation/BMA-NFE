@@ -25,9 +25,17 @@ navigator.serviceWorker
           vapidKey: "BAwRHhzYusFpd-Z_CTfU3AE1w_LuOgCJ2LpTQMPbIUNZQv343yQwd2fF49XxGj09AwArLcZ7icVMTlgxcaX53nE",
           serviceWorkerRegistration: registration,
         }).then((token) => {
+          const csrfToken = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("csrftoken="))
+            ?.split("=")[1];
+
           fetch("/api/save-fcm-token/", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken,
+            },
             body: JSON.stringify({ token }),
           });
         });
