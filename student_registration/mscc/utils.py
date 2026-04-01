@@ -53,34 +53,86 @@ def create_attendance(data, center_id):
         logger.error(f"Invalid date format: {data['attendance_date']}")
         return False
 
+    from django.utils import timezone
+
     try:
-        attendance, created = MSCCAttendance.objects.get_or_create(round_id=round_id, center_id=center_id,
-                                                                   attendance_date=attendance_date,
-                                                                   education_program=education_program,
-                                                                   class_section=class_section
-                                                                   )
-        attendance.day_off = data["attendance_day_off"]
-        attendance.close_reason = data["close_reason"]
-        attendance.save()
+        with transaction.atomic():
+            attendance, created = MSCCAttendance.objects.get_or_create(round_id=round_id, center_id=center_id,
+                                                                       attendance_date=attendance_date,
+                                                                       education_program=education_program,
+                                                                       class_section=class_section
+                                                                       )
+            attendance.day_off = data["attendance_day_off"]
+            attendance.close_reason = data["close_reason"]
+            attendance.save()
 
-        for child in data.get('children_attendance', []):
-            child_id = child.get('child_id')
-            registration_id = child.get('registration_id')
+            children_data = data.get('children_attendance', [])
 
-            if not child_id or not registration_id:
-                logger.warning(f"Missing child_id or registration_id for child: {child}")
-                continue
+            # Create a list of conditions to query existing MSCCAttendanceChild records
+            child_registration_pairs = []
+            for child in children_data:
+                child_id = child.get('child_id')
+                registration_id = child.get('registration_id')
+                if child_id and registration_id:
+                    child_registration_pairs.append((child_id, registration_id))
 
-            attendance_child, created = MSCCAttendanceChild.objects.get_or_create(
-                attendance_day=attendance,
-                child_id=child_id,
-                registration_id=registration_id
-            )
+            # Fetch existing records
+            existing_records = {}
+            if child_registration_pairs:
+                from django.db.models import Q
+                query = Q()
+                for child_id, registration_id in child_registration_pairs:
+                    query |= Q(child_id=child_id, registration_id=registration_id)
+                query &= Q(attendance_day=attendance)
 
-            attendance_child.attended = child.get('attended')
-            attendance_child.absence_reason = child.get('absence_reason')
-            attendance_child.absence_reason_other = child.get('absence_reason_other')
-            attendance_child.save()
+                existing_qs = MSCCAttendanceChild.objects.filter(query)
+                existing_records = {(str(rec.child_id), str(rec.registration_id)): rec for rec in existing_qs}
+
+            to_create = []
+            to_update = []
+            now = timezone.now()
+
+            for child in children_data:
+                child_id = child.get('child_id')
+                registration_id = child.get('registration_id')
+
+                if not child_id or not registration_id:
+                    logger.warning(f"Missing child_id or registration_id for child: {child}")
+                    continue
+
+                attended = child.get('attended')
+                absence_reason = child.get('absence_reason')
+                absence_reason_other = child.get('absence_reason_other')
+
+                key = (str(child_id), str(registration_id))
+                if key in existing_records:
+                    # Update existing record
+                    attendance_child = existing_records[key]
+                    attendance_child.attended = attended
+                    attendance_child.absence_reason = absence_reason
+                    attendance_child.absence_reason_other = absence_reason_other
+                    attendance_child.modified = now
+                    to_update.append(attendance_child)
+                else:
+                    # Create new record
+                    new_attendance_child = MSCCAttendanceChild(
+                        attendance_day=attendance,
+                        child_id=child_id,
+                        registration_id=registration_id,
+                        attended=attended,
+                        absence_reason=absence_reason,
+                        absence_reason_other=absence_reason_other,
+                    )
+                    to_create.append(new_attendance_child)
+
+            if to_create:
+                MSCCAttendanceChild.objects.bulk_create(to_create)
+
+            if to_update:
+                MSCCAttendanceChild.objects.bulk_update(
+                    to_update,
+                    ['attended', 'absence_reason', 'absence_reason_other', 'modified']
+                )
 
         return True
 
