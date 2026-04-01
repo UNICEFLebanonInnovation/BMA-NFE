@@ -219,6 +219,7 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
 
 
 def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
+    from django.utils import timezone
     try:
         with transaction.atomic():
             children = list(
@@ -226,43 +227,68 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
                     registration_id=registration_id,
                     attendance_day__education_program=education_program,
                     attendance_day__class_section=old_class_section,
-                ).select_related('attendance_day__center')
+                ).select_related('attendance_day')
             )
+
+            if not children:
+                return []
+
+            # Find unique (center_id, attendance_date) combinations for the children's attendances
+            center_date_pairs = {(ca.attendance_day.center_id, ca.attendance_day.attendance_date) for ca in children}
+            center_ids = list({cid for cid, d in center_date_pairs})
+            dates = list({d for cid, d in center_date_pairs})
+
+            # Fetch all possible new attendances in one query
+            # We want the .last() ordered by 'id', so ordering by 'id' and overwriting in the dict works.
+            new_attendances_qs = MSCCAttendance.objects.filter(
+                center_id__in=center_ids,
+                attendance_date__in=dates,
+                education_program=education_program,
+                class_section=new_class_section,
+            ).order_by('id')
+
+            new_attendance_map = {}
+            for na in new_attendances_qs:
+                new_attendance_map[(na.center_id, na.attendance_date)] = na
+
+            to_update = []
+            to_delete_ca_ids = []
+            old_attendance_ids = set()
+
+            now = timezone.now()
 
             for ca in children:
                 old_attendance = ca.attendance_day
-                old_attendance_id = old_attendance.id
-                center_id = old_attendance.center_id
-                attendance_date = old_attendance.attendance_date
+                old_attendance_ids.add(old_attendance.id)
 
-                new_attendance = (
-                    MSCCAttendance.objects
-                    .filter(
-                        center_id=center_id,
-                        attendance_date=attendance_date,
-                        education_program=education_program,
-                        class_section=new_class_section,
-                    )
-                    .order_by('id')
-                    .last()
-                )
-
-                others_count = (
-                    MSCCAttendanceChild.objects
-                    .filter(attendance_day=old_attendance)
-                    .exclude(pk=ca.pk)
-                    .count()
-                )
+                key = (old_attendance.center_id, old_attendance.attendance_date)
+                new_attendance = new_attendance_map.get(key)
 
                 if new_attendance:
                     ca.attendance_day = new_attendance
-                    ca.save(update_fields=['attendance_day'])
+                    ca.modified = now
+                    to_update.append(ca)
                 else:
-                    MSCCAttendanceChild.objects.filter(pk=ca.pk).delete()
+                    to_delete_ca_ids.append(ca.pk)
 
-                if others_count == 0:
-                    # delete old attendance if now empty
-                    MSCCAttendance.objects.filter(pk=old_attendance_id).delete()
+            if to_update:
+                MSCCAttendanceChild.objects.bulk_update(to_update, fields=['attendance_day', 'modified'])
+
+            if to_delete_ca_ids:
+                MSCCAttendanceChild.objects.filter(pk__in=to_delete_ca_ids).delete()
+
+            if old_attendance_ids:
+                # Find which old attendances still have children
+                non_empty_old_attendance_ids = set(
+                    MSCCAttendanceChild.objects.filter(
+                        attendance_day_id__in=old_attendance_ids
+                    ).values_list('attendance_day_id', flat=True)
+                )
+
+                empty_old_attendance_ids = old_attendance_ids - non_empty_old_attendance_ids
+
+                if empty_old_attendance_ids:
+                    MSCCAttendance.objects.filter(pk__in=empty_old_attendance_ids).delete()
 
         return []
     except Exception as ex:
