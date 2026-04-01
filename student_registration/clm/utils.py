@@ -779,46 +779,52 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
         bool: ``True`` when the transfer completes without errors; ``False`` on failure.
     """
 
-    child_attendances = CLMAttendanceStudent.objects.filter(
-        registration_id=registration_id,
-        attendance_day__education_program=education_program,
-        attendance_day__class_section=old_class_section
-    )
-
     try:
-        if child_attendances:
+        with transaction.atomic():
+            child_attendances = list(
+                CLMAttendanceStudent.objects.filter(
+                    registration_id=registration_id,
+                    attendance_day__education_program=education_program,
+                    attendance_day__class_section=old_class_section
+                ).select_related('attendance_day')
+            )
+
             for ca in child_attendances:
-                center_id = ca.attendance_day.center.id
-                attendance_date = ca.attendance_day.attendance_date
+                old_attendance = ca.attendance_day
+                attendance_id = old_attendance.id
+                center_id = old_attendance.center.id
+                attendance_date = old_attendance.attendance_date
 
                 # Search if attendance for the new class exists and move the child attendance to it
-                new_attendance = CLMAttendance.objects.filter(
-                    center_id=center_id,
-                    attendance_date=attendance_date,
-                    education_program=education_program,
-                    class_section=new_class_section
-                ).last()
-
-                attendance_id = ca.attendance_day.id
+                new_attendance = (
+                    CLMAttendance.objects
+                    .filter(
+                        center_id=center_id,
+                        attendance_date=attendance_date,
+                        education_program=education_program,
+                        class_section=new_class_section
+                    )
+                    .order_by('id')
+                    .last()
+                )
 
                 # Count the number of other attendances for the same day
-                other_children_count = CLMAttendanceStudent.objects.filter(attendance_day=ca.attendance_day).exclude(id=ca.id).count()
+                other_children_count = (
+                    CLMAttendanceStudent.objects
+                    .filter(attendance_day=old_attendance)
+                    .exclude(pk=ca.pk)
+                    .count()
+                )
 
                 if new_attendance:
                     ca.attendance_day = new_attendance
-                    ca.save()
+                    ca.save(update_fields=['attendance_day'])
                 else:
-                    ca.delete()
+                    CLMAttendanceStudent.objects.filter(pk=ca.pk).delete()
 
                 if other_children_count == 0:
-                    try:
-                        old_attendance = CLMAttendance.objects.get(id=attendance_id)
+                    CLMAttendance.objects.filter(pk=attendance_id).delete()
 
-                        # Delete the unique old_attendance instance
-                        old_attendance.delete()
-
-                    except CLMAttendance.DoesNotExist:
-                        pass
         return True
 
     except Exception as ex:
