@@ -4,14 +4,15 @@ def populate_gradings(apps, schema_editor):
     EducationProgrammeGrading = apps.get_model('mscc', 'EducationProgrammeGrading')
 
     # helper for adding assessments
-    def add(prog, key, label, max_score, condition='', order=0):
+    def add(prog, key, label, max_score, condition='', order=0, form_type='education'):
         EducationProgrammeGrading.objects.create(
             programme_type=prog,
             key=key,
             label=label,
             max_score=max_score,
             condition=condition,
-            order=order
+            order=order,
+            form_type=form_type
         )
 
     # Data from education_tags.py and EducationGradingForm
@@ -88,20 +89,20 @@ def populate_gradings(apps, schema_editor):
         add(p, 'science_grade', 'Science', 20, order=4)
 
     # Youth Scoring forms
-    add('YBLN Level 1', 'arabic_grade', 'Arabic Language Development', 12, order=1)
-    add('YBLN Level 1', 'math_grade', 'Mathematics', 15, order=2)
-    add('YBLN Level 1', 'life_skills', 'Life Skills Development', 12, order=3)
+    add('YBLN Level 1', 'arabic_grade', 'Arabic Language Development', 12, order=1, form_type='youth')
+    add('YBLN Level 1', 'math_grade', 'Mathematics', 15, order=2, form_type='youth')
+    add('YBLN Level 1', 'life_skills', 'Life Skills Development', 12, order=3, form_type='youth')
 
-    add('YBLN Level 2', 'arabic_grade', 'Arabic Language Development', 12, order=1)
-    add('YBLN Level 2', 'language_grade', 'Foreign Language Development', 12, order=2)
-    add('YBLN Level 2', 'math_grade', 'Mathematics', 21, order=3)
-    add('YBLN Level 2', 'life_skills', 'Life Skills Development', 12, order=4)
+    add('YBLN Level 2', 'arabic_grade', 'Arabic Language Development', 12, order=1, form_type='youth')
+    add('YBLN Level 2', 'language_grade', 'Foreign Language Development', 12, order=2, form_type='youth')
+    add('YBLN Level 2', 'math_grade', 'Mathematics', 21, order=3, form_type='youth')
+    add('YBLN Level 2', 'life_skills', 'Life Skills Development', 12, order=4, form_type='youth')
 
-    yfs = ['YFS Level 1', 'YFS Level 2']
+    yfs = ['YFS Level 1', 'YFS Level 2', 'YFS Level 1 - RS Grade 9', 'YFS Level 2 - RS Grade 9']
     for p in yfs:
-        add(p, 'english_development', 'English Development', 100, order=1)
-        add(p, 'financial_development', 'Financial Literacy Development', 100, order=2)
-        add(p, 'it_development', 'IT Development', 100, order=3)
+        add(p, 'english_development', 'English Development', 100, order=1, form_type='youth')
+        add(p, 'financial_development', 'Financial Literacy Development', 100, order=2, form_type='youth')
+        add(p, 'it_development', 'IT Development', 100, order=3, form_type='youth')
 
 def reverse_populate(apps, schema_editor):
     EducationProgrammeGrading = apps.get_model('mscc', 'EducationProgrammeGrading')

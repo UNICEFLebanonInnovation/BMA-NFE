@@ -51,7 +51,7 @@ def get_education_programme_assessments(result1, result, request=None):
     if request and request.user and hasattr(request.user, 'center') and request.user.center:
         provide_french = getattr(request.user.center, 'provide_french_language', 'No') == 'Yes'
 
-    gradings = EducationProgrammeGrading.objects.filter(programme_type=prog).order_by('order')
+    gradings = EducationProgrammeGrading.objects.filter(programme_type=prog, form_type='education').order_by('order')
 
     for grading in gradings:
         if grading.condition == 'french_only' and not provide_french:

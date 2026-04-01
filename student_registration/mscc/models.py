@@ -2058,9 +2058,19 @@ class EducationProgrammeGrading(TimeStampedModel):
         ('french_only', _('French Only (If center provides French)')),
         ('english_only', _('English Only (If center does not provide French)')),
     )
+    FORM_TYPE_CHOICES = Choices(
+        ('education', _('Education Grading')),
+        ('youth', _('Youth Scoring')),
+    )
     programme_type = models.CharField(
         max_length=100,
         verbose_name=_('Education Programme Type')
+    )
+    form_type = models.CharField(
+        max_length=50,
+        choices=FORM_TYPE_CHOICES,
+        default='education',
+        verbose_name=_('Form Type')
     )
     key = models.CharField(
         max_length=50,
@@ -2089,7 +2099,7 @@ class EducationProgrammeGrading(TimeStampedModel):
 
     class Meta:
         ordering = ['programme_type', 'order']
-        unique_together = ('programme_type', 'key')
+        unique_together = ('programme_type', 'key', 'form_type')
         verbose_name = "Education Programme Grading"
         verbose_name_plural = "Education Programme Gradings"
 

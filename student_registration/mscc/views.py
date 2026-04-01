@@ -1325,6 +1325,15 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         )
 
         improvements = {}
+        from .models import EducationProgrammeGrading
+
+        # Prefetch valid grading keys per programme type to allow completely dynamic assessment fields
+        valid_keys_per_programme = {}
+        for grading in EducationProgrammeGrading.objects.all():
+            if grading.programme_type not in valid_keys_per_programme:
+                valid_keys_per_programme[grading.programme_type] = {}
+            valid_keys_per_programme[grading.programme_type][grading.key] = grading.label
+
         for p in programme_assessments:
             ptype = p.get('programme_type') or 'Unknown'
             pre = p.get('pre_test') or {}
@@ -1333,16 +1342,22 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             if ptype not in improvements:
                 improvements[ptype] = {}
 
+            valid_keys = valid_keys_per_programme.get(ptype, {})
+
             for key in post.keys():
-                if key.endswith('_grade') or key in ['life_skills', 'english_development', 'financial_development', 'it_development']:
+                # Allow dynamically added keys or fallback to original matching pattern
+                is_valid = key in valid_keys or key.endswith('_grade') or key in ['life_skills', 'english_development', 'financial_development', 'it_development']
+                if is_valid:
                     try:
                         post_val = float(post[key])
                         pre_val = float(pre.get(key, 0))
                         if pre_val > 0:
                             imp = ((post_val - pre_val) / pre_val) * 100
-                            if key not in improvements[ptype]:
-                                improvements[ptype][key] = []
-                            improvements[ptype][key].append(imp)
+                            # Use the friendly label if it exists, otherwise humanize the key
+                            label = valid_keys.get(key, key.replace('_grade', '').replace('_', ' ').title())
+                            if label not in improvements[ptype]:
+                                improvements[ptype][label] = []
+                            improvements[ptype][label].append(imp)
                     except (ValueError, TypeError):
                         pass
 
@@ -1354,7 +1369,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
                     imp_val = round(sum(vals) / len(vals), 1)
                     programme_improvements.append({
                         'programme': ptype,
-                        'material': metric.replace('_grade', '').replace('_', ' ').title(),
+                        'material': metric,
                         'improvement': imp_val
                     })
                     all_nfe_improvements.extend(vals)

@@ -883,7 +883,7 @@ class EducationGradingForm(forms.ModelForm):
         # Fetch dynamic fields
         self.grading_fields = []
         if programme_type:
-            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type).order_by('order')
+            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type, form_type='education').order_by('order')
             for grading in gradings:
                 if grading.condition == 'french_only' and not provide_french_language:
                     continue
@@ -993,13 +993,8 @@ class EducationGradingForm(forms.ModelForm):
 
         # Dynamic validation threshold checking
         if programme_type:
-            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type)
+            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type, form_type='education')
             for grading in gradings:
-                if grading.condition == 'french_only' and not self.provide_french_language:
-                    continue
-                if grading.condition == 'english_only' and self.provide_french_language:
-                    continue
-
                 field_value = cleaned_data.get(grading.key)
                 if field_value is not None and field_value > grading.max_score:
                     self.add_error(grading.key, f"This value is greater than {grading.max_score}")
@@ -1072,7 +1067,7 @@ class YouthScoringForm(forms.ModelForm):
         # Fetch dynamic fields
         self.grading_fields = []
         if programme_type:
-            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type).order_by('order')
+            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type, form_type='youth').order_by('order')
             for grading in gradings:
                 if grading.condition == 'french_only' and not provide_french_language:
                     continue
@@ -1180,13 +1175,8 @@ class YouthScoringForm(forms.ModelForm):
 
         # Dynamic validation threshold checking
         if programme_type:
-            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type)
+            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type, form_type='youth')
             for grading in gradings:
-                if grading.condition == 'french_only' and not self.provide_french_language:
-                    continue
-                if grading.condition == 'english_only' and self.provide_french_language:
-                    continue
-
                 field_value = cleaned_data.get(grading.key)
                 if field_value is not None and field_value > grading.max_score:
                     self.add_error(grading.key, f"This value is greater than {grading.max_score}")
@@ -1228,7 +1218,7 @@ class EducationSchoolGradingForm(forms.ModelForm):
         # Fetch dynamic fields
         self.grading_fields = []
         if programme_type:
-            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type).order_by('order')
+            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type, form_type='education').order_by('order')
             for grading in gradings:
                 if grading.condition == 'french_only' and not provide_french_language:
                     continue
@@ -1292,13 +1282,8 @@ class EducationSchoolGradingForm(forms.ModelForm):
 
         # Dynamic validation threshold checking
         if programme_type:
-            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type)
+            gradings = EducationProgrammeGrading.objects.filter(programme_type=programme_type, form_type='education')
             for grading in gradings:
-                if grading.condition == 'french_only' and not self.provide_french_language:
-                    continue
-                if grading.condition == 'english_only' and self.provide_french_language:
-                    continue
-
                 field_value = cleaned_data.get(grading.key)
                 if field_value is not None and field_value > grading.max_score:
                     self.add_error(grading.key, f"This value is greater than {grading.max_score}")
