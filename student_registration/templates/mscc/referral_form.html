@@ -73,16 +73,14 @@
 </div>
 {% endblock %}
 
+
 {% block extra_js %}
-    <script src="{% static 'js/mscc/referral.js' %}?v=7"></script>
+    <script src="{% static 'js/mscc/referral.js' %}?v=11"></script>
     <script src="{% static 'js/mscc/general.js' %}?v=2"></script>
     <script>
-        $(document).ready(function() {
-            // UI Polish
+        $(document).ready(function () {
             $('.btn-success').addClass('px-5 fw-bold');
             $('.btn-warning').removeClass('btn-warning').addClass('btn-outline-secondary');
-
-            // Standardize selects
             $('select').addClass('form-select');
         });
     </script>

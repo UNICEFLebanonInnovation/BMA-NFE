@@ -908,7 +908,8 @@ class ReferralForm(forms.ModelForm):
     )
     dropout_date = forms.DateField(
         label=_("Please Specify dropout date"),
-        required=False
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'})
     )
     is_cbece = forms.CharField(required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -923,10 +924,13 @@ class ReferralForm(forms.ModelForm):
 
         form_action = reverse('mscc:referral_add', kwargs={'registry': registry})
         if pk:
-            form_action = reverse('mscc:referral_edit',
-                                  kwargs={'registry': registry, 'pk': pk})
+            form_action = reverse('mscc:referral_edit', kwargs={'registry': registry, 'pk': pk})
+
         if is_cbece == 'Yes':
             self.fields['referred_formal_education'].required = True
+
+        # prevent future dates directly in browser
+        self.fields['dropout_date'].widget.attrs['max'] = datetime.date.today().isoformat()
 
         education_program = get_education_service(registry)
         choices = list()
@@ -940,27 +944,32 @@ class ReferralForm(forms.ModelForm):
         choices.append(('Progress to  Higher Level  in next school year', _('Progress to  Higher Level  in next school year')))
 
         if education_program == "CBECE Level 2":
-            choices.append(('Referred to CBECE Higher Level in next school year',
-                            _('Referred to CBECE Higher Level in next school year')))
+            choices.append((
+                'Referred to CBECE Higher Level in next school year',
+                _('Referred to CBECE Higher Level in next school year')
+            ))
 
         self.fields['recommended_learning_path'].choices = choices
-
         self.fields['is_cbece'].initial = is_cbece
+
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+
         if is_cbece == 'Yes':
             self.helper.layout = Layout(
                 Div(
                     Div('is_cbece', css_class='d-none'),
+
                     Fieldset(
                         _('Formal Education Referral'),
                         Div(
                             Div('referred_formal_education', css_class='col-md-6'),
-                            Div('referred_school', css_class='col-md-6'),
+                            Div('referred_school', css_class='col-md-6 d-none', css_id='referred-school-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
+
                     Fieldset(
                         _('Resources & Services'),
                         Div(
@@ -969,15 +978,16 @@ class ReferralForm(forms.ModelForm):
                         ),
                         Div(
                             Div('referred_service', css_class='col-md-6'),
-                            Div('referred_service_other', css_class='col-md-6'),
+                            Div('referred_service_other', css_class='col-md-6 d-none', css_id='referred-service-other-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
+
                     Fieldset(
                         _('Recommended Path'),
                         Div(
                             Div('recommended_learning_path', css_class='col-md-6'),
-                            Div('dropout_date', css_class='col-md-6'),
+                            Div('dropout_date', css_class='col-md-6 d-none', css_id='dropout-date-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
@@ -990,11 +1000,13 @@ class ReferralForm(forms.ModelForm):
                           css_class='btn btn-outline-secondary ms-2'),
                     css_class='d-flex justify-content-end border-top pt-4 mt-4'
                 ),
-        )
+            )
+
         if is_cbece == 'No':
             self.helper.layout = Layout(
                 Div(
                     Div('is_cbece', css_class='d-none'),
+
                     Fieldset(
                         _('Referral Services'),
                         Div(
@@ -1003,10 +1015,11 @@ class ReferralForm(forms.ModelForm):
                         ),
                         Div(
                             Div('referred_service', css_class='col-md-6'),
-                            Div('referred_service_other', css_class='col-md-6'),
+                            Div('referred_service_other', css_class='col-md-6 d-none', css_id='referred-service-other-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
+
                     Fieldset(
                         _('Recommended Outcome'),
                         Div(
@@ -1014,7 +1027,7 @@ class ReferralForm(forms.ModelForm):
                             css_class='row mb-3'
                         ),
                         Div(
-                            Div('dropout_date', css_class='col-md-6'),
+                            Div('dropout_date', css_class='col-md-6 d-none', css_id='dropout-date-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
@@ -1027,7 +1040,7 @@ class ReferralForm(forms.ModelForm):
                           css_class='btn btn-outline-secondary ms-2'),
                     css_class='d-flex justify-content-end border-top pt-4 mt-4'
                 ),
-        )
+            )
 
     def save(self, request=None, instance=None, registry=None):
         from datetime import datetime
@@ -1044,38 +1057,46 @@ class ReferralForm(forms.ModelForm):
         instance.referred_service = validated_data.get('referred_service')
         instance.referred_service_other = validated_data.get('referred_service_other')
         instance.recommended_learning_path = validated_data.get('recommended_learning_path')
+
         dropout_date_str = validated_data.get('dropout_date')
         if dropout_date_str:
-            dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
+            dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d').date()
             instance.dropout_date = dropout_date
+        else:
+            instance.dropout_date = None
+
         instance.save()
-
         messages.success(request, _('Your data has been sent successfully to the server'))
-
         return instance
 
     def clean(self):
         cleaned_data = super(ReferralForm, self).clean()
-        is_cbece  = cleaned_data.get("is_cbece")
+
+        is_cbece = cleaned_data.get("is_cbece")
         referred_formal_education = cleaned_data.get("referred_formal_education")
         referred_school = cleaned_data.get("referred_school")
 
-        if is_cbece and is_cbece == 'Yes':
+        if is_cbece == 'Yes':
             if not referred_formal_education:
                 self.add_error('referred_formal_education', 'This field is required')
 
-                if referred_formal_education == 'Yes' and not referred_school:
-                    self.add_error('referred_school', 'This field is required')
+            if referred_formal_education == 'Yes' and not referred_school:
+                self.add_error('referred_school', 'This field is required')
 
         referred_service = cleaned_data.get("referred_service")
         referred_service_other = cleaned_data.get("referred_service_other")
-        if referred_service and referred_service == 'Other' and not referred_service_other:
+        if referred_service == 'Other' and not referred_service_other:
             self.add_error('referred_service_other', 'This field is required')
 
         recommended_learning_path = cleaned_data.get("recommended_learning_path")
         dropout_date = cleaned_data.get("dropout_date")
-        if recommended_learning_path == 'Drop out' and not dropout_date:
-            self.add_error('dropout_date', 'This field is required')
+        if recommended_learning_path == 'Drop out':
+            if not dropout_date:
+                self.add_error('dropout_date', 'This field is required')
+            elif dropout_date > datetime.date.today():
+                self.add_error('dropout_date', 'Dropout date cannot be in the future.')
+
+        return cleaned_data
 
     class Meta:
         model = Referral
@@ -1088,8 +1109,6 @@ class ReferralForm(forms.ModelForm):
             'recommended_learning_path',
             'dropout_date',
         )
-
-
 class CustomClearableFileInput(ClearableFileInput):
     template_name = 'students/clearable_file_input.html'
 
