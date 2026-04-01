@@ -142,8 +142,16 @@ def get_service(registry, service_name):
 @register.simple_tag
 def get_youth_services(registry,service_name):
     if type(registry) == 'int':
-        return Packages.objects.filter(type=registry.type, age=registry.child_age).last()
-    return Packages.objects.filter(type=registry.type, age=registry.child_age).last()
+        return Packages.objects.filter(
+            type=registry.type,
+            min_age__lte=registry.child_age,
+            max_age__gte=registry.child_age
+        ).last()
+    return Packages.objects.filter(
+        type=registry.type,
+        min_age__lte=registry.child_age,
+        max_age__gte=registry.child_age
+    ).last()
 
 
 @register.simple_tag

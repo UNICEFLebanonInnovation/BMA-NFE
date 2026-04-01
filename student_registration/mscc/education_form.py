@@ -521,7 +521,8 @@ class EducationServiceForm(forms.ModelForm):
             if registry_obj:
                 available_service_names = set(
                     Packages.objects.filter(
-                        age=registry_obj.child_age
+                        min_age__lte=registry_obj.child_age,
+                        max_age__gte=registry_obj.child_age
                     ).values_list('name', flat=True)
                 )
 
