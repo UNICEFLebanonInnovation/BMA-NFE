@@ -888,6 +888,16 @@ class Packages(models.Model):
     )
     required = models.BooleanField(blank=True, default=False)
     age = models.IntegerField(blank=True, null=True)
+    min_age = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Minimum Age')
+    )
+    max_age = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Maximum Age')
+    )
 
     def __unicode__(self):
         return self.name
