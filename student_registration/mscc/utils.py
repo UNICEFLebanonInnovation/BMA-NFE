@@ -219,6 +219,8 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
 
 
 def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
+    from django.db.models import Count
+
     try:
         with transaction.atomic():
             children = list(
@@ -229,40 +231,71 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
                 ).select_related('attendance_day__center')
             )
 
+            if not children:
+                return []
+
+            center_ids = set()
+            attendance_dates = set()
+            old_attendance_ids = set()
+            for ca in children:
+                center_ids.add(ca.attendance_day.center_id)
+                attendance_dates.add(ca.attendance_day.attendance_date)
+                old_attendance_ids.add(ca.attendance_day_id)
+
+            # Bulk fetch new attendances
+            new_attendances = MSCCAttendance.objects.filter(
+                center_id__in=center_ids,
+                attendance_date__in=attendance_dates,
+                education_program=education_program,
+                class_section=new_class_section,
+            ).order_by('id')
+
+            new_attendance_map = {
+                (na.center_id, na.attendance_date): na
+                for na in new_attendances
+            }
+
+            # Pre-calculate counts of other children for the old attendances
+            child_ids = [ca.pk for ca in children]
+            other_counts_qs = (
+                MSCCAttendanceChild.objects
+                .filter(attendance_day_id__in=old_attendance_ids)
+                .exclude(pk__in=child_ids)
+                .values('attendance_day_id')
+                .annotate(count=Count('id'))
+            )
+            other_counts_map = {item['attendance_day_id']: item['count'] for item in other_counts_qs}
+
+            to_update = []
+            to_delete_ca_ids = []
+            to_delete_old_att_ids = []
+
             for ca in children:
                 old_attendance = ca.attendance_day
                 old_attendance_id = old_attendance.id
                 center_id = old_attendance.center_id
                 attendance_date = old_attendance.attendance_date
 
-                new_attendance = (
-                    MSCCAttendance.objects
-                    .filter(
-                        center_id=center_id,
-                        attendance_date=attendance_date,
-                        education_program=education_program,
-                        class_section=new_class_section,
-                    )
-                    .order_by('id')
-                    .last()
-                )
-
-                others_count = (
-                    MSCCAttendanceChild.objects
-                    .filter(attendance_day=old_attendance)
-                    .exclude(pk=ca.pk)
-                    .count()
-                )
+                new_attendance = new_attendance_map.get((center_id, attendance_date))
+                others_count = other_counts_map.get(old_attendance_id, 0)
 
                 if new_attendance:
                     ca.attendance_day = new_attendance
-                    ca.save(update_fields=['attendance_day'])
+                    to_update.append(ca)
                 else:
-                    MSCCAttendanceChild.objects.filter(pk=ca.pk).delete()
+                    to_delete_ca_ids.append(ca.pk)
 
                 if others_count == 0:
-                    # delete old attendance if now empty
-                    MSCCAttendance.objects.filter(pk=old_attendance_id).delete()
+                    to_delete_old_att_ids.append(old_attendance_id)
+
+            if to_update:
+                MSCCAttendanceChild.objects.bulk_update(to_update, ['attendance_day'])
+
+            if to_delete_ca_ids:
+                MSCCAttendanceChild.objects.filter(pk__in=to_delete_ca_ids).delete()
+
+            if to_delete_old_att_ids:
+                MSCCAttendance.objects.filter(pk__in=set(to_delete_old_att_ids)).delete()
 
         return []
     except Exception as ex:
