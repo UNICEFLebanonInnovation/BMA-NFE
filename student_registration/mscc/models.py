@@ -2052,6 +2052,51 @@ class EducationAssessment(TimeStampedModel):
         verbose_name_plural = "Education Assessments"
 
 
+class EducationProgrammeGrading(TimeStampedModel):
+    CONDITION_CHOICES = Choices(
+        ('', 'None'),
+        ('french_only', _('French Only (If center provides French)')),
+        ('english_only', _('English Only (If center does not provide French)')),
+    )
+    programme_type = models.CharField(
+        max_length=100,
+        verbose_name=_('Education Programme Type')
+    )
+    key = models.CharField(
+        max_length=50,
+        verbose_name=_('Field Key'),
+        help_text=_('JSON key (e.g., arabic_grade)')
+    )
+    label = models.CharField(
+        max_length=200,
+        verbose_name=_('Label')
+    )
+    max_score = models.IntegerField(
+        default=100,
+        verbose_name=_('Max Score')
+    )
+    condition = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=CONDITION_CHOICES,
+        verbose_name=_('Condition')
+    )
+    order = models.IntegerField(
+        default=0,
+        verbose_name=_('Order')
+    )
+
+    class Meta:
+        ordering = ['programme_type', 'order']
+        unique_together = ('programme_type', 'key')
+        verbose_name = "Education Programme Grading"
+        verbose_name_plural = "Education Programme Gradings"
+
+    def __str__(self):
+        return f"{self.programme_type} - {self.label} ({self.key})"
+
+
 class EducationProgrammeAssessment(TimeStampedModel):
 
     registration = models.ForeignKey(

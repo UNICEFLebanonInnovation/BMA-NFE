@@ -342,6 +342,20 @@ class EducationRSServiceAdmin(admin.ModelAdmin):
     )
 
 
+class EducationProgrammeGradingAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'programme_type',
+        'label',
+        'key',
+        'max_score',
+        'condition',
+        'order',
+    )
+    list_filter = ('programme_type', 'condition')
+    search_fields = ('programme_type', 'label', 'key')
+
+
 class EducationProgrammeAssessmentAdmin(admin.ModelAdmin):
 
     list_display = (
@@ -529,6 +543,7 @@ admin.site.register(Packages, PackagesAdmin)
 admin.site.register(EducationService, EducationServiceAdmin)
 admin.site.register(EducationRSService, EducationRSServiceAdmin)
 admin.site.register(EducationProgrammeAssessment, EducationProgrammeAssessmentAdmin)
+admin.site.register(EducationProgrammeGrading, EducationProgrammeGradingAdmin)
 # admin.site.register(YouthKitService, YouthKitServiceAdmin)
 # admin.site.register(FollowUpService, FollowUpServiceAdmin)
 admin.site.register(Referral, ReferralAdmin)
