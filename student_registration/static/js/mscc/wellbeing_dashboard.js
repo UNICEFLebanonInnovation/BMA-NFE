@@ -359,6 +359,11 @@
         renderBarChart('#chart_nfe_platforms', data.transitions.nfe_platforms);
     }
 
+    // Drop Out Rate by Program
+    if (document.getElementById('chart_dropout_by_program')) {
+        renderBarChart('#chart_dropout_by_program', data.transitions.dropout_by_program, 'Drop Out Rate (%)');
+    }
+
     renderBarChart('#chart_barriers', data.impact.barriers);
 
     // Impact: Attendance vs Improvement
