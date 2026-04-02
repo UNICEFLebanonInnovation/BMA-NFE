@@ -888,6 +888,16 @@ class Packages(models.Model):
     )
     required = models.BooleanField(blank=True, default=False)
     age = models.IntegerField(blank=True, null=True)
+    min_age = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Minimum Age')
+    )
+    max_age = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Maximum Age')
+    )
 
     def __unicode__(self):
         return self.name
@@ -1540,6 +1550,31 @@ class HealthNutritionReferral(TimeStampedModel):
         verbose_name_plural = "Health & Nutrition Referrals"
 
 
+class NFEToFEReferralMapping(TimeStampedModel):
+    """Dynamic mapping to restrict FE referrals based on NFE program components and age."""
+
+    education_component = models.CharField(
+        max_length=100,
+        verbose_name=_('NFE Component Name (e.g. ECE, BLN, ALP)')
+    )
+    min_age = models.IntegerField(
+        verbose_name=_('Minimum Age'),
+        default=0
+    )
+    max_age = models.IntegerField(
+        verbose_name=_('Maximum Age'),
+        default=99
+    )
+
+    class Meta:
+        verbose_name = _('NFE to FE Referral Mapping')
+        verbose_name_plural = _('NFE to FE Referral Mappings')
+        ordering = ['education_component']
+
+    def __str__(self):
+        return f"{self.education_component} ({self.min_age}-{self.max_age} yrs)"
+
+
 class EducationService(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(
@@ -1595,6 +1630,10 @@ class EducationService(TimeStampedModel):
         ('RS Grade 8', _('RS Grade 8')),
         ('RS Grade 9', _('RS Grade 9')),
         ('ECD', _('ECD')),
+        ('ALP Level 1', _('ALP Level 1')),
+        ('ALP Level 2', _('ALP Level 2')),
+        ('ALP Level 3', _('ALP Level 3')),
+        ('ALP Level 4', _('ALP Level 4')),
     )
     YOUTH_PROGRAM = Choices(
         ('YBLN Level 1', _('YBLN Level 1')),

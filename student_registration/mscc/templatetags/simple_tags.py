@@ -3,6 +3,7 @@ from django.apps import apps
 from django.db.models import QuerySet
 import logging
 from typing import Iterable, Union
+from collections import defaultdict
 
 
 from student_registration.mscc.models import (
@@ -142,8 +143,16 @@ def get_service(registry, service_name):
 @register.simple_tag
 def get_youth_services(registry,service_name):
     if type(registry) == 'int':
-        return Packages.objects.filter(type=registry.type, age=registry.child_age).last()
-    return Packages.objects.filter(type=registry.type, age=registry.child_age).last()
+        return Packages.objects.filter(
+            type=registry.type,
+            min_age__lte=registry.child_age,
+            max_age__gte=registry.child_age
+        ).last()
+    return Packages.objects.filter(
+        type=registry.type,
+        min_age__lte=registry.child_age,
+        max_age__gte=registry.child_age
+    ).last()
 
 
 @register.simple_tag
@@ -311,18 +320,31 @@ def get_educations_data(obj):
     try:
         history = education_history(obj)
 
+        # Group programme IDs by programme type to minimize queries
+        programmes_by_type = defaultdict(list)
+        for item in history:
+            programmes_by_type[item.programme_type].append(item.programme_id)
+
+        # Fetch all related models in bulk
+        fetched_models = {}
+        for p_type, p_ids in programmes_by_type.items():
+            model = apps.get_model('clm', p_type)
+            # Fetch all matching objects and store them in a dict keyed by (programme_type, id)
+            for model_data in model.objects.filter(id__in=p_ids):
+                fetched_models[(p_type, model_data.id)] = model_data
+
         educations = []
         for item in history:
-            model = apps.get_model('clm', item.programme_type)
-            model_data = model.objects.get(id=item.programme_id)
-            educations.append({
-                'programme_type': item.programme_type,
-                'programme_id': item.programme_id,
-                'round': model_data.round,
-                'registration_level': model_data.registration_level,
-                'center': model_data.center,
-                'registration_date': model_data.registration_date
-            })
+            model_data = fetched_models.get((item.programme_type, item.programme_id))
+            if model_data:
+                educations.append({
+                    'programme_type': item.programme_type,
+                    'programme_id': item.programme_id,
+                    'round': model_data.round,
+                    'registration_level': model_data.registration_level,
+                    'center': model_data.center,
+                    'registration_date': model_data.registration_date
+                })
         return educations
     except Exception as ex:
         logger.exception(ex)

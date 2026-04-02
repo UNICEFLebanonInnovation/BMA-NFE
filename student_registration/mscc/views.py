@@ -73,6 +73,7 @@ from .models import (
     HealthNutritionService,
     EducationService,
     EducationProgrammeAssessment,
+    NFEToFEReferralMapping,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -317,6 +318,7 @@ class DashboardDataView(LoginRequiredMixin, View):
             Registration,
             YouthKitService,
             PSSService,
+            Referral,
         )
         user = request.user
         cash_support_programmes = Registration.CASH_SUPPORT_PROGRAMMES
@@ -352,6 +354,7 @@ class DashboardDataView(LoginRequiredMixin, View):
 
         pss_qs = PSSService.objects.filter(registration__in=qs)
         ys_qs = YouthKitService.objects.filter(registration__in=qs)
+        ref_qs = Referral.objects.filter(registration__in=qs)
 
         data = {
             'children_per_gender': aggregate(qs, 'child__gender'),
@@ -361,6 +364,7 @@ class DashboardDataView(LoginRequiredMixin, View):
             'children_per_source': aggregate(qs, 'source_of_identification'),
             'children_per_disability': aggregate(qs, 'child__disability__name'),
             'children_per_vulnerability': aggregate(pss_qs, 'child_vulnerability'),
+            'children_referred_formal_education': aggregate(ref_qs, 'referred_formal_education'),
         }
 
         programme_counts = Counter()
@@ -596,9 +600,15 @@ class MainListView(LoginRequiredMixin,
                 .values('count')
         )
 
+        referred_to_fe_subquery = Referral.objects.filter(
+            registration_id=OuterRef('pk'),
+            recommended_learning_path='Progress to FE'
+        )
+
         qs = qs.annotate(
             has_previous=Exists(previous_registration),
             _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
+            is_referred_to_fe=Exists(referred_to_fe_subquery),
         )
 
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
@@ -1243,7 +1253,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         pss_indicators = {
             'caregiver_distress': pss_qs.filter(caregivers_distress='Yes').count(),
             'child_distress': pss_qs.filter(child_distress='Yes').count(),
-            'protection_concern': pss_qs.exclude(child_protection_concern__in=['', None]).count(),
+            'protection_concern': pss_qs.exclude(child_protection_concern__in=['', None]).exclude(child_protection_concern='No').count(),
         }
 
         # 3. Education
@@ -1277,17 +1287,13 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         avg_attendance_rate = ((total_possible_days - total_absences) / total_possible_days) * 100
 
         labor_rate = (qs.exclude(have_labour='No').count() / total_registrations) * 100
-        overall_improvement = (
-            (avg_improvement['arabic'] or 0) +
-            (avg_improvement['math'] or 0) +
-            (avg_improvement['language'] or 0)
-        ) / 3
 
         protection_rate = (pss_indicators['protection_concern'] / total_registrations) * 100
 
         # Barriers
         barriers = (
             assess_qs.values(name=F('barriers'))
+            .exclude(name__in=['', None])
             .annotate(y=Count('id'))
             .order_by('-y')
         )
@@ -1341,14 +1347,21 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
                         pass
 
         programme_improvements = []
+        all_nfe_improvements = []
         for ptype, metrics in improvements.items():
             for metric, vals in metrics.items():
                 if vals:
+                    imp_val = round(sum(vals) / len(vals), 1)
                     programme_improvements.append({
                         'programme': ptype,
                         'material': metric.replace('_grade', '').replace('_', ' ').title(),
-                        'improvement': round(sum(vals) / len(vals), 1)
+                        'improvement': imp_val
                     })
+                    all_nfe_improvements.extend(vals)
+
+        avg_nfe_grade = 0
+        if all_nfe_improvements:
+            avg_nfe_grade = sum(all_nfe_improvements) / len(all_nfe_improvements)
 
         # Impact: Attendance on Improvement
         # Children with 0 absences vs children with > 5 absences
@@ -1368,25 +1381,158 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         )
 
         def get_avg_imp(ids):
-            agg = EducationAssessment.objects.filter(registration_id__in=ids).aggregate(
-                avg=Avg(
-                    (Cast(F('post_arabic_grade') - F('pre_arabic_grade'), FloatField()) / NullIf(Cast(F('pre_arabic_grade'), FloatField()), 0.0) * 100 +
-                     Cast(F('post_math_grade') - F('pre_math_grade'), FloatField()) / NullIf(Cast(F('pre_math_grade'), FloatField()), 0.0) * 100 +
-                     Cast(F('post_language_grade') - F('pre_language_grade'), FloatField()) / NullIf(Cast(F('pre_language_grade'), FloatField()), 0.0) * 100) / 3
-                )
-            )
-            return round(agg['avg'] or 0, 1)
+            prog_assessments = EducationProgrammeAssessment.objects.filter(registration_id__in=ids).values('pre_test', 'post_test')
+            improvements_list = []
+            for p in prog_assessments:
+                pre = p.get('pre_test') or {}
+                post = p.get('post_test') or {}
+                for key in post.keys():
+                    if key.endswith('_grade') or key in ['life_skills', 'english_development', 'financial_development', 'it_development']:
+                        try:
+                            post_val = float(post[key])
+                            pre_val = float(pre.get(key, 0))
+                            if pre_val > 0:
+                                improvements_list.append(((post_val - pre_val) / pre_val) * 100)
+                        except (ValueError, TypeError):
+                            pass
+            return round(sum(improvements_list) / len(improvements_list), 1) if improvements_list else 0.0
 
         attendance_impact_improvement = {
             'high_attendance': get_avg_imp(no_absences_ids),
             'low_attendance': get_avg_imp(high_absences_ids)
         }
 
+        # NEW CORRELATION: Psychological distress vs attendance rates
+        distressed_ids = pss_qs.filter(
+            Q(caregivers_distress='Yes') | Q(child_distress='Yes')
+        ).values_list('registration_id', flat=True)
+
+        not_distressed_ids = pss_qs.exclude(
+            Q(caregivers_distress='Yes') | Q(child_distress='Yes')
+        ).values_list('registration_id', flat=True)
+
+        distress_impact_attendance = {
+            'with_distress': get_attendance_rate(qs.filter(id__in=distressed_ids)),
+            'without_distress': get_attendance_rate(qs.filter(id__in=not_distressed_ids))
+        }
+
+        # NEW CORRELATION: Cash support programs vs child labor
+        cash_support_yes_ids = qs.exclude(Q(cash_support_programmes__isnull=True) | Q(cash_support_programmes=[])).values_list('id', flat=True)
+        cash_support_no_ids = qs.filter(Q(cash_support_programmes__isnull=True) | Q(cash_support_programmes=[])).values_list('id', flat=True)
+
+        def get_labor_rate(sub_qs):
+            total = sub_qs.count() or 1
+            labor = sub_qs.exclude(have_labour='No').count()
+            return round((labor / total) * 100, 1)
+
+        cash_impact_labor = {
+            'with_cash_support': get_labor_rate(qs.filter(id__in=cash_support_yes_ids)),
+            'without_cash_support': get_labor_rate(qs.filter(id__in=cash_support_no_ids))
+        }
+
+        # NEW INDICATOR: NFE to FE transition
+        # Count referrals with 'Progress to FE'
+        nfe_to_fe_count = Referral.objects.filter(
+            registration__in=qs,
+            recommended_learning_path='Progress to FE'
+        ).count()
+
+        # NEW INDICATOR: Monitor children grades and transition between NFE platforms
+        # E.g. other pathways or transition rates between NFE platforms
+        nfe_transitions = (
+            Referral.objects.filter(registration__in=qs)
+            .exclude(recommended_learning_path__in=[None, '', 'Progress to FE', 'Drop out'])
+            .values(name=F('recommended_learning_path'))
+            .annotate(y=Count('id'))
+            .order_by('-y')
+        )
+        nfe_transitions = [
+            {'name': item['name'] or 'Unknown', 'y': item['y']}
+            for item in nfe_transitions
+        ]
+
+        # NEW INDICATOR: Dropout rate based on attendance (< 45 days)
+        # 1. Total registrations that could drop out
+        # 2. Number of children whose attended days < 45
+        attended_counts = MSCCAttendanceChild.objects.filter(registration__in=qs, attended='Yes').values('registration').annotate(attended_days=Count('id'))
+
+        # Determine dropout based on < 45 attended days
+        dropped_out_registrations = [
+            item['registration'] for item in attended_counts if item['attended_days'] < 45
+        ]
+
+        # Registrations with 0 attendance could also be dropouts depending on how you look at it,
+        # but let's just count those with < 45 days or no attendance at all.
+        registrations_with_attendance = MSCCAttendanceChild.objects.filter(registration__in=qs).values_list('registration', flat=True).distinct()
+        no_attendance_registrations = qs.exclude(id__in=registrations_with_attendance).values_list('id', flat=True)
+
+        total_dropouts = len(dropped_out_registrations) + len(no_attendance_registrations)
+
+        avg_dropout_rate = 0
+        if total_registrations > 0:
+            avg_dropout_rate = (total_dropouts / total_registrations) * 100
+
+        # NEW INDICATOR: Eligible for Formal Education
+        eligible_for_fe_list = []
+        try:
+            # Optimize DB queries: we need reg.id, child.id, child.first_name, child.last_name, child.unicef_id, reg.child_age, and education programs
+            from django.db.models import Prefetch
+            fe_qs = qs.select_related('child').prefetch_related(
+                Prefetch('education_service', queryset=EducationService.objects.only('education_program', 'registration_id'))
+            ).only('id', 'child__first_name', 'child__last_name', 'child__unicef_id', 'child__birthday_year', 'child__birthday_month', 'child__birthday_day')
+
+            mappings = list(NFEToFEReferralMapping.objects.all())
+
+            for reg in fe_qs:
+                age = reg.child_age
+                allow_fe = False
+                if age is not None:
+                    for edu in reg.education_service.all():
+                        if not edu.education_program:
+                            continue
+                        ep = edu.education_program.upper()
+
+                        if mappings:
+                            for mapping in mappings:
+                                if mapping.education_component.upper() in ep and mapping.min_age <= age <= mapping.max_age:
+                                    if mapping.education_component.upper() == 'BLN' and ('YBLN' in ep or 'ABLN' in ep):
+                                        continue
+                                    allow_fe = True
+                                    break
+                        else:
+                            if 'ECE' in ep and 3 <= age <= 6:
+                                allow_fe = True
+                            elif 'YBLN' in ep and 15 <= age <= 18:
+                                allow_fe = True
+                            elif 'BLN' in ep and 'YBLN' not in ep and 'ABLN' not in ep and 10 <= age <= 14:
+                                allow_fe = True
+                            elif 'ALP' in ep and 7 <= age <= 14:
+                                allow_fe = True
+                            elif 'RS' in ep and 7 <= age <= 15:
+                                allow_fe = True
+                        if allow_fe:
+                            break
+
+                if allow_fe:
+                    child_id = getattr(reg.child, 'unicef_id', 'N/A')
+                    fname = getattr(reg.child, 'first_name', '') or ''
+                    lname = getattr(reg.child, 'last_name', '') or ''
+                    eligible_for_fe_list.append({
+                        'reg_id': reg.id,
+                        'case_number': child_id,
+                        'child_name': f"{fname} {lname}".strip(),
+                        'age': age
+                    })
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error calculating FE eligibility: {e}")
+
         data = {
             'kpis': {
                 'avg_attendance': round(avg_attendance_rate, 1),
                 'labor_rate': round(labor_rate, 1),
-                'avg_improvement': round(overall_improvement, 1),
+                'avg_improvement': round(avg_nfe_grade, 1),
                 'protection_concerns': round(protection_rate, 1),
             },
             'socio_economic': {
@@ -1402,18 +1548,80 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             },
             'education': {
                 'status': edu_status,
-                'improvement': [
-                    {'name': 'Arabic', 'value': round(avg_improvement['arabic'] or 0, 1)},
-                    {'name': 'Math', 'value': round(avg_improvement['math'] or 0, 1)},
-                    {'name': 'Language', 'value': round(avg_improvement['language'] or 0, 1)},
-                ],
+                'improvement': [],
                 'programme_improvements': programme_improvements,
             },
             'impact': {
                 'barriers': barriers,
                 'attendance_impact_improvement': attendance_impact_improvement,
                 'labor_impact_attendance': labor_impact_attendance,
+                'distress_impact_attendance': distress_impact_attendance,
+                'cash_impact_labor': cash_impact_labor,
+            },
+            'transitions': {
+                'nfe_to_fe': nfe_to_fe_count,
+                'nfe_platforms': nfe_transitions,
+                'dropout_rate': round(avg_dropout_rate, 1),
+                'avg_nfe_grade': round(avg_nfe_grade, 1),
+                'eligible_for_fe_count': len(eligible_for_fe_list),
+                'eligible_for_fe_list': eligible_for_fe_list
             }
         }
 
         return JsonResponse(data, safe=False)
+
+
+class WellbeingIndicatorChildrenDataView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        qs = Registration.objects.filter(deleted=False)
+
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                qs = qs.filter(partner_id=user.partner_id)
+            if user.center_id:
+                qs = qs.filter(center_id=user.center_id)
+
+        # Apply Filters
+        centers = request.GET.getlist('centers')
+        if centers:
+            qs = qs.filter(center_id__in=centers)
+        rounds = request.GET.getlist('rounds')
+        if rounds:
+            qs = qs.filter(round_id__in=rounds)
+        governorates = request.GET.getlist('governorates')
+        if governorates:
+            qs = qs.filter(center__governorate_id__in=governorates)
+        partners = request.GET.getlist('partners')
+        if partners:
+            qs = qs.filter(partner_id__in=partners)
+
+        indicator = request.GET.get('indicator')
+
+        if indicator == 'labor_rate':
+            qs = qs.exclude(have_labour='No')
+        elif indicator == 'protection_concerns':
+            pss_qs = PSSService.objects.filter(registration__in=qs).exclude(child_protection_concern__in=['', None]).exclude(child_protection_concern='No')
+            qs = qs.filter(id__in=pss_qs.values_list('registration_id', flat=True))
+        elif indicator == 'nfe_to_fe':
+            ref_qs = Referral.objects.filter(registration__in=qs, recommended_learning_path='Progress to FE')
+            qs = qs.filter(id__in=ref_qs.values_list('registration_id', flat=True))
+        elif indicator == 'avg_nfe_grade':
+            ass_qs = EducationProgrammeAssessment.objects.filter(registration__in=qs)
+            qs = qs.filter(id__in=ass_qs.values_list('registration_id', flat=True))
+        elif indicator == 'dropout_rate':
+            attended_counts = MSCCAttendanceChild.objects.filter(registration__in=qs, attended='Yes').values('registration').annotate(attended_days=Count('id'))
+            dropped_out_registrations = [item['registration'] for item in attended_counts if item['attended_days'] < 45]
+            registrations_with_attendance = MSCCAttendanceChild.objects.filter(registration__in=qs).values_list('registration', flat=True).distinct()
+            no_attendance_registrations = list(qs.exclude(id__in=registrations_with_attendance).values_list('id', flat=True))
+            qs = qs.filter(id__in=dropped_out_registrations + no_attendance_registrations)
+        elif indicator == 'avg_attendance':
+            registrations_with_attendance = MSCCAttendanceChild.objects.filter(registration__in=qs).values_list('registration', flat=True).distinct()
+            qs = qs.filter(id__in=registrations_with_attendance)
+        else:
+            qs = qs.none()
+
+        fe_qs = qs.select_related('child').only('id', 'child__first_name', 'child__last_name', 'child__unicef_id', 'child__birthday_year', 'child__birthday_month', 'child__birthday_day')[:1000]
+        children_list = [{'reg_id': reg.id, 'case_number': getattr(reg.child, 'unicef_id', 'N/A'), 'child_name': f"{getattr(reg.child, 'first_name', '') or ''} {getattr(reg.child, 'last_name', '') or ''}".strip(), 'age': reg.child_age} for reg in fe_qs]
+
+        return JsonResponse({'children': children_list}, safe=False)

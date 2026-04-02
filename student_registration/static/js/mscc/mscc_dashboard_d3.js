@@ -211,6 +211,7 @@
     renderPieChart('#children_per_status', data.children_per_status || []);
     renderPieChart('#children_per_disability', data.children_per_disability || []);
     renderPieChart('#children_cash_support', data.children_cash_support || []);
+    renderPieChart('#children_referred_formal_education', data.children_referred_formal_education || []);
 
     renderBarChart('#children_per_programme', data.children_per_programme || []);
     renderBarChart('#children_per_nationality', data.children_per_nationality || []);

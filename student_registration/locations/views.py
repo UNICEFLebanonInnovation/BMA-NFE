@@ -164,24 +164,30 @@ def export_data(request):
 
 
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
+        query_params = []
 
         if has_group(user, 'MSCC_UNICEF'):
             vw_center_data_str += ""  # UNICEF has no extra filter
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            vw_center_data_str += " AND partner_id = {}".format(partner_id)
+            vw_center_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            vw_center_data_str += " AND center_id = {}".format(center_id)
+            vw_center_data_str += " AND center_id = %s"
+            query_params.append(center_id)
         else:
             vw_center_data_str += " AND center_id = 0"  # Dummy condition for safety
 
         if center_name:
-            vw_center_data_str += " AND center_name LIKE '%{}%'".format(center_name)
+            vw_center_data_str += " AND center_name LIKE %s"
+            query_params.append('%{}%'.format(center_name))
         if center_type:
-            vw_center_data_str += " AND center_type LIKE '%{}%'".format(center_type)
+            vw_center_data_str += " AND center_type LIKE %s"
+            query_params.append('%{}%'.format(center_type))
         if center_governorate:
-            vw_center_data_str += " AND governorate_id = {}".format(center_governorate)
+            vw_center_data_str += " AND governorate_id = %s"
+            query_params.append(center_governorate)
 
-        cursor.execute(vw_center_data_str)
+        cursor.execute(vw_center_data_str, query_params)
         data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
 
@@ -265,24 +271,30 @@ def export_center_background(request):
 
 
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
+        query_params = []
 
         if has_group(user, 'MSCC_UNICEF'):
             vw_center_data_str += ""  # UNICEF has no extra filter
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            vw_center_data_str += " AND partner_id = {}".format(partner_id)
+            vw_center_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            vw_center_data_str += " AND center_id = {}".format(center_id)
+            vw_center_data_str += " AND center_id = %s"
+            query_params.append(center_id)
         else:
             vw_center_data_str += " AND center_id = 0"  # Dummy condition for safety
 
         if center_name:
-            vw_center_data_str += " AND center_name LIKE '%{}%'".format(center_name)
+            vw_center_data_str += " AND center_name LIKE %s"
+            query_params.append('%{}%'.format(center_name))
         if center_type:
-            vw_center_data_str += " AND center_type LIKE '%{}%'".format(center_type)
+            vw_center_data_str += " AND center_type LIKE %s"
+            query_params.append('%{}%'.format(center_type))
         if center_governorate:
-            vw_center_data_str += " AND governorate_id = {}".format(center_governorate)
+            vw_center_data_str += " AND governorate_id = %s"
+            query_params.append(center_governorate)
 
-        cursor.execute(vw_center_data_str)
+        cursor.execute(vw_center_data_str, query_params)
         data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
 

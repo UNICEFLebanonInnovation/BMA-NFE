@@ -27,4 +27,16 @@
   {% endfor %}
   </tbody>
 </table></div>
+
+<h2 class="mt-4">Most Frequently Exported Fields (Filters)</h2>
+<div class="table-responsive shadow-sm border rounded-3 overflow-hidden"><table class="table">
+  <thead><tr><th>Field / Filter Used</th><th>Count</th></tr></thead>
+  <tbody>
+  {% for item in field_stats %}
+    <tr><td><code>{{ item.field }}</code></td><td>{{ item.count }}</td></tr>
+  {% empty %}
+    <tr><td colspan="2">No filter data available</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
 {% endblock %}
