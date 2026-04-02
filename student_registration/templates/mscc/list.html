@@ -27,14 +27,14 @@
             </h3>
         </div>
         <div class="col-md-6 text-md-end">
-            <button class="btn btn-outline-primary me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+            <button class="btn btn-sm btn-outline-primary me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
                 <i class="bi bi-funnel me-2"></i> {% trans "Advanced Search" %}
             </button>
-            <button class="btn btn-outline-success me-2 download-report-async" type="button">
+            <button class="btn btn-sm btn-outline-success me-2 download-report-async" type="button">
                 <i class="bi bi-download me-2"></i> {% trans "Export Data" %}
             </button>
             {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner.id %}
-            <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#child-registration-modal">
+            <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#child-registration-modal">
                 <i class="bi bi-plus-lg me-2"></i> {% trans "Add New Child" %}
             </button>
             {% endif %}
