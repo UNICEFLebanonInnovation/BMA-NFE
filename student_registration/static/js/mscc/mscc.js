@@ -1,4 +1,5 @@
 
+
 var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, " +
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
 
@@ -694,7 +695,8 @@ function validateMainForm(showModal, step) {
         '#id_child_have_children',
         '#id_child_have_sibling',
         '#id_child_mother_pregnant_expecting',
-        '#id_source_of_identification'
+        '#id_source_of_identification',
+        '#id_child_living_arrangement'
     ];
 
     var minValueMap = {
@@ -720,15 +722,26 @@ function validateMainForm(showModal, step) {
     });
 
     // Date validation
-    var year = parseInt($('#id_child_birthday_year').val()) || 0;
-    var month = parseInt($('#id_child_birthday_month').val()) || 0;
-    var day = parseInt($('#id_child_birthday_day').val()) || 0;
+    var year = parseInt($('#id_child_birthday_year').val(), 10) || 0;
+    var month = parseInt($('#id_child_birthday_month').val(), 10) || 0;
+    var day = parseInt($('#id_child_birthday_day').val(), 10) || 0;
+
     if (year && month && day) {
         var dt = new Date(year, month - 1, day);
-        if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) {
-            showError('#id_child_birthday_year', 'The date is not valid.');
+
+    if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) {
+        showError('#id_child_birthday_year', 'The date is not valid.');
+        valid = false;
+    } else {
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        dt.setHours(0, 0, 0, 0);
+
+        if (dt > today) {
+            showError('#id_child_birthday_year', 'Birth date cannot be after today.');
             valid = false;
         }
+    }
     } else {
         if (!year) showError('#id_child_birthday_year', 'This field is required');
         if (!month) showError('#id_child_birthday_month', 'This field is required');
@@ -763,7 +776,10 @@ function validateMainForm(showModal, step) {
     if (step === 1) {
         return valid;
     }
-
+    if ($('#id_id_type').is(':visible') && (!$('#id_id_type').val() || $('#id_id_type').val().trim() === '')) {
+        showError('#id_id_type', 'This field is required');
+        valid = false;
+    }
         if ($('#id_father_educational_level').is(':visible') && (!$('#id_father_educational_level').val() || $('#id_father_educational_level').val().trim() === '')) {
             showError('#id_father_educational_level', 'This field is required');
             valid = false;

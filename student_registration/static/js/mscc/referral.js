@@ -1,61 +1,108 @@
-
-
-$(document).ready(function(){
+$(document).ready(function () {
+    setupReferralForm();
+    bindReferralEvents();
     reorganizeForm();
-
-    if($(document).find('#id_dropout_date').length == 1) {
-        $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
-    }
-    $(document).on('change', 'select#id_referred_service' , function(){
-       reorganizeForm();
-    });
-    $(document).on('change', 'select#id_referred_formal_education' , function(){
-       reorganizeForm();
-    });
-    $(document).on('change', 'select#id_recommended_learning_path' , function(){
-       reorganizeForm();
-    });
-
 });
 
+function setupReferralForm() {
+    if ($('#id_dropout_date').length === 1) {
+        const today = new Date().toISOString().split('T')[0];
 
-function reorganizeForm()
-{
-    var referred_service = $('select#id_referred_service').val();
-    if(referred_service == 'Other'){
-//        $('div#div_id_referred_service_other').removeClass('d-none');
-        if ($('#id_referred_service_other').val()== null || $('#id_referred_service_other').val()=='')
-        {
-        $('#id_referred_service_other').addClass('error-field');
+        $('#id_dropout_date').attr('type', 'date');
+        $('#id_dropout_date').attr('max', today);
+
+        if ($.fn.datepicker) {
+            $('#id_dropout_date').datepicker('destroy');
+            $('#id_dropout_date').datepicker({
+                dateFormat: "yy-mm-dd",
+                maxDate: 0
+            });
         }
     }
-    else{
-        $('#id_barriers_other').val('');
-//        $('div#div_id_referred_service_other').addClass('d-none');
-        $('#id_referred_service_other').removeClass('error-field');
+}
+
+function bindReferralEvents() {
+    $(document).off('change.referral');
+
+    $(document).on('change.referral', '#id_referred_service', function () {
+        reorganizeForm();
+    });
+
+    $(document).on('change.referral', '#id_referred_formal_education', function () {
+        reorganizeForm();
+    });
+
+    $(document).on('change.referral', '#id_recommended_learning_path', function () {
+        reorganizeForm();
+    });
+
+    $(document).off('submit.referral', 'form');
+    $(document).on('submit.referral', 'form', function (e) {
+        reorganizeForm();
+
+        const referredService = ($('#id_referred_service').val() || '').trim();
+        const recommendedLearningPath = ($('#id_recommended_learning_path').val() || '').trim();
+        const referredFormalEducation = ($('#id_referred_formal_education').val() || '').trim();
+        const dropoutDate = ($('#id_dropout_date').val() || '').trim();
+        const today = new Date().toISOString().split('T')[0];
+
+        $('#id_referred_service_other').prop('required', referredService === 'Other');
+        $('#id_dropout_date').prop('required', recommendedLearningPath === 'Drop out');
+        $('#id_referred_school').prop('required', referredFormalEducation === 'Yes');
+
+        if (recommendedLearningPath === 'Drop out' && dropoutDate && dropoutDate > today) {
+            alert('Dropout date cannot be in the future.');
+            $('#id_dropout_date').focus();
+            e.preventDefault();
+            return false;
+        }
+
+        return true;
+    });
+}
+
+function reorganizeForm() {
+    const referredService = ($('#id_referred_service').val() || '').trim();
+    const referredFormalEducation = ($('#id_referred_formal_education').val() || '').trim();
+    const recommendedLearningPath = ($('#id_recommended_learning_path').val() || '').trim();
+
+    const $referredServiceOtherWrapper = $('#referred-service-other-wrapper');
+    const $dropoutDateWrapper = $('#dropout-date-wrapper');
+    const $referredSchoolWrapper = $('#referred-school-wrapper');
+
+    const $referredServiceOther = $('#id_referred_service_other');
+    const $dropoutDate = $('#id_dropout_date');
+    const $referredSchool = $('#id_referred_school');
+
+    // referred service other
+    if (referredService === 'Other') {
+        $referredServiceOtherWrapper.removeClass('d-none').show();
+    } else {
+        $referredServiceOtherWrapper.addClass('d-none').hide();
+        $referredServiceOther.val('').removeClass('error-field');
+        $referredServiceOther.prop('required', false);
     }
 
-    var referred_formal_education = $('select#id_referred_formal_education').val();
-    if(referred_formal_education == 'Yes'){
-        $('div#div_id_referred_school').removeClass('d-none');
-        if ($('#id_referred_school').val()== null || $('#id_referred_school').val()=='')
-        {
-        $('#id_referred_school').addClass('error-field');
+    // referred school
+    if ($('#id_referred_formal_education').length && referredFormalEducation === 'Yes') {
+        $referredSchoolWrapper.removeClass('d-none').show();
+    } else {
+        $referredSchoolWrapper.addClass('d-none').hide();
+        $referredSchool.removeClass('error-field');
+        $referredSchool.prop('required', false);
+        try {
+            $referredSchool.val(null).trigger('change');
+        } catch (e) {
+            $referredSchool.val('');
         }
     }
-    else{
-        $('#id_referred_school').val('');
-//        $('div#div_id_referred_school').addClass('d-none');
-        $('#id_referred_school').removeClass('error-field');
-    }
 
-    var recommended_learning_path = $('select#id_recommended_learning_path').val();
-    if(recommended_learning_path == 'Drop out'){
-        $('div#div_id_dropout_date').removeClass('d-none');
+    // dropout date
+    if (recommendedLearningPath === 'Drop out') {
+        $dropoutDateWrapper.removeClass('d-none').show();
+    } else {
+        $dropoutDateWrapper.addClass('d-none').hide();
+        $dropoutDate.val('').removeClass('error-field');
+        $dropoutDate.prop('required', false);
     }
-    else{
-        $('#id_dropout_date').val('');
-//        $('div#div_id_dropout_date').addClass('d-none');
-    }
-  }
-
+}

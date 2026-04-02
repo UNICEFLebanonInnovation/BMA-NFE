@@ -346,7 +346,7 @@
         window.isAddPage = function() { return {% if not form.instance.id %}true{% else %}false{% endif %}; };
     </script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=40"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=41"></script>
     <script type="text/javascript">
         $(function() {
             let currentStep = 1;
@@ -409,7 +409,22 @@
                 } else if (typeof validateMainForm === 'function') {
                    if (!validateMainForm(true, currentStep)) return;
                 }
+    if (currentStep === 2) {
+        const idTypeVal = $('#id_id_type').val();
 
+        if (!idTypeVal) {
+            $('#id_id_type').addClass('is-invalid');
+
+            // scroll to field
+            $('html, body').animate({
+                scrollTop: $('#id_id_type').offset().top - 150
+            }, 200);
+
+            return; 
+        } else {
+            $('#id_id_type').removeClass('is-invalid');
+        }
+    }
                 if (currentStep < totalSteps) {
                     currentStep++;
                     updateWizard(currentStep);
@@ -452,39 +467,55 @@
 
                 currentStep = firstStepWithError;
                 updateWizard(firstStepWithError);
-            }
-
-            // Draft saving logic
-            const formId = "nfe_reg_draft";
-            $('input, select').on('change input', function() {
-                const formData = {};
-                $('#registrationForm').serializeArray().forEach(item => {
-                    // Exclude CSRF token from being saved in draft
-                    if (item.name !== 'csrfmiddlewaretoken') {
-                        formData[item.name] = item.value;
-                    }
-                });
-                localStorage.setItem(formId, JSON.stringify(formData));
-            });
-
-            // Load draft if exists
-            const draft = localStorage.getItem(formId);
-            if (draft && !{{ form.instance.id|default:"null" }}) {
-                const data = JSON.parse(draft);
-                Object.keys(data).forEach(key => {
-                    // Exclude CSRF token from being restored from draft
-                    if (key !== 'csrfmiddlewaretoken') {
-                        $(`[name="${key}"]`).val(data[key]).trigger('change');
-                    }
-                });
-            }
-
-            // Clear draft on submit
-            $('#registrationForm').on('submit', function() {
-                localStorage.removeItem(formId);
-            });
-
-            window.isAddPage = function() { return true; };
+            };
         });
     </script>
+    <script>
+    $(function () {
+        const $cashChecks = $('#div_id_cash_support_programmes input[type="checkbox"]');
+
+        $cashChecks.on('change', function () {
+            const $changed = $(this);
+            const value = $changed.val();
+            const checked = $changed.is(':checked');
+
+            if (!checked) return;
+
+            if (value === 'None') {
+                $cashChecks.not($changed).prop('checked', false);
+            } else {
+                $cashChecks.filter('[value="None"]').prop('checked', false);
+            }
+        });
+    });
+</script>
+<script>
+$(function () {
+    const $haveChildren = $('#id_child_have_children');
+    const $childrenDiv = $('#div_id_child_children_number');
+    const $childrenInput = $('#id_child_children_number');
+
+    function toggleChildrenField() {
+        const value = $haveChildren.val();
+
+        if (value === "Yes" || value === "Child pregnant or expecting children") {
+            $childrenDiv.removeClass('d-none');
+
+            if (!$childrenInput.val() || $childrenInput.val() == 0) {
+                $childrenInput.val(1);
+            }
+
+        } else {
+            $childrenDiv.addClass('d-none');
+            $childrenInput.val(0);
+        }
+    }
+
+    // Run on page load
+    toggleChildrenField();
+
+    // Run on change
+    $haveChildren.on('change', toggleChildrenField);
+});
+</script>
 {% endblock %}

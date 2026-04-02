@@ -3,12 +3,13 @@
 $(document).ready(function() {
     reorganizeForm();
 
-    if($(document).find('#id_dropout_date').length == 1) {
-        $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
-    }
-     if($(document).find('#id_registration_date').length == 1) {
-        $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
-    }
+if ($('#id_dropout_date').length === 1 && $.fn.datepicker) {
+    $('#id_dropout_date').datepicker({ dateFormat: "yy-mm-dd" ,maxDate: new Date()});
+}
+
+if ($('#id_registration_date').length === 1 && $.fn.datepicker) {
+    $('#id_registration_date').datepicker({ dateFormat: "yy-mm-dd" ,maxDate: new Date()});
+}
 
     $(document).on('change', '#id_education_program', function(){
         reorganizeForm();
@@ -24,25 +25,34 @@ function reorganizeForm()
 //    Education Status
    var education_status = $('select#id_education_status').val();
 
-//    $('div#div_id_dropout_date').addClass('d-none');
-//    $('#span_dropout_date').addClass('d-none');
+    console.log('education_status value =', education_status);
+    console.log('dropout wrapper found =', $('#div_id_dropout_date').length);
+    console.log('dropout input found =', $('#id_dropout_date').length);
 
-    if(education_status == 'Currently registered in Formal Education school but not attending'){
-        $('#div_id_dropout_date').removeClass('d-none');
-        $('#span_dropout_date').removeClass('d-none');
-        $('#id_dropout_date').addClass('error-field');
-    }
-    else
-    {
-//        $('div#div_id_dropout_date').addClass('d-none');
-        $('#id_dropout_date').removeClass('error-field');
-        $('#id_dropout_date').val('');
-    }
+    $('div#div_id_dropout_date').addClass('d-none');
+    $('#span_dropout_date').addClass('d-none');
+
+if (education_status && education_status.includes('not attending')) {
+    console.log('showing dropout date');
+    $('#div_id_dropout_date').removeClass('d-none');
+    $('#span_dropout_date').removeClass('d-none');
+
+    $('#id_dropout_date').addClass('error-field');
+    $('#id_dropout_date').prop('required', true);
+}
+else {
+    console.log('hiding dropout date');
+    $('#div_id_dropout_date').addClass('d-none');
+
+    $('#id_dropout_date').removeClass('error-field');
+    $('#id_dropout_date').prop('required', false);
+    $('#id_dropout_date').val('');
+}
 
 //   Education Program
    var education_program = $('select#id_education_program').val();
-//    $('div#div_id_catch_up_registered').addClass('d-none');
-//    $('#span_catch_up_registered').addClass('d-none');
+    $('div#div_id_catch_up_registered').addClass('d-none');
+    $('#span_catch_up_registered').addClass('d-none');
 
     const CatchUpPrograms = [
       'BLN Catch-up',

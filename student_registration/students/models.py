@@ -8,7 +8,8 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from .utils import *
 from django.core.exceptions import ValidationError
-
+from datetime import datetime, date
+from django.core.exceptions import ValidationError
 
 class Nationality(models.Model):
     name = models.CharField(max_length=45, unique=True)
@@ -57,6 +58,21 @@ class Labour(models.Model):
 
 
 class Person(TimeStampedModel):
+
+    def clean(self):
+        if self.birthday_year and self.birthday_month and self.birthday_day:
+            try:
+                birth_date = date(
+                    int(self.birthday_year),
+                    int(self.birthday_month),
+                    int(self.birthday_day)
+                )
+            except ValueError:
+                raise ValidationError({'birthday_day': 'Invalid birth date.'})
+
+            if birth_date > date.today():
+                raise ValidationError({'birthday_day': 'Birth date cannot be in the future.'})
+            
 
     CURRENT_YEAR = datetime.now().year
 
@@ -135,7 +151,7 @@ class Person(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
-        choices=((str(x), x) for x in range(1990, 2050)),
+        choices=((str(x), x) for x in range(1990, datetime.now().year)),
         verbose_name=_('Birthday year')
     )
     birthday_month = models.CharField(
@@ -301,6 +317,7 @@ class Person(TimeStampedModel):
         abstract = True
 
     def save(self, **kwargs):
+        self.clean()
 
         """
         Generate unique IDs for every person

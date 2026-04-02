@@ -4,20 +4,34 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
+*.pyc
 .Python
 
 # Virtual environments
+.env/
+.venv/
 nfe/
-env/
-venv/
-staticfiles/
 
 # Django
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+staticfiles/
+media/
 
 # IDEs
 .idea/
 .vscode/
+
+# VSCode workspace
+*.code-workspace
+
+# Node (if any frontend exists)
+node_modules/
+
+# Build / dist
+dist/
+build/

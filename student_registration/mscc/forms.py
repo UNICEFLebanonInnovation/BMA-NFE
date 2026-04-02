@@ -125,7 +125,7 @@ class MainForm(forms.ModelForm):
     )
     child_living_arrangement = forms.ChoiceField(
         label=_("Living Arrangement"),
-        widget=forms.Select, required=False,
+        widget=forms.Select, required=True,
         choices=Child.LIVING_ARRANGEMENT
     )
     child_disability = forms.ModelChoiceField(
@@ -201,31 +201,31 @@ class MainForm(forms.ModelForm):
     father_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
         label=_('What is the father\'s educational level?'),
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
     )
     mother_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
         label=_('What is the mother\'s educational level?'),
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
     )
     first_phone_owner = forms.ChoiceField(
         label=_("Who will be answering the phone?"),
         widget=forms.Select,
-        required=False,
+        required=True,
         choices=Child.PHONE_OWNER,
         initial=''
     )
     first_phone_number = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
-        required=False,
+        required=True,
         label=_('Primary phone number'),
         help_text=_('Enter a valid mobile number for the primary contact.')
     )
     first_phone_number_confirm = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
-        required=False,
+        required=True,
         label=_('Confirm primary phone number')
     )
     second_phone_owner = forms.ChoiceField(
@@ -249,7 +249,7 @@ class MainForm(forms.ModelForm):
     )
     main_caregiver = forms.ChoiceField(
         label=_("Who is the Child\'s primary caregiver?"),
-        widget=forms.Select, required=False,
+        widget=forms.Select, required=True,
         choices=Child.MAIN_CAREGIVER
     )
     main_caregiver_other = forms.CharField(
@@ -259,25 +259,25 @@ class MainForm(forms.ModelForm):
     children_number_under18 = forms.IntegerField(
         label=_('Number of children under 18'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        required=False,
+        required=True,
         initial=0,
         min_value=0
     )
     caregiver_first_name = forms.CharField(
         label=_("Caregiver First Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's first name")}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's first name")}), required=True
     )
     caregiver_middle_name = forms.CharField(
         label=_("Caregiver Middle Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's father's name")}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's father's name")}), required=True
     )
     caregiver_last_name = forms.CharField(
         label=_("Caregiver Last Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's family name")}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's family name")}), required=True
     )
     caregiver_mother_name = forms.CharField(
         label=_("Caregiver Mother Full Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Full name of the caregiver's mother")}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _("Full name of the caregiver's mother")}), required=True
     )
     have_labour = forms.ChoiceField(
         label=_('Does the child participate in work?'),
@@ -318,7 +318,7 @@ class MainForm(forms.ModelForm):
         queryset=IDType.objects.filter(active=True),
         widget=forms.Select,
         label=_('ID type of the caregiver'),
-        required=False, to_field_name='id'
+        required=True, to_field_name='id'
     )
     case_number = forms.RegexField(
         regex=UNHCR_CASE_REGEX,
@@ -480,7 +480,15 @@ class MainForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
+        cash_support_programmes = cleaned_data.get("cash_support_programmes") or []
 
+        if not cash_support_programmes:
+            self.add_error('cash_support_programmes', 'This field is required')
+        elif 'None' in cash_support_programmes and len(cash_support_programmes) > 1:
+            self.add_error(
+            'cash_support_programmes',
+            'Select either "None" or one or more other options, not both.'
+            )
         child_p_code = cleaned_data.get("child_p_code")
         if child_p_code and len(child_p_code) > 50:
             self.add_error('child_p_code', _('P-Code must not exceed 50 characters.'))
@@ -508,8 +516,14 @@ class MainForm(forms.ModelForm):
 
         child_have_children = cleaned_data.get("child_have_children")
         child_children_number = cleaned_data.get("child_children_number")
-        if child_have_children == "Yes" and not child_children_number:
-            self.add_error('child_children_number', 'This field is required')
+        if child_have_children == "Yes":
+            if not child_children_number or child_children_number < 1:
+                self.add_error('child_children_number', 'Must be at least 1')
+        elif child_have_children == "No":
+            cleaned_data['child_children_number'] = 0
+        elif child_have_children == "Child pregnant or expecting children":
+            if not child_children_number or child_children_number < 1:
+                self.add_error('child_children_number', 'Must be at least 1')
 
         child_have_sibling = cleaned_data.get("child_have_sibling")
         child_siblings_have_disability = cleaned_data.get("child_siblings_have_disability")
@@ -894,7 +908,8 @@ class ReferralForm(forms.ModelForm):
     )
     dropout_date = forms.DateField(
         label=_("Please Specify dropout date"),
-        required=False
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'})
     )
     is_cbece = forms.CharField(required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -909,10 +924,13 @@ class ReferralForm(forms.ModelForm):
 
         form_action = reverse('mscc:referral_add', kwargs={'registry': registry})
         if pk:
-            form_action = reverse('mscc:referral_edit',
-                                  kwargs={'registry': registry, 'pk': pk})
+            form_action = reverse('mscc:referral_edit', kwargs={'registry': registry, 'pk': pk})
+
         if is_cbece == 'Yes':
             self.fields['referred_formal_education'].required = True
+
+        # prevent future dates directly in browser
+        self.fields['dropout_date'].widget.attrs['max'] = datetime.date.today().isoformat()
 
         education_program = get_education_service(registry)
         choices = list()
@@ -926,27 +944,32 @@ class ReferralForm(forms.ModelForm):
         choices.append(('Progress to  Higher Level  in next school year', _('Progress to  Higher Level  in next school year')))
 
         if education_program == "CBECE Level 2":
-            choices.append(('Referred to CBECE Higher Level in next school year',
-                            _('Referred to CBECE Higher Level in next school year')))
+            choices.append((
+                'Referred to CBECE Higher Level in next school year',
+                _('Referred to CBECE Higher Level in next school year')
+            ))
 
         self.fields['recommended_learning_path'].choices = choices
-
         self.fields['is_cbece'].initial = is_cbece
+
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+
         if is_cbece == 'Yes':
             self.helper.layout = Layout(
                 Div(
                     Div('is_cbece', css_class='d-none'),
+
                     Fieldset(
                         _('Formal Education Referral'),
                         Div(
                             Div('referred_formal_education', css_class='col-md-6'),
-                            Div('referred_school', css_class='col-md-6'),
+                            Div('referred_school', css_class='col-md-6 d-none', css_id='referred-school-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
+
                     Fieldset(
                         _('Resources & Services'),
                         Div(
@@ -955,15 +978,16 @@ class ReferralForm(forms.ModelForm):
                         ),
                         Div(
                             Div('referred_service', css_class='col-md-6'),
-                            Div('referred_service_other', css_class='col-md-6'),
+                            Div('referred_service_other', css_class='col-md-6 d-none', css_id='referred-service-other-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
+
                     Fieldset(
                         _('Recommended Path'),
                         Div(
                             Div('recommended_learning_path', css_class='col-md-6'),
-                            Div('dropout_date', css_class='col-md-6'),
+                            Div('dropout_date', css_class='col-md-6 d-none', css_id='dropout-date-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
@@ -976,11 +1000,13 @@ class ReferralForm(forms.ModelForm):
                           css_class='btn btn-outline-secondary ms-2'),
                     css_class='d-flex justify-content-end border-top pt-4 mt-4'
                 ),
-        )
+            )
+
         if is_cbece == 'No':
             self.helper.layout = Layout(
                 Div(
                     Div('is_cbece', css_class='d-none'),
+
                     Fieldset(
                         _('Referral Services'),
                         Div(
@@ -989,10 +1015,11 @@ class ReferralForm(forms.ModelForm):
                         ),
                         Div(
                             Div('referred_service', css_class='col-md-6'),
-                            Div('referred_service_other', css_class='col-md-6'),
+                            Div('referred_service_other', css_class='col-md-6 d-none', css_id='referred-service-other-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
+
                     Fieldset(
                         _('Recommended Outcome'),
                         Div(
@@ -1000,7 +1027,7 @@ class ReferralForm(forms.ModelForm):
                             css_class='row mb-3'
                         ),
                         Div(
-                            Div('dropout_date', css_class='col-md-6'),
+                            Div('dropout_date', css_class='col-md-6 d-none', css_id='dropout-date-wrapper'),
                             css_class='row mb-3'
                         ),
                     ),
@@ -1013,7 +1040,7 @@ class ReferralForm(forms.ModelForm):
                           css_class='btn btn-outline-secondary ms-2'),
                     css_class='d-flex justify-content-end border-top pt-4 mt-4'
                 ),
-        )
+            )
 
     def save(self, request=None, instance=None, registry=None):
         from datetime import datetime
@@ -1030,38 +1057,46 @@ class ReferralForm(forms.ModelForm):
         instance.referred_service = validated_data.get('referred_service')
         instance.referred_service_other = validated_data.get('referred_service_other')
         instance.recommended_learning_path = validated_data.get('recommended_learning_path')
+
         dropout_date_str = validated_data.get('dropout_date')
         if dropout_date_str:
-            dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
+            dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d').date()
             instance.dropout_date = dropout_date
+        else:
+            instance.dropout_date = None
+
         instance.save()
-
         messages.success(request, _('Your data has been sent successfully to the server'))
-
         return instance
 
     def clean(self):
         cleaned_data = super(ReferralForm, self).clean()
-        is_cbece  = cleaned_data.get("is_cbece")
+
+        is_cbece = cleaned_data.get("is_cbece")
         referred_formal_education = cleaned_data.get("referred_formal_education")
         referred_school = cleaned_data.get("referred_school")
 
-        if is_cbece and is_cbece == 'Yes':
+        if is_cbece == 'Yes':
             if not referred_formal_education:
                 self.add_error('referred_formal_education', 'This field is required')
 
-                if referred_formal_education == 'Yes' and not referred_school:
-                    self.add_error('referred_school', 'This field is required')
+            if referred_formal_education == 'Yes' and not referred_school:
+                self.add_error('referred_school', 'This field is required')
 
         referred_service = cleaned_data.get("referred_service")
         referred_service_other = cleaned_data.get("referred_service_other")
-        if referred_service and referred_service == 'Other' and not referred_service_other:
+        if referred_service == 'Other' and not referred_service_other:
             self.add_error('referred_service_other', 'This field is required')
 
         recommended_learning_path = cleaned_data.get("recommended_learning_path")
         dropout_date = cleaned_data.get("dropout_date")
-        if recommended_learning_path == 'Drop out' and not dropout_date:
-            self.add_error('dropout_date', 'This field is required')
+        if recommended_learning_path == 'Drop out':
+            if not dropout_date:
+                self.add_error('dropout_date', 'This field is required')
+            elif dropout_date > datetime.date.today():
+                self.add_error('dropout_date', 'Dropout date cannot be in the future.')
+
+        return cleaned_data
 
     class Meta:
         model = Referral
@@ -1074,8 +1109,6 @@ class ReferralForm(forms.ModelForm):
             'recommended_learning_path',
             'dropout_date',
         )
-
-
 class CustomClearableFileInput(ClearableFileInput):
     template_name = 'students/clearable_file_input.html'
 
