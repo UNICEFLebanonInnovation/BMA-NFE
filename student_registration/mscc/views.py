@@ -1451,26 +1451,56 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             for item in nfe_transitions
         ]
 
-        # NEW INDICATOR: Dropout rate based on attendance (< 45 days)
-        # 1. Total registrations that could drop out
-        # 2. Number of children whose attended days < 45
-        attended_counts = MSCCAttendanceChild.objects.filter(registration__in=qs, attended='Yes').values('registration').annotate(attended_days=Count('id'))
+        # NEW INDICATOR: Dropout rate based on attendance (< 45 days average per round)
+        # We define a dropped out child as one whose average attended days per round is < 45.
+        child_rounds = qs.values('child_id').annotate(
+            total_rounds=Count('id', distinct=True)
+        )
+        child_to_rounds = {item['child_id']: item['total_rounds'] for item in child_rounds if item['child_id']}
 
-        # Determine dropout based on < 45 attended days
-        dropped_out_registrations = [
-            item['registration'] for item in attended_counts if item['attended_days'] < 45
-        ]
+        child_attended = MSCCAttendanceChild.objects.filter(registration__in=qs, attended='Yes').values('registration__child_id').annotate(
+            total_attended=Count('id')
+        )
+        child_to_attended = {item['registration__child_id']: item['total_attended'] for item in child_attended if item['registration__child_id']}
 
-        # Registrations with 0 attendance could also be dropouts depending on how you look at it,
-        # but let's just count those with < 45 days or no attendance at all.
-        registrations_with_attendance = MSCCAttendanceChild.objects.filter(registration__in=qs).values_list('registration', flat=True).distinct()
-        no_attendance_registrations = qs.exclude(id__in=registrations_with_attendance).values_list('id', flat=True)
+        all_dropped_out_children = set()
+        for child_id, total_rounds in child_to_rounds.items():
+            total_attended = child_to_attended.get(child_id, 0)
+            if total_rounds > 0 and (total_attended / total_rounds) < 45:
+                all_dropped_out_children.add(child_id)
 
-        total_dropouts = len(dropped_out_registrations) + len(no_attendance_registrations)
+        total_children = len(child_to_rounds)
+        total_dropouts = len(all_dropped_out_children)
 
         avg_dropout_rate = 0
-        if total_registrations > 0:
-            avg_dropout_rate = (total_dropouts / total_registrations) * 100
+        if total_children > 0:
+            avg_dropout_rate = (total_dropouts / total_children) * 100
+
+        # NEW INDICATOR: Dropout rate by program
+        dropout_by_program = []
+        try:
+            latest_edu = EducationService.objects.filter(registration=OuterRef('pk')).order_by('-id')
+            qs_with_edu = qs.annotate(latest_program=Subquery(latest_edu.values('education_program')[:1]))
+
+            program_totals = {}
+            program_dropouts = {}
+
+            for reg in qs_with_edu.values('child_id', 'latest_program'):
+                prog = reg['latest_program'] or 'Unknown'
+                program_totals[prog] = program_totals.get(prog, 0) + 1
+                if reg['child_id'] in all_dropped_out_children:
+                    program_dropouts[prog] = program_dropouts.get(prog, 0) + 1
+
+            for prog, total in program_totals.items():
+                dropouts = program_dropouts.get(prog, 0)
+                rate = round((dropouts / total) * 100, 1) if total > 0 else 0
+                dropout_by_program.append({'name': prog, 'y': rate})
+
+            dropout_by_program = sorted(dropout_by_program, key=lambda x: x['y'], reverse=True)
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error calculating dropout by program: {e}")
 
         # NEW INDICATOR: Eligible for Formal Education
         eligible_for_fe_list = []
@@ -1562,6 +1592,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
                 'nfe_to_fe': nfe_to_fe_count,
                 'nfe_platforms': nfe_transitions,
                 'dropout_rate': round(avg_dropout_rate, 1),
+                'dropout_by_program': dropout_by_program,
                 'avg_nfe_grade': round(avg_nfe_grade, 1),
                 'eligible_for_fe_count': len(eligible_for_fe_list),
                 'eligible_for_fe_list': eligible_for_fe_list
