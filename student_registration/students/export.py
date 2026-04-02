@@ -2,7 +2,6 @@ from import_export import resources, fields
 from .models import Teacher
 
 
-
 class TeacherResource(resources.ModelResource):
     class Meta:
         model = Teacher

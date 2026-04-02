@@ -385,4 +385,9 @@ urlpatterns = [
         view=views.WellbeingDashboardDataView.as_view(),
         name='wellbeing_dashboard_data'
     ),
+    re_path(
+        r'^wellbeing-indicator-children-data/$',
+        view=views.WellbeingIndicatorChildrenDataView.as_view(),
+        name='wellbeing_indicator_children_data'
+    ),
 ]

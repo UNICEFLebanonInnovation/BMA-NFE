@@ -16,7 +16,8 @@ class PackagesResource(resources.ModelResource):
             'id',
             'name',
             'type',
-            'age',
+            'min_age',
+            'max_age',
             'category'
         )
         export_order = ('name', )
@@ -28,13 +29,15 @@ class PackagesAdmin(ImportExportModelAdmin):
         'id',
         'name',
         'type',
-        'age',
+        'min_age',
+        'max_age',
         'category'
     )
     list_filter = (
         'name',
         'type',
-        'age',
+        'min_age',
+        'max_age',
         'category'
     )
 
@@ -505,10 +508,21 @@ class RoundAdmin(admin.ModelAdmin):
     inlines = (RoundPartnerInline,)
 
 
+class NFEToFEReferralMappingAdmin(admin.ModelAdmin):
+    list_display = (
+        'education_component',
+        'min_age',
+        'max_age',
+    )
+    search_fields = (
+        'education_component',
+    )
+
 admin.site.register(Registration, RegistrationAdmin)
-admin.site.register(EducationHistory, EducationHistoryAdmin)
+admin.site.register(NFEToFEReferralMapping, NFEToFEReferralMappingAdmin)
+# admin.site.register(EducationHistory, EducationHistoryAdmin)
 # admin.site.register(ProvidedServices, ProvidedServicesAdmin)
-# admin.site.register(Packages, PackagesAdmin)
+admin.site.register(Packages, PackagesAdmin)
 # admin.site.register(InclusionService, InclusionServiceAdmin)
 # admin.site.register(DigitalService, DigitalServiceAdmin)
 # admin.site.register(PSSService, PSSServiceAdmin)
@@ -520,7 +534,7 @@ admin.site.register(EducationProgrammeAssessment, EducationProgrammeAssessmentAd
 # admin.site.register(YouthKitService, YouthKitServiceAdmin)
 # admin.site.register(FollowUpService, FollowUpServiceAdmin)
 admin.site.register(Referral, ReferralAdmin)
-admin.site.register(YouthAssessment, YouthAssessmentAdmin)
+# admin.site.register(YouthAssessment, YouthAssessmentAdmin)
 # admin.site.register(YouthReferral, YouthReferralAdmin)
 # admin.site.register(Recreational, RecreationalAdmin)
 # admin.site.register(Teacher, TeacherAdmin)

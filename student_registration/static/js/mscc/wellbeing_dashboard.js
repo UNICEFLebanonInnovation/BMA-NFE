@@ -33,6 +33,7 @@
 
   function renderPieChart(selector, data) {
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
     const containerWidth = root.node().getBoundingClientRect().width;
     const width = containerWidth, height = 300, radius = Math.min(width, height) / 2 - 40;
@@ -76,8 +77,34 @@
     });
   }
 
+
+  function wrapText(text, width) {
+    text.each(function() {
+      var text = d3.select(this),
+          words = text.text().split(/\s+/).reverse(),
+          word,
+          line = [],
+          lineNumber = 0,
+          lineHeight = 1.1, // ems
+          y = text.attr("y"),
+          dy = parseFloat(text.attr("dy")),
+          tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+      while (word = words.pop()) {
+        line.push(word);
+        tspan.text(line.join(" "));
+        if (tspan.node().getComputedTextLength() > width && line.length > 1) {
+          line.pop();
+          tspan.text(line.join(" "));
+          line = [word];
+          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+        }
+      }
+    });
+  }
+
   function renderBarChart(selector, data, isHorizontal = false) {
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
     const margin = { top: 20, right: 30, bottom: 60, left: 60 };
     const width = root.node().getBoundingClientRect().width - margin.left - margin.right;
@@ -89,15 +116,17 @@
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    const yMin = d3.min(data, d => d.y);
+    const yMax = d3.max(data, d => d.y) || 10;
+
     const x = d3.scaleBand().range([0, width]).domain(data.map(d => d.name)).padding(0.3);
-    const y = d3.scaleLinear().range([height, 0]).domain([0, d3.max(data, d => d.y) || 10]);
+    const y = d3.scaleLinear().range([height, 0]).domain([Math.min(0, yMin), Math.max(0, yMax)]);
 
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(x))
       .selectAll('text')
-      .attr('transform', 'translate(-10,0)rotate(-45)')
-      .style('text-anchor', 'end');
+      .call(wrapText, x.bandwidth());
 
     svg.append('g').call(d3.axisLeft(y).ticks(5));
 
@@ -107,8 +136,8 @@
       .append('rect')
       .attr('x', d => x(d.name))
       .attr('width', x.bandwidth())
-      .attr('y', d => y(d.y))
-      .attr('height', d => height - y(d.y))
+      .attr('y', d => y(Math.max(0, d.y)))
+      .attr('height', d => Math.abs(y(d.y) - y(0)))
       .attr('fill', '#00adef')
       .on("mouseover", function(event, d) {
         tooltip.transition().duration(200).style("opacity", .9);
@@ -119,10 +148,22 @@
       .on("mouseout", function() {
         tooltip.transition().duration(500).style("opacity", 0);
       });
+
+    // Add zero line if there are negative values
+    if (yMin < 0) {
+      svg.append('line')
+        .attr('x1', 0)
+        .attr('x2', width)
+        .attr('y1', y(0))
+        .attr('y2', y(0))
+        .attr('stroke', '#000')
+        .attr('stroke-width', 1);
+    }
   }
 
   function renderImprovementChart(selector, data) {
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
 
     if (!data || data.length === 0) {
@@ -153,8 +194,11 @@
       .rangeRound([0, x0.bandwidth()])
       .padding(0.05);
 
+    const yMin = d3.min(data, d => d.improvement);
+    const yMax = d3.max(data, d => d.improvement) || 20;
+
     const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.improvement) || 20]).nice()
+      .domain([Math.min(0, yMin), Math.max(0, yMax)]).nice()
       .rangeRound([height, 0]);
 
     const color = d3.scaleOrdinal(d3.schemeCategory10).domain(materials);
@@ -168,9 +212,9 @@
       .data(d => data.filter(item => item.programme === d))
       .enter().append('rect')
       .attr('x', d => x1(d.material))
-      .attr('y', d => y(d.improvement))
+      .attr('y', d => y(Math.max(0, d.improvement)))
       .attr('width', x1.bandwidth())
-      .attr('height', d => height - y(d.improvement))
+      .attr('height', d => Math.abs(y(d.improvement) - y(0)))
       .attr('fill', d => color(d.material))
       .on("mouseover", function(event, d) {
         tooltip.transition().duration(200).style("opacity", .9);
@@ -181,6 +225,17 @@
       .on("mouseout", function() {
         tooltip.transition().duration(500).style("opacity", 0);
       });
+
+    // Add zero line if there are negative values
+    if (yMin < 0) {
+      svg.append('line')
+        .attr('x1', 0)
+        .attr('x2', width)
+        .attr('y1', y(0))
+        .attr('y2', y(0))
+        .attr('stroke', '#000')
+        .attr('stroke-width', 1);
+    }
 
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
@@ -203,6 +258,7 @@
 
   function renderPSSIndicators(selector, data) {
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
     const items = [
         { label: 'Caregiver Distress', value: data.caregiver_distress, color: '#ffc107' },
@@ -221,6 +277,7 @@
   function renderGroupedBar(selector, matrix) {
     // For Labor Type & Income
     const root = d3.select(selector);
+    if (!root.node()) return;
     root.selectAll('*').remove();
     // Simplified: show top types
     const types = Array.from(new Set(matrix.map(d => d.type))).slice(0, 5);
@@ -235,10 +292,54 @@
     const data = await fetchData();
 
     // Update KPIs
-    document.getElementById('kpi_avg_attendance').innerText = `${data.kpis.avg_attendance}%`;
-    document.getElementById('kpi_labor_rate').innerText = `${data.kpis.labor_rate}%`;
-    document.getElementById('kpi_avg_improvement').innerText = `${data.kpis.avg_improvement}%`;
-    document.getElementById('kpi_protection_concerns').innerText = `${data.kpis.protection_concerns}%`;
+    const kpiAvgAttendance = document.getElementById('kpi_avg_attendance');
+    if (kpiAvgAttendance) kpiAvgAttendance.innerText = `${data.kpis.avg_attendance}%`;
+
+    const kpiLaborRate = document.getElementById('kpi_labor_rate');
+    if (kpiLaborRate) kpiLaborRate.innerText = `${data.kpis.labor_rate}%`;
+
+    const kpiAvgImprovement = document.getElementById('kpi_avg_improvement');
+    if (kpiAvgImprovement) kpiAvgImprovement.innerText = `${data.kpis.avg_improvement}%`;
+
+    const kpiProtectionConcerns = document.getElementById('kpi_protection_concerns');
+    if (kpiProtectionConcerns) kpiProtectionConcerns.innerText = `${data.kpis.protection_concerns}%`;
+
+    const kpiNfeToFe = document.getElementById('kpi_nfe_to_fe');
+    if (kpiNfeToFe) kpiNfeToFe.innerText = `${data.transitions.nfe_to_fe}`;
+
+    const kpiAvgNfeGrade = document.getElementById('kpi_avg_nfe_grade');
+    if (kpiAvgNfeGrade) kpiAvgNfeGrade.innerText = `${data.transitions.avg_nfe_grade}%`;
+
+    const kpiDropoutRate = document.getElementById('kpi_dropout_rate');
+    if (kpiDropoutRate) kpiDropoutRate.innerText = `${data.transitions.dropout_rate}%`;
+
+    const kpiEligibleForFe = document.getElementById('kpi_eligible_for_fe');
+    if (kpiEligibleForFe) kpiEligibleForFe.innerText = `${data.transitions.eligible_for_fe_count}`;
+
+    // Populate FE Eligible List Modal
+    const feTableBody = document.getElementById('feEligibleTableBody');
+    if (feTableBody) {
+        if (data.transitions.eligible_for_fe_list && data.transitions.eligible_for_fe_list.length > 0) {
+            feTableBody.innerHTML = data.transitions.eligible_for_fe_list.map(child => `
+                <tr>
+                    <td class="align-middle">${child.case_number || 'N/A'}</td>
+                    <td class="align-middle fw-medium">${child.child_name || 'N/A'}</td>
+                    <td class="align-middle text-muted">${child.age !== null ? child.age : '-'}</td>
+                    <td class="align-middle text-end">
+                        <a href="/mscc/child-profile/${child.reg_id}/" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            feTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">No children eligible for Formal Education at this time.</td>
+                </tr>
+            `;
+        }
+    }
 
     // Render Charts
     renderPieChart('#chart_child_labor', data.socio_economic.labor_participation);
@@ -253,6 +354,11 @@
     renderBarChart('#chart_education_status', data.education.status);
     renderImprovementChart('#chart_programme_improvements', data.education.programme_improvements);
 
+    // NFE platforms transition
+    if (document.getElementById('chart_nfe_platforms')) {
+        renderBarChart('#chart_nfe_platforms', data.transitions.nfe_platforms);
+    }
+
     renderBarChart('#chart_barriers', data.impact.barriers);
 
     // Impact: Attendance vs Improvement
@@ -266,13 +372,112 @@
         { name: 'With Labor', y: data.impact.labor_impact_attendance.with_labor },
         { name: 'Without Labor', y: data.impact.labor_impact_attendance.without_labor }
     ]);
+
+    // NEW CORRELATIONS
+    if (document.getElementById('impact_distress_attendance')) {
+        renderBarChart('#impact_distress_attendance', [
+            { name: 'With Distress', y: data.impact.distress_impact_attendance.with_distress },
+            { name: 'Without Distress', y: data.impact.distress_impact_attendance.without_distress }
+        ]);
+    }
+
+    if (document.getElementById('impact_cash_labor')) {
+        renderBarChart('#impact_cash_labor', [
+            { name: 'With Cash Support', y: data.impact.cash_impact_labor.with_cash_support },
+            { name: 'Without Cash Support', y: data.impact.cash_impact_labor.without_cash_support }
+        ]);
+    }
   }
 
-  document.getElementById('applyFilters').addEventListener('click', refresh);
-  document.getElementById('refreshData').addEventListener('click', refresh);
+  const applyFiltersBtn = document.getElementById('applyFilters');
+  if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', refresh);
+
+  const refreshDataBtn = document.getElementById('refreshData');
+  if (refreshDataBtn) refreshDataBtn.addEventListener('click', refresh);
 
   refresh();
 
   window.addEventListener('resize', refresh);
 
+
+  // Handle metric-card clicks
+  document.querySelectorAll('.metric-card').forEach(card => {
+    card.addEventListener('click', async function() {
+      const indicator = this.dataset.indicator;
+      if (!indicator) return;
+
+      const titleMap = {
+          'avg_attendance': 'Avg Attendance Rate',
+          'labor_rate': 'Child Labor Rate',
+          'protection_concerns': 'Protection Concerns',
+          'nfe_to_fe': 'Transition NFE to FE',
+          'avg_nfe_grade': 'Avg NFE Grade Impr.',
+          'dropout_rate': 'Avg Drop Out Rate'
+      };
+
+      const modalTitle = document.getElementById('indicatorChildrenModalLabel');
+      if (modalTitle) modalTitle.innerText = `Children List: ${titleMap[indicator] || indicator}`;
+
+      const tbody = document.getElementById('indicatorChildrenTableBody');
+      if (tbody) {
+          tbody.innerHTML = `
+              <tr>
+                  <td colspan="4" class="text-center py-4 text-muted">
+                      <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                      Loading data...
+                  </td>
+              </tr>
+          `;
+      }
+
+      // Show modal
+      const modalEl = document.getElementById('indicatorChildrenModal');
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+
+      // Fetch data
+      const filters = getFilters();
+      const params = new URLSearchParams();
+      for (const key in filters) {
+        filters[key].forEach(v => params.append(key, v));
+      }
+      params.append('indicator', indicator);
+
+      try {
+          const response = await fetch(`${config.urls.indicator_children_data}?${params.toString()}`);
+          const data = await response.json();
+
+          if (tbody) {
+              if (data.children && data.children.length > 0) {
+                  tbody.innerHTML = data.children.map(child => `
+                      <tr>
+                          <td class="align-middle">${child.case_number || 'N/A'}</td>
+                          <td class="align-middle fw-medium">${child.child_name || 'N/A'}</td>
+                          <td class="align-middle text-muted">${child.age !== null ? child.age : '-'}</td>
+                          <td class="align-middle text-end">
+                              <a href="/mscc/child-profile/${child.reg_id}/" target="_blank" class="btn btn-sm btn-outline-primary">
+                                  <i class="bi bi-eye"></i> View
+                              </a>
+                          </td>
+                      </tr>
+                  `).join('');
+              } else {
+                  tbody.innerHTML = `
+                      <tr>
+                          <td colspan="4" class="text-center py-4 text-muted">No children found for this indicator.</td>
+                      </tr>
+                  `;
+              }
+          }
+      } catch (e) {
+          if (tbody) {
+              tbody.innerHTML = `
+                  <tr>
+                      <td colspan="4" class="text-center py-4 text-danger">Failed to load data.</td>
+                  </tr>
+              `;
+          }
+      }
+    });
+  });
 })();

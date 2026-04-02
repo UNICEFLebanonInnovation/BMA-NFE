@@ -19,16 +19,16 @@ function reorganizeForm()
 {
     var student_age = $('#id_student_age').val();
     var education_status = $('select#id_education_status').val();
-    $('div#div_id_miss_school_date').addClass('d-none');
-    $('#span_miss_school_date').addClass('d-none');
-    $('div#div_id_dropout_program').addClass('d-none');
-    $('#span_dropout_program').addClass('d-none');
+//    $('div#div_id_miss_school_date').addClass('d-none');
+//    $('#span_miss_school_date').addClass('d-none');
+//    $('div#div_id_dropout_program').addClass('d-none');
+//    $('#span_dropout_program').addClass('d-none');
 
     if(education_status != 'out of school'){
-        $('#div_id_miss_school_date').removeClass('d-none');
-        $('#span_miss_school_date').removeClass('d-none');
-        $('div#div_id_dropout_program').removeClass('d-none');
-        $('#span_dropout_program').removeClass('d-none');
+//        $('#div_id_miss_school_date').removeClass('d-none');
+//        $('#span_miss_school_date').removeClass('d-none');
+//        $('div#div_id_dropout_program').removeClass('d-none');
+//        $('#span_dropout_program').removeClass('d-none');
     }
     if (student_age >= 16){
         $('#youth').removeClass('d-none');
