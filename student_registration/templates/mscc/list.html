@@ -28,10 +28,10 @@
         </div>
         <div class="col-md-6 text-md-end">
             <button class="btn btn-sm btn-outline-primary me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
-                <i class="bi bi-funnel me-2"></i> {% trans "Advanced Search" %}
+                <i class="bi bi-funnel me-2"></i> {% trans "Search" %}
             </button>
             <button class="btn btn-sm btn-outline-success me-2 download-report-async" type="button">
-                <i class="bi bi-download me-2"></i> {% trans "Export Data" %}
+                <i class="bi bi-download me-2"></i> {% trans "Export" %}
             </button>
             {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner.id %}
             <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#child-registration-modal">
@@ -69,7 +69,7 @@
 <!-- Advanced Search Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="filterOffcanvas" style="width: 400px;">
     <div class="offcanvas-header border-bottom bg-light">
-        <h5 class="offcanvas-title fw-bold"><i class="bi bi-funnel me-2"></i> {% trans "Advanced Search" %}</h5>
+        <h5 class="offcanvas-title fw-bold"><i class="bi bi-funnel me-2"></i> {% trans "Search" %}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">

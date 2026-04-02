@@ -1504,59 +1504,6 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
 
         # NEW INDICATOR: Eligible for Formal Education
         eligible_for_fe_list = []
-        try:
-            # Optimize DB queries: we need reg.id, child.id, child.first_name, child.last_name, child.unicef_id, reg.child_age, and education programs
-            from django.db.models import Prefetch
-            fe_qs = qs.select_related('child').prefetch_related(
-                Prefetch('education_service', queryset=EducationService.objects.only('education_program', 'registration_id'))
-            ).only('id', 'child__first_name', 'child__last_name', 'child__unicef_id', 'child__birthday_year', 'child__birthday_month', 'child__birthday_day')
-
-            mappings = list(NFEToFEReferralMapping.objects.all())
-
-            for reg in fe_qs:
-                age = reg.child_age
-                allow_fe = False
-                if age is not None:
-                    for edu in reg.education_service.all():
-                        if not edu.education_program:
-                            continue
-                        ep = edu.education_program.upper()
-
-                        if mappings:
-                            for mapping in mappings:
-                                if mapping.education_component.upper() in ep and mapping.min_age <= age <= mapping.max_age:
-                                    if mapping.education_component.upper() == 'BLN' and ('YBLN' in ep or 'ABLN' in ep):
-                                        continue
-                                    allow_fe = True
-                                    break
-                        else:
-                            if 'ECE' in ep and 3 <= age <= 6:
-                                allow_fe = True
-                            elif 'YBLN' in ep and 15 <= age <= 18:
-                                allow_fe = True
-                            elif 'BLN' in ep and 'YBLN' not in ep and 'ABLN' not in ep and 10 <= age <= 14:
-                                allow_fe = True
-                            elif 'ALP' in ep and 7 <= age <= 14:
-                                allow_fe = True
-                            elif 'RS' in ep and 7 <= age <= 15:
-                                allow_fe = True
-                        if allow_fe:
-                            break
-
-                if allow_fe:
-                    child_id = getattr(reg.child, 'unicef_id', 'N/A')
-                    fname = getattr(reg.child, 'first_name', '') or ''
-                    lname = getattr(reg.child, 'last_name', '') or ''
-                    eligible_for_fe_list.append({
-                        'reg_id': reg.id,
-                        'case_number': child_id,
-                        'child_name': f"{fname} {lname}".strip(),
-                        'age': age
-                    })
-        except Exception as e:
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.error(f"Error calculating FE eligibility: {e}")
 
         data = {
             'kpis': {
