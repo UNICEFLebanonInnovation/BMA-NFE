@@ -5,6 +5,14 @@ var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last
 
 var isDuplicateFound = false;
 
+function hideNfeSearchLoader() {
+    $('#nfe_search_loader').addClass('d-none hidden');
+}
+
+function showNfeSearchLoader() {
+    $('#nfe_search_loader').removeClass('d-none hidden');
+}
+
 $(document).ready(function() {
 
     $("#submit-id-save").click(function(e){
@@ -175,6 +183,8 @@ $(document).ready(function() {
       '#id_child_mother_fullname, #id_child_gender, #id_child_birthday_year, ' +
       '#id_child_birthday_month, #id_child_birthday_day, #id_child_nationality',
       function () {
+        hideNfeSearchLoader();
+
         var first_name = $('#id_child_first_name').val();
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
@@ -188,7 +198,7 @@ $(document).ready(function() {
         if (first_name && father_name && last_name && year && month && day) {
 
           $('#search_loader').removeClass('hidden');
-          $('#nfe_search_loader').removeClass('d-none');
+          showNfeSearchLoader();
 
           if (typeof outreach_child_search === 'function') outreach_child_search();
 
@@ -248,6 +258,8 @@ function child_duplication_check() {
     var nationality = $('#id_child_nationality').val();
 
     if (birthday_year && birthday_month && birthday_day && first_name && father_name && last_name && mother_fullname && sex && nationality) {
+        showNfeSearchLoader();
+
         var data = {
             birthday_year: birthday_year,
             birthday_month: birthday_month,
@@ -314,10 +326,14 @@ function child_duplication_check() {
                     $('#child-duplication-error').show();
                     $('#submit-id-save').prop('disabled', true);
                     $('#next-btn').prop('disabled', true);
+                    showNfeSearchLoader();
+                } else {
+                    hideNfeSearchLoader();
                 }
             },
             error: function (response) {
                 console.log(response);
+                hideNfeSearchLoader();
             }
         });
     }
@@ -328,7 +344,7 @@ function append_old_result(data)
 
     var $container = $('#nfe_search_result');
     $container.empty();
-    $('#nfe_search_loader').addClass('d-none');
+    hideNfeSearchLoader();
 
     if(data.result.error) {
         $container.append('<div class="list-group-item text-warning p-3"><i class="bi bi-exclamation-triangle me-2"></i>' + data.result.error + '</div>');
@@ -370,7 +386,7 @@ function append_old_result(data)
 
 function get_old_child_data(student_id)
 {
-    $('#nfe_search_loader').removeClass('hidden');
+    showNfeSearchLoader();
 
     $.ajax({
         url: '/mscc/get-old-child-data/',
@@ -389,7 +405,7 @@ function get_old_child_data(student_id)
 
 function fill_old_child_data(data)
 {
-    $('#nfe_search_loader').addClass('hidden');
+    hideNfeSearchLoader();
     $(data).each(function(i, item) {
         console.log(item);
         {
@@ -398,7 +414,7 @@ function fill_old_child_data(data)
             });
         }
     });
-    $('#nfe_search_loader').addClass('hidden');
+    hideNfeSearchLoader();
 }
 
 function reorganizeForm()
