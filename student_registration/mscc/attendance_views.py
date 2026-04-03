@@ -10,7 +10,6 @@ from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, Q
 from django.utils import timezone
-from django.utils.encoding import force_str
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view, action
 
@@ -68,12 +67,7 @@ def _get_education_program_dict():
     )
     sorted_packages = sorted(set(education_packages))
 
-    if sorted_packages:
-        return OrderedDict((name, name) for name in sorted_packages)
-
-    education_programs = EducationService.EDUCATION_PROGRAM
-    sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
-    return OrderedDict(sorted_education_programs)
+    return OrderedDict((name, name) for name in sorted_packages)
 
 
 def _aggregate_attendance(queryset, *group_fields):
@@ -315,16 +309,14 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
         )
 
         programme_category_lookup, category_order_lookup = _get_programme_lookups()
-        programme_choices = dict(EducationService.EDUCATION_PROGRAM)
         programme_totals = {}
 
         for row in programme_qs:
             programme = row['registration__education_service__education_program'] or 'Unknown'
-            label = programme_choices.get(programme, programme)
             category = programme_category_lookup.get(programme)
 
             if category is None:
-                category = force_str(label) if label else 'Unknown'
+                category = programme or 'Unknown'
 
             key = (category, row['attendance_day__attendance_date'])
             totals = programme_totals.setdefault(key, {'total': 0, 'absent': 0})
@@ -407,16 +399,14 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
         )
 
         programme_category_lookup, category_order_lookup = _get_programme_lookups()
-        programme_choices = dict(EducationService.EDUCATION_PROGRAM)
         programme_monthly_totals = {}
 
         for row in programme_rows:
             programme = row['registration__education_service__education_program'] or 'Unknown'
-            label = programme_choices.get(programme, programme)
             category = programme_category_lookup.get(programme)
 
             if category is None:
-                category = force_str(label) if label else 'Unknown'
+                category = programme or 'Unknown'
 
             month = row['attendance_day__attendance_date__month']
             key = (category, month)
