@@ -312,6 +312,11 @@ class Teacher(TimeStampedModel):
         choices=((x, x) for x in range(0, 30)),
         verbose_name=_('Number of teacher training sessions (attended)')
     )
+    training_date_of_completion = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date of completion of the training')
+    )
     extra_coaching = models.CharField(
         max_length=10,
         blank=True,

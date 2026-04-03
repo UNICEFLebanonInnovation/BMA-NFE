@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.urls import re_path
 
-from . import views, education_view, services_view, attendance_views
+from . import views, education_view, services_view, attendance_views, dashboard_views
 
 app_name = 'mscc'
 
@@ -389,5 +389,15 @@ urlpatterns = [
         r'^wellbeing-indicator-children-data/$',
         view=views.WellbeingIndicatorChildrenDataView.as_view(),
         name='wellbeing_indicator_children_data'
+    ),
+    re_path(
+        r'^teacher-dashboard/$',
+        view=dashboard_views.TeacherDashboardView.as_view(),
+        name='teacher_dashboard'
+    ),
+    re_path(
+        r'^teacher-dashboard-data/$',
+        view=dashboard_views.TeacherDashboardDataView.as_view(),
+        name='teacher_dashboard_data'
     ),
 ]

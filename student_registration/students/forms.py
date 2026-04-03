@@ -191,6 +191,11 @@ class TeacherForm(forms.ModelForm):
         label=_('Number of teacher training sessions (attended)'),
         widget=forms.TextInput, required=False
     )
+    training_date_of_completion = forms.DateField(
+        label=_('Date of completion of the training'),
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False,
+    )
     extra_coaching = forms.ChoiceField(
         label=_('Extra coaching'),
         widget=forms.Select,
@@ -392,12 +397,14 @@ class TeacherForm(forms.ModelForm):
                     Div('trainings', css_class='col-md-3 multiple-choice'),
                     HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('training_sessions_attended', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('training_date_of_completion', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('extra_coaching', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_extra_coaching_specify">16</span>'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_extra_coaching_specify">17</span>'),
                     Div('extra_coaching_specify', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
@@ -611,6 +618,7 @@ class TeacherForm(forms.ModelForm):
             'teaching_hours_dirasa',
             'trainings',
             'training_sessions_attended',
+            'training_date_of_completion',
             'extra_coaching',
             'extra_coaching_specify',
             'attach_short_description_1',
