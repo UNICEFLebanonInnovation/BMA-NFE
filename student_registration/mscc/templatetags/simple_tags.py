@@ -238,12 +238,12 @@ def have_service_category(category, obj):
 @register.simple_tag
 def have_education_programme(programme_type):
     try:
-        programmes = ['BLN Level 1', 'BLN Level 2', 'BLN Level 3','BLN Catch-up' ,'ABLN Level 1', 'ABLN Level 2',
-                      'ABLN Catch-up', 'CBECE Level 1', 'CBECE Level 2', 'CBECE Level 3', 'RS Grade 1', 'RS Grade 2',
-                      'RS Grade 3', 'RS Grade 4', 'RS Grade 5', 'RS Grade 6', 'RS Grade 7', 'RS Grade 8', 'RS Grade 9',
-                      'YFS Level 1 - RS Grade 9', 'YFS Level 2 - RS Grade 9']
-        if programme_type in programmes:
-            return True
+        return (
+            Packages.objects
+            .filter(category='Education', name=programme_type)
+            .values_list('name', flat=True)
+            .first()
+        )
     except Exception as ex:
         return False
 
