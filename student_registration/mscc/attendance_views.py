@@ -16,7 +16,7 @@ from rest_framework.decorators import api_view, action
 
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from student_registration.attendances.serializers import MSCCAttendanceChildSerializer
-from student_registration.mscc.models import EducationService, Round
+from student_registration.mscc.models import EducationService, Packages, Round
 from student_registration.locations.models import Center
 from student_registration.schools.models import PartnerOrganization
 
@@ -24,70 +24,56 @@ from .utils import load_child_attendance, create_attendance
 from student_registration.users.templatetags.custom_tags import has_group
 
 
-SERVICE_PROGRAM_MAPPING = [
-    ('BLN', [
-        'BLN Level 1',
-        'BLN Level 2',
-        'BLN Level 3',
-    ]),
-    ('BLN Catch-up', [
-        'BLN Catch-up',
-    ]),
-    ('CB-ECE', [
-        'CBECE Level 1',
-        'CBECE Level 2',
-        'CBECE Level 3',
-    ]),
-    ('CB-ECE Catch-up', [
-        'CBECE Catch-up',
-    ]),
-    ('ABLN', [
-        'ABLN Level 1',
-        'ABLN Level 2',
-    ]),
-    ('ABLN Catch-up', [
-        'ABLN Catch-up',
-    ]),
-    ('RS', [
-        'RS Grade 1',
-        'RS Grade 2',
-        'RS Grade 3',
-        'RS Grade 4',
-        'RS Grade 5',
-        'RS Grade 6',
-        'RS Grade 7',
-        'RS Grade 8',
-        'RS Grade 9',
-    ]),
-    ('YBLN', [
-        'YBLN Level 1',
-        'YBLN Level 2',
-    ]),
-    ('YBLN Catch-up', [
-        'YBLN Catch-up',
-    ]),
-    ('YFS', [
-        'YFS Level 1',
-        'YFS Level 2',
-    ]),
-    ('ECD', [
-        'ECD',
-    ]),
-    ('RS-YFS', [
-        'YFS Level 1 - RS Grade 9',
-        'YFS Level 2 - RS Grade 9',
-    ]),
-]
+def _get_service_program_mapping():
+    package_rows = (
+        Packages.objects
+        .filter(category='Education')
+        .exclude(type__isnull=True)
+        .exclude(type='')
+        .exclude(name__isnull=True)
+        .exclude(name='')
+        .values_list('type', 'name')
+        .distinct()
+    )
 
-PROGRAMME_CATEGORY_LOOKUP = {
-    programme: category
-    for category, programmes in SERVICE_PROGRAM_MAPPING
-    for programme in programmes
-}
+    grouped = OrderedDict()
+    for package_type, package_name in sorted(package_rows, key=lambda row: (row[0], row[1])):
+        grouped.setdefault(package_type, [])
+        grouped[package_type].append(package_name)
 
-CATEGORY_ORDER_LOOKUP = {
-    category: index for index, (category, _programmes) in enumerate(SERVICE_PROGRAM_MAPPING)
-}
+    return list(grouped.items())
+
+
+def _get_programme_lookups():
+    service_program_mapping = _get_service_program_mapping()
+    programme_category_lookup = {
+        programme: category
+        for category, programmes in service_program_mapping
+        for programme in programmes
+    }
+    category_order_lookup = {
+        category: index for index, (category, _programmes) in enumerate(service_program_mapping)
+    }
+    return programme_category_lookup, category_order_lookup
+
+
+def _get_education_program_dict():
+    education_packages = (
+        Packages.objects
+        .filter(category='Education')
+        .exclude(name__isnull=True)
+        .exclude(name='')
+        .values_list('name', flat=True)
+        .distinct()
+    )
+    sorted_packages = sorted(set(education_packages))
+
+    if sorted_packages:
+        return OrderedDict((name, name) for name in sorted_packages)
+
+    education_programs = EducationService.EDUCATION_PROGRAM
+    sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
+    return OrderedDict(sorted_education_programs)
 
 
 def _aggregate_attendance(queryset, *group_fields):
@@ -145,9 +131,7 @@ class AttendanceView(LoginRequiredMixin,
         close_reason = ''
         round = Round.objects.filter(current_year=True)
 
-        education_programs = EducationService.EDUCATION_PROGRAM
-        sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
-        education_program_dict = OrderedDict(sorted_education_programs)
+        education_program_dict = _get_education_program_dict()
 
         class_sections = EducationService.CLASS_SECTION
         sorted_class_sections = sorted(class_sections, key=lambda x: x[1])
@@ -285,10 +269,7 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
 
         context['rounds'] = Round.objects.filter(current_year=True).all()
 
-        education_programs = EducationService.EDUCATION_PROGRAM
-        sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
-        education_program_dict = OrderedDict(sorted_education_programs)
-        context['education_program'] = education_program_dict
+        context['education_program'] = _get_education_program_dict()
 
         class_sections = EducationService.CLASS_SECTION
         sorted_class_sections = sorted(class_sections, key=lambda x: x[1])
@@ -333,13 +314,14 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
             'registration__education_service__education_program',
         )
 
+        programme_category_lookup, category_order_lookup = _get_programme_lookups()
         programme_choices = dict(EducationService.EDUCATION_PROGRAM)
         programme_totals = {}
 
         for row in programme_qs:
             programme = row['registration__education_service__education_program'] or 'Unknown'
             label = programme_choices.get(programme, programme)
-            category = PROGRAMME_CATEGORY_LOOKUP.get(programme)
+            category = programme_category_lookup.get(programme)
 
             if category is None:
                 category = force_str(label) if label else 'Unknown'
@@ -354,7 +336,7 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
         def _programme_sort_key(item):
             (category, attendance_date), _data = item
             return (
-                CATEGORY_ORDER_LOOKUP.get(category, len(CATEGORY_ORDER_LOOKUP)),
+                category_order_lookup.get(category, len(category_order_lookup)),
                 attendance_date,
             )
 
@@ -424,13 +406,14 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
             'registration__education_service__education_program',
         )
 
+        programme_category_lookup, category_order_lookup = _get_programme_lookups()
         programme_choices = dict(EducationService.EDUCATION_PROGRAM)
         programme_monthly_totals = {}
 
         for row in programme_rows:
             programme = row['registration__education_service__education_program'] or 'Unknown'
             label = programme_choices.get(programme, programme)
-            category = PROGRAMME_CATEGORY_LOOKUP.get(programme)
+            category = programme_category_lookup.get(programme)
 
             if category is None:
                 category = force_str(label) if label else 'Unknown'
@@ -446,7 +429,7 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
         def _category_sort_key(item):
             (category, month), _data = item
             return (
-                CATEGORY_ORDER_LOOKUP.get(category, len(CATEGORY_ORDER_LOOKUP)),
+                category_order_lookup.get(category, len(category_order_lookup)),
                 month,
             )
 
