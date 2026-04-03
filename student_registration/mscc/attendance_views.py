@@ -24,61 +24,6 @@ from .utils import load_child_attendance, create_attendance
 from student_registration.users.templatetags.custom_tags import has_group
 
 
-DEFAULT_SERVICE_PROGRAM_MAPPING = [
-    ('BLN', [
-        'BLN Level 1',
-        'BLN Level 2',
-        'BLN Level 3',
-    ]),
-    ('BLN Catch-up', [
-        'BLN Catch-up',
-    ]),
-    ('CB-ECE', [
-        'CBECE Level 1',
-        'CBECE Level 2',
-        'CBECE Level 3',
-    ]),
-    ('CB-ECE Catch-up', [
-        'CBECE Catch-up',
-    ]),
-    ('ABLN', [
-        'ABLN Level 1',
-        'ABLN Level 2',
-    ]),
-    ('ABLN Catch-up', [
-        'ABLN Catch-up',
-    ]),
-    ('RS', [
-        'RS Grade 1',
-        'RS Grade 2',
-        'RS Grade 3',
-        'RS Grade 4',
-        'RS Grade 5',
-        'RS Grade 6',
-        'RS Grade 7',
-        'RS Grade 8',
-        'RS Grade 9',
-    ]),
-    ('YBLN', [
-        'YBLN Level 1',
-        'YBLN Level 2',
-    ]),
-    ('YBLN Catch-up', [
-        'YBLN Catch-up',
-    ]),
-    ('YFS', [
-        'YFS Level 1',
-        'YFS Level 2',
-    ]),
-    ('ECD', [
-        'ECD',
-    ]),
-    ('RS-YFS', [
-        'YFS Level 1 - RS Grade 9',
-        'YFS Level 2 - RS Grade 9',
-    ]),
-]
-
 def _get_service_program_mapping():
     package_rows = (
         Packages.objects
@@ -90,9 +35,6 @@ def _get_service_program_mapping():
         .values_list('type', 'name')
         .distinct()
     )
-
-    if not package_rows:
-        return DEFAULT_SERVICE_PROGRAM_MAPPING
 
     grouped = OrderedDict()
     for package_type, package_name in sorted(package_rows, key=lambda row: (row[0], row[1])):
