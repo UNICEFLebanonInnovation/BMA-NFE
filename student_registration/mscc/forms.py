@@ -1230,6 +1230,11 @@ class TeacherForm(forms.ModelForm):
         widget=forms.TextInput,
         required=False,
     )
+    training_date_of_completion = forms.DateField(
+        label=_('Date of completion of the training'),
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False,
+    )
     extra_coaching = forms.ChoiceField(
         label=_('Extra coaching'),
         widget=forms.Select,
@@ -1371,6 +1376,7 @@ class TeacherForm(forms.ModelForm):
                 Div(
                     Div('trainings', css_class='col-md-4'),
                     Div('training_sessions_attended', css_class='col-md-4'),
+                    Div('training_date_of_completion', css_class='col-md-4'),
                     css_class='row mb-3'
                 ),
                 Div(
@@ -1484,6 +1490,7 @@ class TeacherForm(forms.ModelForm):
             'teaching_hours_mscc',
             'trainings',
             'training_sessions_attended',
+            'training_date_of_completion',
             'extra_coaching',
             'extra_coaching_specify',
             'attach_short_description_1',
