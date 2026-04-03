@@ -16,7 +16,7 @@ from rest_framework.decorators import api_view, action
 
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from student_registration.attendances.serializers import MSCCAttendanceChildSerializer
-from student_registration.mscc.models import EducationService, Round
+from student_registration.mscc.models import EducationService, Packages, Round
 from student_registration.locations.models import Center
 from student_registration.schools.models import PartnerOrganization
 
@@ -90,6 +90,25 @@ CATEGORY_ORDER_LOOKUP = {
 }
 
 
+def _get_education_program_dict():
+    education_packages = (
+        Packages.objects
+        .filter(category='Education')
+        .exclude(name__isnull=True)
+        .exclude(name='')
+        .values_list('name', flat=True)
+        .distinct()
+    )
+    sorted_packages = sorted(set(education_packages))
+
+    if sorted_packages:
+        return OrderedDict((name, name) for name in sorted_packages)
+
+    education_programs = EducationService.EDUCATION_PROGRAM
+    sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
+    return OrderedDict(sorted_education_programs)
+
+
 def _aggregate_attendance(queryset, *group_fields):
     """Aggregate attendance counts for the provided ``group_fields``.
 
@@ -145,9 +164,7 @@ class AttendanceView(LoginRequiredMixin,
         close_reason = ''
         round = Round.objects.filter(current_year=True)
 
-        education_programs = EducationService.EDUCATION_PROGRAM
-        sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
-        education_program_dict = OrderedDict(sorted_education_programs)
+        education_program_dict = _get_education_program_dict()
 
         class_sections = EducationService.CLASS_SECTION
         sorted_class_sections = sorted(class_sections, key=lambda x: x[1])
@@ -285,10 +302,7 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
 
         context['rounds'] = Round.objects.filter(current_year=True).all()
 
-        education_programs = EducationService.EDUCATION_PROGRAM
-        sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
-        education_program_dict = OrderedDict(sorted_education_programs)
-        context['education_program'] = education_program_dict
+        context['education_program'] = _get_education_program_dict()
 
         class_sections = EducationService.CLASS_SECTION
         sorted_class_sections = sorted(class_sections, key=lambda x: x[1])
