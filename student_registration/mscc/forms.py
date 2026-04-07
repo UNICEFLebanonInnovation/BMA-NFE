@@ -35,6 +35,7 @@ from .models import (
 from student_registration.schools.models import (
     School
 )
+from django.core.validators import RegexValidator
 from .serializers import MainSerializer
 from student_registration.mscc.templatetags.simple_tags import get_service, get_education_service
 import datetime
@@ -46,34 +47,37 @@ UNHCR_RECORDED_REGEX = re.compile(r'^((245|380|568|705|781|909|947|954|LEB|LB1|L
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
 DAYS.insert(0, ('', '---------'))
-
+only_letters_validator = RegexValidator(
+    regex=r'^[A-Za-z\u0621-\u064A\u066E-\u06D3\s]+$',
+    message=_('Only alphabetic characters are allowed.')
+)
 
 class MainForm(forms.ModelForm):
     # YEARS = list(((str(x), x) for x in range(Child.CURRENT_YEAR - 20, Child.CURRENT_YEAR + 1)))
     YEARS = list(((str(x), x) for x in range(1990, Child.CURRENT_YEAR + 1)))
     YEARS.insert(0, ('', '---------'))
 
-    # center = forms.ModelChoiceField(
-    #     queryset=Center.objects.all(), widget=forms.Select,
-    #     label=_('Center'),
-    #     empty_label='-------',
-    #     required=True, to_field_name='id',
-    # )
     child_first_name = forms.CharField(
         label=_("Child\'s First Name"),
-        widget=forms.TextInput(attrs={'placeholder': _('مثال: محمد')}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _('مثال: محمد'),
+        'oninput': "this.value = this.value.replace(/[^A-Za-z\\u0621-\\u064A\\u066E-\\u06D3\\s]/g, '')"}), required=True ,validators=[only_letters_validator]
     )
     child_father_name = forms.CharField(
         label=_("Child\'s Father Name"),
-        widget=forms.TextInput(attrs={'placeholder': _('مثال: أحمد')}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _('مثال: أحمد'),
+        'oninput': "this.value = this.value.replace(/[^A-Za-z\\u0621-\\u064A\\u066E-\\u06D3\\s]/g, '')"}), required=True
+        ,validators=[only_letters_validator]
+
     )
     child_last_name = forms.CharField(
         label=_("Child\'s Family Name"),
-        widget=forms.TextInput(attrs={'placeholder': _('مثال: السيد')}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _('مثال: السيد'),
+        'oninput': "this.value = this.value.replace(/[^A-Za-z\\u0621-\\u064A\\u066E-\\u06D3\\s]/g, '')"}), required=True,validators=[only_letters_validator]
     )
     child_mother_fullname = forms.CharField(
         label=_("Mother Full Name"),
-        widget=forms.TextInput(attrs={'placeholder': _('مثال: الهام')}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _('مثال: الهام'),
+        'oninput': "this.value = this.value.replace(/[^A-Za-z\\u0621-\\u064A\\u066E-\\u06D3\\s]/g, '')"}), required=True,validators=[only_letters_validator]
     )
     child_gender = forms.ChoiceField(
         label=_("Child\'s Gender"),
@@ -87,7 +91,8 @@ class MainForm(forms.ModelForm):
     )
     child_nationality_other = forms.CharField(
         label=_('If Other, Please specify'),
-        widget=forms.TextInput(attrs={'placeholder': _('Specify other nationality')}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _('Specify other nationality'),
+        'oninput': "this.value = this.value.replace(/[^A-Za-z\\u0621-\\u064A\\u066E-\\u06D3\\s]/g, '')"}), required=False,validators=[only_letters_validator]
     )
     child_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -111,7 +116,7 @@ class MainForm(forms.ModelForm):
     )
     main_caregiver_nationality_other = forms.CharField(
         label=_('If Other, Please specify'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=False,validators=[only_letters_validator]
     )
     child_p_code = forms.CharField(
         label=_('Insert Pcode if the child lives in Internal Settlement/Camp'),
@@ -122,6 +127,7 @@ class MainForm(forms.ModelForm):
     child_address = forms.CharField(
         label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
         widget=forms.TextInput(attrs={'placeholder': _('e.g. Beirut, Hamra Street, Al Amal Bldg, Floor 2')}), required=False
+        ,validators=[only_letters_validator]
     )
     child_living_arrangement = forms.ChoiceField(
         label=_("Living Arrangement"),
@@ -183,7 +189,7 @@ class MainForm(forms.ModelForm):
     )
     source_of_identification_specify = forms.CharField(
         label=_('If Other, Please specify'),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. Community outreach team')}), required=False
+        widget=forms.TextInput(attrs={'placeholder': _('e.g. Community outreach team')}), required=False,validators=[only_letters_validator]
     )
     cash_support_programmes = forms.MultipleChoiceField(
         label=_('Cash support programmes that the child is already benefiting from'),
@@ -192,12 +198,7 @@ class MainForm(forms.ModelForm):
         required=True,
         initial=['None'],
     )
-    # mscc_packages = forms.MultipleChoiceField(
-    #     label=_('Packages received/to be provided to child under NFR Sector'),
-    #     choices=Registration.MSCC_PACKAGES,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
+
     father_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
         label=_('What is the father\'s educational level?'),
@@ -254,7 +255,7 @@ class MainForm(forms.ModelForm):
     )
     main_caregiver_other = forms.CharField(
         label=_('If Other, Please specify'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=False,validators=[only_letters_validator]
     )
     children_number_under18 = forms.IntegerField(
         label=_('Number of children under 18'),
@@ -265,19 +266,21 @@ class MainForm(forms.ModelForm):
     )
     caregiver_first_name = forms.CharField(
         label=_("Caregiver First Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's first name")}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's first name"),
+        'oninput': "this.value = this.value.replace(/[^A-Za-z\\u0621-\\u064A\\u066E-\\u06D3\\s]/g, '')"}), required=True,validators=[only_letters_validator]
     )
     caregiver_middle_name = forms.CharField(
         label=_("Caregiver Middle Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's father's name")}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's father's name")}), required=True,validators=[only_letters_validator]
     )
     caregiver_last_name = forms.CharField(
         label=_("Caregiver Last Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's family name")}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _("Caregiver's family name")}), required=True,validators=[only_letters_validator]
     )
     caregiver_mother_name = forms.CharField(
         label=_("Caregiver Mother Full Name"),
-        widget=forms.TextInput(attrs={'placeholder': _("Full name of the caregiver's mother")}), required=True
+        widget=forms.TextInput(attrs={'placeholder': _("Full name of the caregiver's mother"),
+        'oninput': "this.value = this.value.replace(/[^A-Za-z\\u0621-\\u064A\\u066E-\\u06D3\\s]/g, '')"}), required=True,validators=[only_letters_validator]
     )
     have_labour = forms.ChoiceField(
         label=_('Does the child participate in work?'),
