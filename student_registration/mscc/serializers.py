@@ -289,6 +289,7 @@ class TeacherSerializer(serializers.ModelSerializer):
             'registration_level',
             'teacher_assignment',
             'teaching_hours_private_school',
+            'training_date_of_completion',
             'teaching_hours_mscc',
             'trainings',
             'training_sessions_attended',

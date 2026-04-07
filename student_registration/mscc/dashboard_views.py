@@ -43,6 +43,7 @@ class TeacherDashboardView(LoginRequiredMixin, TemplateView):
             'rounds': rounds,
         }
 
+
 class TeacherDashboardDataView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
