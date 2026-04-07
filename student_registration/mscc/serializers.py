@@ -292,6 +292,7 @@ class TeacherSerializer(serializers.ModelSerializer):
             'teaching_hours_mscc',
             'trainings',
             'training_sessions_attended',
+            'training_date_of_completion',
             'extra_coaching',
             'extra_coaching_specify',
             'attach_short_description_1',
