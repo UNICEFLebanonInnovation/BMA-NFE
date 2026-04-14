@@ -261,7 +261,7 @@ function child_duplication_check() {
         };
 
         var path = window.location.pathname;
-        var match = path.match(/Child-Edit\/([^\/]+)\//);
+        var match = path.match(/child-edit\/([^\/]+)\//i);
         if (match) {
             data.registration_id = match[1];
         }
