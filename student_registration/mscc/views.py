@@ -773,7 +773,11 @@ def child_duplication_check(request):
                 deleted=False
             )
             if registration_id:
-                qs = qs.exclude(pk=registration_id)
+                try:
+                    current_reg = Registration.objects.get(pk=registration_id)
+                    qs = qs.exclude(child_id=current_reg.child_id)
+                except Registration.DoesNotExist:
+                    qs = qs.exclude(pk=registration_id)
             qs = qs.values(
                 'id',
                 'center__name',
