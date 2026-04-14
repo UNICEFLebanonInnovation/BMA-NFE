@@ -236,9 +236,6 @@
        return Highcharts.chart(container, {
            chart: {
                type: 'column',
-                 margin:80,
-               marginBottom:100,
-
            },
            title: {
                text: '',
@@ -311,8 +308,6 @@
        return Highcharts.chart(container, {
            chart: {
                type: 'column',
-               margin:80,
-               marginBottom:100,
            },
            title: {
                text: '',
