@@ -137,7 +137,7 @@
                                             <h6 class="card-title text-primary"><i class="bi bi-camera me-2"></i> {% trans "Auto-fill with ID Document (OCR)" %}</h6>
                                             <p class="card-text small text-muted">Upload an image of an ID card or passport to automatically fill in the basic details.</p>
                                             <div class="input-group">
-                                                <input type="file" class="form-control" id="ocrDocument" accept="image/*">
+                                                <input type="file" class="form-control" id="ocrDocument" accept="image/*" capture="environment">
                                                 <button class="btn btn-primary" type="button" id="btnProcessOcr">
                                                     <i class="bi bi-magic me-1"></i> {% trans "Extract Data" %}
                                                 </button>
