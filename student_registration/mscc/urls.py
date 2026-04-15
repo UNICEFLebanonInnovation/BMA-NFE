@@ -401,3 +401,7 @@ urlpatterns = [
         name='teacher_dashboard_data'
     ),
 ]
+
+# Add OCR endpoint
+from .ocr_view import process_ocr
+urlpatterns.append(re_path(r'^ocr/process/$', view=process_ocr, name='ocr_process'))

@@ -129,6 +129,25 @@
                         <!-- Step 1: Child Information -->
                         <div class="step-content active" id="step-1">
                             <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "1. Basic Identity Information" %}</h5>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-12">
+                                    <div class="card bg-light border-primary mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-primary"><i class="bi bi-camera me-2"></i> {% trans "Auto-fill with ID Document (OCR)" %}</h6>
+                                            <p class="card-text small text-muted">Upload an image of an ID card or passport to automatically fill in the basic details.</p>
+                                            <div class="input-group">
+                                                <input type="file" class="form-control" id="ocrDocument" accept="image/*">
+                                                <button class="btn btn-primary" type="button" id="btnProcessOcr">
+                                                    <i class="bi bi-magic me-1"></i> {% trans "Extract Data" %}
+                                                </button>
+                                            </div>
+                                            <div id="ocrStatus" class="mt-2 small d-none"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row g-3">
                                 <div class="col-md-4">{{ form.child_first_name|as_crispy_field }}</div>
                                 <div class="col-md-4">{{ form.child_father_name|as_crispy_field }}</div>
@@ -420,7 +439,7 @@
                 scrollTop: $('#id_id_type').offset().top - 150
             }, 200);
 
-            return; 
+            return;
         } else {
             $('#id_id_type').removeClass('is-invalid');
         }
@@ -517,5 +536,91 @@ $(function () {
     // Run on change
     $haveChildren.on('change', toggleChildrenField);
 });
+
+    // OCR Processing Logic
+    $('#btnProcessOcr').on('click', function() {
+        var fileInput = document.getElementById('ocrDocument');
+        var file = fileInput.files[0];
+
+        if (!file) {
+            $('#ocrStatus').removeClass('d-none text-success text-info').addClass('text-danger').text('{% trans "Please select an image file first." %}');
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('document', file);
+
+        var $btn = $(this);
+        var originalText = $btn.html();
+        $btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {% trans "Processing..." %}').prop('disabled', true);
+        $('#ocrStatus').removeClass('d-none text-danger text-success').addClass('text-info').text('{% trans "Uploading and extracting data..." %}');
+
+        $.ajax({
+            url: "{% url 'mscc:ocr_process' %}",
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success && response.data) {
+                    var data = response.data;
+                    var filledFields = [];
+
+                    if (data.first_name) {
+                        $('#id_child_first_name').val(data.first_name);
+                        filledFields.push('First Name');
+                    }
+                    if (data.last_name) {
+                        $('#id_child_last_name').val(data.last_name);
+                        filledFields.push('Last Name');
+                    }
+                    if (data.father_name) {
+                        $('#id_child_father_name').val(data.father_name);
+                        filledFields.push('Father Name');
+                    }
+                    if (data.mother_fullname) {
+                        $('#id_child_mother_fullname').val(data.mother_fullname);
+                        filledFields.push('Mother Full Name');
+                    }
+                    if (data.dob) {
+                        // Attempt to parse DOB into year, month, day assuming format is DD/MM/YYYY or YYYY/MM/DD
+                        var parts = data.dob.split(/[-/.]/);
+                        if (parts.length === 3) {
+                            var y, m, d;
+                            if (parts[0].length === 4) {
+                                y = parts[0]; m = parts[1]; d = parts[2];
+                            } else {
+                                d = parts[0]; m = parts[1]; y = parts[2];
+                            }
+
+                            // strip leading zeros for dropdowns
+                            d = parseInt(d, 10).toString();
+                            m = parseInt(m, 10).toString();
+
+                            $('#id_child_birthday_year').val(y).trigger('change');
+                            $('#id_child_birthday_month').val(m).trigger('change');
+                            $('#id_child_birthday_day').val(d).trigger('change');
+                            filledFields.push('Date of Birth');
+                        }
+                    }
+
+                    if (filledFields.length > 0) {
+                        $('#ocrStatus').removeClass('text-info text-danger').addClass('text-success').html('{% trans "Successfully extracted:" %} ' + filledFields.join(', '));
+                    } else {
+                        $('#ocrStatus').removeClass('text-info text-success').addClass('text-warning').html('{% trans "Could not find valid fields in the image." %}');
+                    }
+                } else {
+                    $('#ocrStatus').removeClass('text-info text-success').addClass('text-danger').text(response.error || '{% trans "Failed to extract data." %}');
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#ocrStatus').removeClass('text-info text-success').addClass('text-danger').text('{% trans "An error occurred during OCR processing." %}');
+            },
+            complete: function() {
+                $btn.html(originalText).prop('disabled', false);
+            }
+        });
+    });
+
 </script>
 {% endblock %}
