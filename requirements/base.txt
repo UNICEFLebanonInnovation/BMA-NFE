@@ -96,3 +96,6 @@ firebase-admin==6.8.0
 grpcio==1.65.5
 azure-monitor-opentelemetry==1.8.1
 bleach==6.3.0
+
+# OCR processing
+pytesseract==0.3.13

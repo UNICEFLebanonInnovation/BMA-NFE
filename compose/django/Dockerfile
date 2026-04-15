@@ -8,6 +8,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
         libpq-dev \
+        tesseract-ocr \
+        tesseract-ocr-ara \
         curl && \
     apt-get install -y --no-install-recommends \
         openssh-server --option=Dpkg::Options::="--force-confdef" \
