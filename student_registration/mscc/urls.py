@@ -4,6 +4,9 @@ from django.urls import re_path
 
 from . import views, education_view, services_view, attendance_views, dashboard_views
 
+# Add OCR endpoint
+from .ocr_view import process_ocr
+
 app_name = 'mscc'
 
 urlpatterns = [
@@ -400,8 +403,9 @@ urlpatterns = [
         view=dashboard_views.TeacherDashboardDataView.as_view(),
         name='teacher_dashboard_data'
     ),
+    re_path(
+        r'^ocr/process/$',
+        view=process_ocr,
+        name='ocr_process'
+    )
 ]
-
-# Add OCR endpoint
-from .ocr_view import process_ocr
-urlpatterns.append(re_path(r'^ocr/process/$', view=process_ocr, name='ocr_process'))
