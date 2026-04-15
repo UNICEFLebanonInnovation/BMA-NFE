@@ -65,6 +65,15 @@ def process_ocr(request):
             {'success': False, 'error': 'Unsupported document format. Please upload an image file.'},
             status=400
         )
+    except pytesseract.TesseractNotFoundError:
+        logger.exception('OCR processing failed because the Tesseract binary is not installed or not on PATH.')
+        return JsonResponse(
+            {
+                'success': False,
+                'error': 'OCR engine is not configured on the server. Please contact support.'
+            },
+            status=503
+        )
     except pytesseract.TesseractError:
         logger.exception('OCR processing failed due to a Tesseract runtime error.')
         return JsonResponse(
