@@ -27,6 +27,18 @@ For Ministry operations teams, two documents provide explicit deployment and sup
 
 A third document, ``docs/deployment.md``, has been added to provide a more detailed guide for deploying and maintaining the project. This includes comprehensive instructions on environment setup, database configuration, and running the application in a production environment. This new document consolidates and clarifies the deployment process, making it easier for new developers to get started.
 
+System Requirements (Local Development without Docker)
+------------------------------------------------------
+
+If you are running the application locally without Docker, you must ensure that all system-level dependencies are installed on your host machine.
+
+For the OCR (Optical Character Recognition) features to work (e.g., at `/mscc/ocr/process/`), you **must** install Tesseract and the Arabic language pack:
+
+*   **Ubuntu/Debian:**
+    ``sudo apt-get install tesseract-ocr tesseract-ocr-ara``
+*   **macOS (using Homebrew):**
+    ``brew install tesseract tesseract-lang`` (Note: macOS `tesseract-lang` includes Arabic)
+
 Settings
 --------
 
