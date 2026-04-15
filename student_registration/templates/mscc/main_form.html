@@ -614,7 +614,11 @@ $(function () {
                 }
             },
             error: function(xhr, status, error) {
-                $('#ocrStatus').removeClass('text-info text-success').addClass('text-danger').text('{% trans "An error occurred during OCR processing." %}');
+                var errorMessage = '{% trans "An error occurred during OCR processing." %}';
+                if (xhr && xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                }
+                $('#ocrStatus').removeClass('text-info text-success').addClass('text-danger').text(errorMessage);
             },
             complete: function() {
                 $btn.html(originalText).prop('disabled', false);
