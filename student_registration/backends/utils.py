@@ -133,12 +133,14 @@ def send_push_to_web(user, title, body, data=None):
     if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
 
-    try:
-        token_obj = WebPushToken.objects.get(user=user)
-    except WebPushToken.DoesNotExist:
-        logger.exception("Error Sending Push notifications")
+    tokens = list(WebPushToken.objects.filter(user=user).values_list("token", flat=True))
+    if not tokens:
+        logger.warning("No WebPushTokens found for user %s", user)
         return False
-    message = messaging.Message(
+
+    payload_data = {str(k): str(v) for k, v in (data or {}).items()}
+
+    message = messaging.MulticastMessage(
         notification=messaging.Notification(
             title=title,
             body=body,
@@ -151,7 +153,12 @@ def send_push_to_web(user, title, body, data=None):
                 icon="/static/images/logo.png",
             ),
         ),
-        token=token_obj.token,
-        data=data or {},
+        tokens=tokens,
+        data=payload_data,
     )
-    return messaging.send(message)
+    try:
+        response = messaging.send_multicast(message)
+        return response.success_count > 0
+    except Exception as e:
+        logger.exception("Error Sending Push notifications: %s", e)
+        return False
