@@ -479,3 +479,4 @@ UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='!ct-ph0n3t!cs-24
 # FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
 # cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
 # firebase_app = firebase_admin.initialize_app(cred)
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
