@@ -92,6 +92,7 @@ class DiagnosticAssessmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        self.registry_id = kwargs.get('registry', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
 
@@ -289,6 +290,7 @@ class EducationAssessmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        self.registry_id = kwargs.get('registry', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
 
@@ -487,6 +489,7 @@ class EducationServiceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        self.registry_id = kwargs.get('registry', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
 
@@ -551,7 +554,8 @@ class EducationServiceForm(forms.ModelForm):
         display_edu_section = ''
 
         if registry:
-            child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()
+            registration_obj = Registration.objects.filter(id=registry).values('child_id', 'partner_id').first()
+            child_id = registration_obj['child_id'] if registration_obj else None
 
             if instance:
                 try:
@@ -579,15 +583,25 @@ class EducationServiceForm(forms.ModelForm):
             # Remove any None values
             rounds_registered = [r for r in rounds_registered if r is not None]
 
-            #  rounds for current_year, excluding already registered and including current round.
+            today = date.today()
+
+            base_rounds_qs = Round.objects.filter(current_year=True)
+
+            # The filter condition for active partner rounds
+            partner_filter = Q()
+            if registration_obj and registration_obj['partner_id']:
+                partner_filter = Q(
+                    partner_rounds__partner_id=registration_obj['partner_id'],
+                    partner_rounds__start_date__lte=today
+                ) & (Q(partner_rounds__end_date__gte=today) | Q(partner_rounds__end_date__isnull=True))
+
+            # rounds for current_year, excluding already registered and including current round.
             if current_round_id:
-                available_rounds = Round.objects.filter(
-                    Q(current_year=True) & (
-                        ~Q(id__in=rounds_registered) | Q(id=current_round_id)
-                    )
-                )
+                available_rounds = base_rounds_qs.filter(
+                    (~Q(id__in=rounds_registered) & partner_filter) | Q(id=current_round_id)
+                ).distinct()
             else:
-                available_rounds = Round.objects.filter(current_year=True).exclude(id__in=rounds_registered)
+                available_rounds = base_rounds_qs.filter(partner_filter).exclude(id__in=rounds_registered).distinct()
 
             self.fields['round'].queryset = available_rounds
 
@@ -688,6 +702,7 @@ class EducationServiceForm(forms.ModelForm):
         registration_date = cleaned_data.get("registration_date")
         dropout_date = cleaned_data.get("dropout_date")
         education_status = cleaned_data.get("education_status")
+        round_obj = cleaned_data.get("round")
 
         if not class_section:
             self.add_error("class_section", "This field is required")
@@ -708,6 +723,18 @@ class EducationServiceForm(forms.ModelForm):
                 validate_date(registration_date)
             except ValidationError as e:
                 self.add_error("registration_date", str(e))
+
+        if round_obj and registration_date:
+            registry_id = getattr(self, 'registry_id', None) or self.data.get('registration_id')
+            if registry_id:
+                registration_obj = Registration.objects.filter(id=registry_id).values('partner_id').first()
+                if registration_obj and registration_obj['partner_id']:
+                    round_partner = round_obj.partner_rounds.filter(partner_id=registration_obj['partner_id']).first()
+                    if round_partner:
+                        if round_partner.start_date and registration_date < round_partner.start_date:
+                            self.add_error("registration_date", f"Registration date cannot be before round start date ({round_partner.start_date}).")
+                        if round_partner.end_date and registration_date > round_partner.end_date:
+                            self.add_error("registration_date", f"Registration date cannot be after round end date ({round_partner.end_date}).")
 
         if education_status == 'Currently registered in Formal Education school but not attending' and not dropout_date:
             self.add_error('dropout_date', 'This field is required')
