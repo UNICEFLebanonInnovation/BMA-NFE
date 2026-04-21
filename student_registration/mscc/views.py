@@ -105,7 +105,7 @@ def chart_data(request):
     metric = request.GET.get('chart', 'nationality')
     qs = Registration.objects.filter(deleted=False)
 
-    if not (user.is_superuser or user.is_staff):
+    if not user.is_superuser:
         if user.partner_id:
             qs = qs.filter(partner_id=user.partner_id)
         if user.center_id:
@@ -223,7 +223,7 @@ class DashboardView(LoginRequiredMixin,
         partners = PartnerOrganization.objects.all()
         rounds = Round.objects.all()
 
-        if not (user.is_superuser or user.is_staff):
+        if not user.is_superuser:
             if user.partner_id:
                 instances = instances.filter(partner_id=user.partner_id)
                 centers = centers.filter(partner_id=user.partner_id)
@@ -266,7 +266,7 @@ class DashboardCustomView(LoginRequiredMixin,
         partners = PartnerOrganization.objects.all()
         rounds = Round.objects.all()
 
-        if not (user.is_superuser or user.is_staff):
+        if not user.is_superuser:
             if user.partner_id:
                 instances = instances.filter(partner_id=user.partner_id)
                 centers = centers.filter(partner_id=user.partner_id)
@@ -325,7 +325,7 @@ class DashboardDataView(LoginRequiredMixin, View):
 
         qs = Registration.objects.filter(deleted=False)
 
-        if not (user.is_superuser or user.is_staff):
+        if not user.is_superuser:
             if user.partner_id:
                 qs = qs.filter(partner_id=user.partner_id)
             if user.center_id:
@@ -1145,7 +1145,7 @@ class WellbeingDashboardView(LoginRequiredMixin, TemplateView):
         partners = PartnerOrganization.objects.all()
         rounds = Round.objects.all()
 
-        if not (user.is_superuser or user.is_staff):
+        if not user.is_superuser:
             if user.partner_id:
                 centers = centers.filter(partner_id=user.partner_id)
                 partners = partners.filter(id=user.partner_id)
@@ -1165,7 +1165,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
         user = request.user
         qs = Registration.objects.filter(deleted=False)
 
-        if not (user.is_superuser or user.is_staff):
+        if not user.is_superuser:
             if user.partner_id:
                 qs = qs.filter(partner_id=user.partner_id)
             if user.center_id:
@@ -1558,7 +1558,7 @@ class WellbeingIndicatorChildrenDataView(LoginRequiredMixin, View):
         user = request.user
         qs = Registration.objects.filter(deleted=False)
 
-        if not (user.is_superuser or user.is_staff):
+        if not user.is_superuser:
             if user.partner_id:
                 qs = qs.filter(partner_id=user.partner_id)
             if user.center_id:
