@@ -26,7 +26,8 @@ from .models import (
     EducationRSService,
     EducationProgrammeAssessment,
     YES_NO,
-    Round
+    Round,
+    RoundPartner,
 )
 from student_registration.schools.models import (
     School,
@@ -485,10 +486,22 @@ class EducationServiceForm(forms.ModelForm):
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
+    @staticmethod
+    def _get_user_partner_id(user):
+        """Return the partner id associated with the current user context."""
+        if not user:
+            return None
+        if getattr(user, 'partner_id', None):
+            return user.partner_id
+        if getattr(user, 'center', None) and getattr(user.center, 'partner_id', None):
+            return user.center.partner_id
+        return None
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
+        self.partner_round_windows = {}
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
         self.fields['class_section'].required = True
@@ -588,6 +601,21 @@ class EducationServiceForm(forms.ModelForm):
                 )
             else:
                 available_rounds = Round.objects.filter(current_year=True).exclude(id__in=rounds_registered)
+
+            partner_id = self._get_user_partner_id(getattr(self.request, 'user', None))
+            if partner_id:
+                round_partner_windows = RoundPartner.objects.filter(
+                    partner_id=partner_id,
+                    round_id__in=available_rounds.values_list('id', flat=True)
+                )
+                available_round_ids = set(round_partner_windows.values_list('round_id', flat=True))
+                if current_round_id:
+                    available_round_ids.add(current_round_id)
+                available_rounds = available_rounds.filter(id__in=available_round_ids)
+                self.partner_round_windows = {
+                    window.round_id: (window.start_date, window.end_date)
+                    for window in round_partner_windows
+                }
 
             self.fields['round'].queryset = available_rounds
 
@@ -711,6 +739,37 @@ class EducationServiceForm(forms.ModelForm):
 
         if education_status == 'Currently registered in Formal Education school but not attending' and not dropout_date:
             self.add_error('dropout_date', 'This field is required')
+
+        selected_round = cleaned_data.get("round")
+        if selected_round and registration_date:
+            if not self.partner_round_windows:
+                partner_id = self._get_user_partner_id(getattr(self.request, 'user', None))
+                if partner_id:
+                    round_window = RoundPartner.objects.filter(
+                        partner_id=partner_id,
+                        round_id=selected_round.id
+                    ).first()
+                    if round_window:
+                        self.partner_round_windows[selected_round.id] = (
+                            round_window.start_date,
+                            round_window.end_date
+                        )
+
+            start_date, end_date = self.partner_round_windows.get(selected_round.id, (None, None))
+            if start_date and registration_date < start_date:
+                self.add_error(
+                    "registration_date",
+                    _("Registration date must be on or after %(start_date)s for the selected round.") % {
+                        "start_date": start_date
+                    }
+                )
+            if end_date and registration_date > end_date:
+                self.add_error(
+                    "registration_date",
+                    _("Registration date must be on or before %(end_date)s for the selected round.") % {
+                        "end_date": end_date
+                    }
+                )
 
         return cleaned_data
 
