@@ -36,7 +36,17 @@
 
 <div class="row">
 
-  <iframe title="NFR Sector - 2025 - V2" width="95%" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiOTExNDAyZjUtN2NhNS00MTBiLWE2MWMtMzVmMDBiYTE4NTQ1IiwidCI6Ijc3NDEwMTk1LTE0ZTEtNGZiOC05MDRiLWFiMTg5MjAyMzY2NyIsImMiOjh9" frameborder="0" allowFullScreen="true"></iframe>
+  {% if dashboard_url %}
+  <iframe title="Dashboard" width="95%" height="600" src="{{ dashboard_url }}" frameborder="0" allowFullScreen="true"></iframe>
+  {% else %}
+  <div class="alert alert-info">
+      {% if request.user.partner_id %}
+      {% trans "No dashboard available for your account. Please contact an administrator." %}
+      {% else %}
+      {% trans "You do not have access to view this dashboard." %}
+      {% endif %}
+  </div>
+  {% endif %}
 
 </div>
 

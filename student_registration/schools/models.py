@@ -724,6 +724,12 @@ class PartnerOrganization(models.Model):
         null=True,
         verbose_name=_('Program Manager Focal Point Email')
     )
+    dashboard_url = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Dashboard URL')
+    )
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
