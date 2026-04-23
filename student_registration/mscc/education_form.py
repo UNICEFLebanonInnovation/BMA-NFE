@@ -33,7 +33,6 @@ from student_registration.schools.models import (
 )
 from .utils import update_child_attendance
 
-
 class DiagnosticAssessmentForm(forms.ModelForm):
     # Pre Test
     pre_attended_arabic = forms.ChoiceField(
@@ -487,52 +486,33 @@ class EducationServiceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
-        registry = kwargs.pop('registry', None)
+        self.registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
+
         self.fields['class_section'].required = True
         self.fields['registration_date'].required = True
 
         self.fields['class_section'].widget.attrs['required'] = 'required'
         self.fields['registration_date'].widget.attrs['required'] = 'required'
         self.fields['registration_date'].widget.attrs['max'] = date.today().strftime('%Y-%m-%d')
-        self.fields['registration_id'].initial = registry
+
+        if self.registry:
+            self.fields['registration_id'].initial = self.registry
+
         self.fields['class_section'].label = _("Class Section *")
         self.fields['registration_date'].label = _("Date of registration in the round *")
-        choices = list()
-        # choices.append(('BLN Level 1', _('BLN Level 1')))
-        # choices.append(('BLN Level 2', _('BLN Level 2')))
-        # choices.append(('BLN Level 3', _('BLN Level 3')))
-        # choices.append(('BLN Catch-up', _('BLN Catch-up')))
-        # choices.append(('CBECE Level 1', _('CBECE Level 1')))
-        # choices.append(('CBECE Level 2', _('CBECE Level 2')))
-        # choices.append(('CBECE Level 3', _('CBECE Level 3')))
-        # choices.append(('CBECE Catch-up', _('CBECE Catch-up')))
-        # choices.append(('ABLN Level 1', _('ABLN Level 1')))
-        # choices.append(('ABLN Level 2', _('ABLN Level 2')))
-        # choices.append(('ABLN Catch-up', _('ABLN Catch-up')))
-        # choices.append(('RS Grade 1', _('RS Grade 1')))
-        # choices.append(('RS Grade 2', _('RS Grade 2')))
-        # choices.append(('RS Grade 3', _('RS Grade 3')))
-        # choices.append(('RS Grade 4', _('RS Grade 4')))
-        # choices.append(('RS Grade 5', _('RS Grade 5')))
-        # choices.append(('RS Grade 6', _('RS Grade 6')))
-        # choices.append(('RS Grade 7', _('RS Grade 7')))
-        # choices.append(('RS Grade 8', _('RS Grade 8')))
-        # choices.append(('RS Grade 9', _('RS Grade 9')))
-        # choices.append(('YBLN Level 1', _('YBLN Level 1')))
-        # choices.append(('YBLN Level 2', _('YBLN Level 2')))
-        # choices.append(('YBLN Catch-up', _('YBLN Catch-up')))
-        # choices.append(('YFS Level 1', _('YFS Level 1')))
-        # choices.append(('YFS Level 2', _('YFS Level 2')))
-        # choices.append(('ECD', _('ECD')))
-        # choices.append(('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')))
-        # choices.append(('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')))
+
+        choices = []
 
         available_service_names = ()
-        if registry:
-            registry_obj = Registration.objects.select_related('child').filter(id=registry).first()
+        if self.registry:
+            registry_obj = Registration.objects.select_related('child').filter(id=self.registry).first()
+            print("registry_obj ======", registry_obj)
+            print("registry_obj.__dict__ =", registry_obj.__dict__ if registry_obj else None)
+            print("has registration_date =", hasattr(registry_obj, 'registration_date') if registry_obj else None)
+            print("value of registration_date =", getattr(registry_obj, 'registration_date', None) if registry_obj else None)
             if registry_obj:
                 available_service_names = set(
                     Packages.objects.filter(
@@ -541,7 +521,12 @@ class EducationServiceForm(forms.ModelForm):
                     ).values_list('name', flat=True)
                 )
 
-        print(available_service_names)
+            # IMPORTANT:
+            # replace registration_date below with the REAL field name from Registration model
+                if getattr(registry_obj, 'registration_date', None):
+                    self.fields['registration_date'].widget.attrs['min'] = (
+                        registry_obj.registration_date.strftime('%Y-%m-%d')
+                    )
 
         for option in available_service_names:
             choices.append((option, option))
@@ -550,8 +535,8 @@ class EducationServiceForm(forms.ModelForm):
 
         display_edu_section = ''
 
-        if registry:
-            child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()
+        if self.registry:
+            child_id = Registration.objects.filter(id=self.registry).values_list('child_id', flat=True).first()
 
             if instance:
                 try:
@@ -562,7 +547,6 @@ class EducationServiceForm(forms.ModelForm):
             else:
                 current_round_id = None
 
-            # Get rounds already registered excluding the current
             if current_round_id:
                 rounds_registered = EducationService.objects.filter(
                     registration__child_id=child_id,
@@ -576,10 +560,8 @@ class EducationServiceForm(forms.ModelForm):
                     registration__deleted=False
                 ).values_list('round_id', flat=True)
 
-            # Remove any None values
             rounds_registered = [r for r in rounds_registered if r is not None]
 
-            #  rounds for current_year, excluding already registered and including current round.
             if current_round_id:
                 available_rounds = Round.objects.filter(
                     Q(current_year=True) & (
@@ -591,11 +573,17 @@ class EducationServiceForm(forms.ModelForm):
 
             self.fields['round'].queryset = available_rounds
 
-        form_action = reverse('mscc:service_education_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:service_education_add', kwargs={'registry': self.registry})
         if instance:
-            form_action = reverse('mscc:service_education_edit',
-                                  kwargs={'registry': registry, 'pk': instance})
-
+            form_action = reverse(
+                'mscc:service_education_edit',
+                kwargs={'registry': self.registry, 'pk': instance}
+            )
+        print("========== EducationServiceForm __init__ ==========")
+        print("self.registry:", self.registry)
+        print("registration_date widget attrs:", self.fields['registration_date'].widget.attrs)
+        print("POST data:", self.data if self.is_bound else "GET request")
+        print("===================================================")
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -634,12 +622,11 @@ class EducationServiceForm(forms.ModelForm):
                        css_class='btn btn-primary px-5 fw-bold shadow-sm'),
                 HTML(
                     '<a class="btn btn-outline-secondary ms-2" id="cancel-id-cancel" href="/mscc/child-registration-cancel/{}/">Cancel</a>'.format(
-                        registry)
+                        self.registry)
                 ),
                 css_class='d-flex justify-content-end border-top pt-4 mt-4'
             ),
         )
- 
     def save(self, request=None, instance=None, registry=None):
         validated_data = request.POST
 
@@ -651,16 +638,22 @@ class EducationServiceForm(forms.ModelForm):
             new_class_section = validated_data.get('class_section')
 
             if str(old_class_section) != str(new_class_section):
-                update_child_attendance(instance.registration.id, instance.education_program, old_class_section,
-                                        new_class_section)
+                update_child_attendance(
+                    instance.registration.id,
+                    instance.education_program,
+                    old_class_section,
+                    new_class_section
+                )
 
         instance.education_status = validated_data.get('education_status')
+
         dropout_date_str = validated_data.get('dropout_date')
         if dropout_date_str:
             try:
                 instance.dropout_date = validate_date(dropout_date_str)
             except ValidationError as e:
                 raise ValidationError("Dropout date error: {}".format(e))
+
         instance.education_program = validated_data.get('education_program')
         instance.class_section = validated_data.get('class_section')
         instance.round_id = validated_data.get('round')
@@ -668,7 +661,27 @@ class EducationServiceForm(forms.ModelForm):
         registration_date_str = validated_data.get('registration_date')
         if registration_date_str:
             try:
-                instance.registration_date = validate_date(registration_date_str)
+                parsed_registration_date = validate_date(registration_date_str)
+
+                registration_obj = Registration.objects.get(id=registry)
+
+            # IMPORTANT:
+            # replace this with the REAL field from Registration model
+                student_registration_date = registration_obj.registration_date
+
+
+                if student_registration_date and parsed_registration_date < student_registration_date:
+                    raise ValidationError(
+                        "Date of registration in the round cannot be before the student's registration date"
+                    )
+
+                if parsed_registration_date > date.today():
+                    raise ValidationError(
+                        "Date of registration in the round cannot be in the future"
+                    )
+
+                instance.registration_date = parsed_registration_date
+
             except ValidationError as e:
                 raise ValidationError("Registration date error: {}".format(e))
 
@@ -694,8 +707,29 @@ class EducationServiceForm(forms.ModelForm):
 
         if not registration_date:
             self.add_error("registration_date", "This field is required")
-        elif registration_date > date.today():
-            self.add_error("registration_date", "Date of registration in the round cannot be in the future")
+        else:
+            if registration_date > date.today():
+                self.add_error(
+                    "registration_date",
+                    "Date of registration in the round cannot be in the future"
+                )
+
+            if self.registry:
+                try:
+                    registration_obj = Registration.objects.get(id=self.registry)
+
+                # IMPORTANT:
+                # replace registration_date below with the REAL field name from Registration model
+                    main_registration_date = registration_obj.registration_date
+
+                    if main_registration_date and registration_date < main_registration_date:
+                        self.add_error(
+                            "registration_date",
+                            "Date of registration in the round cannot be before Registration date"
+                        )
+
+                except Registration.DoesNotExist:
+                    self.add_error("registration_date", "Invalid registration")
 
         if dropout_date:
             try:
@@ -703,18 +737,10 @@ class EducationServiceForm(forms.ModelForm):
             except ValidationError as e:
                 self.add_error("dropout_date", str(e))
 
-        if registration_date:
-            try:
-                validate_date(registration_date)
-            except ValidationError as e:
-                self.add_error("registration_date", str(e))
-
         if education_status == 'Currently registered in Formal Education school but not attending' and not dropout_date:
             self.add_error('dropout_date', 'This field is required')
 
         return cleaned_data
-
-
     class Meta:
         model = EducationService
         fields = (

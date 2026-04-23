@@ -5,6 +5,7 @@ from django import forms
 from django.urls import reverse
 from django.contrib import messages
 from django.forms.widgets import ClearableFileInput
+from datetime import date
 
 from crispy_forms.helper import FormHelper
 
@@ -573,7 +574,7 @@ class MainForm(forms.ModelForm):
 
 
         children_number_under18 = cleaned_data.get("children_number_under18")
-        if not children_number_under18:
+        if children_number_under18 in [None, '']:
             self.add_error('children_number_under18', 'This field is required')
 
         have_labour = cleaned_data.get("have_labour")
@@ -752,6 +753,7 @@ class MainForm(forms.ModelForm):
 
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
+                
                 instance.save()
 
                 request.session['instance_id'] = instance.id
@@ -772,6 +774,10 @@ class MainForm(forms.ModelForm):
                 instance.center = request.user.center
                 if request.POST.get("student_old"):
                     instance.student_old = request.POST.get("student_old")
+                if not instance.registration_date:
+                    instance.registration_date = date.today()
+                else:
+                    print("date: "+instance.registration_date)
                 instance.save()
 
                 request.session['instance_id'] = instance.id
