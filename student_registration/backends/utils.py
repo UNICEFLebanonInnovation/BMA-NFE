@@ -115,7 +115,7 @@ def send_push_to_web_0(user, title, body, data=None):
     )
 
     # Send the notification to all tokens.
-    response = messaging.send_multicast(message)
+    response = messaging.send_each_for_multicast(message)
     return response.success_count > 0
 
 
@@ -157,7 +157,7 @@ def send_push_to_web(user, title, body, data=None):
         data=payload_data,
     )
     try:
-        response = messaging.send_multicast(message)
+        response = messaging.send_each_for_multicast(message)
         return response.success_count > 0
     except Exception as e:
         logger.exception("Error Sending Push notifications: %s", e)
