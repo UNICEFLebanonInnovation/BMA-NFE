@@ -92,6 +92,10 @@ body {
     z-index: 1200;
 }
 
+.topbar .export-history-dropdown .dropdown-menu {
+    z-index: 1300;
+}
+
 /* Typography & Components */
 h1, h2, h3, h4, h5 {
     font-weight: 600;
