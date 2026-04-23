@@ -154,9 +154,9 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
 def _generate_filtered_mscc_export(export_id, filters=None, file_format='csv'):
     """Generate an MSCC export with optional filtering and notify the user.
 
-    Parameters are used to filter the SQL query. Results are written to a ZIP
-    file stored in Azure storage. A push notification containing the download
-    URL is sent to the requesting user when done.
+    Parameters are used to filter the SQL query. Results are written as a
+    single CSV/XLSX file stored in Azure storage. A push notification
+    containing the download URL is sent to the requesting user when done.
     """
     export = ExportHistory.objects.get(id=export_id)
     try:
@@ -230,38 +230,10 @@ def _generate_filtered_mscc_export(export_id, filters=None, file_format='csv'):
             data_bytes = csv_mscc_output.getvalue().encode('utf-8')
             file_ext = 'csv'
 
-        zip_output = io.BytesIO()
-        with zipfile.ZipFile(zip_output, 'w') as zf:
-            zf.writestr(f'mscc_data.{file_ext}', data_bytes)
-
-            # Process followup_service_data
-            registration_ids = [row[0] for row in mscc_data]
-            if registration_ids:
-                followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
-                    ','.join(['%s'] * len(registration_ids)))
-                cursor.execute(followup_service_data_str, registration_ids)
-                followup_service_data = cursor.fetchall()
-                followup_headers = [col[0] for col in cursor.description]
-
-                # Create CSV for followup_service_data
-                csv_followup_output = io.StringIO()
-                csv_writer = csv.writer(csv_followup_output)
-
-                # Add BOM to handle Arabic text correctly
-                csv_followup_output.write(codecs.BOM_UTF8.decode('utf-8'))
-                csv_writer.writerow(followup_headers)  # Write headers
-
-                for row in followup_service_data:
-                    encoded_row = [smart_str(cell) for cell in row]
-                    csv_writer.writerow(encoded_row)
-
-                # Add CSV to ZIP
-                zf.writestr('followup_data.csv', csv_followup_output.getvalue())
-
         unique_id = str(uuid.uuid4())
-        file_name = f"out_file_{unique_id}.zip"
+        file_name = f"out_file_{unique_id}.{file_ext}"
         storage = ExportStorage()
-        storage.save(file_name, ContentFile(zip_output.getvalue()))
+        storage.save(file_name, ContentFile(data_bytes))
         file_url = reverse('mscc:export_download', args=[file_name])
         export.file_url = file_url
         export.status = 'done'
