@@ -1,6 +1,3 @@
-document.body.insertAdjacentHTML('afterbegin', '<div style="position:fixed;top:10px;right:10px;z-index:99999;background:red;color:white;padding:8px;">NEW D3 FILE</div>');
-console.log('NEW D3 FILE LOADED');
-
 (function () {
   const state = {
     filters: {},
@@ -126,14 +123,17 @@ console.log('NEW D3 FILE LOADED');
     .nice()
     .range([height, 0]);
 
-  svg.append('g')
-    .attr('transform', `translate(0,${height})`)
-    .call(d3.axisBottom(x))
-    .selectAll('text')
-    .style('text-anchor', 'middle')
-    .style('font-size', '10px')
-    .call(wrapText, 70);
-
+svg.append('g')
+  .attr('class', 'x-axis')
+  .attr('transform', `translate(0,${height})`)
+  .call(d3.axisBottom(x))
+  .selectAll('text')
+  .style('text-anchor', 'middle')
+  .style('font-size', '10px')
+  .style('font-weight', 'bold')
+  .attr('dy', '1.8em')
+  .attr('y', 10)
+  .call(wrapText, 70);
   svg.append('g')
     .call(d3.axisLeft(y).ticks(5));
 
@@ -335,7 +335,7 @@ function renderHorizontalBarChart(selector, items) {
   root.selectAll('*').remove();
 
   const containerWidth = root.node().getBoundingClientRect().width || 400;
-  const margin = { top: 20, right: 20, bottom: 20, left: 320 };
+  const margin = { top: 20, right: 20, bottom: 20, left: 450 };
   const width = containerWidth - margin.left - margin.right;
   const height = Math.max(300, items.length * 40);
 
