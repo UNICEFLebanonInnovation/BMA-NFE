@@ -12,7 +12,7 @@ from .models import ExportHistory
 @login_required
 def export_history_list(request):
     """
-    Return the five most recent exports for the authenticated user.
+    Return export history entries for the authenticated user.
 
     Parameters
     ----------
@@ -26,13 +26,9 @@ def export_history_list(request):
         ``text`` keys describing the export entry.
     """
 
-    exports = (
-        ExportHistory.objects.filter(created_by=request.user)
-        .order_by('-created')[:5]
-    )
+    exports = ExportHistory.objects.filter(created_by=request.user).order_by('-created')
     data = []
     for export in exports:
         timestamp = localtime(export.created).strftime('%Y-%m-%d %H:%M')
         data.append({'url': export.file_url or '#', 'text': f'MSCC export {timestamp}'})
     return JsonResponse({'exports': data})
-
