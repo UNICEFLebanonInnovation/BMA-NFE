@@ -85,7 +85,7 @@ body {
     padding-inline: 1.5rem;
     position: sticky;
     top: 0;
-    z-index: 999;
+    z-index: 1100;
 }
 
 .topbar .user-menu-dropdown {
