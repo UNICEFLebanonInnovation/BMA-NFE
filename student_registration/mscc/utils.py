@@ -37,13 +37,12 @@ def parse_date_flexible(date_str):
         return None
     for fmt in ('%m/%d/%Y', '%Y-%m-%d'):
         try:
-            return datetime.strptime(date_str, fmt)
+            return datetime.strptime(date_str, fmt).date()
         except ValueError:
             continue
     return None
 
 def create_attendance(data, center_id):
-    from datetime import datetime
     round_id = data["round_id"]
     education_program = data["education_program"]
     class_section = data["class_section"]
@@ -63,12 +62,28 @@ def create_attendance(data, center_id):
         attendance.close_reason = data["close_reason"]
         attendance.save()
 
-        for child in data.get('children_attendance', []):
+        children_attendance = data.get('children_attendance', [])
+        registration_ids = [child.get('registration_id') for child in children_attendance if child.get('registration_id')]
+        registration_dates = dict(
+            Registration.objects.filter(id__in=registration_ids).values_list('id', 'registration_date')
+        )
+
+        for child in children_attendance:
             child_id = child.get('child_id')
             registration_id = child.get('registration_id')
 
             if not child_id or not registration_id:
                 logger.warning(f"Missing child_id or registration_id for child: {child}")
+                continue
+
+            registration_date = registration_dates.get(registration_id)
+            if registration_date and attendance_date < registration_date:
+                logger.warning(
+                    "Skipping attendance for registration_id=%s because attendance_date=%s is before registration_date=%s",
+                    registration_id,
+                    attendance_date,
+                    registration_date,
+                )
                 continue
 
             attendance_child, created = MSCCAttendanceChild.objects.get_or_create(
@@ -128,12 +143,16 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
 
                 existing_children.append(attendance_record)
 
+            registration_filters = {
+                'center_id': center_id,
+                'deleted': False,
+                'round_id': round_id,
+            }
+            if attendance_date:
+                registration_filters['registration_date__lte'] = attendance_date
+
             registrations = (
-                Registration.objects.filter(
-                    center_id=center_id,
-                    deleted=False,
-                    round_id=round_id,
-                )
+                Registration.objects.filter(**registration_filters)
                 .annotate(
                     has_education_service=Exists(
                         EducationService.objects.filter(
@@ -170,12 +189,16 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
                 }
                 new_children.append(registration_record)
         else:
+            registration_filters = {
+                'center_id': center_id,
+                'deleted': False,
+                'round_id': round_id,
+            }
+            if attendance_date:
+                registration_filters['registration_date__lte'] = attendance_date
+
             registrations = (
-                Registration.objects.filter(
-                    center_id=center_id,
-                    deleted=False,
-                    round_id=round_id,
-                )
+                Registration.objects.filter(**registration_filters)
                 .annotate(
                     has_education_service=Exists(
                         EducationService.objects.filter(
@@ -405,5 +428,4 @@ def validate_date(date_str):
             continue
 
     raise ValidationError("Date is not valid. Please use the format YYYY-MM-DD.")
-
 
