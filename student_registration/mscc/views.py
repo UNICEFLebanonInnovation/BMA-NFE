@@ -1122,6 +1122,14 @@ def export_list_async(request):
 def get_file(request, file_name):
     if is_valid_filename(file_name, 'zip'):
         return download_file(file_name, 'output_file.zip')
+    if is_valid_filename(file_name, 'csv'):
+        return download_file(file_name, 'exported_data.csv', content_type='text/csv')
+    if is_valid_filename(file_name, 'xlsx'):
+        return download_file(
+            file_name,
+            'exported_data.xlsx',
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
     return HttpResponse("Invalid file.")
 
 
