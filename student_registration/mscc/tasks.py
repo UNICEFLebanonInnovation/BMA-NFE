@@ -170,12 +170,25 @@ def _generate_filtered_mscc_export(export_id, filters=None, file_format='csv'):
         query_params = []
 
         if not round_id or round_id == 'All':
-            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE id > 0"
+            view_name = "vw_mscc_data"
+            vw_mscc_data_str = f"SELECT * FROM {view_name} WHERE id > 0"
         elif round_id == "no_round":
-            vw_mscc_data_str = "SELECT * FROM vw_mscc_data_no_round WHERE id > 0"
+            view_name = "vw_mscc_data_no_round"
+            vw_mscc_data_str = f"SELECT * FROM {view_name} WHERE id > 0"
         else:
-            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
+            view_name = "vw_mscc_data"
+            vw_mscc_data_str = f"SELECT * FROM {view_name} WHERE round_id = %s"
             query_params.append(round_id)
+
+        # Introspect available columns because DB views differ across deployments.
+        cursor.execute(f"SELECT * FROM {view_name} LIMIT 0")
+        available_columns = {col[0] for col in cursor.description}
+
+        def _resolve_column(*candidate_names):
+            for candidate in candidate_names:
+                if candidate in available_columns:
+                    return candidate
+            return None
 
         if has_group(user, 'MSCC_UNICEF'):
             vw_mscc_data_str += " AND id > 0"
@@ -190,20 +203,30 @@ def _generate_filtered_mscc_export(export_id, filters=None, file_format='csv'):
 
         # Apply additional filters from the UI
         if filters.get('child__first_name'):
-            vw_mscc_data_str += " AND first_name ILIKE %s"
-            query_params.append(f"%{filters['child__first_name']}%")
+            first_name_column = _resolve_column('first_name', 'child__first_name')
+            if first_name_column:
+                vw_mscc_data_str += f" AND {first_name_column} ILIKE %s"
+                query_params.append(f"%{filters['child__first_name']}%")
         if filters.get('child__last_name'):
-            vw_mscc_data_str += " AND last_name ILIKE %s"
-            query_params.append(f"%{filters['child__last_name']}%")
+            last_name_column = _resolve_column('last_name', 'child__last_name')
+            if last_name_column:
+                vw_mscc_data_str += f" AND {last_name_column} ILIKE %s"
+                query_params.append(f"%{filters['child__last_name']}%")
         if filters.get('child__father_name'):
-            vw_mscc_data_str += " AND father_name ILIKE %s"
-            query_params.append(f"%{filters['child__father_name']}%")
+            father_name_column = _resolve_column('father_name', 'child__father_name')
+            if father_name_column:
+                vw_mscc_data_str += f" AND {father_name_column} ILIKE %s"
+                query_params.append(f"%{filters['child__father_name']}%")
         if filters.get('child__nationality'):
-            vw_mscc_data_str += " AND nationality_id = %s"
-            query_params.append(filters['child__nationality'])
+            nationality_column = _resolve_column('nationality_id', 'child__nationality_id')
+            if nationality_column:
+                vw_mscc_data_str += f" AND {nationality_column} = %s"
+                query_params.append(filters['child__nationality'])
         if filters.get('child__gender'):
-            vw_mscc_data_str += " AND gender = %s"
-            query_params.append(filters['child__gender'])
+            gender_column = _resolve_column('gender', 'child__gender')
+            if gender_column:
+                vw_mscc_data_str += f" AND {gender_column} = %s"
+                query_params.append(filters['child__gender'])
 
         cursor.execute(vw_mscc_data_str, query_params)
         mscc_data = cursor.fetchall()
