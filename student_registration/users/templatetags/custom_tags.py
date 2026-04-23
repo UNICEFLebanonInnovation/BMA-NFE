@@ -81,11 +81,14 @@ def check_field_value(record, field):
 
 
 @register.simple_tag(takes_context=True)
-def recent_export_history(context, count=5):
+def recent_export_history(context, count=None):
     """Return the latest export history entries for the current user."""
     from student_registration.backends.models import ExportHistory
 
     request = context.get('request')
     if not request or not request.user.is_authenticated:
         return ExportHistory.objects.none()
-    return ExportHistory.objects.filter(created_by=request.user).order_by('-created')[:count]
+    exports = ExportHistory.objects.filter(created_by=request.user).order_by('-created')
+    if count:
+        return exports[:count]
+    return exports
