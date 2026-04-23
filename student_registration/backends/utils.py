@@ -125,7 +125,7 @@ def send_push_to_web(user, title, body, data=None):
 
     from student_registration.users.models import WebPushToken
 
-    root_dirt = Path(__file__).parents[2]
+    root_dirt = Path(__file__).resolve().parents[2]
     FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
     cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
     # firebase_app = firebase_admin.initialize_app(cred)

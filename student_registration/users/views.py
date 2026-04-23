@@ -218,5 +218,4 @@ def save_fcm_token(request):
     if token_obj.user != request.user:
         token_obj.user = request.user
         token_obj.save(update_fields=["user"])
-    WebPushToken.objects.filter(user=request.user).exclude(pk=token_obj.pk).delete()
     return JsonResponse({'status': 'ok'})

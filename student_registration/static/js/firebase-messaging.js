@@ -44,8 +44,8 @@ navigator.serviceWorker
   });
 
 onMessage(messaging, (payload) => {
-  if (payload.data && (payload.data.type === "mscc_export_ready" || payload.data.type === "mscc_export_failed")) {
-    const isSuccess = payload.data.type === "mscc_export_ready";
+  if (payload.data && (payload.data.type === "mscc_export_ready" || payload.data.type === "mscc_export_failed" || payload.data.type === "advanced_export_ready" || payload.data.type === "advanced_export_failed")) {
+    const isSuccess = payload.data.type === "mscc_export_ready" || payload.data.type === "advanced_export_ready";
 
     if (!document.hidden) {
         if (isSuccess) {
