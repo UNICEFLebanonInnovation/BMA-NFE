@@ -157,8 +157,52 @@ def send_push_to_web(user, title, body, data=None):
         data=payload_data,
     )
     try:
-        response = messaging.send_multicast(message)
-        return response.success_count > 0
+        # Firebase Admin progressively moved callers toward
+        # ``send_each_for_multicast``. Keep backwards compatibility with
+        # installations where only ``send_multicast`` is available.
+        send_fn = getattr(messaging, "send_each_for_multicast", None)
+        if callable(send_fn):
+            response = send_fn(message)
+        else:
+            response = messaging.send_multicast(message)
+
+        success_count = getattr(response, "success_count", 0)
+        failure_count = getattr(response, "failure_count", 0)
+        logger.info(
+            "Push notification dispatch completed for user=%s success=%s failure=%s",
+            user,
+            success_count,
+            failure_count,
+        )
+
+        # Remove invalid/unregistered tokens so future exports can notify
+        # active sessions without repeatedly failing on stale tokens.
+        if failure_count:
+            responses = getattr(response, "responses", [])
+            stale_tokens = []
+            for idx, send_response in enumerate(responses):
+                if getattr(send_response, "success", False):
+                    continue
+                error = getattr(send_response, "exception", None)
+                if not error:
+                    continue
+                error_code = getattr(error, "code", "") or str(error)
+                if "UNREGISTERED" in error_code or "registration-token-not-registered" in error_code:
+                    if idx < len(tokens):
+                        stale_tokens.append(tokens[idx])
+
+            if stale_tokens:
+                deleted_count, _ = WebPushToken.objects.filter(
+                    user=user,
+                    token__in=stale_tokens
+                ).delete()
+                logger.info(
+                    "Deleted %s stale web push token(s) for user=%s",
+                    deleted_count,
+                    user,
+                )
+
+        return success_count > 0
     except Exception as e:
         logger.exception("Error Sending Push notifications: %s", e)
         return False
