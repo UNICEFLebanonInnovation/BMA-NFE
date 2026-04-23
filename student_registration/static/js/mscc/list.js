@@ -97,12 +97,35 @@ $(document).ready(function() {
         initiateExport($(this), "/locations/export-center-background/", false);
     });
 
-    // Start Export for Teachers (Placeholder - use same as beneficiaries for now or update if different)
+    // Start Export for Teachers
     $(document).on('click', '#exportOptionsModal .start-export-teacher', function() {
-        // Teachers might need a different endpoint, for now we log or use a default
-        console.log("Teacher export initiated");
-        showModal('Teacher export is currently being processed. You will be notified when ready.');
-        if (exportModal) exportModal.hide();
+        const button = $(this);
+        const originalHtml = button.html();
+
+        button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Processing...');
+
+        $.ajax({
+            url: "/students/teacher-export/",
+            type: "GET",
+            headers: getHeader(),
+            success: function(data) {
+                if (exportModal) exportModal.hide();
+
+                const fileName = (data || '').toString().trim();
+                if (fileName.length > 0) {
+                    window.open("/mscc/export-download-csv/" + encodeURIComponent(fileName), "_blank");
+                    showModal('Teacher export completed. Your download should start automatically.');
+                } else {
+                    showModal('Teacher export completed, but no file was returned.');
+                }
+            },
+            error: function() {
+                showModal('Failed to export teacher data. Please try again later.');
+            },
+            complete: function() {
+                button.prop('disabled', false).html(originalHtml);
+            }
+        });
     });
 
     // Active Filters Display Logic
