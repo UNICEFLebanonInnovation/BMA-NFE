@@ -11,6 +11,7 @@ from storages.backends.azure_storage import AzureStorage
 
 from django.core.files.base import ContentFile
 from django.db import connection
+from django.db.utils import ProgrammingError
 import codecs
 import logging
 import traceback
@@ -361,24 +362,23 @@ class ExportStorage(AzureStorage):
 @login_required(login_url='/users/login')
 def teacher_export_data(request):
     try:
-        cursor = connection.cursor()
         user = request.user
         is_staff = user.is_staff
         clm_bridging_all = has_group(user, 'CLM_BRIDGING_ALL')
         partner_name = user.partner.name if user.partner else ''
 
-        vw_teacher_data = 'SELECT * FROM vw_teacher_data WHERE id > 0'
+        headers = []
+        bridging_data = []
         query_params = []
+        vw_teacher_data = 'SELECT * FROM vw_teacher_data WHERE id > 0'
 
         if not clm_bridging_all and not is_staff and request.user.partner:
-            school_id = 0
+            school_id = user.school.id if user.school else 0
             partner_id = user.partner_id
 
             vw_teacher_data += " AND partner_id = %s"
             query_params.append(partner_id)
 
-            if user.school:
-                school_id = user.school.id
             if school_id > 0:
                 vw_teacher_data += " AND school_id = %s"
                 query_params.append(school_id)
@@ -386,14 +386,54 @@ def teacher_export_data(request):
         elif not clm_bridging_all and not is_staff and not request.user.partner:
             vw_teacher_data += " AND id = 0 "
 
-        cursor.execute(vw_teacher_data, query_params)
+        try:
+            cursor = connection.cursor()
+            cursor.execute(vw_teacher_data, query_params)
+            bridging_data = cursor.fetchall()
+            headers = [col[0] for col in cursor.description]
+            logging.debug("Executing query: %s", vw_teacher_data)
+            logging.debug("Query params: %s", str(query_params))
+        except ProgrammingError:
+            logging.warning("vw_teacher_data view not found, falling back to ORM export.")
 
-        bridging_data = cursor.fetchall()
+            teacher_queryset = Teacher.objects.select_related('school', 'round').all()
+            if not clm_bridging_all and not is_staff and request.user.partner:
+                partner_school_ids = PartnerOrganization.objects.filter(
+                    id=user.partner_id
+                ).values_list('schools', flat=True)
+                teacher_queryset = teacher_queryset.filter(school_id__in=partner_school_ids)
+                if user.school:
+                    teacher_queryset = teacher_queryset.filter(school_id=user.school.id)
+            elif not clm_bridging_all and not is_staff and not request.user.partner:
+                teacher_queryset = teacher_queryset.none()
 
-        logging.debug("Executing query: %s", vw_teacher_data)
-        logging.debug("Query params: %s", str(query_params))
-
-        headers = [col[0] for col in cursor.description]
+            headers = [
+                'id',
+                'round',
+                'school',
+                'first_name',
+                'father_name',
+                'last_name',
+                'sex',
+                'email',
+                'primary_phone_number',
+                'teacher_assignment',
+            ]
+            bridging_data = [
+                [
+                    teacher.id,
+                    teacher.round.name if teacher.round else '',
+                    teacher.school.name if teacher.school else '',
+                    teacher.first_name,
+                    teacher.father_name,
+                    teacher.last_name,
+                    teacher.sex,
+                    teacher.email,
+                    teacher.primary_phone_number,
+                    teacher.teacher_assignment,
+                ]
+                for teacher in teacher_queryset
+            ]
 
         # Create CSV
         csv_output = io.StringIO()
