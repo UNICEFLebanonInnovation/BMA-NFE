@@ -657,15 +657,7 @@ class EducationServiceForm(forms.ModelForm):
 
                 registration_obj = Registration.objects.get(id=registry)
 
-            # IMPORTANT:
-            # replace this with the REAL field from Registration model
-                student_registration_date = registration_obj.registration_date
 
-
-                if student_registration_date and parsed_registration_date < student_registration_date:
-                    raise ValidationError(
-                        "Date of registration in the round cannot be before the student's registration date"
-                    )
 
                 if parsed_registration_date > date.today():
                     raise ValidationError(
@@ -853,7 +845,7 @@ class EducationGradingForm(forms.ModelForm):
     )
     barriers_other = forms.CharField(
         label=_('If Other, Please specify'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required= False
     )
     post_test_done = forms.ChoiceField(
         label=_('Did the child undertake the Post tests?'),
@@ -953,7 +945,10 @@ class EducationGradingForm(forms.ModelForm):
         center = getattr(getattr(self.request, 'user', None), 'center', None)
         provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
         self.provide_french_language = provide_french_language
+        self.fields['barriers_other'].required = False
 
+        if self.data.get('barriers') == 'Other':
+            self.fields['barriers_other'].required = True
         form_action = reverse('mscc:service_education_grading_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:

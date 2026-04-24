@@ -74,18 +74,36 @@
 {% block extra_js %}
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/education_grading.js' %}?v=3"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=2"></script>
+
     <script>
         $(document).ready(function() {
-            // Standardize button appearance
             $('.btn-success').addClass('px-5 fw-bold');
             $('.btn-warning').removeClass('btn-warning').addClass('btn-outline-secondary');
 
-            // Highlight numeric fields with max values
             $('input[type="number"]').each(function() {
                 var max = $(this).attr('max');
                 if (max) {
                     $(this).after('<div class="form-text small">Maximum possible: ' + max + '</div>');
                 }
+            });
+
+            function toggleBarriersOther() {
+                var barriersValue = $('#id_barriers').val();
+
+                if (barriersValue === 'Other') {
+                    $('#div_id_barriers_other').removeClass('d-none');
+                    $('#id_barriers_other').prop('required', true);
+                } else {
+                    $('#div_id_barriers_other').addClass('d-none');
+                    $('#id_barriers_other').prop('required', false);
+                    $('#id_barriers_other').val('');
+                }
+            }
+
+            toggleBarriersOther();
+
+            $('#id_barriers').on('change', function() {
+                toggleBarriersOther();
             });
         });
     </script>
