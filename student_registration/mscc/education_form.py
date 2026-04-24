@@ -33,6 +33,7 @@ from student_registration.schools.models import (
 )
 from .utils import update_child_attendance
 
+
 class DiagnosticAssessmentForm(forms.ModelForm):
     # Pre Test
     pre_attended_arabic = forms.ChoiceField(
@@ -619,6 +620,7 @@ class EducationServiceForm(forms.ModelForm):
                 css_class='d-flex justify-content-end border-top pt-4 mt-4'
             ),
         )
+
     def save(self, request=None, instance=None, registry=None):
         validated_data = request.POST
 
@@ -686,6 +688,7 @@ class EducationServiceForm(forms.ModelForm):
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance
+
     def clean(self):
         cleaned_data = super(EducationServiceForm, self).clean()
 
@@ -733,6 +736,7 @@ class EducationServiceForm(forms.ModelForm):
             self.add_error('dropout_date', 'This field is required')
 
         return cleaned_data
+
     class Meta:
         model = EducationService
         fields = (
@@ -810,7 +814,6 @@ class EducationRSServiceForm(forms.ModelForm):
         )
 
     def save(self, request=None, instance=None, registry=None):
-        from .utils import update_service
 
         validated_data = request.POST
 
@@ -825,8 +828,6 @@ class EducationRSServiceForm(forms.ModelForm):
         instance.support_needed = validated_data.getlist('support_needed')
         instance.save()
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='RS', service_id=instance.id)
 
         return instance
 
