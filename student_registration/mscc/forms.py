@@ -776,8 +776,8 @@ class MainForm(forms.ModelForm):
                     instance.student_old = request.POST.get("student_old")
                 if not instance.registration_date:
                     instance.registration_date = date.today()
-                else:
-                    print("date: "+instance.registration_date)
+                ## else:
+                ##    print("date: "+instance.registration_date)
                 instance.save()
 
                 request.session['instance_id'] = instance.id
