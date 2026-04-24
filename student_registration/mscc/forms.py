@@ -1157,7 +1157,7 @@ class TeacherForm(forms.ModelForm):
     mother_fullname = forms.CharField(
         label=_('Mother full name'),
         widget=forms.TextInput(attrs={'placeholder': _('e.g. Fatima Al Ali')}),
-        required=False
+        required=True
     )
     sex = forms.ChoiceField(
         label=_('Gender'),
