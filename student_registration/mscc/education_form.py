@@ -509,10 +509,6 @@ class EducationServiceForm(forms.ModelForm):
         available_service_names = ()
         if self.registry:
             registry_obj = Registration.objects.select_related('child').filter(id=self.registry).first()
-            print("registry_obj ======", registry_obj)
-            print("registry_obj.__dict__ =", registry_obj.__dict__ if registry_obj else None)
-            print("has registration_date =", hasattr(registry_obj, 'registration_date') if registry_obj else None)
-            print("value of registration_date =", getattr(registry_obj, 'registration_date', None) if registry_obj else None)
             if registry_obj:
                 available_service_names = set(
                     Packages.objects.filter(
@@ -579,11 +575,7 @@ class EducationServiceForm(forms.ModelForm):
                 'mscc:service_education_edit',
                 kwargs={'registry': self.registry, 'pk': instance}
             )
-        print("========== EducationServiceForm __init__ ==========")
-        print("self.registry:", self.registry)
-        print("registration_date widget attrs:", self.fields['registration_date'].widget.attrs)
-        print("POST data:", self.data if self.is_bound else "GET request")
-        print("===================================================")
+
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
