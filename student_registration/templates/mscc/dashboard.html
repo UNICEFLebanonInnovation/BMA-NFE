@@ -146,47 +146,49 @@
 
                     <!-- Charts Grid -->
                     <div class="row g-4">
-                        <div class="col-md-4">
-                            <div class="card border-0 shadow-sm h-100">
-                                <div class="card-header bg-white border-0 py-3">
-                                    <h6 class="mb-0 fw-bold">{% trans "Gender Distribution" %}</h6>
-                                </div>
-                                <div class="card-body chart-container" id="children_per_gender"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card border-0 shadow-sm h-100">
-                                <div class="card-header bg-white border-0 py-3">
-                                    <h6 class="mb-0 fw-bold">{% trans "Nationality Breakdown" %}</h6>
-                                </div>
-                                <div class="card-body chart-container" id="children_per_nationality"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card border-0 shadow-sm h-100">
-                                <div class="card-header bg-white border-0 py-3">
-                                    <h6 class="mb-0 fw-bold">{% trans "Programme Enrollment" %}</h6>
-                                </div>
-                                <div class="card-body chart-container" id="children_per_programme"></div>
-                            </div>
-                        </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Gender Distribution" %}</h6>
+            </div>
+            <div class="card-body chart-container" id="children_per_gender"></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Programme Enrollment" %}</h6>
+            </div>
+            <div class="card-body chart-container" id="children_per_programme"></div>
+        </div>
+    </div>
 
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm h-100">
-                                <div class="card-header bg-white border-0 py-3">
-                                    <h6 class="mb-0 fw-bold">{% trans "Source of Identification" %}</h6>
-                                </div>
-                                <div class="card-body chart-container" id="children_per_source"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm h-100">
-                                <div class="card-header bg-white border-0 py-3">
-                                    <h6 class="mb-0 fw-bold">{% trans "Registrations per Round" %}</h6>
-                                </div>
-                                <div class="card-body chart-container" id="children_per_round"></div>
-                            </div>
-                        </div>
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Nationality Breakdown" %}</h6>
+            </div>
+            <div class="card-body chart-container" id="children_per_nationality"></div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Source of Identification" %}</h6>
+            </div>
+            <div class="card-body chart-container" id="children_per_source"></div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Registrations per Round" %}</h6>
+            </div>
+            <div class="card-body chart-container" id="children_per_round"></div>
+        </div>
+    </div>
 
                         <div class="col-md-4">
                             <div class="card border-0 shadow-sm h-100">
@@ -310,5 +312,5 @@ $(function() {
     });
 });
 </script>
-<script src="{% static 'js/mscc/mscc_dashboard_d3.js' %}"></script>
+<script src="{% static 'js/mscc/mscc_dashboard_d3.js' %}?v=2021"></script>
 {% endblock %}
