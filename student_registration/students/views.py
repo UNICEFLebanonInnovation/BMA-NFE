@@ -185,10 +185,9 @@ class TeacherListView(LoginRequiredMixin,
     def get_queryset(self):
 
         base_queryset = Teacher.objects.select_related('round', 'school')
-        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
-        if clm_bridging_all or is_staff:
+        if is_staff:
             return base_queryset
 
         school_id = self.request.user.school.id if self.request.user.school else 0
@@ -319,12 +318,11 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
 
     def get_queryset(self):
 
-        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
         queryset = Teacher.objects.all()
 
-        if clm_bridging_all or is_staff:
+        if is_staff:
             queryset = Teacher.objects.all()
         else:
             school_id = 0
@@ -364,19 +362,18 @@ def teacher_export_data(request):
     try:
         user = request.user
         is_staff = user.is_staff
-        clm_bridging_all = has_group(user, 'CLM_BRIDGING_ALL')
         partner_name = user.partner.name if user.partner else ''
 
         teacher_queryset = Teacher.objects.select_related('school', 'round').all()
 
-        if not clm_bridging_all and not is_staff and request.user.partner:
+        if not is_staff and request.user.partner:
             partner_school_ids = PartnerOrganization.objects.filter(
                 id=user.partner_id
             ).values_list('schools', flat=True)
             teacher_queryset = teacher_queryset.filter(school_id__in=partner_school_ids)
             if user.school:
                 teacher_queryset = teacher_queryset.filter(school_id=user.school.id)
-        elif not clm_bridging_all and not is_staff and not request.user.partner:
+        elif not is_staff and not request.user.partner:
             teacher_queryset = teacher_queryset.none()
 
         # Support round and center/school parameters
