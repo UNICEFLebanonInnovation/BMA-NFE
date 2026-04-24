@@ -95,6 +95,7 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
 
     if attendance_date_str is not None:
         attendance_date = parse_date_flexible(attendance_date_str)
+        attendance_day = attendance_date.date() if hasattr(attendance_date, "date") else attendance_date
 
         attendance = MSCCAttendance.objects.filter(
             center_id=center_id,
@@ -112,18 +113,19 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
             attendances = MSCCAttendanceChild.objects.filter(attendance_day=attendance)
 
             existing_ids = []
-            for attendance in attendances:
-                existing_ids.append(attendance.registration.id)
+            for attendance_child in attendances:
+                existing_ids.append(attendance_child.registration.id)
+
                 attendance_record = {
-                    'registration_id': attendance.registration.id,
-                    'child_id': attendance.child.id,
-                    'child_fullname': attendance.child.full_name,
-                    'child_mother_fullname': attendance.child.mother_fullname,
-                    'child_birthday': attendance.child.birthday,
-                    'child_nationality': attendance.child.nationality.name,
-                    'attended': attendance.attended,
-                    'absence_reason': attendance.absence_reason,
-                    'absence_reason_other': attendance.absence_reason_other,
+                    'registration_id': attendance_child.registration.id,
+                    'child_id': attendance_child.child.id,
+                    'child_fullname': attendance_child.child.full_name,
+                    'child_mother_fullname': attendance_child.child.mother_fullname,
+                    'child_birthday': attendance_child.child.birthday,
+                    'child_nationality': attendance_child.child.nationality.name,
+                    'attended': attendance_child.attended,
+                    'absence_reason': attendance_child.absence_reason,
+                    'absence_reason_other': attendance_child.absence_reason_other,
                 }
 
                 existing_children.append(attendance_record)
@@ -140,6 +142,7 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
                             registration_id=OuterRef('pk'),
                             education_program=education_program,
                             class_section=class_section,
+                            registration_date__lte=attendance_day,
                         )
                     )
                 )
@@ -149,7 +152,7 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
                         Referral.objects.filter(
                             registration_id=OuterRef('pk'),
                             recommended_learning_path='Drop out',
-                            dropout_date__lte=attendance_date,
+                            dropout_date__lte=attendance_day,
                         ).values('registration_id')
                     )
                 )
@@ -169,6 +172,7 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
                     'absence_reason_other': '',
                 }
                 new_children.append(registration_record)
+
         else:
             registrations = (
                 Registration.objects.filter(
@@ -182,6 +186,7 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
                             registration_id=OuterRef('pk'),
                             education_program=education_program,
                             class_section=class_section,
+                            registration_date__lte=attendance_day,
                         )
                     )
                 )
@@ -191,7 +196,7 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
                         Referral.objects.filter(
                             registration_id=OuterRef('pk'),
                             recommended_learning_path='Drop out',
-                            dropout_date__lte=attendance_date,
+                            dropout_date__lte=attendance_day,
                         ).values('registration_id')
                     )
                 )
@@ -216,8 +221,7 @@ def load_child_attendance(center_id, round_id, attendance_date_str, education_pr
     except Exception as ex:
         logger.exception(ex)
         return {'instances': [], 'new_instances': []}
-
-
+    
 def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
     try:
         with transaction.atomic():
