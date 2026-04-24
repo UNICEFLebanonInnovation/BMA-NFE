@@ -367,73 +367,59 @@ def teacher_export_data(request):
         clm_bridging_all = has_group(user, 'CLM_BRIDGING_ALL')
         partner_name = user.partner.name if user.partner else ''
 
-        headers = []
-        bridging_data = []
-        query_params = []
-        vw_teacher_data = 'SELECT * FROM vw_teacher_data WHERE id > 0'
+        teacher_queryset = Teacher.objects.select_related('school', 'round').all()
 
         if not clm_bridging_all and not is_staff and request.user.partner:
-            school_id = user.school.id if user.school else 0
-            partner_id = user.partner_id
-
-            vw_teacher_data += " AND partner_id = %s"
-            query_params.append(partner_id)
-
-            if school_id > 0:
-                vw_teacher_data += " AND school_id = %s"
-                query_params.append(school_id)
-
+            partner_school_ids = PartnerOrganization.objects.filter(
+                id=user.partner_id
+            ).values_list('schools', flat=True)
+            teacher_queryset = teacher_queryset.filter(school_id__in=partner_school_ids)
+            if user.school:
+                teacher_queryset = teacher_queryset.filter(school_id=user.school.id)
         elif not clm_bridging_all and not is_staff and not request.user.partner:
-            vw_teacher_data += " AND id = 0 "
+            teacher_queryset = teacher_queryset.none()
 
-        try:
-            cursor = connection.cursor()
-            cursor.execute(vw_teacher_data, query_params)
-            bridging_data = cursor.fetchall()
-            headers = [col[0] for col in cursor.description]
-            logging.debug("Executing query: %s", vw_teacher_data)
-            logging.debug("Query params: %s", str(query_params))
-        except ProgrammingError:
-            logging.warning("vw_teacher_data view not found, falling back to ORM export.")
+        # Support round and center/school parameters
+        round_id = request.GET.get('round')
+        if round_id:
+            teacher_queryset = teacher_queryset.filter(round_id=round_id)
 
-            teacher_queryset = Teacher.objects.select_related('school', 'round').all()
-            if not clm_bridging_all and not is_staff and request.user.partner:
-                partner_school_ids = PartnerOrganization.objects.filter(
-                    id=user.partner_id
-                ).values_list('schools', flat=True)
-                teacher_queryset = teacher_queryset.filter(school_id__in=partner_school_ids)
-                if user.school:
-                    teacher_queryset = teacher_queryset.filter(school_id=user.school.id)
-            elif not clm_bridging_all and not is_staff and not request.user.partner:
-                teacher_queryset = teacher_queryset.none()
+        center_id = request.GET.get('center')
+        if center_id:
+            teacher_queryset = teacher_queryset.filter(school_id=center_id)
 
-            headers = [
-                'id',
-                'round',
-                'school',
-                'first_name',
-                'father_name',
-                'last_name',
-                'sex',
-                'email',
-                'primary_phone_number',
-                'teacher_assignment',
+        school_id_param = request.GET.get('school')
+        if school_id_param:
+            teacher_queryset = teacher_queryset.filter(school_id=school_id_param)
+
+        headers = [
+            'id',
+            'round',
+            'school',
+            'first_name',
+            'father_name',
+            'last_name',
+            'sex',
+            'email',
+            'primary_phone_number',
+            'teacher_assignment',
+        ]
+
+        bridging_data = [
+            [
+                teacher.id,
+                teacher.round.name if teacher.round else '',
+                teacher.school.name if teacher.school else '',
+                teacher.first_name,
+                teacher.father_name,
+                teacher.last_name,
+                teacher.sex,
+                teacher.email,
+                teacher.primary_phone_number,
+                teacher.teacher_assignment,
             ]
-            bridging_data = [
-                [
-                    teacher.id,
-                    teacher.round.name if teacher.round else '',
-                    teacher.school.name if teacher.school else '',
-                    teacher.first_name,
-                    teacher.father_name,
-                    teacher.last_name,
-                    teacher.sex,
-                    teacher.email,
-                    teacher.primary_phone_number,
-                    teacher.teacher_assignment,
-                ]
-                for teacher in teacher_queryset
-            ]
+            for teacher in teacher_queryset
+        ]
 
         # Create CSV
         csv_output = io.StringIO()
@@ -458,8 +444,6 @@ def teacher_export_data(request):
         file_name = "teacher_{}.csv".format(unique_id)
         file_path = os.path.join('export', file_name)
 
-        # Save file
-        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
         storage = ExportStorage()
         storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
         file_url = reverse('mscc:export_download', args=[file_name])
@@ -479,6 +463,7 @@ def teacher_export_data(request):
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
+
 
 
 def serve_file(request, file_path):
