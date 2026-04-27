@@ -508,6 +508,11 @@ class EducationServiceForm(forms.ModelForm):
                         max_age__gte=registry_obj.child_age
                     ).values_list('name', flat=True)
                 )
+                
+        if getattr(registry_obj, 'registration_date', None):
+            self.fields['registration_date'].widget.attrs['min'] = (
+                registry_obj.registration_date.strftime('%Y-%m-%d')
+            )
 
         for option in available_service_names:
             choices.append((option, option))
