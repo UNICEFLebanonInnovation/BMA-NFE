@@ -1153,7 +1153,7 @@ class EducationGradingForm(forms.ModelForm):
                         HTML('<span class="badge-form badge-pill">' + str(1 + ctr) + '</span>'),
                         Div('arabic_grade', css_class='col-md-4'),
                         HTML('<span class="badge-form badge-pill">' + str(2 + ctr) + '</span>'),
-                        Div(language_grade, css_class='col-md-4'),
+                        Div('language_grade', css_class='col-md-4'),
                         css_class='row card-body ' + grade_field_css + display_pre_fields_css
                     ),
                     Div(
