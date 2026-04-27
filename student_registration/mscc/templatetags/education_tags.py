@@ -51,36 +51,12 @@ def get_education_programme_assessments(result1, result, request=None):
         provide_french = getattr(request.user.center, 'provide_french_language', 'No') == 'Yes'
 
     if prog == 'BLN Level 1':
-        add('arabic_grade', 'Arabic Language Development', 68)
+        add('arabic_grade', 'Arabic Language Development', 20)
         if provide_french:
-            add('french_grade', 'French Language Development', 43)
+            add('french_grade', 'French Language Development', 30)
         else:
-            add('english_grade', 'English Language Development', 43)
-        add('math_grade', 'Mathematics', 22)
-    elif prog == 'BLN Level 2':
-        add('arabic_grade', 'Arabic Language Development', 70)
-        if provide_french:
-            add('french_grade', 'French Language Development', 65)
-        else:
-            add('english_grade', 'English Language Development', 65)
-        add('math_grade', 'Mathematics', 32)
-    elif prog == 'BLN Level 3':
-        add('arabic_grade', 'Arabic Language Development', 69)
-        if provide_french:
-            add('french_grade', 'French Language Development', 59)
-        else:
-            add('english_grade', 'English Language Development', 64)
-        add('math_grade', 'Mathematics', 32)
-    elif prog == 'ABLN Level 1':
-        add('arabic_grade', 'Arabic Language Development', 46)
-        add('math_grade', 'Mathematics', 20)
-        add('social_emotional_grade', 'Social-Emotional Development', 24)
-        add('artistic_grade', 'Artistic Development', 10)
-    elif prog == 'ABLN Level 2':
-        add('arabic_grade', 'Arabic Language Development', 56)
-        add('math_grade', 'Mathematics', 36)
-        add('social_emotional_grade', 'Social-Emotional Development', 24)
-        add('artistic_grade', 'Artistic Development', 10)
+            add('english_grade', 'English Language Development', 30)
+        add('math_grade', 'Mathematics', 22)  
     elif prog == 'CBECE Level 1':
         add('language_grade', 'Language Development', 48)
         add('math_grade', 'Cognitive Development - Mathematics', 24)
@@ -104,14 +80,7 @@ def get_education_programme_assessments(result1, result, request=None):
         add('social_emotional_grade', 'Social-Emotional Development', 40)
         add('psychomotor_grade', 'Psychomotor Development', 42)
         add('artistic_grade', 'Artistic Development', 16)
-    elif prog in ['RS Grade 7', 'RS Grade 8', 'RS Grade 9', 'YFS Level 1 - RS Grade 9', 'YFS Level 2 - RS Grade 9']:
-        add('arabic_grade', 'Arabic Development', 20)
-        add('language_grade', 'Foreign Language', 20)
-        add('math_grade', 'Mathematics', 20)
-        add('biology_grade', 'Biology', 20)
-        add('chemistry_grade', 'Chemistry', 20)
-        add('physics_grade', 'Physics', 20)
-    elif prog in ['RS Grade 1', 'RS Grade 2', 'RS Grade 3', 'RS Grade 4', 'RS Grade 5', 'RS Grade 6']:
+    elif prog in ['RS Grade 1', 'RS Grade 2', 'RS Grade 3']:
         add('arabic_grade', 'Arabic Development', 20)
         add('language_grade', 'Foreign Language', 20)
         add('math_grade', 'Mathematics', 20)

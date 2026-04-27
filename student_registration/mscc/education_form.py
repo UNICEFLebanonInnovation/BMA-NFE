@@ -949,57 +949,14 @@ class EducationGradingForm(forms.ModelForm):
         if programme_type:
             self.fields['programme_type'].initial = programme_type
 
-        if programme_type == "BLN Level 1":
-            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 68)
-            field_init(self.fields['english_grade'], 'English Language Development', 43)
-            field_init(self.fields['french_grade'], 'French Language Development', 43)
-            field_init(self.fields['math_grade'], 'Mathematics', 22)
-            if provide_french_language:
-                self.fields['english_grade'].hidden_widget()
-                self.fields['english_grade'].required = False
-            else:
-                self.fields['french_grade'].hidden_widget()
-                self.fields['french_grade'].required = False
-            self.fields['social_emotional_grade'].hidden_widget()
-            self.fields['social_emotional_grade'].required = False
-            self.fields['artistic_grade'].hidden_widget()
-            self.fields['artistic_grade'].required = False
-            self.fields['language_grade'].hidden_widget()
-            self.fields['language_grade'].required = False
-            self.fields['science_grade'].hidden_widget()
-            self.fields['biology_grade'].hidden_widget()
-            self.fields['chemistry_grade'].hidden_widget()
-            self.fields['physics_grade'].hidden_widget()
-            self.fields['psychomotor_grade'].hidden_widget()
-
-        if programme_type == "BLN Level 2":
-            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 70)
-            field_init(self.fields['english_grade'], 'English Language Development', 65)
-            field_init(self.fields['french_grade'], 'French Language Development', 65)
-            field_init(self.fields['math_grade'], 'Mathematics', 32)
-            if provide_french_language:
-                self.fields['english_grade'].hidden_widget()
-                self.fields['english_grade'].required = False
-            else:
-                self.fields['french_grade'].hidden_widget()
-                self.fields['french_grade'].required = False
-            self.fields['social_emotional_grade'].hidden_widget()
-            self.fields['social_emotional_grade'].required = False
-            self.fields['artistic_grade'].hidden_widget()
-            self.fields['artistic_grade'].required = False
-            self.fields['language_grade'].hidden_widget()
-            self.fields['language_grade'].required = False
-            self.fields['science_grade'].hidden_widget()
-            self.fields['biology_grade'].hidden_widget()
-            self.fields['chemistry_grade'].hidden_widget()
-            self.fields['physics_grade'].hidden_widget()
-            self.fields['psychomotor_grade'].hidden_widget()
-
-        if programme_type == "BLN Level 3":
-            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 69)
-            field_init(self.fields['english_grade'], 'English Language Development', 64)
-            field_init(self.fields['french_grade'], 'French Language Development', 59)
-            field_init(self.fields['math_grade'], 'Mathematics', 32)
+        if programme_type in ["BLN Level 1", "BLN Level 2", "BLN Level 3"]:
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 20)
+            field_init(self.fields['english_grade'], 'English Language Development', 30)
+            field_init(self.fields['french_grade'], 'French Language Development', 30)
+            if not pre_post or pre_post == "pre":
+                field_init(self.fields['math_grade'], 'Mathematics', 25)
+            if pre_post == "post":
+                field_init(self.fields['math_grade'], 'Mathematics', 20) 
             if provide_french_language:
                 self.fields['english_grade'].hidden_widget()
                 self.fields['english_grade'].required = False
@@ -1319,29 +1276,11 @@ class EducationGradingForm(forms.ModelForm):
 
         # Validation thresholds for each programme type
         thresholds = {
-            "BLN Level 1": {
-                "arabic_grade": 68,
-                "english_grade": 43,
-                "french_grade": 43,
+            "BLN Level 1 - BLN Level 2 - BLN Level 3": {
+                "arabic_grade": 20,
+                "english_grade": 30,
+                "french_grade": 30,
                 "math_grade": 22,
-                "social_emotional_grade": 24,
-                "artistic_grade": 10,
-            },
-            "BLN Level 2": {
-                "arabic_grade": 70,
-                "english_grade": 65,
-                "french_grade": 65,
-                "math_grade": 32,
-                "social_emotional_grade": 24,
-                "artistic_grade": 10,
-            },
-            "BLN Level 3": {
-                "arabic_grade": 69,
-                "english_grade": 64,
-                "french_grade": 59,
-                "math_grade": 32,
-                "social_emotional_grade": 24,
-                "artistic_grade": 10,
             },
             "CBECE Level 1": {
                 "language_grade": 48,
@@ -1390,9 +1329,14 @@ class EducationGradingForm(forms.ModelForm):
         }
 
         if programme_type in thresholds:
-            programme_thresholds = thresholds[programme_type]
+            programme_thresholds = thresholds[programme_type].copy()
 
-            # Iterate through the thresholds to validate each field
+            if programme_type == "BLN Level 1 - BLN Level 2 - BLN Level 3":
+                if pre_post == "pre":
+                    programme_thresholds["math_grade"] = 25
+                elif pre_post =="post":
+                    programme_thresholds["math_grade"] = 20
+
             for field, max_value in programme_thresholds.items():
                 field_value = cleaned_data.get(field)
                 if field_value is not None and field_value > max_value:
