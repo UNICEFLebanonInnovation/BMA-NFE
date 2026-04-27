@@ -491,19 +491,10 @@ class EducationServiceForm(forms.ModelForm):
         instance = kwargs.pop('instance', None)
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
-
-        self.fields['class_section'].required = True
-        self.fields['registration_date'].required = True
-
-        self.fields['class_section'].widget.attrs['required'] = 'required'
-        self.fields['registration_date'].widget.attrs['required'] = 'required'
         self.fields['registration_date'].widget.attrs['max'] = date.today().strftime('%Y-%m-%d')
 
         if self.registry:
             self.fields['registration_id'].initial = self.registry
-
-        self.fields['class_section'].label = _("Class Section *")
-        self.fields['registration_date'].label = _("Date of registration in the round *")
 
         choices = []
 
@@ -517,13 +508,6 @@ class EducationServiceForm(forms.ModelForm):
                         max_age__gte=registry_obj.child_age
                     ).values_list('name', flat=True)
                 )
-
-            # IMPORTANT:
-            # replace registration_date below with the REAL field name from Registration model
-                if getattr(registry_obj, 'registration_date', None):
-                    self.fields['registration_date'].widget.attrs['min'] = (
-                        registry_obj.registration_date.strftime('%Y-%m-%d')
-                    )
 
         for option in available_service_names:
             choices.append((option, option))
