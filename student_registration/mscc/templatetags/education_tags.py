@@ -13,13 +13,17 @@ def get_education_programme_assessments(result1, result, request=None):
     assessments = []
 
     # helper for adding assessments
-    def add(key, label, max_score=None, pre_val=None, post_val=None, school_val=None, imp_val=None, pre_label=None, post_label=None):
+    def add(key, label, max_score=None, pre_max_score=None, post_max_score=None, pre_val=None, post_val=None, school_val=None, imp_val=None, pre_label=None, post_label=None):
+        pre_max = pre_max_score if pre_max_score is not None else max_score
+        post_max = post_max_score if post_max_score is not None else max_score
         assessments.append({
             'key': key,
             'label': label,
             'pre_label': pre_label or label,
             'post_label': post_label or label,
             'max_score': max_score,
+            'pre_max_score': pre_max,
+            'post_max_score': post_max,
             'pre': pre_val if pre_val is not None else (result.pre_test.get(key) if result and hasattr(result, 'pre_test') and result.pre_test else None),
             'post': post_val if post_val is not None else (result.post_test.get(key) if result and hasattr(result, 'post_test') and result.post_test else None),
             'school': school_val if school_val is not None else (result.school_test.get(key) if result and hasattr(result, 'school_test') and result.school_test else None),
@@ -50,13 +54,13 @@ def get_education_programme_assessments(result1, result, request=None):
     if request and request.user and hasattr(request.user, 'center') and request.user.center:
         provide_french = getattr(request.user.center, 'provide_french_language', 'No') == 'Yes'
 
-    if prog == 'BLN Level 1':
+    if prog in ['BLN Level 1', 'BLN Level 2', 'BLN Level 3']:
         add('arabic_grade', 'Arabic Language Development', 20)
         if provide_french:
             add('french_grade', 'French Language Development', 30)
         else:
             add('english_grade', 'English Language Development', 30)
-        add('math_grade', 'Mathematics', 22)  
+        add('math_grade', 'Mathematics', 25, pre_max_score=25, post_max_score=20)
     elif prog == 'CBECE Level 1':
         add('language_grade', 'Language Development', 48)
         add('math_grade', 'Cognitive Development - Mathematics', 24)
@@ -85,5 +89,15 @@ def get_education_programme_assessments(result1, result, request=None):
         add('language_grade', 'Foreign Language', 20)
         add('math_grade', 'Mathematics', 20)
         add('science_grade', 'Science', 20)
+    elif prog == 'YBLN Level 1':
+        add('arabic_grade', 'Arabic Language Development', 12)
+        add('language_grade', 'Foreign Language Development', 0)
+        add('math_grade', 'Mathematics', 15)
+        add('life_skills', 'Life Skills Development', 12)
+    elif prog == 'YBLN Level 2':
+        add('arabic_grade', 'Arabic Language Development', 12)
+        add('language_grade', 'Foreign Language Development', 12)
+        add('math_grade', 'Mathematics', 21)
+        add('life_skills', 'Life Skills Development', 12)
 
     return assessments
