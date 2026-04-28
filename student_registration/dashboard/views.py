@@ -377,13 +377,18 @@ class CentersMapView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         partners = PartnerOrganization.objects.all()
+        centers = Center.objects.all()
 
         if not (user.is_superuser or user.is_staff):
             if user.partner_id:
                 partners = partners.filter(id=user.partner_id)
+                centers = centers.filter(partner_id=user.partner_id)
+            if user.center_id:
+                centers = centers.filter(id=user.center_id)
 
         context.update({
             'partners': partners,
+            'centers': centers,
             'default_partner_id': user.partner_id,
             'default_center_id': user.center_id,
         })
@@ -413,6 +418,10 @@ def centers_geo_data(request):
     partner_id = request.GET.get('partner_id')
     if partner_id:
         qs = qs.filter(partner_id=partner_id)
+
+    center_id = request.GET.get('center_id')
+    if center_id:
+        qs = qs.filter(id=center_id)
 
     data = []
     for center in qs:
@@ -445,6 +454,53 @@ def centers_geo_data(request):
         })
 
     return JsonResponse(data, safe=False)
+
+
+@login_required
+def centers_children_data(request):
+    """Return list of children for the selected partner and/or center."""
+    user = request.user
+
+    qs = Registration.objects.select_related('child', 'center', 'partner').filter(deleted=False)
+
+    if not (user.is_superuser or user.is_staff):
+        if user.partner_id:
+            qs = qs.filter(partner_id=user.partner_id)
+        if user.center_id:
+            qs = qs.filter(center_id=user.center_id)
+
+    partner_id = request.GET.get('partner_id')
+    if partner_id:
+        qs = qs.filter(partner_id=partner_id)
+
+    center_id = request.GET.get('center_id')
+    if center_id:
+        qs = qs.filter(center_id=center_id)
+
+    data = []
+    for reg in qs:
+        child = reg.child
+        if child:
+            try:
+                age = child.calculate_age
+                if age and isinstance(age, tuple):
+                    age = age[0]
+                elif not age:
+                    age = 'N/A'
+            except Exception:
+                age = 'N/A'
+
+            data.append({
+                'unicef_id': child.unicef_id or 'N/A',
+                'name': f"{child.first_name or ''} {child.last_name or ''}".strip(),
+                'gender': child.get_gender_display() if child.gender else 'N/A',
+                'age': age,
+                'partner': reg.partner.name if reg.partner else 'N/A',
+                'center': reg.center.name if reg.center else 'N/A',
+                'program': reg.programme_type if hasattr(reg, 'programme_type') else 'N/A',
+            })
+
+    return JsonResponse({'data': data})
 
 
 class WikiPageView(LoginRequiredMixin, TemplateView):
