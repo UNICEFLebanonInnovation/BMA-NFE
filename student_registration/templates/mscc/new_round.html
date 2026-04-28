@@ -75,22 +75,28 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const confirmButton = document.getElementById("submit-id-save");
-        const radioButtons = document.querySelectorAll("input[name='registrationType']");
 
-        const updateHref = () => {
-            const selectedRadio = document.querySelector("input[name='registrationType']:checked");
-            if (selectedRadio) {
-                const selectedType = selectedRadio.value;
-                confirmButton.href = `{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}`;
-            }
-        };
-
-        if (radioButtons.length > 0) {
-            updateHref();
-            radioButtons.forEach((radio) => {
-                radio.addEventListener("change", updateHref);
-            });
+        if (!confirmButton) {
+            return;
         }
+
+        const baseUrl = "{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed";
+
+        function updateHref() {
+            const selectedRadio = document.querySelector("input[name='registrationType']:checked");
+
+            if (selectedRadio) {
+                confirmButton.href = baseUrl + "&registrationType=" + encodeURIComponent(selectedRadio.value);
+            } else {
+                confirmButton.href = baseUrl;
+            }
+        }
+
+        updateHref();
+
+        document.querySelectorAll("input[name='registrationType']").forEach(function (radio) {
+            radio.addEventListener("change", updateHref);
+        });
     });
 </script>
 {% endblock %}
