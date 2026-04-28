@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.db.utils import OperationalError, ProgrammingError
 
 from django_filters import (
@@ -92,9 +92,32 @@ class MainFilter(RedesignFilterSet):
         model = Registration
         fields = []
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+    hide_duplicates = ChoiceFilter(
+        choices=(('yes', _('Hide Duplicate Children')), ('no', _('Show All Registrations'))),
+        method='filter_hide_duplicates',
+        label=_('Duplicates'),
+        empty_label=None,
+    )
+
+    def filter_hide_duplicates(self, queryset, name, value):
+        if value == 'yes':
+            latest_ids = queryset.order_by().values('child').annotate(
+                max_id=Max('id')
+            ).values('max_id')
+            return queryset.filter(id__in=latest_ids)
+        return queryset
+
+    def __init__(self, data=None, *args, **kwargs):
+        if data is not None:
+            data = data.copy()
+            if 'hide_duplicates' not in data:
+                data['hide_duplicates'] = 'yes'
+        else:
+            data = {'hide_duplicates': 'yes'}
+        super().__init__(data, *args, **kwargs)
         self._populate_round_choices()
+
 
     def filter_round(self, queryset, name, value):
         if value == 'All':
@@ -161,9 +184,32 @@ class FullFilter(RedesignFilterSet):
         fields = [
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+    hide_duplicates = ChoiceFilter(
+        choices=(('yes', _('Hide Duplicate Children')), ('no', _('Show All Registrations'))),
+        method='filter_hide_duplicates',
+        label=_('Duplicates'),
+        empty_label=None,
+    )
+
+    def filter_hide_duplicates(self, queryset, name, value):
+        if value == 'yes':
+            latest_ids = queryset.order_by().values('child').annotate(
+                max_id=Max('id')
+            ).values('max_id')
+            return queryset.filter(id__in=latest_ids)
+        return queryset
+
+    def __init__(self, data=None, *args, **kwargs):
+        if data is not None:
+            data = data.copy()
+            if 'hide_duplicates' not in data:
+                data['hide_duplicates'] = 'yes'
+        else:
+            data = {'hide_duplicates': 'yes'}
+        super().__init__(data, *args, **kwargs)
         self._populate_round_choices()
+
 
     def filter_round(self, queryset, name, value):
         if value == 'All':
