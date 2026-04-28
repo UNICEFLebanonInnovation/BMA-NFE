@@ -377,13 +377,18 @@ class CentersMapView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         partners = PartnerOrganization.objects.all()
+        centers = Center.objects.select_related('partner').all()
 
         if not (user.is_superuser or user.is_staff):
             if user.partner_id:
                 partners = partners.filter(id=user.partner_id)
+                centers = centers.filter(partner_id=user.partner_id)
+            if user.center_id:
+                centers = centers.filter(id=user.center_id)
 
         context.update({
             'partners': partners,
+            'centers': centers,
             'default_partner_id': user.partner_id,
             'default_center_id': user.center_id,
         })
@@ -413,6 +418,9 @@ def centers_geo_data(request):
     partner_id = request.GET.get('partner_id')
     if partner_id:
         qs = qs.filter(partner_id=partner_id)
+    center_id = request.GET.get('center_id')
+    if center_id:
+        qs = qs.filter(id=center_id)
 
     data = []
     for center in qs:
@@ -445,6 +453,51 @@ def centers_geo_data(request):
         })
 
     return JsonResponse(data, safe=False)
+
+
+@login_required
+def centers_children_data(request):
+    """Return children registered for selected partner and/or center."""
+    user = request.user
+    qs = Registration.objects.select_related('child', 'partner', 'center').filter(
+        deleted=False,
+        child__isnull=False,
+    )
+
+    if not (user.is_superuser or user.is_staff):
+        if user.partner_id:
+            qs = qs.filter(partner_id=user.partner_id)
+        if user.center_id:
+            qs = qs.filter(center_id=user.center_id)
+
+    partner_id = request.GET.get('partner_id')
+    if partner_id:
+        qs = qs.filter(partner_id=partner_id)
+    center_id = request.GET.get('center_id')
+    if center_id:
+        qs = qs.filter(center_id=center_id)
+
+    rows = qs.values(
+        'child_id',
+        'child__first_name',
+        'child__last_name',
+        'child__gender',
+        'child__nationality__name',
+        'center__name',
+        'partner__name',
+    ).order_by('-created')[:500]
+
+    data = [{
+        'child_id': row['child_id'],
+        'first_name': row['child__first_name'] or '',
+        'last_name': row['child__last_name'] or '',
+        'gender': row['child__gender'] or '',
+        'nationality': row['child__nationality__name'] or '',
+        'center': row['center__name'] or '',
+        'partner': row['partner__name'] or '',
+    } for row in rows]
+
+    return JsonResponse({'count': len(data), 'results': data}, safe=False)
 
 
 class WikiPageView(LoginRequiredMixin, TemplateView):

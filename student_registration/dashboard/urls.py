@@ -20,6 +20,7 @@ urlpatterns = [
 
     re_path(r'^centers-map/$', view=views.CentersMapView.as_view(), name='centers_map'),
     re_path(r'^api/centers-geo-data/$', view=views.centers_geo_data, name='centers_geo_data'),
+    re_path(r'^api/centers-children-data/$', view=views.centers_children_data, name='centers_children_data'),
 ]
 
 # Added for Advanced Exporter

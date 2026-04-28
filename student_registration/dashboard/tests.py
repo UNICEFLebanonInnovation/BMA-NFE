@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from student_registration.locations.models import Center, Location, LocationType
 from student_registration.schools.models import PartnerOrganization
+from student_registration.child.models import Child
+from student_registration.mscc.models import Registration
 
 User = get_user_model()
 
@@ -57,3 +59,18 @@ class CentersMapTests(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data), 0)
+
+    def test_centers_children_data_api(self):
+        child = Child.objects.create(first_name="Nada", last_name="Ali", gender="Female")
+        Registration.objects.create(
+            child=child,
+            center=self.center,
+            partner=self.partner,
+        )
+
+        response = self.client.get(reverse('dashboard:centers_children_data') + f'?partner_id={self.partner.id}&center_id={self.center.id}')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['results'][0]['first_name'], "Nada")
+        self.assertEqual(data['results'][0]['center'], "Test Center")
