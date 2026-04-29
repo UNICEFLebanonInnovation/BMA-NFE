@@ -1,6 +1,9 @@
-{% extends "mscc/base.html" %} {% load static i18n %} {% block project_title
-%}{% trans "Centers Map" %}{% endblock %} {% block module_name %}{% trans
-"Centers Geographic Information" %}{% endblock %} {% block extra_head %}
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+
+{% block project_title %}{% trans "Centers Map" %}{% endblock %}
+{% block module_name %}{% trans "Centers Geographic Information" %}{% endblock %}
+{% block extra_head %}
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -42,7 +45,9 @@
     color: #666;
   }
 </style>
-{% endblock %} {% block main_content %}
+{% endblock %}
+
+{% block main_content %}
 <div class="container-fluid">
   <div class="row mb-4">
     <div class="col-12">
@@ -58,13 +63,7 @@
                 {% for p in partners %}
                 <option
                   value="{{ p.id }}"
-                  {%
-                  if
-                  p.id=""
-                  ="default_partner_id"
-                  %}selected{%
-                  endif
-                  %}
+                  {% if p.id == default_partner_id %}selected{% endif %}
                 >
                   {{ p.name }}
                 </option>
@@ -80,13 +79,7 @@
                 {% for c in centers %}
                 <option
                   value="{{ c.id }}"
-                  {%
-                  if
-                  c.id=""
-                  ="default_center_id"
-                  %}selected{%
-                  endif
-                  %}
+                  {% if c.id == default_center_id %}selected{% endif %}
                 >
                   {{ c.name }}
                 </option>
@@ -168,7 +161,9 @@
     </div>
   </div>
 </div>
-{% endblock %} {% block extra_js %}
+{% endblock %}
+
+{% block extra_js %}
 <script
   src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
