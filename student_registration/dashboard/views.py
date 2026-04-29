@@ -456,12 +456,14 @@ def centers_geo_data(request):
     return JsonResponse(data, safe=False)
 
 
+from django.core.paginator import Paginator
+
 @login_required
 def centers_children_data(request):
     """Return list of children for the selected partner and/or center."""
     user = request.user
 
-    qs = Registration.objects.select_related('child', 'center', 'partner').filter(deleted=False)
+    qs = Registration.objects.select_related('child', 'center', 'partner').filter(deleted=False).order_by('-id')
 
     if not (user.is_superuser or user.is_staff):
         if user.partner_id:
@@ -477,8 +479,12 @@ def centers_children_data(request):
     if center_id:
         qs = qs.filter(center_id=center_id)
 
+    paginator = Paginator(qs, 20)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
     data = []
-    for reg in qs:
+    for reg in page_obj:
         child = reg.child
         if child:
             try:
@@ -500,7 +506,16 @@ def centers_children_data(request):
                 'program': reg.programme_type if hasattr(reg, 'programme_type') else 'N/A',
             })
 
-    return JsonResponse({'data': data})
+    return JsonResponse({
+        'data': data,
+        'pagination': {
+            'has_next': page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+            'current_page': page_obj.number,
+            'total_pages': paginator.num_pages,
+            'total_items': paginator.count
+        }
+    })
 
 
 class WikiPageView(LoginRequiredMixin, TemplateView):
