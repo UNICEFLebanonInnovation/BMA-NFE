@@ -57,3 +57,10 @@ class CentersMapTests(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data), 0)
+
+    def test_centers_children_data_api(self):
+        response = self.client.get(reverse('dashboard:centers_children_data'))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('data', data)
+        self.assertIn('pagination', data)
