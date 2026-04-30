@@ -71,9 +71,7 @@ def _get_education_program_dict():
     if sorted_packages:
         return OrderedDict((name, name) for name in sorted_packages)
 
-    education_programs = EducationService.EDUCATION_PROGRAM
-    sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
-    return OrderedDict(sorted_education_programs)
+    return OrderedDict()
 
 
 def _aggregate_attendance(queryset, *group_fields):
@@ -315,7 +313,7 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
         )
 
         programme_category_lookup, category_order_lookup = _get_programme_lookups()
-        programme_choices = dict(EducationService.EDUCATION_PROGRAM)
+        programme_choices = _get_education_program_dict()
         programme_totals = {}
 
         for row in programme_qs:
@@ -407,7 +405,7 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
         )
 
         programme_category_lookup, category_order_lookup = _get_programme_lookups()
-        programme_choices = dict(EducationService.EDUCATION_PROGRAM)
+        programme_choices = _get_education_program_dict()
         programme_monthly_totals = {}
 
         for row in programme_rows:
