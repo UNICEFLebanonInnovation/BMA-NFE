@@ -423,14 +423,39 @@ def centers_geo_data(request):
     if center_id:
         qs = qs.filter(id=center_id)
 
+    centers_list = list(qs)
+    center_ids = [c.id for c in centers_list]
+
+    from student_registration.mscc.models import Registration, Teacher
+    from django.db.models import Count, Q
+
+    regs_stats = {
+        item['center_id']: item for item in Registration.objects.filter(center_id__in=center_ids, deleted=False).values('center_id').annotate(
+            total=Count('id'),
+            total_male=Count('id', filter=Q(child__gender='Male')),
+            total_female=Count('id', filter=Q(child__gender='Female')),
+        )
+    }
+
+    teachers_stats = {
+        item['center_id']: item for item in Teacher.objects.filter(center_id__in=center_ids).values('center_id').annotate(
+            total=Count('id'),
+            total_male=Count('id', filter=Q(sex='Male')),
+            total_female=Count('id', filter=Q(sex='Female')),
+        )
+    }
+
     data = []
-    for center in qs:
+    for center in centers_list:
+        reg_stat = regs_stats.get(center.id, {'total': 0, 'total_male': 0, 'total_female': 0})
+        teach_stat = teachers_stats.get(center.id, {'total': 0, 'total_male': 0, 'total_female': 0})
+
         # Calculate a simple vulnerability score based on registered children in the center
         # For this demonstration, we use a proxy if total_children exists.
         # In a real scenario, this might query PSSServices or child_vulnerability fields.
         vulnerability_score = 0
-        if center.total_children > 0:
-            vulnerability_score = min(10, max(1, int(center.total_children / 50)))
+        if reg_stat['total'] > 0:
+            vulnerability_score = min(10, max(1, int(reg_stat['total'] / 50)))
 
         data.append({
             'id': center.id,
@@ -441,12 +466,12 @@ def centers_geo_data(request):
             'cadaster': center.cadaster.name if center.cadaster else 'N/A',
             'latitude': float(center.latitude) if center.latitude is not None else None,
             'longitude': float(center.longitude) if center.longitude is not None else None,
-            'total_children': center.total_children,
-            'total_male': center.total_male,
-            'total_female': center.total_female,
-            'total_teachers': center.total_teachers,
-            'total_teachers_male': center.total_teachers_male,
-            'total_teachers_female': center.total_teachers_female,
+            'total_children': reg_stat['total'],
+            'total_male': reg_stat['total_male'],
+            'total_female': reg_stat['total_female'],
+            'total_teachers': teach_stat['total'],
+            'total_teachers_male': teach_stat['total_male'],
+            'total_teachers_female': teach_stat['total_female'],
             'type': center.get_type_display() if center.type else 'N/A',
             'p_code': center.p_code or 'N/A',
             'profile_url': reverse('locations:center_profile', kwargs={'pk': center.id}),
