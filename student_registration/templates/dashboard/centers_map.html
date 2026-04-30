@@ -191,6 +191,13 @@
 
     let markers = L.layerGroup().addTo(map);
 
+    function hideLoadingOverlay() {
+      const overlay = document.getElementById("loading-overlay");
+      if (overlay) {
+        overlay.style.display = "none";
+      }
+    }
+
     function loadData() {
       const partnerId = document.getElementById("partner-filter").value;
       const centerId = document.getElementById("center-filter").value;
@@ -278,7 +285,8 @@
             map.fitBounds(bounds, { padding: [50, 50] });
           }
         })
-        .catch((error) => console.error("Error loading map data:", error));
+        .catch((error) => console.error("Error loading map data:", error))
+        .finally(() => hideLoadingOverlay());
     }
 
     function loadChildrenData(page = 1) {
@@ -337,7 +345,8 @@
           console.error("Error loading children data:", error);
           tbody.innerHTML =
             '<tr><td colspan="7" class="text-center text-danger">{% trans "Error loading data." %}</td></tr>';
-        });
+        })
+        .finally(() => hideLoadingOverlay());
     }
 
     function renderPaginator(pagination) {
