@@ -115,7 +115,7 @@ def send_push_to_web_0(user, title, body, data=None):
     )
 
     # Send the notification to all tokens.
-    response = messaging.send_each_for_multicast(message)
+    response = messaging.send_multicast(message)
     return response.success_count > 0
 
 
@@ -125,6 +125,9 @@ def send_push_to_web(user, title, body, data=None):
 
     from student_registration.users.models import WebPushToken
 
+    # Tokens are registered from the client via the save_fcm_token view
+    # (``/api/save-fcm-token/``).  If a user has never visited the app with
+    # notifications enabled there will be no token to use here.
     root_dirt = Path(__file__).parents[2]
     FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
     cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
@@ -133,14 +136,18 @@ def send_push_to_web(user, title, body, data=None):
     if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
 
-    tokens = list(WebPushToken.objects.filter(user=user).values_list("token", flat=True))
-    if not tokens:
-        logger.warning("No WebPushTokens found for user %s", user)
+    token_obj = (
+        WebPushToken.objects.filter(user=user)
+        .order_by("-pk")
+        .first()
+    )
+    if token_obj is None:
+        logger.warning(
+            "No web push token registered for user %s; call the save_fcm_token endpoint to register one before sending.",
+            user.pk,
+        )
         return False
-
-    payload_data = {str(k): str(v) for k, v in (data or {}).items()}
-
-    message = messaging.MulticastMessage(
+    message = messaging.Message(
         notification=messaging.Notification(
             title=title,
             body=body,
@@ -153,12 +160,7 @@ def send_push_to_web(user, title, body, data=None):
                 icon="/static/images/logo.png",
             ),
         ),
-        tokens=tokens,
-        data=payload_data,
+        token=token_obj.token,
+        data=data or {},
     )
-    try:
-        response = messaging.send_each_for_multicast(message)
-        return response.success_count > 0
-    except Exception as e:
-        logger.exception("Error Sending Push notifications: %s", e)
-        return False
+    return messaging.send(message)
