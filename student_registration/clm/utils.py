@@ -779,6 +779,8 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
         bool: ``True`` when the transfer completes without errors; ``False`` on failure.
     """
 
+    from django.db.models import Count
+
     try:
         with transaction.atomic():
             child_attendances = list(
@@ -796,23 +798,42 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
             ca_to_delete_ids = []
             old_attendances_to_delete_ids = set()
 
+            if child_attendances:
+                old_attendance_ids = [ca.attendance_day_id for ca in child_attendances]
+                attendance_dates = [ca.attendance_day.attendance_date for ca in child_attendances]
+                center_ids = [ca.attendance_day.center_id for ca in child_attendances]
+
+                # Pre-fetch new attendances
+                new_attendances_qs = CLMAttendance.objects.filter(
+                    center_id__in=center_ids,
+                    attendance_date__in=attendance_dates,
+                    education_program=education_program,
+                    class_section=new_class_section
+                ).order_by('id')
+
+                new_att_dict = {}
+                for na in new_attendances_qs:
+                    new_att_dict[(na.center_id, na.attendance_date)] = na
+
+                # Pre-fetch counts
+                counts_qs = CLMAttendanceStudent.objects.filter(
+                    attendance_day_id__in=old_attendance_ids
+                ).values('attendance_day_id').annotate(count=Count('id'))
+                counts_dict = {item['attendance_day_id']: item['count'] for item in counts_qs}
+            else:
+                new_att_dict = {}
+                counts_dict = {}
+
             for ca in child_attendances:
                 old_attendance = ca.attendance_day
                 center_id = old_attendance.center_id
                 attendance_date = old_attendance.attendance_date
 
                 # Search if attendance for the new class exists and move the child attendance to it
-                new_attendance = CLMAttendance.objects.filter(
-                    center_id=center_id,
-                    attendance_date=attendance_date,
-                    education_program=education_program,
-                    class_section=new_class_section
-                ).order_by('id').last()
+                new_attendance = new_att_dict.get((center_id, attendance_date))
 
                 # Count the number of other attendances for the same day
-                other_children_count = CLMAttendanceStudent.objects.filter(
-                    attendance_day=old_attendance
-                ).exclude(id=ca.id).count()
+                other_children_count = counts_dict.get(old_attendance.id, 0) - 1
 
                 if new_attendance:
                     ca.attendance_day = new_attendance
@@ -820,7 +841,7 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
                 else:
                     ca_to_delete_ids.append(ca.id)
 
-                if other_children_count == 0:
+                if other_children_count <= 0:
                     old_attendances_to_delete_ids.add(old_attendance.id)
 
             if ca_to_update:
