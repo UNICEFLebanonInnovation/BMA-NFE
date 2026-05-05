@@ -733,12 +733,15 @@ def create_attendance(data):
             attendance.save()
 
             student_ids = [child['child_id'] for child in children_attendance]
-            registrations = Bridging.objects.filter(student_id__in=student_ids, round_id=round_id)
+            registrations_qs = Bridging.objects.filter(
+                student_id__in=student_ids, round_id=round_id
+            ).select_related('student')
+            registrations_by_student = {reg.student_id: reg for reg in registrations_qs}
 
             for child in children_attendance:
                 student_id = child['child_id']
                 registration_id = child['registration_id']
-                registration = registrations.filter(student_id=student_id).first()
+                registration = registrations_by_student.get(student_id)
 
                 # Use update_or_create to minimize database hits
                 attendance_child, created = CLMAttendanceStudent.objects.update_or_create(
