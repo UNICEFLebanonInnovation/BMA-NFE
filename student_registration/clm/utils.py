@@ -1,4 +1,7 @@
 # -- coding: utf-8 --
+import operator
+from functools import reduce
+from django.db.models import Count, Q
 import io
 import xlwt
 from django.http import HttpResponse, FileResponse
@@ -799,23 +802,45 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
             ca_to_delete_ids = []
             old_attendances_to_delete_ids = set()
 
+            q_objects = [
+                Q(center_id=ca.attendance_day.center_id, attendance_date=ca.attendance_day.attendance_date)
+                for ca in child_attendances
+            ]
+
+            new_attendances_map = {}
+            if q_objects:
+                new_attendances_qs = CLMAttendance.objects.filter(
+                    reduce(operator.or_, q_objects),
+                    education_program=education_program,
+                    class_section=new_class_section
+                ).order_by('id')
+
+                new_attendances_map = {
+                    (na.center_id, na.attendance_date): na
+                    for na in new_attendances_qs
+                }
+
+            old_attendance_ids = [ca.attendance_day_id for ca in child_attendances]
+
+            other_children_counts = {}
+            if old_attendance_ids:
+                other_children_counts = {
+                    item['attendance_day_id']: item['count']
+                    for item in CLMAttendanceStudent.objects.filter(
+                        attendance_day_id__in=old_attendance_ids
+                    ).exclude(
+                        id__in=[ca.id for ca in child_attendances]
+                    ).values('attendance_day_id').annotate(count=Count('id'))
+                }
+
             for ca in child_attendances:
                 old_attendance = ca.attendance_day
                 center_id = old_attendance.center_id
                 attendance_date = old_attendance.attendance_date
 
-                # Search if attendance for the new class exists and move the child attendance to it
-                new_attendance = CLMAttendance.objects.filter(
-                    center_id=center_id,
-                    attendance_date=attendance_date,
-                    education_program=education_program,
-                    class_section=new_class_section
-                ).order_by('id').last()
+                new_attendance = new_attendances_map.get((center_id, attendance_date))
 
-                # Count the number of other attendances for the same day
-                other_children_count = CLMAttendanceStudent.objects.filter(
-                    attendance_day=old_attendance
-                ).exclude(id=ca.id).count()
+                other_children_count = other_children_counts.get(old_attendance.id, 0)
 
                 if new_attendance:
                     ca.attendance_day = new_attendance
