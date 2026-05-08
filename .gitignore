@@ -34,4 +34,4 @@ node_modules/
 
 # Build / dist
 dist/
-build/
+build/venv/

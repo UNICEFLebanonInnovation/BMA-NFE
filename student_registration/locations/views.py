@@ -224,7 +224,7 @@ def export_data(request):
                     csv_teacher_output.write(codecs.BOM_UTF8.decode('utf-8'))
                     csv_writer.writerow(teacher_headers)
 
-                    for teacher in teachers:
+                    for teacher in teachers.iterator(chunk_size=2000):
                         csv_writer.writerow([
                             smart_str(teacher['center__name']),
                             smart_str(teacher['first_name']),
@@ -331,7 +331,7 @@ def export_center_background(request):
                     csv_teacher_output.write(codecs.BOM_UTF8.decode('utf-8'))
                     csv_writer.writerow(teacher_headers)
 
-                    for teacher in teachers:
+                    for teacher in teachers.iterator(chunk_size=2000):
                         csv_writer.writerow([
                             smart_str(teacher['center__name']),
                             smart_str(teacher['first_name']),
