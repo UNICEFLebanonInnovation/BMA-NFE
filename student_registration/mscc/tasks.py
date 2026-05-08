@@ -190,20 +190,29 @@ def _generate_filtered_mscc_export(export_id, filters=None, file_format='csv'):
 
         # Apply additional filters from the UI
         if filters.get('child__first_name'):
-            vw_mscc_data_str += " AND first_name ILIKE %s"
+            vw_mscc_data_str += " AND child_first_name ILIKE %s"
             query_params.append(f"%{filters['child__first_name']}%")
         if filters.get('child__last_name'):
-            vw_mscc_data_str += " AND last_name ILIKE %s"
+            vw_mscc_data_str += " AND child_last_name ILIKE %s"
             query_params.append(f"%{filters['child__last_name']}%")
         if filters.get('child__father_name'):
-            vw_mscc_data_str += " AND father_name ILIKE %s"
+            vw_mscc_data_str += " AND child_father_name ILIKE %s"
             query_params.append(f"%{filters['child__father_name']}%")
+        if filters.get('child__mother_fullname'):
+            vw_mscc_data_str += " AND child_mother_fullname = %s"
+            query_params.append(filters['child__mother_fullname'])
         if filters.get('child__nationality'):
             vw_mscc_data_str += " AND child_nationality_id = %s"
             query_params.append(filters['child__nationality'])
         if filters.get('child__gender'):
-            vw_mscc_data_str += " AND gender = %s"
+            vw_mscc_data_str += " AND child_gender = %s"
             query_params.append(filters['child__gender'])
+        if filters.get('child__unicef_id'):
+            vw_mscc_data_str += " AND unicef_id LIKE %s"
+            query_params.append(f"%{filters['child__unicef_id']}%")
+        if filters.get('programme_type'):
+            vw_mscc_data_str += " AND education_program = %s"
+            query_params.append(filters['programme_type'])
 
         cursor.execute(vw_mscc_data_str, query_params)
         mscc_data = cursor.fetchall()
