@@ -5,12 +5,16 @@ import os
 import io
 import re
 import logging
+import base64
+import binascii
 
 from pathlib import Path
 from time import mktime
 
+from django.core.files.storage import FileSystemStorage
 from django.http import FileResponse, HttpResponse
 from storages.backends.azure_storage import AzureStorage
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +34,39 @@ class MyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class ExportStorage(AzureStorage):
-    """Azure storage backend dedicated for exported files."""
+class _AzureExportStorage(AzureStorage):
     location = "export"
+
+
+class ExportStorage:
+    """Storage wrapper for exported files with Azure-to-local fallback."""
+
+    location = "export"
+
+    def __init__(self):
+        self._storage = self._build_storage()
+
+    def _build_storage(self):
+        account_key = getattr(settings, 'AZURE_ACCOUNT_KEY', '') or os.getenv('AZURE_ACCOUNT_KEY', '')
+        if account_key:
+            try:
+                base64.b64decode(account_key, validate=True)
+                return _AzureExportStorage()
+            except (binascii.Error, ValueError):
+                logger.warning('Invalid AZURE_ACCOUNT_KEY format; falling back to local export storage.')
+
+        export_root = os.path.join(settings.MEDIA_ROOT, self.location)
+        os.makedirs(export_root, exist_ok=True)
+        return FileSystemStorage(location=export_root, base_url=f"{settings.MEDIA_URL}{self.location}/")
+
+    def save(self, name, content):
+        return self._storage.save(name, content)
+
+    def open(self, name, mode='rb'):
+        return self._storage.open(name, mode)
+
+    def delete(self, name):
+        return self._storage.delete(name)
 
 
 def download_file(file_name, returned_file_name, content_type="application/octet-stream", delete_after=True):

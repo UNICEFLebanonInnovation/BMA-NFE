@@ -45,17 +45,18 @@ $(document).ready(function() {
 
     // Common Export Handler Function
     function initiateExport(button, url, checkRound = false) {
-        var params = $('#filter-form').serialize();
+        // Build export params from the filter form, but always read `round` from
+        // the URL so exports match the currently applied round filter.
+        var paramsObj = new URLSearchParams($('#filter-form').serialize() || '');
+        var roundFromUrl = new URLSearchParams(window.location.search || '').get('round');
+        if (roundFromUrl !== null) {
+            paramsObj.set('round', roundFromUrl);
+        }
+
         var format = $("input[name='export-format']:checked").val();
         var originalHtml = button.html();
-
-
-        // Add format to params if not already there
-        if (params.indexOf('format=') === -1) {
-            params += "&format=" + format;
-        } else {
-            params = params.replace(/format=[^&]*/, 'format=' + format);
-        }
+        paramsObj.set('format', format);
+        var params = paramsObj.toString();
 
         button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Processsing...');
 
