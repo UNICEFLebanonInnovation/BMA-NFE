@@ -45,17 +45,21 @@ $(document).ready(function() {
 
     // Common Export Handler Function
     function initiateExport(button, url, checkRound = false) {
-        var params = $('#filter-form').serialize();
+        // Build export params from the current URL first so active filters are preserved
+        // even when the offcanvas filter form has not been interacted with.
+        var paramsObj = new URLSearchParams(window.location.search || '');
+        var formSerialized = $('#filter-form').serialize();
+        if (formSerialized) {
+            var formParams = new URLSearchParams(formSerialized);
+            formParams.forEach(function(value, key) {
+                paramsObj.set(key, value);
+            });
+        }
+
         var format = $("input[name='export-format']:checked").val();
         var originalHtml = button.html();
-
-
-        // Add format to params if not already there
-        if (params.indexOf('format=') === -1) {
-            params += "&format=" + format;
-        } else {
-            params = params.replace(/format=[^&]*/, 'format=' + format);
-        }
+        paramsObj.set('format', format);
+        var params = paramsObj.toString();
 
         button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Processsing...');
 
