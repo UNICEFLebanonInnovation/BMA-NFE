@@ -45,15 +45,12 @@ $(document).ready(function() {
 
     // Common Export Handler Function
     function initiateExport(button, url, checkRound = false) {
-        // Build export params from the current URL first so active filters are preserved
-        // even when the offcanvas filter form has not been interacted with.
-        var paramsObj = new URLSearchParams(window.location.search || '');
-        var formSerialized = $('#filter-form').serialize();
-        if (formSerialized) {
-            var formParams = new URLSearchParams(formSerialized);
-            formParams.forEach(function(value, key) {
-                paramsObj.set(key, value);
-            });
+        // Build export params from the filter form, but always read `round` from
+        // the URL so exports match the currently applied round filter.
+        var paramsObj = new URLSearchParams($('#filter-form').serialize() || '');
+        var roundFromUrl = new URLSearchParams(window.location.search || '').get('round');
+        if (roundFromUrl !== null) {
+            paramsObj.set('round', roundFromUrl);
         }
 
         var format = $("input[name='export-format']:checked").val();
