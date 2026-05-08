@@ -1336,6 +1336,8 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             'programme_type', 'pre_test', 'post_test'
         )
 
+        REQUIRED_ASSESSMENT_KEYS = {'life_skills', 'english_development', 'financial_development', 'it_development'}
+
         improvements = {}
         for p in programme_assessments:
             ptype = p.get('programme_type') or 'Unknown'
@@ -1346,7 +1348,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
                 improvements[ptype] = {}
 
             for key in post.keys():
-                if key.endswith('_grade') or key in ['life_skills', 'english_development', 'financial_development', 'it_development']:
+                if key.endswith('_grade') or key in REQUIRED_ASSESSMENT_KEYS:
                     try:
                         post_val = float(post[key])
                         pre_val = float(pre.get(key, 0))
@@ -1399,7 +1401,7 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
                 pre = p.get('pre_test') or {}
                 post = p.get('post_test') or {}
                 for key in post.keys():
-                    if key.endswith('_grade') or key in ['life_skills', 'english_development', 'financial_development', 'it_development']:
+                    if key.endswith('_grade') or key in REQUIRED_ASSESSMENT_KEYS:
                         try:
                             post_val = float(post[key])
                             pre_val = float(pre.get(key, 0))
