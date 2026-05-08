@@ -199,7 +199,7 @@ def _generate_filtered_mscc_export(export_id, filters=None, file_format='csv'):
             vw_mscc_data_str += " AND father_name ILIKE %s"
             query_params.append(f"%{filters['child__father_name']}%")
         if filters.get('child__nationality'):
-            vw_mscc_data_str += " AND nationality_id = %s"
+            vw_mscc_data_str += " AND child_nationality_id = %s"
             query_params.append(filters['child__nationality'])
         if filters.get('child__gender'):
             vw_mscc_data_str += " AND gender = %s"
