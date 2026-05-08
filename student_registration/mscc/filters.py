@@ -70,19 +70,15 @@ class MainFilter(RedesignFilterSet):
         .order_by('name').distinct(),
         empty_label='Round'
     )
-    programme_type = ChoiceFilter(choices=Packages.objects.values_list('id', 'name').order_by('name').distinct(),
-                                  field_name='education_service__education_program',
-                                  empty_label='Programme Type', method='filter_education_program')
+    programme_type = ChoiceFilter(
+        choices=Packages.objects.values_list('name', 'name').order_by('name').distinct(),
+        field_name='education_service__education_program',
+        empty_label='Programme Type',
+        method='filter_education_program',
+    )
 
     center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Center')
-    center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name')
-                                       .order_by('name').distinct(), empty_label='Governorate')
-    center__caza = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name')
-                                .order_by('name').distinct(), empty_label='Caza')
-    center__cadaster = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name')
-        .order_by('name').distinct(), empty_label='Cadaster')
 
     class Meta:
         model = Registration
@@ -117,9 +113,13 @@ class FullFilter(RedesignFilterSet):
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Nationality')
-    programme_type = ChoiceFilter(choices=Packages.objects.values_list('id', 'name').order_by('name').distinct(),
-                                  field_name='education_service__education_program',
-                                  empty_label='Programme Type', method='filter_education_program')
+
+    programme_type = ChoiceFilter(
+        choices=Packages.objects.values_list('name', 'name').order_by('name').distinct(),
+        field_name='education_service__education_program',
+        empty_label='Programme Type',
+        method='filter_education_program',
+    )
 
 
     class Meta:
@@ -132,7 +132,6 @@ class FullFilter(RedesignFilterSet):
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
-
 
 
 class TeacherFilter(RedesignFilterSet):
@@ -155,6 +154,3 @@ class TeacherFilter(RedesignFilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    def filter_education_program(self, queryset, name, value):
-        return queryset.filter(education_service__education_program=value)
