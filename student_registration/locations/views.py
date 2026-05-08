@@ -209,11 +209,11 @@ def export_data(request):
             if center_ids:
                 # Replace vw_center_program_staff with teacher data
                 from student_registration.mscc.models import Teacher
-                teachers = Teacher.objects.filter(center_id__in=center_ids).values(
+                teachers = list(Teacher.objects.filter(center_id__in=center_ids).values(
                     'center__name', 'first_name', 'last_name', 'sex', 'email', 'primary_phone_number'
-                )
+                ))
 
-                if teachers.exists():
+                if teachers:
                     teacher_headers = ['Center', 'First Name', 'Last Name', 'Sex', 'Email', 'Phone Number']
 
                     # Create CSV for teacher data
@@ -316,11 +316,11 @@ def export_center_background(request):
             if center_ids:
                 # Replace vw_center_program_staff with teacher data
                 from student_registration.mscc.models import Teacher
-                teachers = Teacher.objects.filter(center_id__in=center_ids).values(
+                teachers = list(Teacher.objects.filter(center_id__in=center_ids).values(
                     'center__name', 'first_name', 'last_name', 'sex', 'email', 'primary_phone_number'
-                )
+                ))
 
-                if teachers.exists():
+                if teachers:
                     teacher_headers = ['Center', 'First Name', 'Last Name', 'Sex', 'Email', 'Phone Number']
 
                     # Create CSV for teacher data
