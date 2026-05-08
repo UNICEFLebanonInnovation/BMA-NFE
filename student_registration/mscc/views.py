@@ -69,7 +69,6 @@ from .models import (
     Registration,
     Teacher,
     PSSService,
-    EducationAssessment,
     HealthNutritionService,
     EducationService,
     EducationProgrammeAssessment,
@@ -1280,13 +1279,6 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             for item in edu_status
         ]
 
-        assess_qs = EducationAssessment.objects.filter(registration__in=qs)
-        avg_improvement = assess_qs.aggregate(
-            arabic=Avg(Cast(F('post_arabic_grade') - F('pre_arabic_grade'), FloatField()) / NullIf(Cast(F('pre_arabic_grade'), FloatField()), 0.0) * 100),
-            math=Avg(Cast(F('post_math_grade') - F('pre_math_grade'), FloatField()) / NullIf(Cast(F('pre_math_grade'), FloatField()), 0.0) * 100),
-            language=Avg(Cast(F('post_language_grade') - F('pre_language_grade'), FloatField()) / NullIf(Cast(F('pre_language_grade'), FloatField()), 0.0) * 100),
-        )
-
         # 4. Impact Analysis & KPIs
         # Attendance logic (simplified: use the annotated property if possible or aggregate)
         # For performance, let's just get the average of the annotated _total_absent_days if we were in a ListView,
@@ -1302,17 +1294,8 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
 
         protection_rate = (pss_indicators['protection_concern'] / total_registrations) * 100
 
-        # Barriers
-        barriers = (
-            assess_qs.values(name=F('barriers'))
-            .exclude(name__in=['', None])
-            .annotate(y=Count('id'))
-            .order_by('-y')
-        )
-        barriers = [
-            {'name': item['name'] or 'No barriers', 'y': item['y']}
-            for item in barriers
-        ]
+        # Barriers (EducationAssessment removed)
+        barriers = []
 
         # Impact: Attendance vs Improvement
         # High attendance (>90%) vs Low attendance (<90%)

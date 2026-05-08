@@ -20,7 +20,6 @@ from student_registration.mscc.utils import validate_date
 from student_registration.mscc.widgets import DatePickerInput
 from .models import (
     Registration,
-    EducationAssessment,
     EducationService,
     Packages,
     EducationRSService,
@@ -34,409 +33,6 @@ from student_registration.schools.models import (
 from .utils import update_child_attendance
 
 
-class DiagnosticAssessmentForm(forms.ModelForm):
-    # Pre Test
-    pre_attended_arabic = forms.ChoiceField(
-        label=_("Did the Child Undertake Arabic Language Development Assessment"),
-        widget=forms.Select, required=True,
-        choices=YES_NO,
-    )
-    pre_modality_arabic = forms.ChoiceField(
-        label=_("Modality"),
-        widget=forms.Select,
-        required=False,
-        choices=EducationAssessment.MODALITY
-    )
-    pre_arabic_grade = forms.IntegerField(
-        label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
-        min_value=0, required=False,
-        initial=0
-    )
-    pre_attended_language = forms.ChoiceField(
-        label=_("Did the Child Undertake Foreign Language Development Assessment"),
-        widget=forms.Select, required=True,
-        choices=YES_NO,
-    )
-    pre_modality_language = forms.ChoiceField(
-        label=_("Modality"),
-        widget=forms.Select,
-        required=False,
-        choices=EducationAssessment.MODALITY
-    )
-    pre_language_grade = forms.IntegerField(
-        label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
-        min_value=0, required=False,
-        initial=0
-    )
-    pre_attended_math = forms.ChoiceField(
-        label=_("Did the Child Undertake Cognitive Development - Mathematics test"),
-        widget=forms.Select, required=True,
-        choices=YES_NO,
-    )
-    pre_modality_math = forms.ChoiceField(
-        label=_("Modality"),
-        widget=forms.Select,
-        required=False,
-        choices=EducationAssessment.MODALITY
-    )
-    pre_math_grade = forms.IntegerField(
-        label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
-        min_value=0, required=False,
-        initial=0
-    )
-
-    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        registry = kwargs.pop('registry', None)
-        instance = kwargs.pop('instance', None)
-
-        super(DiagnosticAssessmentForm, self).__init__(*args, **kwargs)
-
-        form_action = reverse('mscc:service_diagnostic_assessment_add', kwargs={'registry': registry})
-        if instance:
-            form_action = reverse('mscc:service_diagnostic_assessment_edit',
-                                  kwargs={'registry': registry, 'pk': instance})
-        self.helper = FormHelper()
-        self.helper.form_show_labels = True
-        self.helper.form_action = form_action
-        self.helper.layout = Layout(
-            Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('pre_attended_arabic', css_class='col-md-6'),
-                    Div('pre_modality_arabic', css_class='col-md-3'),
-                    Div('pre_arabic_grade', css_class='col-md-2'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('pre_attended_language', css_class='col-md-6'),
-                    Div('pre_modality_language', css_class='col-md-3'),
-                    Div('pre_language_grade', css_class='col-md-2'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('pre_attended_math', css_class='col-md-6'),
-                    Div('pre_modality_math', css_class='col-md-3'),
-                    Div('pre_math_grade', css_class='col-md-2'),
-                    css_class='row card-body'
-                ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
-                css_id='step-1'
-            ),
-        )
-
-    def save(self, request=None, instance=None, registry=None):
-
-        validated_data = request.POST
-
-        if not instance:
-            instance = EducationAssessment.objects.create(registration_id=registry)
-        else:
-            instance = EducationAssessment.objects.get(id=instance)
-
-        instance.pre_attended_arabic = validated_data.get('pre_attended_arabic')
-        instance.pre_modality_arabic = validated_data.get('pre_modality_arabic')
-        instance.pre_arabic_grade = int(validated_data.get('pre_arabic_grade'))
-        instance.pre_attended_language = validated_data.get('pre_attended_language')
-        instance.pre_modality_language = validated_data.get('pre_modality_language')
-        instance.pre_language_grade = int(validated_data.get('pre_language_grade'))
-        instance.pre_attended_math = validated_data.get('pre_attended_math')
-        instance.pre_modality_math = validated_data.get('pre_modality_math')
-        instance.pre_math_grade = int(validated_data.get('pre_math_grade'))
-        instance.save()
-
-        messages.success(request, _('Your data has been sent successfully to the server'))
-
-        return instance
-
-    def clean(self):
-        cleaned_data = super(DiagnosticAssessmentForm, self).clean()
-
-        pre_attended_arabic = cleaned_data.get("pre_attended_arabic")
-        pre_modality_arabic = cleaned_data.get("pre_modality_arabic")
-        pre_arabic_grade = cleaned_data.get("pre_arabic_grade")
-        if pre_attended_arabic and pre_attended_arabic == 'Yes':
-            if not pre_modality_arabic:
-                self.add_error('pre_modality_arabic', 'This field is required')
-            if not pre_arabic_grade:
-                self.add_error('pre_arabic_grade', 'This field is required')
-
-        pre_attended_language = cleaned_data.get("pre_attended_language")
-        pre_modality_language = cleaned_data.get("pre_modality_language")
-        pre_language_grade = cleaned_data.get("pre_language_grade")
-        if pre_attended_language and pre_attended_language == 'Yes':
-            if not pre_modality_language:
-                self.add_error('pre_modality_language', 'This field is required')
-            if not pre_language_grade:
-                self.add_error('pre_language_grade', 'This field is required')
-
-        pre_attended_math = cleaned_data.get("pre_attended_math")
-        pre_modality_math = cleaned_data.get("pre_modality_math")
-        pre_math_grade = cleaned_data.get("pre_math_grade")
-        if pre_attended_math and pre_attended_math == 'Yes':
-            if not pre_modality_math:
-                self.add_error('pre_modality_math', 'This field is required')
-            if not pre_math_grade:
-                self.add_error('pre_math_grade', 'This field is required')
-
-    class Meta:
-        model = EducationAssessment
-        fields = (
-            'pre_attended_arabic',
-            'pre_modality_arabic',
-            'pre_arabic_grade',
-            'pre_attended_language',
-            'pre_modality_language',
-            'pre_language_grade',
-            'pre_attended_math',
-            'pre_modality_math',
-            'pre_math_grade',
-        )
-
-
-class EducationAssessmentForm(forms.ModelForm):
-    participation = forms.ChoiceField(
-        label=_("Child Level of participation / Absence"),
-        widget=forms.Select, required=True,
-        choices=EducationAssessment.PARTICIPATION
-    )
-    barriers = forms.ChoiceField(
-        label=_('The main barriers affecting the child\'s '
-                'daily attendance/participation, performance, or causing drop-out'),
-        widget=forms.Select, required=False,
-        choices=EducationAssessment.BARRIERS
-    )
-    barriers_other = forms.CharField(
-        label=_('Please specify'),
-        widget=forms.TextInput(attrs={'placeholder': _('Describe other barriers')}), required=False
-    )
-    post_test_done = forms.ChoiceField(
-        label=_('Did the child undertake the Post tests?'),
-        widget=forms.Select, required=True,
-        choices=YES_NO
-    )
-    school_year_completed = forms.ChoiceField(
-        label=_('Did the child fully complete the school year?'),
-        widget=forms.Select, required=True,
-        choices=YES_NO
-    )
-    # Post test
-    post_attended_arabic = forms.ChoiceField(
-        label=_("Did the Child Undertake Arabic Language Development Assessment"),
-        widget=forms.Select, required=True,
-        choices=YES_NO,
-    )
-    post_modality_arabic = forms.ChoiceField(
-        label=_("Modality"),
-        widget=forms.Select,
-        required=False,
-        choices=EducationAssessment.MODALITY
-    )
-    post_arabic_grade = forms.IntegerField(
-        label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
-        required=False,
-        initial=0
-    )
-    post_attended_language = forms.ChoiceField(
-        label=_("Did the Child Undertake Foreign Language Development Assessment"),
-        widget=forms.Select, required=True,
-        choices=YES_NO,
-    )
-    post_modality_language = forms.ChoiceField(
-        label=_("Modality"),
-        widget=forms.Select,
-        required=False,
-        choices=EducationAssessment.MODALITY
-    )
-    post_language_grade = forms.IntegerField(
-        label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
-        required=False,
-        initial=0
-    )
-    post_attended_math = forms.ChoiceField(
-        label=_("Did the Child Undertake Cognitive Development - Mathematics test"),
-        widget=forms.Select, required=True,
-        choices=YES_NO,
-    )
-    post_modality_math = forms.ChoiceField(
-        label=_("Modality"),
-        widget=forms.Select,
-        required=False,
-        choices=EducationAssessment.MODALITY
-    )
-    post_math_grade = forms.IntegerField(
-        label=_('Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
-        required=False,
-        initial=0
-    )
-
-    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        registry = kwargs.pop('registry', None)
-        instance = kwargs.pop('instance', None)
-
-        super(EducationAssessmentForm, self).__init__(*args, **kwargs)
-
-        form_action = reverse('mscc:service_education_assessment_add', kwargs={'registry': registry})
-        if instance:
-            form_action = reverse('mscc:service_education_assessment_edit',
-                                  kwargs={'registry': registry, 'pk': instance})
-
-        self.helper = FormHelper()
-        self.helper.form_show_labels = True
-        self.helper.form_action = form_action
-        self.helper.layout = Layout(
-            Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('participation', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('barriers', css_class='col-md-8'),
-                    Div('barriers_other', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('post_test_done', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('school_year_completed', css_class='col-md-5'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('post_attended_arabic', css_class='col-md-6'),
-                    Div('post_modality_arabic', css_class='col-md-3 grd-arabic'),
-                    Div('post_arabic_grade', css_class='col-md-2 grd-arabic'),
-                    css_class='row grades card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('post_attended_language', css_class='col-md-6'),
-                    Div('post_modality_language', css_class='col-md-3'),
-                    Div('post_language_grade', css_class='col-md-2'),
-                    css_class='row grades card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('post_attended_math', css_class='col-md-6'),
-                    Div('post_modality_math', css_class='col-md-3'),
-                    Div('post_math_grade', css_class='col-md-2'),
-                    css_class='row grades card-body'
-                ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
-                css_id='step-1'
-            ),
-        )
-
-    def save(self, request=None, instance=None, registry=None):
-
-        validated_data = request.POST
-
-        if not instance:
-            instance = EducationAssessment.objects.create(registration_id=registry)
-        else:
-            instance = EducationAssessment.objects.get(id=instance)
-
-        instance.participation = validated_data.get('participation')
-        instance.barriers = validated_data.get('barriers')
-        instance.barriers_other = validated_data.get('barriers_other')
-        instance.post_test_done = validated_data.get('post_test_done')
-        instance.school_year_completed = validated_data.get('school_year_completed')
-        instance.post_attended_arabic = validated_data.get('post_attended_arabic')
-        instance.post_modality_arabic = validated_data.get('post_modality_arabic')
-        instance.post_arabic_grade = int(validated_data.get('post_arabic_grade'))
-        instance.post_attended_language = validated_data.get('post_attended_language')
-        instance.post_modality_language = validated_data.get('post_modality_language')
-        instance.post_language_grade = int(validated_data.get('post_language_grade'))
-        instance.post_attended_math = validated_data.get('post_attended_math')
-        instance.post_modality_math = validated_data.get('post_modality_math')
-        instance.post_math_grade = int(validated_data.get('post_math_grade'))
-        instance.save()
-
-        messages.success(request, _('Your data has been sent successfully to the server'))
-
-        return instance
-
-    def clean(self):
-        cleaned_data = super(EducationAssessmentForm, self).clean()
-        barriers = cleaned_data.get("barriers")
-        barriers_other = cleaned_data.get("barriers_other")
-        if barriers and barriers == 'Other' and not barriers_other:
-            self.add_error('barriers_other', 'This field is required')
-
-        post_test_done = cleaned_data.get("post_test_done")
-        if post_test_done and post_test_done == 'Yes':
-
-            post_attended_arabic = cleaned_data.get("post_attended_arabic")
-            post_modality_arabic = cleaned_data.get("post_modality_arabic")
-            post_arabic_grade = cleaned_data.get("post_arabic_grade")
-            if post_attended_arabic and post_attended_arabic == 'Yes':
-                if not post_modality_arabic:
-                    self.add_error('post_modality_arabic', 'This field is required')
-                if not post_arabic_grade:
-                    self.add_error('post_arabic_grade', 'This field is required')
-
-            post_attended_language = cleaned_data.get("post_attended_language")
-            post_modality_language = cleaned_data.get("post_modality_language")
-            post_language_grade = cleaned_data.get("post_language_grade")
-            if post_attended_language and post_attended_language == 'Yes':
-                if not post_modality_language:
-                    self.add_error('post_modality_language', 'This field is required')
-                if not post_language_grade:
-                    self.add_error('post_language_grade', 'This field is required')
-
-            post_attended_math = cleaned_data.get("post_attended_math")
-            post_modality_math = cleaned_data.get("post_modality_math")
-            post_math_grade = cleaned_data.get("post_math_grade")
-            if post_attended_math and post_attended_math == 'Yes':
-                if not post_modality_math:
-                    self.add_error('post_modality_math', 'This field is required')
-                if not post_math_grade:
-                    self.add_error('post_math_grade', 'This field is required')
-
-    class Meta:
-        model = EducationAssessment
-        fields = (
-            'participation',
-            'barriers',
-            'barriers_other',
-            'post_test_done',
-            'school_year_completed',
-            'post_attended_arabic',
-            'post_modality_arabic',
-            'post_arabic_grade',
-            'post_attended_language',
-            'post_modality_language',
-            'post_language_grade',
-            'post_attended_math',
-            'post_modality_math',
-            'post_math_grade'
-        )
 
 
 class EducationServiceForm(forms.ModelForm):
@@ -821,17 +417,50 @@ class EducationRSServiceForm(forms.ModelForm):
         )
 
 
+PARTICIPATION_CHOICES = Choices(
+    ('', '----------'),
+    ('No Absence', _('No Absence')),
+    ('Absence for less than 5 days/equivlant remote learning sessions',
+     _('Absence for less than 5 days/equivlant remote learning sessions')),
+    ('Absence for 5-10 days /equivlant remote learning sessions',
+     _('Absence for 5-10 days /equivlant remote learning sessions')),
+    ('Absence for 10-15 days /equivlant remote learning sessions',
+     _('Absence for 10-15 days /equivlant remote learning sessions')),
+    ('Absence for 15-25 days /equivlant remote learning sessions',
+     _('Absence for 15-25 days /equivlant remote learning sessions')),
+    ('Absence for more than 25 days / equivlant remote learning sessions',
+     _('Absence for more than 25 days / equivlant remote learning sessions')),
+)
+
+BARRIERS_CHOICES = Choices(
+    ('', '----------'),
+    ('Working Full-time to support family', _('Working Full-time to support family')),
+    ('Availability of Electronic Device', _('Availability of Electronic Device')),
+    ('Sickness', _('Sickness')),
+    ('Family changed address in Lebanon', _('Family changed address in Lebanon')),
+    ('Marriage/engagement', _('Marriage/engagement')),
+    ('No barriers', _('No barriers')),
+    ('Enrolled in Formal Education', _('Enrolled in Formal Education')),
+    ('Seasonal Work', _('Seasonal Work')),
+    ('Internet Connectivity', _('Internet Connectivity')),
+    ('Security Concerns', _('Security Concerns')),
+    ('Family moved back to Syria', _('Family moved back to Syria')),
+    ('No Interest in pursuing programme', _('No Interest in pursuing programme')),
+    ('Violence and Bullying', _('Violence and Bullying')),
+    ('Other', _('Other')),
+)
+
 class EducationGradingForm(forms.ModelForm):
     participation = forms.ChoiceField(
         label=_("Child Level of participation / Absence"),
         widget=forms.Select, required=False,
-        choices=EducationAssessment.PARTICIPATION
+        choices=PARTICIPATION_CHOICES
     )
     barriers = forms.ChoiceField(
         label=_('The main barriers affecting the child\'s '
                 'daily attendance/participation, performance, or causing drop-out'),
         widget=forms.Select, required=False,
-        choices=EducationAssessment.BARRIERS
+        choices=BARRIERS_CHOICES
     )
     barriers_other = forms.CharField(
         label=_('If Other, Please specify'),
@@ -1444,13 +1073,13 @@ class YouthScoringForm(forms.ModelForm):
     participation = forms.ChoiceField(
         label=_("Child Level of participation / Absence"),
         widget=forms.Select, required=False,
-        choices=EducationAssessment.PARTICIPATION
+        choices=PARTICIPATION_CHOICES
     )
     barriers = forms.ChoiceField(
         label=_('The main barriers affecting the child\'s '
                 'daily attendance/participation, performance, or causing drop-out'),
         widget=forms.Select, required=False,
-        choices=EducationAssessment.BARRIERS
+        choices=BARRIERS_CHOICES
     )
     barriers_other = forms.CharField(
         label=_('If Other, Please specify'),
