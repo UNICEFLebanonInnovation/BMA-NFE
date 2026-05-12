@@ -28,3 +28,8 @@ It is structured to cater to three main audiences:
 
 ---
 *Generated for the BMA NFE Sector System Modernization.*
+*   **[System Overview & Infrastructure](system_details.md)**
+    *   Backend Core Packages
+    *   Frontend Ecosystem
+    *   Django Applications
+    *   Deployment and Docker Configuration
