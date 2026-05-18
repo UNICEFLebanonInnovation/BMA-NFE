@@ -263,12 +263,11 @@
     const items = [
         { label: 'Caregiver Distress', value: data.caregiver_distress, color: '#ffc107' },
         { label: 'Child Distress', value: data.child_distress, color: '#fd7e14' },
-        { label: 'Protection Concerns', value: data.protection_concern, color: '#dc3545' }
     ];
 
     const container = root.append('div').attr('class', 'row g-4 text-center py-4');
     items.forEach(item => {
-        const col = container.append('div').attr('class', 'col-md-4');
+        const col = container.append('div').attr('class', 'col-md-6');
         col.append('div').attr('class', 'h1 fw-bold').style('color', item.color).text(item.value);
         col.append('div').attr('class', 'text-muted small text-uppercase').text(item.label);
     });
@@ -301,8 +300,6 @@
     const kpiAvgImprovement = document.getElementById('kpi_avg_improvement');
     if (kpiAvgImprovement) kpiAvgImprovement.innerText = `${data.kpis.avg_improvement}%`;
 
-    const kpiProtectionConcerns = document.getElementById('kpi_protection_concerns');
-    if (kpiProtectionConcerns) kpiProtectionConcerns.innerText = `${data.kpis.protection_concerns}%`;
 
     const kpiNfeToFe = document.getElementById('kpi_nfe_to_fe');
     if (kpiNfeToFe) kpiNfeToFe.innerText = `${data.transitions.nfe_to_fe}`;
@@ -364,7 +361,6 @@
         renderBarChart('#chart_dropout_by_program', data.transitions.dropout_by_program, 'Drop Out Rate (%)');
     }
 
-    renderBarChart('#chart_barriers', data.impact.barriers);
 
     // Impact: Attendance vs Improvement
     renderBarChart('#impact_attendance_improvement', [
@@ -414,7 +410,6 @@
       const titleMap = {
           'avg_attendance': 'Avg Attendance Rate',
           'labor_rate': 'Child Labor Rate',
-          'protection_concerns': 'Protection Concerns',
           'nfe_to_fe': 'Transition NFE to FE',
           'avg_nfe_grade': 'Avg NFE Grade Impr.',
           'dropout_rate': 'Avg Drop Out Rate'
