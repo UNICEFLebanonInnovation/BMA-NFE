@@ -146,6 +146,36 @@ def chart_data(request):
             .annotate(value=Count('id'))
             .order_by('label')
         )
+    elif metric == 'gender_age':
+        import datetime
+        current_year = datetime.date.today().year
+
+        gender_age_data = qs.values('child__gender', 'child__birthday_year').annotate(total=Count('id'))
+
+        gender_age_counts = {}
+        for row in gender_age_data:
+            gender = row['child__gender'] or 'Unknown'
+            b_year = row['child__birthday_year']
+            try:
+                age = current_year - int(b_year)
+                if age < 5:
+                    age_group = '< 5'
+                elif age < 10:
+                    age_group = '5-9'
+                elif age < 15:
+                    age_group = '10-14'
+                elif age < 18:
+                    age_group = '15-17'
+                else:
+                    age_group = '18+'
+            except (ValueError, TypeError):
+                age_group = 'Unknown'
+
+            label = f"{gender} - {age_group}"
+            gender_age_counts[label] = gender_age_counts.get(label, 0) + row['total']
+
+        data = [{'label': name, 'value': count} for name, count in gender_age_counts.items()]
+        data = sorted(data, key=lambda x: x['label'])
     else:
         data = (
             qs.values(label=F('child__nationality__name'))
@@ -356,10 +386,39 @@ class DashboardDataView(LoginRequiredMixin, View):
         ys_qs = YouthKitService.objects.filter(registration__in=qs)
         ref_qs = Referral.objects.filter(registration__in=qs)
 
+        import datetime
+        current_year = datetime.date.today().year
+
+        gender_age_data = qs.values('child__gender', 'child__birthday_year').annotate(total=Count('id'))
+
+        gender_age_counts = {}
+        for row in gender_age_data:
+            gender = row['child__gender'] or 'Unknown'
+            b_year = row['child__birthday_year']
+            try:
+                age = current_year - int(b_year)
+                if age < 5:
+                    age_group = '< 5'
+                elif age < 10:
+                    age_group = '5-9'
+                elif age < 15:
+                    age_group = '10-14'
+                elif age < 18:
+                    age_group = '15-17'
+                else:
+                    age_group = '18+'
+            except (ValueError, TypeError):
+                age_group = 'Unknown'
+
+            label = f"{gender} - {age_group}"
+            gender_age_counts[label] = gender_age_counts.get(label, 0) + row['total']
+
+        children_gender_age = [{'name': name, 'y': count} for name, count in gender_age_counts.items()]
+
         data = {
             'children_per_gender': aggregate(qs, 'child__gender'),
             'children_per_status': aggregate(qs, 'child__marital_status'),
-            'children_per_programme': aggregate(qs, 'type'),
+            'children_gender_age': children_gender_age,
             'children_per_nationality': aggregate(qs, 'child__nationality__name'),
             'children_per_source': aggregate(qs, 'source_of_identification'),
             'children_per_disability': aggregate(qs, 'child__disability__name'),
