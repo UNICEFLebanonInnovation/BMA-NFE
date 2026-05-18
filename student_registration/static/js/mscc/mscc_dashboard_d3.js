@@ -313,7 +313,7 @@ svg.append('g')
       renderPieChart('#children_cash_support', data.children_cash_support || []);
       renderPieChart('#children_referred_formal_education', data.children_referred_formal_education || []);
 
-      renderBarChart('#children_per_programme', data.children_per_programme || []);
+      renderPieChart('#children_gender_age', data.children_gender_age || []);
       renderBarChart('#children_per_nationality', data.children_per_nationality || []);
       renderHorizontalBarChart('#children_per_source', data.children_per_source || []);
       renderBarChart('#children_per_vulnerability', data.children_per_vulnerability || []);
