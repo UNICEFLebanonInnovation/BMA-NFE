@@ -373,12 +373,28 @@ def teacher_export_data(request):
         else:
             vw_center_teacher_str += " AND center_id = 0"
 
-        first_name = request.GET.get('first_name__contains')
-        father_name = request.GET.get('father_name__contains')
-        last_name = request.GET.get('last_name__contains')
-        unicef_id = request.GET.get('unicef_id__contains')
-        filter_center_id = request.GET.get('center')
-        filter_round = request.GET.get('round')
+        first_name = (
+                request.GET.get('first_name__contains')
+                or request.GET.get('first_name__icontains')
+                or request.GET.get('first_name')
+        )
+        father_name = (
+                request.GET.get('father_name__contains')
+                or request.GET.get('father_name__icontains')
+                or request.GET.get('father_name')
+        )
+        last_name = (
+                request.GET.get('last_name__contains')
+                or request.GET.get('last_name__icontains')
+                or request.GET.get('last_name')
+        )
+        unicef_id = (
+                request.GET.get('unicef_id__contains')
+                or request.GET.get('unicef_id__icontains')
+                or request.GET.get('unicef_id')
+        )
+        filter_center_id = request.GET.get('center') or request.GET.get('school')
+        filter_round = request.GET.get('round') or request.GET.get('round_id')
 
         if first_name:
             vw_center_teacher_str += " AND first_name ILIKE %s"
