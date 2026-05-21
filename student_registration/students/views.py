@@ -5,9 +5,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 import io
 import csv
-import os
 import uuid
-from storages.backends.azure_storage import AzureStorage
 
 from django.core.files.base import ContentFile
 from django.db import connection
@@ -27,7 +25,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from dal import autocomplete
-from student_registration.backends.utils import download_file
+from student_registration.backends.utils import download_file, ExportStorage
 
 from .utils import is_allowed_create, is_allowed_edit
 from .models import (
@@ -352,71 +350,58 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
-class ExportStorage(AzureStorage):
-    """Azure storage backend dedicated for exported files."""
-    location = "export"
-
-
 @login_required(login_url='/users/login')
 def teacher_export_data(request):
     try:
         user = request.user
-        is_staff = user.is_staff
         partner_name = user.partner.name if user.partner else ''
+        cursor = connection.cursor()
+        center_id = user.center_id
+        partner_id = user.partner_id
 
-        teacher_queryset = Teacher.objects.select_related('school', 'round').all()
+        vw_center_teacher_str = "SELECT * FROM vw_center_teacher WHERE center_id > 0"
+        query_params = []
 
-        if not is_staff and request.user.partner:
-            partner_school_ids = PartnerOrganization.objects.filter(
-                id=user.partner_id
-            ).values_list('schools', flat=True)
-            teacher_queryset = teacher_queryset.filter(school_id__in=partner_school_ids)
-            if user.school:
-                teacher_queryset = teacher_queryset.filter(school_id=user.school.id)
-        elif not is_staff and not request.user.partner:
-            teacher_queryset = teacher_queryset.none()
+        if has_group(user, 'MSCC_UNICEF') or user.is_staff:
+            vw_center_teacher_str += " AND center_id > 0"
+        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+            vw_center_teacher_str += " AND partner_id = %s"
+            query_params.append(partner_id)
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            vw_center_teacher_str += " AND center_id = %s"
+            query_params.append(center_id)
+        else:
+            vw_center_teacher_str += " AND center_id = 0"
 
-        # Support round and center/school parameters
-        round_id = request.GET.get('round')
-        if round_id:
-            teacher_queryset = teacher_queryset.filter(round_id=round_id)
+        first_name = request.GET.get('first_name__contains')
+        father_name = request.GET.get('father_name__contains')
+        last_name = request.GET.get('last_name__contains')
+        unicef_id = request.GET.get('unicef_id__contains')
+        filter_center_id = request.GET.get('center')
+        filter_round = request.GET.get('round')
 
-        center_id = request.GET.get('center')
-        if center_id:
-            teacher_queryset = teacher_queryset.filter(school_id=center_id)
+        if first_name:
+            vw_center_teacher_str += " AND first_name ILIKE %s"
+            query_params.append(f"%{first_name}%")
+        if father_name:
+            vw_center_teacher_str += " AND father_name ILIKE %s"
+            query_params.append(f"%{father_name}%")
+        if last_name:
+            vw_center_teacher_str += " AND last_name ILIKE %s"
+            query_params.append(f"%{last_name}%")
+        if unicef_id:
+            vw_center_teacher_str += " AND unicef_id ILIKE %s"
+            query_params.append(f"%{unicef_id}%")
+        if filter_center_id:
+            vw_center_teacher_str += " AND center_id = %s"
+            query_params.append(filter_center_id)
+        if filter_round:
+            vw_center_teacher_str += " AND round_id = %s"
+            query_params.append(filter_round)
 
-        school_id_param = request.GET.get('school')
-        if school_id_param:
-            teacher_queryset = teacher_queryset.filter(school_id=school_id_param)
-
-        headers = [
-            'id',
-            'round',
-            'school',
-            'first_name',
-            'father_name',
-            'last_name',
-            'sex',
-            'email',
-            'primary_phone_number',
-            'teacher_assignment',
-        ]
-
-        bridging_data = [
-            [
-                teacher.id,
-                teacher.round.name if teacher.round else '',
-                teacher.school.name if teacher.school else '',
-                teacher.first_name,
-                teacher.father_name,
-                teacher.last_name,
-                teacher.sex,
-                teacher.email,
-                teacher.primary_phone_number,
-                teacher.teacher_assignment,
-            ]
-            for teacher in teacher_queryset
-        ]
+        cursor.execute(vw_center_teacher_str, query_params)
+        bridging_data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
 
         # Create CSV
         csv_output = io.StringIO()
@@ -439,8 +424,6 @@ def teacher_export_data(request):
 
         unique_id = str(uuid.uuid4())
         file_name = "teacher_{}.csv".format(unique_id)
-        file_path = os.path.join('export', file_name)
-
         storage = ExportStorage()
         storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
         file_url = reverse('mscc:export_download', args=[file_name])
