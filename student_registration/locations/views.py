@@ -205,34 +205,30 @@ def export_data(request):
 
             zf.writestr('center_data.csv', csv_center_output.getvalue())
 
-            center_ids = [row[0] for row in data]
-            if center_ids:
-                # Replace vw_center_program_staff with teacher data
-                from student_registration.mscc.models import Teacher
-                teachers = list(Teacher.objects.filter(center_id__in=center_ids).values(
-                    'center__name', 'first_name', 'last_name', 'sex', 'email', 'primary_phone_number'
-                ))
+            if data and 'center_id' in headers:
+                center_id_index = headers.index('center_id')
+                center_ids = [row[center_id_index] for row in data if row[center_id_index]]
+                if center_ids:
+                    in_placeholders = ','.join(['%s'] * len(center_ids))
+                    vw_center_teacher_str = (
+                        "SELECT * FROM vw_center_teacher "
+                        "WHERE center_id IN ({})".format(in_placeholders)
+                    )
+                    teacher_query_params = center_ids
+                    cursor.execute(vw_center_teacher_str, teacher_query_params)
+                else:
+                    cursor.execute("SELECT * FROM vw_center_teacher WHERE center_id = 0")
+                teachers = cursor.fetchall()
+                teacher_headers = [col[0] for col in cursor.description]
 
                 if teachers:
-                    teacher_headers = ['Center', 'First Name', 'Last Name', 'Sex', 'Email', 'Phone Number']
-
-                    # Create CSV for teacher data
                     csv_teacher_output = io.StringIO()
                     csv_writer = csv.writer(csv_teacher_output)
-
-                    # Add BOM for teacher data CSV
                     csv_teacher_output.write(codecs.BOM_UTF8.decode('utf-8'))
                     csv_writer.writerow(teacher_headers)
 
-                    for teacher in teachers.iterator(chunk_size=2000):
-                        csv_writer.writerow([
-                            smart_str(teacher['center__name']),
-                            smart_str(teacher['first_name']),
-                            smart_str(teacher['last_name']),
-                            smart_str(teacher['sex']),
-                            smart_str(teacher['email']),
-                            smart_str(teacher['primary_phone_number'])
-                        ])
+                    for teacher in teachers:
+                        csv_writer.writerow([smart_str(cell) for cell in teacher])
 
                     zf.writestr('teacher_data.csv', csv_teacher_output.getvalue())
 
@@ -312,34 +308,30 @@ def export_center_background(request):
 
             zf.writestr('center_data.csv', csv_center_output.getvalue())
 
-            center_ids = [row[0] for row in data]
-            if center_ids:
-                # Replace vw_center_program_staff with teacher data
-                from student_registration.mscc.models import Teacher
-                teachers = list(Teacher.objects.filter(center_id__in=center_ids).values(
-                    'center__name', 'first_name', 'last_name', 'sex', 'email', 'primary_phone_number'
-                ))
+            if data and 'center_id' in headers:
+                center_id_index = headers.index('center_id')
+                center_ids = [row[center_id_index] for row in data if row[center_id_index]]
+                if center_ids:
+                    in_placeholders = ','.join(['%s'] * len(center_ids))
+                    vw_center_teacher_str = (
+                        "SELECT * FROM vw_center_teacher "
+                        "WHERE center_id IN ({})".format(in_placeholders)
+                    )
+                    teacher_query_params = center_ids
+                    cursor.execute(vw_center_teacher_str, teacher_query_params)
+                else:
+                    cursor.execute("SELECT * FROM vw_center_teacher WHERE center_id = 0")
+                teachers = cursor.fetchall()
+                teacher_headers = [col[0] for col in cursor.description]
 
                 if teachers:
-                    teacher_headers = ['Center', 'First Name', 'Last Name', 'Sex', 'Email', 'Phone Number']
-
-                    # Create CSV for teacher data
                     csv_teacher_output = io.StringIO()
                     csv_writer = csv.writer(csv_teacher_output)
-
-                    # Add BOM for teacher data CSV
                     csv_teacher_output.write(codecs.BOM_UTF8.decode('utf-8'))
                     csv_writer.writerow(teacher_headers)
 
-                    for teacher in teachers.iterator(chunk_size=2000):
-                        csv_writer.writerow([
-                            smart_str(teacher['center__name']),
-                            smart_str(teacher['first_name']),
-                            smart_str(teacher['last_name']),
-                            smart_str(teacher['sex']),
-                            smart_str(teacher['email']),
-                            smart_str(teacher['primary_phone_number'])
-                        ])
+                    for teacher in teachers:
+                        csv_writer.writerow([smart_str(cell) for cell in teacher])
 
                     zf.writestr('teacher_data.csv', csv_teacher_output.getvalue())
 
