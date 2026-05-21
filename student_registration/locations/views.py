@@ -158,10 +158,10 @@ def export_data(request):
         center_id = user.center_id
         partner_id = user.partner_id
 
-        center_name = request.GET.get('center_name', '')
-        center_type = request.GET.get('center_type', '')
-        center_governorate = request.GET.get('center_governorate', '')
-
+        center_name = request.GET.get('center_name') or request.GET.get('name', '')
+        center_type = request.GET.get('center_type') or request.GET.get('type', '')
+        center_governorate = request.GET.get('center_governorate') or request.GET.get('governorate', '')
+        center_is_active = request.GET.get('center_is_active') or request.GET.get('is_active', '')
 
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
         query_params = []
@@ -186,6 +186,10 @@ def export_data(request):
         if center_governorate:
             vw_center_data_str += " AND governorate_id = %s"
             query_params.append(center_governorate)
+        if center_is_active == 'True':
+            vw_center_data_str += " AND is_active = TRUE"
+        elif center_is_active == 'False':
+            vw_center_data_str += " AND is_active = FALSE"
 
         cursor.execute(vw_center_data_str, query_params)
         data = cursor.fetchall()
@@ -205,25 +209,24 @@ def export_data(request):
 
             zf.writestr('center_data.csv', csv_center_output.getvalue())
 
-            if data:
-                vw_center_teacher_str = (
-                    "SELECT * FROM vw_center_teacher "
-                    "WHERE center_id IN (SELECT center_id FROM ({}) filtered_centers)"
-                ).format(vw_center_data_str)
-                cursor.execute(vw_center_teacher_str, query_params)
-                teachers = cursor.fetchall()
-                teacher_headers = [col[0] for col in cursor.description]
 
-                if teachers:
-                    csv_teacher_output = io.StringIO()
-                    csv_writer = csv.writer(csv_teacher_output)
-                    csv_teacher_output.write(codecs.BOM_UTF8.decode('utf-8'))
-                    csv_writer.writerow(teacher_headers)
+            vw_center_teacher_str = (
+                "SELECT * FROM vw_center_teacher "
+                "WHERE center_id IN (SELECT center_id FROM ({}) filtered_centers)"
+            ).format(vw_center_data_str)
+            cursor.execute(vw_center_teacher_str, query_params)
+            teachers = cursor.fetchall()
+            teacher_headers = [col[0] for col in cursor.description]
 
-                    for teacher in teachers:
-                        csv_writer.writerow([smart_str(cell) for cell in teacher])
+            csv_teacher_output = io.StringIO()
+            csv_writer = csv.writer(csv_teacher_output)
+            csv_teacher_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(teacher_headers)
 
-                    zf.writestr('teacher_data.csv', csv_teacher_output.getvalue())
+            for teacher in teachers:
+                csv_writer.writerow([smart_str(cell) for cell in teacher])
+
+            zf.writestr('teacher_data.csv', csv_teacher_output.getvalue())
 
         response = HttpResponse(zip_output.getvalue(), content_type='application/zip')
         response['Content-Disposition'] = 'attachment; filename=exported_data.zip'
@@ -249,10 +252,10 @@ def export_center_background(request):
             partner_id = user.partner_id
             partner_name = user.partner.name
 
-        center_name = request.GET.get('center_name', '')
-        center_type = request.GET.get('center_type', '')
-        center_governorate = request.GET.get('center_governorate', '')
-
+        center_name = request.GET.get('center_name') or request.GET.get('name', '')
+        center_type = request.GET.get('center_type') or request.GET.get('type', '')
+        center_governorate = request.GET.get('center_governorate') or request.GET.get('governorate', '')
+        center_is_active = request.GET.get('center_is_active') or request.GET.get('is_active', '')
 
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
         query_params = []
@@ -277,6 +280,10 @@ def export_center_background(request):
         if center_governorate:
             vw_center_data_str += " AND governorate_id = %s"
             query_params.append(center_governorate)
+        if center_is_active == 'True':
+            vw_center_data_str += " AND is_active = TRUE"
+        elif center_is_active == 'False':
+            vw_center_data_str += " AND is_active = FALSE"
 
         cursor.execute(vw_center_data_str, query_params)
         data = cursor.fetchall()
@@ -296,25 +303,23 @@ def export_center_background(request):
 
             zf.writestr('center_data.csv', csv_center_output.getvalue())
 
-            if data:
-                vw_center_teacher_str = (
-                    "SELECT * FROM vw_center_teacher "
-                    "WHERE center_id IN (SELECT center_id FROM ({}) filtered_centers)"
-                ).format(vw_center_data_str)
-                cursor.execute(vw_center_teacher_str, query_params)
-                teachers = cursor.fetchall()
-                teacher_headers = [col[0] for col in cursor.description]
+            vw_center_teacher_str = (
+                "SELECT * FROM vw_center_teacher "
+                "WHERE center_id IN (SELECT center_id FROM ({}) filtered_centers)"
+            ).format(vw_center_data_str)
+            cursor.execute(vw_center_teacher_str, query_params)
+            teachers = cursor.fetchall()
+            teacher_headers = [col[0] for col in cursor.description]
 
-                if teachers:
-                    csv_teacher_output = io.StringIO()
-                    csv_writer = csv.writer(csv_teacher_output)
-                    csv_teacher_output.write(codecs.BOM_UTF8.decode('utf-8'))
-                    csv_writer.writerow(teacher_headers)
+            csv_teacher_output = io.StringIO()
+            csv_writer = csv.writer(csv_teacher_output)
+            csv_teacher_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(teacher_headers)
 
-                    for teacher in teachers:
-                        csv_writer.writerow([smart_str(cell) for cell in teacher])
+            for teacher in teachers:
+                csv_writer.writerow([smart_str(cell) for cell in teacher])
 
-                    zf.writestr('teacher_data.csv', csv_teacher_output.getvalue())
+            zf.writestr('teacher_data.csv', csv_teacher_output.getvalue())
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
