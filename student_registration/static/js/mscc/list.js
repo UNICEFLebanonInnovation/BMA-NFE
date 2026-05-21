@@ -102,11 +102,13 @@ $(document).ready(function() {
     $(document).on('click', '#exportOptionsModal .start-export-teacher', function() {
         const button = $(this);
         const originalHtml = button.html();
+        const params = $('#filter-form').serialize();
+        const exportUrl = params ? ("/students/teacher-export/?" + params) : "/students/teacher-export/";
 
         button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Processing...');
 
         $.ajax({
-            url: "/students/teacher-export/",
+            url: exportUrl,
             type: "GET",
             headers: getHeader(),
             success: function(data) {
