@@ -34,6 +34,7 @@ from .models import (
 )
 from student_registration.schools.models import PartnerOrganization, School
 from student_registration.backends.models import ExportHistory
+from student_registration.backends.utils import ExportStorage
 
 from .forms import (
     CenterForm
@@ -47,7 +48,6 @@ from .filters import (
 from dal import autocomplete
 import os
 import uuid
-from storages.backends.azure_storage import AzureStorage
 from django.core.files.base import ContentFile
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -235,11 +235,6 @@ def export_data(request):
         logging.error(traceback.format_exc())
 
         return HttpResponse("An error occurred: " + str(e), status=500)
-
-
-class ExportStorage(AzureStorage):
-    """Azure storage backend dedicated for exported files."""
-    location = "export"
 
 
 @login_required(login_url='/users/login')
