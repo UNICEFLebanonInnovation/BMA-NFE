@@ -205,19 +205,12 @@ def export_data(request):
 
             zf.writestr('center_data.csv', csv_center_output.getvalue())
 
-            if data and 'center_id' in headers:
-                center_id_index = headers.index('center_id')
-                center_ids = [row[center_id_index] for row in data if row[center_id_index]]
-                if center_ids:
-                    in_placeholders = ','.join(['%s'] * len(center_ids))
-                    vw_center_teacher_str = (
-                        "SELECT * FROM vw_center_teacher "
-                        "WHERE center_id IN ({})".format(in_placeholders)
-                    )
-                    teacher_query_params = center_ids
-                    cursor.execute(vw_center_teacher_str, teacher_query_params)
-                else:
-                    cursor.execute("SELECT * FROM vw_center_teacher WHERE center_id = 0")
+            if data:
+                vw_center_teacher_str = (
+                    "SELECT * FROM vw_center_teacher "
+                    "WHERE center_id IN (SELECT center_id FROM ({}) filtered_centers)"
+                ).format(vw_center_data_str)
+                cursor.execute(vw_center_teacher_str, query_params)
                 teachers = cursor.fetchall()
                 teacher_headers = [col[0] for col in cursor.description]
 
@@ -308,19 +301,12 @@ def export_center_background(request):
 
             zf.writestr('center_data.csv', csv_center_output.getvalue())
 
-            if data and 'center_id' in headers:
-                center_id_index = headers.index('center_id')
-                center_ids = [row[center_id_index] for row in data if row[center_id_index]]
-                if center_ids:
-                    in_placeholders = ','.join(['%s'] * len(center_ids))
-                    vw_center_teacher_str = (
-                        "SELECT * FROM vw_center_teacher "
-                        "WHERE center_id IN ({})".format(in_placeholders)
-                    )
-                    teacher_query_params = center_ids
-                    cursor.execute(vw_center_teacher_str, teacher_query_params)
-                else:
-                    cursor.execute("SELECT * FROM vw_center_teacher WHERE center_id = 0")
+            if data:
+                vw_center_teacher_str = (
+                    "SELECT * FROM vw_center_teacher "
+                    "WHERE center_id IN (SELECT center_id FROM ({}) filtered_centers)"
+                ).format(vw_center_data_str)
+                cursor.execute(vw_center_teacher_str, query_params)
                 teachers = cursor.fetchall()
                 teacher_headers = [col[0] for col in cursor.description]
 
