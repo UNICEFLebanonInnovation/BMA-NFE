@@ -133,8 +133,8 @@ $(document).ready(function() {
             dataType: 'html',
             success: function (response) {
                 $('#attendance_children').empty().append(response);
-
-                var childrenCount = $(".list-group-item").length;
+                
+                var childrenCount = $('#attendance_children .registration_id').length;
                 $('#children_count').text(childrenCount);
 
                 $('#save_attendance_children').removeClass('disabled');
