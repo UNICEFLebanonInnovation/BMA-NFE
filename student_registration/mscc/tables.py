@@ -165,6 +165,7 @@ class TeacherTable(tables.Table):
         template_name='django_tables2/mscc/teacher_action_column.html',
         attrs={'url_edit': '/mscc/teacher-edit/', 'url_delete': '/mscc/teacher-delete/'},
     )
+    partner = tables.Column(verbose_name=_('Partner'), accessor='center.partner')
 
     class Meta:
         model = Teacher
@@ -178,6 +179,7 @@ class TeacherTable(tables.Table):
             'sex',
             'unicef_id',
             'primary_phone_number',
+            'partner',
             'center',
             'round',
             'email',
@@ -186,6 +188,12 @@ class TeacherTable(tables.Table):
             'created',
             'modified',
         )
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user and not (user.is_staff or user.groups.filter(name='MSCC_UNICEF').exists()):
+            self.exclude = tuple(set(self.exclude + ('partner',)))
 
 
 class PartnerTable(CommonTable):

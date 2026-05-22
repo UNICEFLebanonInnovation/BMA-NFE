@@ -920,6 +920,11 @@ class TeacherListView(LoginRequiredMixin,
     group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
     filterset_class = TeacherFilter
 
+    def get_table_kwargs(self):
+        kwargs = super(TeacherListView, self).get_table_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def get_queryset(self):
         base_queryset = Teacher.objects.select_related('round', 'center')
         user = self.request.user

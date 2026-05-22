@@ -26,6 +26,7 @@ from .models import (
 from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
 from student_registration.contrib.filters import RedesignFilterSet
+from student_registration.users.templatetags.custom_tags import has_group
 
 DELETED_CHOICES = [
     ('', 'All'),
@@ -86,6 +87,34 @@ class MainFilter(RedesignFilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        user = getattr(getattr(self, 'request', None), 'user', None)
+        if not user:
+            return
+
+        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+            return
+
+        if has_group(user, 'MSCC_PARTNER'):
+            partner_centers = list(
+                Center.objects.filter(partner_id=user.partner_id)
+                    .values_list('id', 'name')
+                    .order_by('name')
+                    .distinct()
+            ) if user.partner_id else []
+            center_choices = partner_centers
+            self.filters['center'].extra['choices'] = center_choices
+            self.filters['center'].field.choices = center_choices
+            if 'center' in self.form.fields:
+                self.form.fields['center'].choices = center_choices
+
+        if has_group(user, 'MSCC_CENTER'):
+            self.filters.pop('partner', None)
+            self.form.fields.pop('partner', None)
+            self.filters.pop('center', None)
+            self.form.fields.pop('center', None)
+        elif has_group(user, 'MSCC_PARTNER'):
+            self.filters.pop('partner', None)
+            self.form.fields.pop('partner', None)
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
@@ -129,6 +158,34 @@ class FullFilter(RedesignFilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        user = getattr(getattr(self, 'request', None), 'user', None)
+        if not user:
+            return
+
+        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+            return
+
+        if has_group(user, 'MSCC_PARTNER'):
+            partner_centers = list(
+                Center.objects.filter(partner_id=user.partner_id)
+                .values_list('id', 'name')
+                .order_by('name')
+                .distinct()
+            ) if user.partner_id else []
+            center_choices = partner_centers
+            self.filters['center'].extra['choices'] = center_choices
+            self.filters['center'].field.choices = center_choices
+            if 'center' in self.form.fields:
+                self.form.fields['center'].choices = center_choices
+
+        if has_group(user, 'MSCC_CENTER'):
+            self.filters.pop('partner', None)
+            self.form.fields.pop('partner', None)
+            self.filters.pop('center', None)
+            self.form.fields.pop('center', None)
+        elif has_group(user, 'MSCC_PARTNER'):
+            self.filters.pop('partner', None)
+            self.form.fields.pop('partner', None)
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
@@ -154,3 +211,19 @@ class TeacherFilter(RedesignFilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        user = getattr(getattr(self, 'request', None), 'user', None)
+        if not user:
+            return
+
+        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+            return
+
+        if has_group(user, 'MSCC_CENTER'):
+            self.filters.pop('center', None)
+            self.form.fields.pop('center', None)
+        elif has_group(user, 'MSCC_PARTNER') and user.partner_id:
+            partner_center_qs = Center.objects.filter(partner_id=user.partner_id).order_by('name')
+            self.filters['center'].queryset = partner_center_qs
+            self.filters['center'].field.queryset = partner_center_qs
+            if 'center' in self.form.fields:
+                self.form.fields['center'].queryset = partner_center_qs

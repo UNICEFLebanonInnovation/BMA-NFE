@@ -137,6 +137,11 @@ class CenterListView(LoginRequiredMixin,
     group_required = [u"MSCC", u"MSCC_PARTNER"]
     filterset_class = CenterFilter
 
+    def get_table_kwargs(self):
+        kwargs = super(CenterListView, self).get_table_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def get_queryset(self):
         user = self.request.user
         center_id = user.center_id

@@ -39,6 +39,7 @@ from student_registration.schools.models import (
 from django.core.validators import RegexValidator
 from .serializers import MainSerializer
 from student_registration.mscc.templatetags.simple_tags import get_service, get_education_service
+from student_registration.users.templatetags.custom_tags import has_group
 import datetime
 import re
 
@@ -1318,8 +1319,12 @@ class TeacherForm(forms.ModelForm):
             form_action = reverse('mscc:teacher_edit', kwargs={'pk': instance.id})
 
         center_queryset = Center.objects.all()
-        if self.request and self.request.user.center_id:
-            center_queryset = Center.objects.filter(id=self.request.user.center_id)
+        if self.request:
+            user = self.request.user
+            if has_group(user, 'MSCC_CENTER') and user.center_id:
+                center_queryset = Center.objects.filter(id=user.center_id)
+            elif has_group(user, 'MSCC_PARTNER') and user.partner_id:
+                center_queryset = Center.objects.filter(partner_id=user.partner_id).order_by('name')
 
         self.fields['center'] = forms.ModelChoiceField(
             queryset=center_queryset,

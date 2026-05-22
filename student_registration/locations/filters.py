@@ -14,6 +14,8 @@ from .models import (
     Location
 )
 from student_registration.contrib.filters import RedesignFilterSet
+from student_registration.schools.models import PartnerOrganization
+from student_registration.users.templatetags.custom_tags import has_group
 
 class PlaceholderFilterSet(FilterSet):
     """Base FilterSet that hides labels and uses placeholders."""
@@ -59,15 +61,31 @@ class CenterFilter(RedesignFilterSet):
         label=_('Is Active'),
         method='filter_is_active'
     )
+    partner = ModelChoiceFilter(
+        queryset=PartnerOrganization.objects.all().order_by('name'),
+        empty_label=_('Partner')
+    )
 
     class Meta:
         model = Center
         fields = [
             'name',
+            'partner',
             'type',
             'governorate',
 
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user = getattr(getattr(self, 'request', None), 'user', None)
+        if not user:
+            return
+        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+            return
+
+        self.filters.pop('partner', None)
+        self.form.fields.pop('partner', None)
 
     def filter_is_active(self, queryset, name, value):
         if value == 'True':

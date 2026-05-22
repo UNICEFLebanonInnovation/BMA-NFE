@@ -24,6 +24,7 @@ class CenterTable(tables.Table):
         fields = (
             'profile_column',
             'name',
+            'partner',
             'governorate',
             'caza',
             'cadaster',
@@ -36,4 +37,8 @@ class CenterTable(tables.Table):
             'owner_name',
             'modified_by_name',)
 
-
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user and not (user.is_staff or user.groups.filter(name='MSCC_UNICEF').exists()):
+            self.exclude = tuple(set(self.exclude + ('partner',)))
