@@ -53,7 +53,7 @@ class ExportStorage:
                 base64.b64decode(account_key, validate=True)
                 return _AzureExportStorage()
             except (binascii.Error, ValueError):
-                logger.warning('Invalid AZURE_ACCOUNT_KEY format; falling back to local export storage.')
+                logger.debug('Invalid AZURE_ACCOUNT_KEY format; falling back to local export storage.')
 
         export_root = os.path.join(settings.MEDIA_ROOT, self.location)
         os.makedirs(export_root, exist_ok=True)
@@ -201,5 +201,5 @@ def send_push_to_web(user, title, body, data=None):
         )
         return messaging.send(message)
     except Exception as exc:  # pragma: no cover - depends on external Firebase service
-        logger.warning("Unable to send web push notification to user %s: %s", user.pk, exc)
+        logger.debug("Unable to send web push notification to user %s: %s", user.pk, exc)
         return False
