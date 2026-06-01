@@ -34,6 +34,17 @@ DELETED_CHOICES = [
     ('no', 'No'),
 ]
 
+
+def _refresh_filter_form_helper(filterset):
+    """Rebuild the crispy helper after role-specific fields are removed."""
+    helper = FormHelper(filterset.form)
+    helper.form_method = "get"
+    helper.form_tag = False
+    helper.disable_csrf = True
+    helper.layout = Layout(*filterset.form.fields.keys())
+    filterset.form.helper = helper
+
+
 class PlaceholderFilterSet(FilterSet):
     """Deprecated: Base FilterSet that hides labels and uses placeholders."""
 
@@ -116,6 +127,8 @@ class MainFilter(RedesignFilterSet):
             self.filters.pop('partner', None)
             self.form.fields.pop('partner', None)
 
+        _refresh_filter_form_helper(self)
+
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
 
@@ -187,6 +200,8 @@ class FullFilter(RedesignFilterSet):
             self.filters.pop('partner', None)
             self.form.fields.pop('partner', None)
 
+        _refresh_filter_form_helper(self)
+
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
 
@@ -221,6 +236,7 @@ class TeacherFilter(RedesignFilterSet):
         if has_group(user, 'MSCC_CENTER'):
             self.filters.pop('center', None)
             self.form.fields.pop('center', None)
+            _refresh_filter_form_helper(self)
         elif has_group(user, 'MSCC_PARTNER') and user.partner_id:
             partner_center_qs = Center.objects.filter(partner_id=user.partner_id).order_by('name')
             self.filters['center'].queryset = partner_center_qs

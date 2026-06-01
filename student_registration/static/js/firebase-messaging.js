@@ -28,7 +28,12 @@ navigator.serviceWorker
           const csrfToken = document.cookie
             .split("; ")
             .find((row) => row.startsWith("csrftoken="))
-            ?.split("=")[1];
+            ?.split("=")[1] || document.querySelector("[name=csrfmiddlewaretoken]")?.value;
+
+          if (!csrfToken) {
+            console.warn("Unable to register FCM token because the CSRF token is missing.");
+            return;
+          }
 
           fetch("/api/save-fcm-token/", {
             method: "POST",
@@ -36,6 +41,7 @@ navigator.serviceWorker
               "Content-Type": "application/json",
               "X-CSRFToken": csrfToken,
             },
+            credentials: "same-origin",
             body: JSON.stringify({ token }),
           });
         });

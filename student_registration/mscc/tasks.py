@@ -177,7 +177,7 @@ def _generate_filtered_mscc_export(export_id, filters=None, file_format='csv'):
             vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
             query_params.append(round_id)
 
-        if has_group(user, 'MSCC_UNICEF'):
+        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
             vw_mscc_data_str += " AND id > 0"
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
             vw_mscc_data_str += " AND partner_id = %s"
