@@ -33,6 +33,7 @@ from student_registration.mscc.models import (
     EducationService,
     Registration,
     EducationProgrammeAssessment,
+    Teacher,
 )
 from student_registration.schools.models import PartnerOrganization
 from student_registration.locations.models import Center, Location
@@ -174,6 +175,12 @@ DIMENSION_MAP = {
     'age': 'age_group',
 }
 
+TEACHER_DIMENSION_MAP = {
+    'sex': 'sex',
+    'nationality': 'nationality__name',
+    'center': 'center__name',
+}
+
 
 def _cache_key(namespace, params, user):
     payload = {
@@ -265,13 +272,40 @@ def analytics_base_queryset(user, params):
         qs = qs.filter(age_years__lte=int(params['age_max']))
     return qs
 
+def teacher_analytics_base_queryset(user, params):
+    qs = Teacher.objects.all()
+
+    if not (user.is_superuser or user.is_staff):
+        if user.center_id:
+            qs = qs.filter(center_id=user.center_id)
+        elif user.partner_id:
+            qs = qs.filter(center__partner_id=user.partner_id)
+
+    date_from = parse_date(params.get('date_from', ''))
+    date_to = parse_date(params.get('date_to', ''))
+    if date_from:
+        from_dt = timezone.make_aware(datetime.combine(date_from, time.min))
+        qs = qs.filter(created__gte=from_dt)
+    if date_to:
+        to_dt = timezone.make_aware(datetime.combine(date_to, time.max))
+        qs = qs.filter(created__lte=to_dt)
+
+    if params.get('partner_id'):
+        qs = qs.filter(center__partner_id=params['partner_id'])
+    if params.get('center_id'):
+        qs = qs.filter(center_id=params['center_id'])
+
+    return qs
+
 
 @login_required
 def analytics_summary(request):
     def builder(params):
         qs = analytics_base_queryset(request.user, params)
+        teacher_qs = teacher_analytics_base_queryset(request.user, params)
         return {
             'total_registrations': qs.count(),
+            'total_teachers': teacher_qs.count(),
             'partners': qs.values('partner_id').distinct().count(),
             'centers': qs.values('center_id').distinct().count(),
             'programmes': qs.values('programme').distinct().count(),
@@ -331,6 +365,24 @@ def analytics_breakdown(request):
         }
 
     return _with_cache(f"breakdown:{request.GET.get('dimension', 'gender')}", request, builder)
+
+
+@login_required
+def analytics_teacher_breakdown(request):
+    def builder(params):
+        dimension = request.GET.get('dimension', 'sex')
+        field = TEACHER_DIMENSION_MAP.get(dimension)
+        if not field:
+            return {'error': 'Invalid dimension', 'valid_dimensions': sorted(TEACHER_DIMENSION_MAP.keys())}
+
+        qs = teacher_analytics_base_queryset(request.user, params)
+        rows = qs.values(field).annotate(count=Count('id')).order_by('-count', field)
+        return {
+            'dimension': dimension,
+            'items': [{'key': row[field] or 'Unknown', 'count': row['count']} for row in rows],
+        }
+
+    return _with_cache(f"teacher_breakdown:{request.GET.get('dimension', 'sex')}", request, builder)
 
 
 @login_required
