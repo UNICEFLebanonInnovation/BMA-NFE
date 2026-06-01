@@ -201,6 +201,7 @@ def user_overview(request):
     return render(request, 'users/profile.html', args)
 
 
+@csrf_exempt
 @require_POST
 @login_required
 def save_fcm_token(request):

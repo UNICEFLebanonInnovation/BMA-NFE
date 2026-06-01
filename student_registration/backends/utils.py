@@ -201,5 +201,5 @@ def send_push_to_web(user, title, body, data=None):
         )
         return messaging.send(message)
     except Exception as exc:  # pragma: no cover - depends on external Firebase service
-        logger.exception("Unable to send web push notification to user %s: %s", user.pk, exc)
+        logger.warning("Unable to send web push notification to user %s: %s", user.pk, exc)
         return False

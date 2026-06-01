@@ -43,6 +43,44 @@ $(document).ready(function() {
         if (exportModal) exportModal.show();
     });
 
+
+    function pollExportStatus(exportId, attemptsRemaining) {
+        if (!exportId) {
+            showModal('Export started successfully. Please check the recent exports menu for the download link.');
+            return;
+        }
+
+        $.ajax({
+            url: "/mscc/export-status/" + exportId + "/",
+            type: "GET",
+            headers: getHeader(),
+            success: function(data) {
+                if (data.status === "done" && data.file_url) {
+                    window.location.href = data.file_url;
+                    showModal('Export successful. Your download should start automatically. If it does not, please use the recent exports menu.');
+                    return;
+                }
+
+                if (data.status === "failed") {
+                    showModal('Export failed. Please try again later or contact support.');
+                    return;
+                }
+
+                if (attemptsRemaining > 0) {
+                    setTimeout(function() {
+                        pollExportStatus(exportId, attemptsRemaining - 1);
+                    }, 2000);
+                    return;
+                }
+
+                showModal('Export is still processing. Please check the recent exports menu for the download link.');
+            },
+            error: function() {
+                showModal('Export started, but the download status could not be checked. Please check the recent exports menu.');
+            }
+        });
+    }
+
     // Common Export Handler Function
     function initiateExport(button, url, checkRound = false) {
         // Build export params from the filter form, but always read `round` from
@@ -76,7 +114,8 @@ $(document).ready(function() {
                          showModal('Export started successfully. You will be notified when the file is ready.');
                     }
                 } else {
-                    showModal('Export started successfully. Processing may take a few minutes depending on the data size. You will be notified when the file is ready.');
+                    showModal('Export started successfully. Processing may take a few minutes depending on the data size.');
+                    pollExportStatus(data.export_id, 90);
                 }
             },
             error: function() {

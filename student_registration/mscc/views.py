@@ -1112,7 +1112,22 @@ def export_list_background(request):
         filters=filters,
         file_format=file_format
     )
-    return JsonResponse({'status': 'started'})
+    return JsonResponse({'status': 'started', 'export_id': export_record.id})
+
+
+@login_required(login_url='/users/login')
+def export_status(request, export_id):
+    export_record = ExportHistory.objects.filter(
+        id=export_id,
+        created_by=request.user,
+    ).first()
+    if export_record is None:
+        return JsonResponse({'status': 'not_found'}, status=404)
+
+    return JsonResponse({
+        'status': export_record.status,
+        'file_url': export_record.file_url or '',
+    })
 
 
 def export_child_list_background(request):

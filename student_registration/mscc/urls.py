@@ -350,6 +350,11 @@ urlpatterns = [
         name='export_list_async'
     ),
     re_path(
+        r'^export-status/(?P<export_id>\d+)/$',
+        view=views.export_status,
+        name='export_status'
+    ),
+    re_path(
         r"^export-download/(?P<file_name>.+)/$",
         view=views.get_file,
         name='export_download'
