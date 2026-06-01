@@ -285,6 +285,10 @@ class Teacher(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Number of teaching hours')
     )
+    years_of_experience = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Years of experience in NFE/FE')
+    )
     trainings = models.ManyToManyField(
         Training,
         blank=True,
@@ -300,7 +304,7 @@ class Teacher(TimeStampedModel):
     training_date_of_completion = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('Date of completion of the training')
+        verbose_name=_('Date of completion of the listed training')
     )
     extra_coaching = models.CharField(
         max_length=10,
