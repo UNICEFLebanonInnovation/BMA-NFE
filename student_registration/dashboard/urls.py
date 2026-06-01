@@ -15,6 +15,7 @@ urlpatterns = [
     re_path(r'^api/analytics/summary/$', view=views.analytics_summary, name='analytics_summary'),
     re_path(r'^api/analytics/trend/$', view=views.analytics_trend, name='analytics_trend'),
     re_path(r'^api/analytics/breakdown/$', view=views.analytics_breakdown, name='analytics_breakdown'),
+    re_path(r'^api/analytics/teacher-breakdown/$', view=views.analytics_teacher_breakdown, name='analytics_teacher_breakdown'),
     re_path(r'^api/analytics/crosstab/$', view=views.analytics_crosstab, name='analytics_crosstab'),
     re_path(r'^api/analytics/export.csv$', view=views.analytics_export_csv, name='analytics_export_csv'),
 

@@ -60,13 +60,19 @@
 
         <section class="col-lg-9">
             <div class="row g-3" id="kpi-cards">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="card metric-card border-0 shadow-sm">
                         <div class="metric-label">{% trans "Total" %}</div>
                         <div class="metric-value" id="kpi-total">0</div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <div class="card metric-card border-0 shadow-sm">
+                        <div class="metric-label">{% trans "Teachers" %}</div>
+                        <div class="metric-value" id="kpi-teachers">0</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
                     <div class="card metric-card border-0 shadow-sm">
                         <div class="metric-label">{% trans "Partners" %}</div>
                         <div class="metric-value" id="kpi-partners">0</div>
@@ -94,6 +100,12 @@
                 </div>
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 fw-bold">{% trans "Registrations by Center" %}</div>
+                        <div class="card-body chart" id="chart-registration-center"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
                         <div class="card-header bg-white py-3 fw-bold">{% trans "Gender Distribution" %}</div>
                         <div class="card-body chart" id="chart-gender"></div>
                     </div>
@@ -102,6 +114,24 @@
                     <div class="card shadow-sm border-0 h-100">
                         <div class="card-header bg-white py-3 fw-bold">{% trans "Nationality Distribution" %}</div>
                         <div class="card-body chart" id="chart-nationality"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 fw-bold">{% trans "Teacher Gender Distribution" %}</div>
+                        <div class="card-body chart" id="chart-teacher-gender"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 fw-bold">{% trans "Teacher Nationality Distribution" %}</div>
+                        <div class="card-body chart" id="chart-teacher-nationality"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 fw-bold">{% trans "Teachers by Center" %}</div>
+                        <div class="card-body chart" id="chart-teacher-center"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -121,6 +151,7 @@ window.analyticsConfig = {
     summary: "{% url 'dashboard:analytics_summary' %}",
     trend: "{% url 'dashboard:analytics_trend' %}",
     breakdown: "{% url 'dashboard:analytics_breakdown' %}",
+    teacherBreakdown: "{% url 'dashboard:analytics_teacher_breakdown' %}",
     crosstab: "{% url 'dashboard:analytics_crosstab' %}",
     exportCsv: "{% url 'dashboard:analytics_export_csv' %}"
   },

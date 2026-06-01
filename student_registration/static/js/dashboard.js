@@ -78,22 +78,33 @@
 
   async function refresh() {
     const filters = getFilters();
-    const [summary, trend, gender, nationality, crosstab] = await Promise.all([
+    const [summary, trend, gender, nationality, center, teacherSex, teacherNationality, teacherCenter, crosstab] = await Promise.all([
       fetchJson(config.urls.summary, filters),
       fetchJson(config.urls.trend, filters),
       fetchJson(config.urls.breakdown, { ...filters, dimension: 'gender' }),
       fetchJson(config.urls.breakdown, { ...filters, dimension: 'nationality' }),
+      fetchJson(config.urls.breakdown, { ...filters, dimension: 'center' }),
+      fetchJson(config.urls.teacherBreakdown, { ...filters, dimension: 'sex' }),
+      fetchJson(config.urls.teacherBreakdown, { ...filters, dimension: 'nationality' }),
+      fetchJson(config.urls.teacherBreakdown, { ...filters, dimension: 'center' }),
       fetchJson(config.urls.crosstab, { ...filters, x: 'programme', y: 'age' }),
     ]);
 
     el('kpi-total').textContent = summary.total_registrations;
+    el('kpi-teachers').textContent = summary.total_teachers || 0;
     el('kpi-partners').textContent = summary.partners;
     el('kpi-centers').textContent = summary.centers;
     el('kpi-programmes').textContent = summary.programmes;
 
     renderLineChart('#chart-trend', trend.series || []);
+    renderHorizontalBar('#chart-registration-center', center.items || [], 'center');
     renderHorizontalBar('#chart-gender', gender.items || [], 'gender');
     renderHorizontalBar('#chart-nationality', nationality.items || [], 'nationality');
+
+    renderHorizontalBar('#chart-teacher-gender', teacherSex.items || [], 'sex');
+    renderHorizontalBar('#chart-teacher-nationality', teacherNationality.items || [], 'nationality');
+    renderHorizontalBar('#chart-teacher-center', teacherCenter.items || [], 'center');
+
     renderHeatmap('#chart-crosstab', crosstab.matrix || []);
   }
 
