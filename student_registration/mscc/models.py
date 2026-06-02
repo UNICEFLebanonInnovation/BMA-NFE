@@ -183,12 +183,6 @@ class Teacher(TimeStampedModel):
         on_delete=models.SET_NULL,
         verbose_name=_('Nationality')
     )
-    unicef_id = models.CharField(
-        max_length=45,
-        blank=True,
-        null=True,
-        verbose_name=_('Unicef ID')
-    )
 
     SUBJECT_PROVIDED = (
         ('arabic', _('Arabic')),

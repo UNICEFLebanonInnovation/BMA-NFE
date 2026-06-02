@@ -172,6 +172,11 @@ class Child(TimeStampedModel):
         on_delete=models.SET_NULL,
         verbose_name=_('Does the child have any disability or special need?')
     )
+    disability_other = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Other Disability')
+    )
     marital_status = models.CharField(
         max_length=50,
         blank=True,
@@ -220,7 +225,7 @@ class Child(TimeStampedModel):
         verbose_name=_('Formal Education unique student ID')
     )
     number = models.CharField(max_length=45, blank=True, null=True)
-    unicef_id = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('Unicef ID'))
+    photo = models.ImageField(upload_to='child_photos/', null=True, blank=True, verbose_name=_('Child Photo'))
     id_type = models.ForeignKey(
         IDType,
         blank=False, null=True,
@@ -667,16 +672,5 @@ class Child(TimeStampedModel):
             self.birthday_month,
             self.birthday_year
         )
-
-        # self.unicef_id = generate_one_unique_id(
-        #     str(self.pk),
-        #     self.first_name,
-        #     self.father_name,
-        #     self.last_name,
-        #     self.mother_fullname,
-        #     self.birthdate,
-        #     self.nationality_name_en(),
-        #     self.sex
-        # )
 
         super(Child, self).save(**kwargs)

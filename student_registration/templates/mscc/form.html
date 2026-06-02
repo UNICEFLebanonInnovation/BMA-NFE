@@ -96,12 +96,17 @@
                     </ul>
 
                     <div class="form-wizard-content">
-                                            <form method="post" action="{{ form.helper.form_action }}">
+                                            <form method="post" enctype="multipart/form-data" action="{{ form.helper.form_action }}">
                                                 {% csrf_token %}
                                                 {% for h in form.hidden_fields %}
                                                     {{ h }}
                                                 {% endfor %}
                                                 <div id="step-1">
+                                                    {% if has_group_partner %}
+                                                        <div class="row card-body">
+                                                            <div class="col-md-12">{{ form.child_photo|as_crispy_field }}</div>
+                                                        </div>
+                                                    {% endif %}
                                                     <div class="row card-body">
                                                         <span class="badge-form badge-pill">1</span> <div class="col-md-3">{{ form.child_first_name|as_crispy_field }}</div>
                                                         <span class="badge-form badge-pill">2</span> <div class="col-md-3">{{ form.child_father_name|as_crispy_field }}</div>
@@ -128,6 +133,9 @@
                                                         <span class="badge-form-2 badge-pill">12</span> <div class="col-md-5">{{ form.child_living_arrangement|as_crispy_field }}</div>
                                                         <span class="badge-form-2 badge-pill">13</span> <div class="col-md-6">{{ form.child_disability|as_crispy_field }}</div>
                                                     </div>
+                                                    <div class="row card-body" id="div_id_child_disability_other">
+                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-6">{{ form.child_disability_other|as_crispy_field }}</div>
+                                                    </div>
                                                     <div class="row card-body">
                                                         <span class="badge-form-2 badge-pill">14</span> <div class="col-md-5">{{ form.child_marital_status|as_crispy_field }}</div>
                                                     </div>
@@ -136,56 +144,56 @@
                                                         <span class="badge-form-empty badge-pill"></span> <div class="col-md-6">{{ form.child_children_number|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">16</span> <div class="col-md-5">{{ form.child_have_sibling|as_crispy_field }}</div>
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-6">{{ form.child_siblings_have_disability|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">16</span> <div class="col-md-5">{{ form.partner_unique_number|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">17</span> <div class="col-md-5">{{ form.child_mother_pregnant_expecting|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">18</span> <div class="col-md-5">{{ form.partner_unique_number|as_crispy_field }}</div>
-                                                    </div>
-                                                    <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">19</span> <div class="col-md-5">{{ form.source_of_identification|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">17</span> <div class="col-md-5">{{ form.source_of_identification|as_crispy_field }}</div>
                                                         <span class="badge-form-empty badge-pill"></span> <div class="col-md-6">{{ form.source_of_identification_specify|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">20</span> <div class="col-md-9">{{ form.cash_support_programmes|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">18</span> <div class="col-md-9">{{ form.cash_support_programmes|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body d-none" id="child_fe_unique_id_block">
-                                                        <span class="badge-form-2 badge-pill">21</span> <div class="col-md-4">{{ form.child_fe_unique_id|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">19</span> <div class="col-md-4">{{ form.child_fe_unique_id|as_crispy_field }}</div>
                                                     </div>
                                                 </div>
                                                 <div id="step-2">
                                                     <div class="row card-body">
-                                                        <span class="badge-form badge-pill">1</span> <div class="col-md-5">{{ form.father_educational_level|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">2</span> <div class="col-md-6">{{ form.mother_educational_level|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">1</span> <div class="col-md-5">{{ form.child_have_sibling|as_crispy_field }}</div>
+                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-6">{{ form.child_siblings_have_disability|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form badge-pill">3</span> <div class="col-md-6">{{ form.first_phone_number|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">4</span> <div class="col-md-6">{{ form.first_phone_number_confirm|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">5</span> <div class="col-md-4">{{ form.first_phone_owner|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">2</span> <div class="col-md-5">{{ form.child_mother_pregnant_expecting|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form badge-pill">6</span> <div class="col-md-6">{{ form.second_phone_number|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">7</span> <div class="col-md-6">{{ form.second_phone_number_confirm|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">8</span> <div class="col-md-4">{{ form.second_phone_owner|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">3</span> <div class="col-md-5">{{ form.father_educational_level|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">4</span> <div class="col-md-6">{{ form.mother_educational_level|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form badge-pill">9</span> <div class="col-md-5">{{ form.children_number_under18|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">5</span> <div class="col-md-6">{{ form.first_phone_number|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">6</span> <div class="col-md-6">{{ form.first_phone_number_confirm|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">7</span> <div class="col-md-4">{{ form.first_phone_owner|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">10</span> <div class="col-md-5">{{ form.main_caregiver|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">8</span> <div class="col-md-6">{{ form.second_phone_number|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">9</span> <div class="col-md-6">{{ form.second_phone_number_confirm|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">10</span> <div class="col-md-4">{{ form.second_phone_owner|as_crispy_field }}</div>
+                                                    </div>
+                                                    <div class="row card-body">
+                                                        <span class="badge-form-2 badge-pill">11</span> <div class="col-md-5">{{ form.children_number_under18|as_crispy_field }}</div>
+                                                    </div>
+                                                    <div class="row card-body">
+                                                        <span class="badge-form-2 badge-pill">12</span> <div class="col-md-5">{{ form.main_caregiver|as_crispy_field }}</div>
                                                         <span class="badge-form-empty badge-pill"></span> <div class="col-md-4">{{ form.main_caregiver_other|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">12</span> <div class="col-md-3">{{ form.caregiver_first_name|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">13</span> <div class="col-md-3">{{ form.caregiver_middle_name|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">14</span> <div class="col-md-3">{{ form.caregiver_last_name|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">13</span> <div class="col-md-3">{{ form.caregiver_first_name|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">14</span> <div class="col-md-3">{{ form.caregiver_middle_name|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">15</span> <div class="col-md-3">{{ form.caregiver_last_name|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form-2 badge-pill">15</span> <div class="col-md-3">{{ form.caregiver_mother_name|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">16</span> <div class="col-md-3">{{ form.main_caregiver_nationality|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">16</span> <div class="col-md-3">{{ form.caregiver_mother_name|as_crispy_field }}</div>
+                                                        <span class="badge-form-2 badge-pill">17</span> <div class="col-md-3">{{ form.main_caregiver_nationality|as_crispy_field }}</div>
                                                         <span class="badge-form-empty badge-pill"></span> <div class="col-md-3">{{ form.main_caregiver_nationality_other|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">

@@ -76,6 +76,10 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': _('مثال: السيد'),
         'oninput': "this.value = this.value.replace(/[^A-Za-z\\u0621-\\u064A\\u066E-\\u06D3\\s]/g, '')"}), required=True,validators=[only_letters_validator]
     )
+    child_photo = forms.ImageField(
+        label=_('Child Photo'),
+        required=False,
+    )
     child_mother_fullname = forms.CharField(
         label=_("Mother Full Name"),
         widget=forms.TextInput(attrs={'placeholder': _('مثال: الهام'),
@@ -140,6 +144,11 @@ class MainForm(forms.ModelForm):
         label=_("Does the child have any disability or special need?"),
         queryset=Disability.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+    )
+    child_disability_other = forms.CharField(
+        label=_('If Other, Please specify'),
+        widget=forms.TextInput(attrs={'placeholder': _('Specify other disability')}),
+        required=False,
     )
     child_marital_status = forms.ChoiceField(
         label=_('Child\'s Marital Status '),
@@ -519,6 +528,11 @@ class MainForm(forms.ModelForm):
         if child_nationality and child_nationality.id == 6 and not child_nationality_other:
             self.add_error('child_nationality_other', 'This field is required')
 
+        child_disability = cleaned_data.get("child_disability")
+        child_disability_other = cleaned_data.get("child_disability_other")
+        if child_disability and (child_disability.name_en == 'Other' or child_disability.name == 'غير ذلك') and not child_disability_other:
+            self.add_error('child_disability_other', 'This field is required')
+
         child_have_children = cleaned_data.get("child_have_children")
         child_children_number = cleaned_data.get("child_children_number")
         if child_have_children == "Yes":
@@ -755,6 +769,11 @@ class MainForm(forms.ModelForm):
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 
+                child_photo = request.FILES.get('child_photo')
+                if child_photo:
+                    instance.child.photo = child_photo
+                    instance.child.save()
+
                 instance.save()
 
                 request.session['instance_id'] = instance.id
@@ -776,25 +795,17 @@ class MainForm(forms.ModelForm):
                 if request.POST.get("student_old"):
                     instance.student_old = request.POST.get("student_old")
 
+                child_photo = request.FILES.get('child_photo')
+                if child_photo:
+                    instance.child.photo = child_photo
+                    instance.child.save()
+
                 instance.save()
 
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
-
-        if instance:
-            instance.child.unicef_id = generate_one_unique_id(
-                str(instance.child.pk),
-                instance.child.first_name,
-                instance.child.father_name,
-                instance.child.last_name,
-                instance.child.mother_fullname,
-                instance.child.birthdate,
-                instance.child.nationality_name_en,
-                instance.child.gender
-            )
-            instance.child.save()
 
         return instance
 
@@ -1442,17 +1453,6 @@ class TeacherForm(forms.ModelForm):
             mother_name = instance.mother_fullname or ''
             nationality = instance.nationality.name if instance.nationality else ''
             birthdate = instance.birthdate.isoformat() if instance.birthdate else ''
-
-            instance.unicef_id = generate_one_unique_id(
-                str(instance.pk),
-                instance.first_name or '',
-                instance.father_name or '',
-                instance.last_name or '',
-                mother_name,
-                birthdate,
-                nationality,
-                instance.sex or '',
-            )
             instance.save()
         else:
             messages.warning(request, serializer.errors)

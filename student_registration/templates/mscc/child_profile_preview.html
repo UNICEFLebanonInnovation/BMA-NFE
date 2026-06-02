@@ -34,7 +34,9 @@
                                         <div class="menu-header-content btn-pane-right">
                                             <div class="avatar-icon-wrapper mr-2 avatar-icon-xl">
                                                 <div class="avatar-icon rounded">
-                                                    {% if instance.child.gender == 'Female' %}
+                                                    {% if instance.child.photo %}
+                                                        <img src="{{ instance.child.photo.url }}">
+                                                    {% elif instance.child.gender == 'Female' %}
                                                         <img src="{% static 'images/avatars/female.png' %}">
                                                     {% else %}
                                                         <img src="{% static 'images/avatars/male.png' %}">
