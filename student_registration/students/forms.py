@@ -187,12 +187,16 @@ class TeacherForm(forms.ModelForm):
         required=True,
         label=_('Topics of teacher training'),
     )
+    years_of_experience = forms.IntegerField(
+        label=_('Years of experience in NFE/FE'),
+        required=False,
+    )
     training_sessions_attended = forms.IntegerField(
         label=_('Number of teacher training sessions (attended)'),
         widget=forms.TextInput, required=False
     )
     training_date_of_completion = forms.DateField(
-        label=_('Date of completion of the training'),
+        label=_('Date of completion of the listed training'),
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=False,
     )
@@ -403,6 +407,8 @@ class TeacherForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    Div('years_of_experience', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
                     Div('extra_coaching', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill" id="span_extra_coaching_specify">17</span>'),
                     Div('extra_coaching_specify', css_class='col-md-3'),
@@ -617,6 +623,7 @@ class TeacherForm(forms.ModelForm):
             'teaching_hours_private_school',
             'teaching_hours_dirasa',
             'trainings',
+            'years_of_experience',
             'training_sessions_attended',
             'training_date_of_completion',
             'extra_coaching',
