@@ -274,18 +274,34 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
         class_section_dict = OrderedDict(sorted_class_sections)
         context['class_section'] = class_section_dict
 
+        user = self.request.user
+        is_unicef_or_staff = user.is_staff or has_group(user, 'MSCC_UNICEF')
+        is_partner_user = has_group(user, 'MSCC_PARTNER') and user.partner_id
+        is_center_user = has_group(user, 'MSCC_CENTER') and user.center_id
+
         context['center'] = []
         context['partner'] = []
 
-        if not has_group(self.request.user, 'MSCC_UNICEF'):
-            if self.request.user.center_id:
-                center = Center.objects.filter(id=self.request.user.center_id).last()
-                if center:
-                    context['center'] = [center]
-                    context['partner'] = PartnerOrganization.objects.filter(id=center.partner_id).all()
-        else:
-            context['center'] = Center.objects.all()
-            context['partner'] = PartnerOrganization.objects.all()
+        context['show_partner_filter'] = False
+        context['show_center_filter'] = False
+        context['selected_partner_id'] = user.partner_id or ''
+        context['selected_center_id'] = user.center_id or ''
+
+        if is_unicef_or_staff:
+            context['center'] = Center.objects.all().order_by('name')
+            context['partner'] = PartnerOrganization.objects.all().order_by('name')
+            context['show_partner_filter'] = True
+            context['show_center_filter'] = True
+            context['selected_partner_id'] = ''
+            context['selected_center_id'] = ''
+        elif is_center_user:
+            center = Center.objects.filter(id=user.center_id).last()
+            if center:
+                context['selected_center_id'] = center.id
+                context['selected_partner_id'] = center.partner_id or user.partner_id or ''
+        elif is_partner_user:
+            context['center'] = Center.objects.filter(partner_id=user.partner_id).order_by('name')
+            context['show_center_filter'] = True
 
         return context
 

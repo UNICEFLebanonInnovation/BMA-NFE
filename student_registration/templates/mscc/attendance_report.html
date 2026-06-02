@@ -51,6 +51,7 @@
                                 <option value="2026">2026</option>
                             </select>
                         </div>
+                        {% if show_partner_filter %}
                         <div class="col-12">
                             <label for="partner" class="form-label small fw-bold text-muted">{% trans "Partner" %}</label>
                             <select id="partner" class="form-select">
@@ -62,6 +63,10 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        {% else %}
+                        <input type="hidden" id="partner" value="{{ selected_partner_id|default:'' }}">
+                        {% endif %}
+                        {% if show_center_filter %}
                         <div class="col-12">
                             <label for="center" class="form-label small fw-bold text-muted">{% trans "Center" %}</label>
                             <select id="center" class="form-select">
@@ -73,6 +78,9 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        {% else %}
+                        <input type="hidden" id="center" value="{{ selected_center_id|default:'' }}">
+                        {% endif %}
                         <div class="col-12">
                             <label for="education_program" class="form-label small fw-bold text-muted">{% trans "Education Program" %}</label>
                             <select id="education_program" class="form-select">
