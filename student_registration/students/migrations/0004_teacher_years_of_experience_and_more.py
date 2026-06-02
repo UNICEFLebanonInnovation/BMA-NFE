@@ -4,7 +4,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('students', '0004_auto_create_attachment_types'),
+        ('students', '0003_teacher_training_date_of_completion_and_more'),
     ]
 
     operations = [

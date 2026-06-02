@@ -168,5 +168,5 @@ class CenterAdmin(ImportExportModelAdmin):
 
 
 # admin.site.register(Center, CenterAdmin)
-# admin.site.register(Disability, DisabilityAdmin)
+admin.site.register(Disability, DisabilityAdmin)
 # admin.site.register(Bridging, BridgingAdmin)

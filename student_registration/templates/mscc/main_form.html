@@ -130,9 +130,7 @@
                         <div class="step-content active" id="step-1">
                             <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "1. Basic Identity Information" %}</h5>
                             <div class="row g-3">
-                                {% if has_group_partner %}
-                                    <div class="col-md-12">{{ form.child_photo|as_crispy_field }}</div>
-                                {% endif %}
+                                <div class="col-md-12">{{ form.child_photo|as_crispy_field }}</div>
                                 <div class="col-md-4">{{ form.child_first_name|as_crispy_field }}</div>
                                 <div class="col-md-4">{{ form.child_father_name|as_crispy_field }}</div>
                                 <div class="col-md-4">{{ form.child_last_name|as_crispy_field }}</div>

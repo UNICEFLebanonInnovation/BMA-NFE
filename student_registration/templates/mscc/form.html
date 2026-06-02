@@ -102,11 +102,9 @@
                                                     {{ h }}
                                                 {% endfor %}
                                                 <div id="step-1">
-                                                    {% if has_group_partner %}
-                                                        <div class="row card-body">
-                                                            <div class="col-md-12">{{ form.child_photo|as_crispy_field }}</div>
-                                                        </div>
-                                                    {% endif %}
+                                                    <div class="row card-body">
+                                                        <div class="col-md-12">{{ form.child_photo|as_crispy_field }}</div>
+                                                    </div>
                                                     <div class="row card-body">
                                                         <span class="badge-form badge-pill">1</span> <div class="col-md-3">{{ form.child_first_name|as_crispy_field }}</div>
                                                         <span class="badge-form badge-pill">2</span> <div class="col-md-3">{{ form.child_father_name|as_crispy_field }}</div>
