@@ -424,11 +424,11 @@ function reorganizeForm()
 //    Child Disability Other
     var child_disability = $('select#id_child_disability option:selected').text();
     if(child_disability == 'Other' || child_disability == 'غير ذلك'){
-        $('#div_id_child_disability_other').removeClass('d-none').show();
+        //$('#div_id_child_disability_other').removeClass('d-none').show();
     }
     else{
-        $('#div_id_child_disability_other').addClass('d-none').hide();
-        $('#id_child_disability_other').val('');
+       // $('#div_id_child_disability_other').addClass('d-none').hide();
+       // $('#id_child_disability_other').val('');
     }
 
     if(child_nationality == 6){
@@ -450,7 +450,7 @@ function reorganizeForm()
     var child_have_children = $('select#id_child_have_children').val();
 
     if(child_have_children =='Yes'){
-        $('div#div_id_child_children_number').removeClass('d-none').show();
+        //$('div#div_id_child_children_number').removeClass('d-none').show();
     }
     else{
 //        $('div#div_id_child_children_number').addClass('d-none').hide();

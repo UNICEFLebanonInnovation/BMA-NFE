@@ -157,12 +157,14 @@
 
                             <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "2. Status & Background" %}</h5>
                             <div class="row g-3">
-                                <div class="col-md-6">{{ form.child_living_arrangement|as_crispy_field }}</div>
-                                <div class="col-md-6">{{ form.child_disability|as_crispy_field }}</div>
-                                <div class="col-md-6" id="div_id_child_disability_other">{{ form.child_disability_other|as_crispy_field }}</div>
-                                <div class="col-md-6">{{ form.child_marital_status|as_crispy_field }}</div>
-                                <div class="col-md-6">{{ form.child_have_children|as_crispy_field }}</div>
-                                <div class="col-md-6 " id="div_id_child_children_number">{{ form.child_children_number|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_living_arrangement|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_disability|as_crispy_field }}</div>
+                                <div class="col-md-4" >{{ form.child_disability_other|as_crispy_field }}</div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">{{ form.child_marital_status|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_have_children|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_children_number|as_crispy_field }}</div>
                             </div>
                         </div>
 
