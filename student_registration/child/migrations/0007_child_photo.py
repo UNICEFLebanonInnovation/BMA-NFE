@@ -2,7 +2,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('child', '0006_remove_unicef_id'),
+        ('child', '0005_child_disability_other'),
     ]
     operations = [
         migrations.AddField(

@@ -165,7 +165,7 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     def get_unicef_id(self, obj):
         return obj.child.unicef_id
-    get_unicef_id.short_description = 'Unicef ID'
+    get_unicef_id.short_description = 'UNIQUE ID'
 
 class EducationHistoryAdmin(admin.ModelAdmin):
 

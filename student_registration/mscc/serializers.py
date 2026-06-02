@@ -80,7 +80,6 @@ class MainSerializer(serializers.ModelSerializer):
     child_living_arrangement = serializers.CharField(source='child.living_arrangement', required=False)
     child_disability = serializers.CharField(source='child.disability', required=False)
     child_disability_id = serializers.CharField(source='child.disability.id', read_only=True)
-    child_disability_other = serializers.CharField(source='child.disability_other', required=False, allow_blank=True)
     child_p_code = serializers.CharField(source='child.p_code', required=False)
     child_id_number = serializers.CharField(source='child.id_number', required=False)
     child_fe_unique_id = serializers.CharField(source='child.fe_unique_id', required=False)
@@ -201,7 +200,6 @@ class MainSerializer(serializers.ModelSerializer):
             'child_living_arrangement',
             'child_disability',
             'child_disability_id',
-            'child_disability_other',
             'child_marital_status',
             'child_have_children',
             'child_children_number',
@@ -284,6 +282,7 @@ class TeacherSerializer(serializers.ModelSerializer):
             'id_type',
             'id_number',
             'nationality',
+            'unicef_id',
             'primary_phone_number',
             'email',
             'subjects_provided',

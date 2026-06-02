@@ -225,6 +225,7 @@ class Child(TimeStampedModel):
         verbose_name=_('Formal Education unique student ID')
     )
     number = models.CharField(max_length=45, blank=True, null=True)
+    unicef_id = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('UNIQUE ID'))
     photo = models.ImageField(upload_to='child_photos/', null=True, blank=True, verbose_name=_('Child Photo'))
     id_type = models.ForeignKey(
         IDType,
@@ -672,5 +673,16 @@ class Child(TimeStampedModel):
             self.birthday_month,
             self.birthday_year
         )
+
+        # self.unicef_id = generate_one_unique_id(
+        #     str(self.pk),
+        #     self.first_name,
+        #     self.father_name,
+        #     self.last_name,
+        #     self.mother_fullname,
+        #     self.birthdate,
+        #     self.nationality_name_en(),
+        #     self.sex
+        # )
 
         super(Child, self).save(**kwargs)

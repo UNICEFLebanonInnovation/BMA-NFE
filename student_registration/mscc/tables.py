@@ -71,6 +71,11 @@ class CommonTable(tables.Table):
     def render_has_previous_registration(self, record):
         return record.has_previous_registration
 
+    def render_child_unicef_id(self, record):
+        url = reverse('mscc:child_profile', kwargs={'pk': record.id})
+        return format_html('<a href="{}" target="_blank">{}</a>', url, record.child.unicef_id)
+
+
 class MainTable(CommonTable):
     action_column = tables.TemplateColumn(
         verbose_name=_('Actions'),
@@ -89,6 +94,7 @@ class MainTable(CommonTable):
             'action_column',
             'absence_column',
             'round',
+            'child.unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -128,6 +134,7 @@ class FullTable(CommonTable):
             'action_column',
             'absence_column',
             'round',
+            'child.unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -170,6 +177,7 @@ class TeacherTable(tables.Table):
             'father_name',
             'last_name',
             'sex',
+            'unicef_id',
             'primary_phone_number',
             'partner',
             'center',
@@ -207,6 +215,7 @@ class PartnerTable(CommonTable):
             'action_column',
             'absence_column',
             'round',
+            'child.unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -240,6 +249,7 @@ class YouthMainTable(CommonTable):
         model = Registration
         fields = (
             'action_column',
+            'child.unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',

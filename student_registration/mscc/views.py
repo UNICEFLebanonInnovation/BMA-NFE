@@ -496,10 +496,7 @@ class MainAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        context = super(MainAddView, self).get_context_data(**kwargs)
-        user = self.request.user
-        context['has_group_partner'] = user.is_staff or user.groups.filter(name__in=['MSCC_PARTNER', 'MSCC_CENTER']).exists()
-        return context
+        return super(MainAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(MainAddView, self).get_initial()
@@ -516,7 +513,7 @@ class MainAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
-            return MainForm(self.request.POST, self.request.FILES, instance=None, request=self.request)
+            return MainForm(self.request.POST, instance=None, request=self.request)
         else:
             return MainForm(None, instance=None, request=self.request, initial=self.get_initial())
 
@@ -536,15 +533,12 @@ class MainEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        context = super(MainEditView, self).get_context_data(**kwargs)
-        user = self.request.user
-        context['has_group_partner'] = user.is_staff or user.groups.filter(name__in=['MSCC_PARTNER', 'MSCC_CENTER']).exists()
-        return context
+        return super(MainEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         instance = Registration.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            return MainForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
+            return MainForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = MainSerializer(instance).data
             data['child_nationality'] = data['child_nationality_id'] if 'child_nationality_id' in data else ''

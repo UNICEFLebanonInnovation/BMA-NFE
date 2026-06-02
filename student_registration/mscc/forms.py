@@ -770,8 +770,18 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 
                 child_photo = request.FILES.get('child_photo')
+                child_disability_other = request.POST.get('child_disability_other')
+
+                child_save = False
                 if child_photo:
                     instance.child.photo = child_photo
+                    child_save = True
+
+                if child_disability_other is not None:
+                    instance.child.disability_other = child_disability_other
+                    child_save = True
+
+                if child_save:
                     instance.child.save()
 
                 instance.save()
@@ -796,8 +806,18 @@ class MainForm(forms.ModelForm):
                     instance.student_old = request.POST.get("student_old")
 
                 child_photo = request.FILES.get('child_photo')
+                child_disability_other = request.POST.get('child_disability_other')
+
+                child_save = False
                 if child_photo:
                     instance.child.photo = child_photo
+                    child_save = True
+
+                if child_disability_other is not None:
+                    instance.child.disability_other = child_disability_other
+                    child_save = True
+
+                if child_save:
                     instance.child.save()
 
                 instance.save()
@@ -806,6 +826,19 @@ class MainForm(forms.ModelForm):
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
+
+        if instance:
+            instance.child.unicef_id = generate_one_unique_id(
+                str(instance.child.pk),
+                instance.child.first_name,
+                instance.child.father_name,
+                instance.child.last_name,
+                instance.child.mother_fullname,
+                instance.child.birthdate,
+                instance.child.nationality_name_en,
+                instance.child.gender
+            )
+            instance.child.save()
 
         return instance
 
@@ -1453,6 +1486,17 @@ class TeacherForm(forms.ModelForm):
             mother_name = instance.mother_fullname or ''
             nationality = instance.nationality.name if instance.nationality else ''
             birthdate = instance.birthdate.isoformat() if instance.birthdate else ''
+
+            instance.unicef_id = generate_one_unique_id(
+                str(instance.pk),
+                instance.first_name or '',
+                instance.father_name or '',
+                instance.last_name or '',
+                mother_name,
+                birthdate,
+                nationality,
+                instance.sex or '',
+            )
             instance.save()
         else:
             messages.warning(request, serializer.errors)
