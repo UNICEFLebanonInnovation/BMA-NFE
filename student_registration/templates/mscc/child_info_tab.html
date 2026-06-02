@@ -23,6 +23,12 @@
                         <div class="row small text-uppercase fw-bold text-muted mb-1">
                             <div class="col-12">{% trans "Full Name & Family" %}</div>
                         </div>
+
+                        {% if instance.child.photo %}
+                        <div class="mb-3 text-center">
+                            <img src="{{ instance.child.photo.url }}" alt="Child Photo" class="img-thumbnail" style="max-width: 150px; max-height: 150px; object-fit: cover;">
+                        </div>
+                        {% endif %}
                         <div class="fw-bold">{{ instance.child.full_name }}</div>
                         <div class="small text-muted mt-1">
                             <span class="d-block">{% trans "Father" %}: {{ instance.child.father_name }}</span>
