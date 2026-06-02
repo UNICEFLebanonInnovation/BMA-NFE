@@ -163,7 +163,7 @@ $(document).ready(function() {
     });
     reorganizeForm();
 
-    $(document).on('change', 'select#id_child_have_children, select#id_child_nationality, select#id_main_caregiver, select#id_main_caregiver_nationality, select#id_have_labour, select#id_labour_type, select#id_child_have_sibling', function(){
+    $(document).on('change', 'select#id_child_have_children, select#id_child_nationality, select#id_child_disability, select#id_main_caregiver, select#id_main_caregiver_nationality, select#id_have_labour, select#id_labour_type, select#id_child_have_sibling', function(){
          reorganizeForm();
     });
     $(document).on('change', 'select#id_student_nationality, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
@@ -420,6 +420,16 @@ function reorganizeForm()
 //    Child Nationality
     var child_nationality = $('select#id_child_nationality').val();
     //$('div#div_id_child_nationality_other').addClass('d-none').hide();
+
+//    Child Disability Other
+    var child_disability = $('select#id_child_disability option:selected').text();
+    if(child_disability == 'Other' || child_disability == 'غير ذلك'){
+        $('#div_id_child_disability_other').removeClass('d-none').show();
+    }
+    else{
+        $('#div_id_child_disability_other').addClass('d-none').hide();
+        $('#id_child_disability_other').val('');
+    }
 
     if(child_nationality == 6){
         $('#div_id_child_nationality_other').removeClass('d-none').show();
@@ -752,6 +762,13 @@ function validateMainForm(showModal, step) {
     // Child nationality other
     if ($('#id_child_nationality').val() == '6' && $('#id_child_nationality_other').val() === '') {
         showError('#id_child_nationality_other', 'This field is required');
+        valid = false;
+    }
+
+    // Child disability other
+    var child_disability_txt = $('#id_child_disability option:selected').text();
+    if ((child_disability_txt == 'Other' || child_disability_txt == 'غير ذلك') && $('#id_child_disability_other').val() === '') {
+        showError('#id_child_disability_other', 'This field is required');
         valid = false;
     }
 

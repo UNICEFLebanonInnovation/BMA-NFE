@@ -187,7 +187,7 @@ class Teacher(TimeStampedModel):
         max_length=45,
         blank=True,
         null=True,
-        verbose_name=_('Unicef ID')
+        verbose_name=_('UNIQUE ID')
     )
 
     SUBJECT_PROVIDED = (
