@@ -664,6 +664,8 @@ class EducationServiceForm(forms.ModelForm):
 
         registry = instance.registration
         registry.round_id = instance.round_id
+        registry.deleted = False
+        registry.deleted_by = None
         registry.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))

@@ -582,6 +582,8 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             new_registration = copy.copy(registration)
             new_registration.pk = None
             new_registration.round = None
+            new_registration.deleted = True
+            new_registration.deleted_by = self.request.user
             new_registration.owner = self.request.user
             new_registration.modified_by = self.request.user
             if self.request.user.center:
@@ -744,7 +746,6 @@ def main_registration_cancel_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Registration.objects.get(id=pk)
-            registration.deleted = True
             registration.save()
             return redirect('mscc:list')
         except Registration.DoesNotExist:
