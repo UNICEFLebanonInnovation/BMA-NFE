@@ -249,6 +249,13 @@
                                 <div class="map-popup-item"><span class="map-popup-label">{% trans "Caza" %}:</span> ${escapeHtml(center.caza)}</div>
                                 <div class="map-popup-item"><span class="map-popup-label">{% trans "Cadaster" %}:</span> ${escapeHtml(center.cadaster)}</div>
                                 <div class="map-popup-item"><span class="map-popup-label">{% trans "Type" %}:</span> ${escapeHtml(center.type)}</div>
+                                <div class="map-popup-item"><span class="map-popup-label">{% trans "Provided Services" %}:</span> ${center.provided_packages && center.provided_packages.length > 0 ? escapeHtml(center.provided_packages.join(', ')) : 'N/A'}</div>
+                                <div class="map-popup-item"><span class="map-popup-label">{% trans "Education Program" %}:</span> ${center.programs && center.programs.length > 0 ? escapeHtml(center.programs.join(', ')) : 'N/A'}</div>
+                                <div class="map-popup-item"><span class="map-popup-label">{% trans "Center Active" %}:</span> ${center.is_active ? '{% trans "Yes" %}' : '{% trans "No" %}'}</div>
+                                <div class="map-popup-item"><span class="map-popup-label">{% trans "Offer Digital Learning Services" %}:</span> ${escapeHtml(center.offer_digital_learning && center.offer_digital_learning !== 'False' ? center.offer_digital_learning : 'N/A')}</div>
+                                <div class="map-popup-item"><span class="map-popup-label">{% trans "Have a Digital Hub" %}:</span> ${escapeHtml(center.have_digital_hub && center.have_digital_hub !== 'False' ? center.have_digital_hub : 'N/A')}</div>
+                                <div class="map-popup-item"><span class="map-popup-label">{% trans "Number of Admin Staff" %}:</span> ${center.admin_staff_number != null ? escapeHtml(center.admin_staff_number.toString()) : 'N/A'}</div>
+                                <div class="map-popup-item"><span class="map-popup-label">{% trans "Accessible for CWD" %}:</span> ${escapeHtml(center.cwd_accessible && center.cwd_accessible !== 'False' ? center.cwd_accessible : 'N/A')}</div>
                                 <div class="map-popup-item mt-2 pt-2 border-top">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <span class="fw-bold"><i class="bi bi-people me-1"></i> {% trans "Children" %}:</span>

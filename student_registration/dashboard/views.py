@@ -528,6 +528,13 @@ def centers_geo_data(request):
             'p_code': center.p_code or 'N/A',
             'profile_url': reverse('locations:center_profile', kwargs={'pk': center.id}),
             'vulnerability_score': vulnerability_score,
+            'provided_packages': list(center.provided_packages) if center.provided_packages else [],
+            'programs': list(center.programs) if center.programs else [],
+            'is_active': center.is_active,
+            'offer_digital_learning': center.get_offer_digital_learning_display() if hasattr(center, 'get_offer_digital_learning_display') and center.offer_digital_learning else center.offer_digital_learning,
+            'have_digital_hub': center.get_have_digital_hub_display() if hasattr(center, 'get_have_digital_hub_display') and center.have_digital_hub else center.have_digital_hub,
+            'admin_staff_number': center.admin_staff_number,
+            'cwd_accessible': center.get_cwd_accessible_display() if hasattr(center, 'get_cwd_accessible_display') and center.cwd_accessible else center.cwd_accessible,
         })
 
     return JsonResponse(data, safe=False)
