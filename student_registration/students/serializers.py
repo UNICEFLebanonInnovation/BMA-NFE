@@ -103,6 +103,7 @@ class TeacherSerializer(serializers.ModelSerializer):
             'teaching_hours_private_school',
             'teaching_hours_dirasa',
             'trainings',
+            'years_of_experience',
             'training_sessions_attended',
             'extra_coaching',
             'extra_coaching_specify',
