@@ -118,6 +118,60 @@
   </div>
 
   <div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">{% trans "Provided Services" %}</div>
+            <div class="card-body chart" id="chart-provided-services"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">{% trans "Education Program" %}</div>
+            <div class="card-body chart" id="chart-education-program"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">{% trans "Center Active" %}</div>
+            <div class="card-body chart" id="chart-center-active"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">{% trans "Offer Digital Learning Services" %}</div>
+            <div class="card-body chart" id="chart-digital-learning"></div>
+        </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">{% trans "Have a Digital Hub" %}</div>
+            <div class="card-body chart" id="chart-digital-hub"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">{% trans "Accessible for CWD" %}</div>
+            <div class="card-body chart" id="chart-cwd"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">{% trans "Type" %}</div>
+            <div class="card-body chart" id="chart-type"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">{% trans "Governorate" %}</div>
+            <div class="card-body chart" id="chart-governorate"></div>
+        </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
     <div class="col-12">
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white border-bottom">
@@ -164,6 +218,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script
   src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -171,6 +226,79 @@
 ></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // D3 Chart Rendering function
+    function renderHorizontalBar(selector, items) {
+      const root = d3.select(selector);
+      root.selectAll('*').remove();
+
+      if (!items || items.length === 0) {
+        root.append('div').attr('class', 'text-center text-muted mt-3').text('{% trans "No data available" %}');
+        return;
+      }
+
+      const width = root.node().getBoundingClientRect().width || 300;
+      const barHeight = 24;
+      const margin = { top: 10, right: 30, bottom: 20, left: 140 };
+      const height = Math.max(120, items.length * barHeight + margin.top + margin.bottom);
+
+      const svg = root.append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+      const y = d3.scaleBand()
+        .domain(items.map(d => d.key))
+        .range([margin.top, height - margin.bottom])
+        .padding(0.2);
+
+      const x = d3.scaleLinear()
+        .domain([0, d3.max(items, d => d.count) || 1]).nice()
+        .range([margin.left, width - margin.right]);
+
+      svg.selectAll('rect').data(items).enter().append('rect')
+        .attr('x', margin.left).attr('y', d => y(d.key))
+        .attr('height', y.bandwidth())
+        .attr('width', d => x(d.count) - margin.left)
+        .attr('fill', '#16aaff').attr('tabindex', 0)
+        .append('title').text(d => `${d.key}: ${d.count}`);
+
+      svg.selectAll('text.value').data(items).enter().append('text')
+        .attr('class', 'value')
+        .attr('x', d => x(d.count) + 5)
+        .attr('y', d => y(d.key) + y.bandwidth() / 2 + 4)
+        .attr('font-size', '10px')
+        .attr('fill', '#666')
+        .text(d => d.count);
+
+      svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x).ticks(4));
+      svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y))
+        .selectAll(".tick text")
+        .call(wrap, margin.left - 10);
+
+      function wrap(text, width) {
+        text.each(function() {
+          var text = d3.select(this),
+              words = text.text().split(/\s+/).reverse(),
+              word,
+              line = [],
+              lineNumber = 0,
+              lineHeight = 1.1, // ems
+              y = text.attr("y"),
+              dy = parseFloat(text.attr("dy")),
+              tspan = text.text(null).append("tspan").attr("x", -10).attr("y", y).attr("dy", dy + "em");
+          while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > width) {
+              line.pop();
+              tspan.text(line.join(" "));
+              line = [word];
+              tspan = text.append("tspan").attr("x", -10).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+            }
+          }
+        });
+      }
+    }
+
     // HTML Escaping helper
     function escapeHtml(unsafe) {
       return (unsafe || "")
@@ -215,11 +343,73 @@
           markers.clearLayers();
           document.getElementById("center-count").textContent = data.length;
 
-          if (data.length === 0) return;
+          if (data.length === 0) {
+             renderHorizontalBar('#chart-provided-services', []);
+             renderHorizontalBar('#chart-education-program', []);
+             renderHorizontalBar('#chart-center-active', []);
+             renderHorizontalBar('#chart-digital-learning', []);
+             renderHorizontalBar('#chart-digital-hub', []);
+             renderHorizontalBar('#chart-cwd', []);
+             renderHorizontalBar('#chart-type', []);
+             renderHorizontalBar('#chart-governorate', []);
+             return;
+          }
 
           const bounds = L.latLngBounds();
 
+          // Aggregations
+          const providedServicesCount = {};
+          const programsCount = {};
+          const activeCount = {};
+          const digitalLearningCount = {};
+          const digitalHubCount = {};
+          const cwdCount = {};
+          const typeCount = {};
+          const governorateCount = {};
+
           data.forEach((center) => {
+            // Aggregate Provided Services
+            if (center.provided_packages && center.provided_packages.length > 0) {
+               center.provided_packages.forEach(pkg => {
+                  providedServicesCount[pkg] = (providedServicesCount[pkg] || 0) + 1;
+               });
+            } else {
+               providedServicesCount['N/A'] = (providedServicesCount['N/A'] || 0) + 1;
+            }
+
+            // Aggregate Programs
+            if (center.programs && center.programs.length > 0) {
+               center.programs.forEach(prog => {
+                  programsCount[prog] = (programsCount[prog] || 0) + 1;
+               });
+            } else {
+               programsCount['N/A'] = (programsCount['N/A'] || 0) + 1;
+            }
+
+            // Aggregate Active
+            const isActive = center.is_active ? '{% trans "Yes" %}' : '{% trans "No" %}';
+            activeCount[isActive] = (activeCount[isActive] || 0) + 1;
+
+            // Aggregate Digital Learning
+            const dl = (center.offer_digital_learning && center.offer_digital_learning !== 'False') ? center.offer_digital_learning : 'N/A';
+            digitalLearningCount[dl] = (digitalLearningCount[dl] || 0) + 1;
+
+            // Aggregate Digital Hub
+            const dh = (center.have_digital_hub && center.have_digital_hub !== 'False') ? center.have_digital_hub : 'N/A';
+            digitalHubCount[dh] = (digitalHubCount[dh] || 0) + 1;
+
+            // Aggregate CWD
+            const cwd = (center.cwd_accessible && center.cwd_accessible !== 'False') ? center.cwd_accessible : 'N/A';
+            cwdCount[cwd] = (cwdCount[cwd] || 0) + 1;
+
+            // Aggregate Type
+            const ctype = center.type || 'N/A';
+            typeCount[ctype] = (typeCount[ctype] || 0) + 1;
+
+            // Aggregate Governorate
+            const gov = center.governorate || 'N/A';
+            governorateCount[gov] = (governorateCount[gov] || 0) + 1;
+
             // Color coding based on vulnerability score
             let fillColor = "#28a745"; // Green for low vulnerability
             if (center.vulnerability_score >= 8) {
@@ -291,6 +481,19 @@
           if (data.length > 0) {
             map.fitBounds(bounds, { padding: [50, 50] });
           }
+
+          // Format data and render charts
+          const formatChartData = (counts) => Object.entries(counts).map(([key, count]) => ({key, count})).sort((a,b) => b.count - a.count);
+
+          renderHorizontalBar('#chart-provided-services', formatChartData(providedServicesCount));
+          renderHorizontalBar('#chart-education-program', formatChartData(programsCount));
+          renderHorizontalBar('#chart-center-active', formatChartData(activeCount));
+          renderHorizontalBar('#chart-digital-learning', formatChartData(digitalLearningCount));
+          renderHorizontalBar('#chart-digital-hub', formatChartData(digitalHubCount));
+          renderHorizontalBar('#chart-cwd', formatChartData(cwdCount));
+          renderHorizontalBar('#chart-type', formatChartData(typeCount));
+          renderHorizontalBar('#chart-governorate', formatChartData(governorateCount));
+
         })
         .catch((error) => console.error("Error loading map data:", error))
         .finally(() => hideLoadingOverlay());
