@@ -1459,6 +1459,18 @@ class TeacherForm(forms.ModelForm):
                     Div('attach_short_description_2', css_class='col-md-3'),
                     css_class='row mb-2 align-items-end'
                 ),
+                Div(
+                    Div('attach_file_3', css_class='col-md-6'),
+                    Div('attach_type_3', css_class='col-md-3'),
+                    Div('attach_short_description_3', css_class='col-md-3'),
+                    css_class='row mb-2 align-items-end'
+                ),
+                Div(
+                    Div('attach_file_4', css_class='col-md-6'),
+                    Div('attach_type_4', css_class='col-md-3'),
+                    Div('attach_short_description_4', css_class='col-md-3'),
+                    css_class='row mb-2 align-items-end'
+                ),
             ),
             FormActions(
                 Submit('save', _('Complete Registration'), css_class='btn btn-primary px-5 fw-bold shadow-sm'),
