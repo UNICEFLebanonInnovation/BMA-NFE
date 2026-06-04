@@ -349,19 +349,19 @@ msgstr "المستوى "
 
 #: student_registration/attendances/models.py:283
 msgid "BLN Catch-up"
-msgstr ""
+msgstr "برنامج التعليم الأساسي التعويضي"
 
 #: student_registration/attendances/models.py:284
 msgid "ABLN Level 1"
-msgstr ""
+msgstr "برنامج التعليم الأساسي السريع المستوى 1"
 
 #: student_registration/attendances/models.py:285
 msgid "ABLN Level 2"
-msgstr ""
+msgstr "برنامج التعليم الأساسي السريع المستوى 2"
 
 #: student_registration/attendances/models.py:286
 msgid "ABLN Catch-up"
-msgstr ""
+msgstr "التعليم الأساسي السريع التعويضي"
 
 #: student_registration/attendances/models.py:287
 #: student_registration/mscc/models.py:1602
@@ -382,7 +382,7 @@ msgstr "المستوى "
 #: student_registration/attendances/models.py:289
 #: student_registration/mscc/models.py:1604
 msgid "YBLN Catch-up"
-msgstr ""
+msgstr "التعليم الأساسي للشباب التعويضي"
 
 #: student_registration/attendances/models.py:290
 #: student_registration/mscc/models.py:1605
@@ -404,13 +404,13 @@ msgstr "المستوى "
 #: student_registration/mscc/models.py:1607
 #: student_registration/mscc/models.py:1633
 msgid "YFS Level 1 - RS Grade 9"
-msgstr ""
+msgstr "الشباب المستوى 1 - الصف 9"
 
 #: student_registration/attendances/models.py:293
 #: student_registration/mscc/models.py:1608
 #: student_registration/mscc/models.py:1634
 msgid "YFS Level 2 - RS Grade 9"
-msgstr ""
+msgstr "الشباب المستوى 2 - الصف 9"
 
 #: student_registration/attendances/models.py:294
 #: student_registration/mscc/models.py:1609
@@ -429,12 +429,12 @@ msgstr "المستوى "
 #: student_registration/attendances/models.py:296
 #: student_registration/mscc/models.py:1611
 msgid "CBECE Level 3"
-msgstr ""
+msgstr "التعليم في مرحلة الطفولة المبكرة المستوى 3"
 
 #: student_registration/attendances/models.py:297
 #: student_registration/mscc/models.py:1612
 msgid "CBECE Catch-up"
-msgstr ""
+msgstr "التعليم في مرحلة الطفولة المبكرة التعويضي"
 
 #: student_registration/attendances/models.py:298
 #: student_registration/mscc/models.py:1613
@@ -502,7 +502,7 @@ msgstr "العلامات"
 #: student_registration/attendances/models.py:307
 #: student_registration/mscc/models.py:1622
 msgid "ECD"
-msgstr ""
+msgstr "تنمية الطفولة المبكرة"
 
 #: student_registration/attendances/models.py:311
 #: student_registration/mscc/models.py:1638
@@ -537,37 +537,37 @@ msgstr "و"
 #: student_registration/attendances/models.py:317
 #: student_registration/mscc/models.py:1644
 msgid "G"
-msgstr ""
+msgstr "ز"
 
 #: student_registration/attendances/models.py:318
 #: student_registration/mscc/models.py:1645
 msgid "H"
-msgstr ""
+msgstr "ح"
 
 #: student_registration/attendances/models.py:319
 #: student_registration/mscc/models.py:1646
 msgid "I"
-msgstr ""
+msgstr "ط"
 
 #: student_registration/attendances/models.py:320
 #: student_registration/mscc/models.py:1647
 msgid "J"
-msgstr ""
+msgstr "ي"
 
 #: student_registration/attendances/models.py:321
 #: student_registration/mscc/models.py:1648
 msgid "K"
-msgstr ""
+msgstr "ك"
 
 #: student_registration/attendances/models.py:322
 #: student_registration/mscc/models.py:1649
 msgid "L"
-msgstr ""
+msgstr "ل"
 
 #: student_registration/attendances/models.py:323
 #: student_registration/mscc/models.py:1650
 msgid "M"
-msgstr ""
+msgstr "م"
 
 #: student_registration/attendances/models.py:324
 #: student_registration/mscc/models.py:1651
@@ -579,62 +579,62 @@ msgstr "كلا"
 #: student_registration/attendances/models.py:325
 #: student_registration/mscc/models.py:1652
 msgid "O"
-msgstr ""
+msgstr "س"
 
 #: student_registration/attendances/models.py:326
 #: student_registration/mscc/models.py:1653
 msgid "P"
-msgstr ""
+msgstr "ع"
 
 #: student_registration/attendances/models.py:327
 #: student_registration/mscc/models.py:1654
 msgid "Q"
-msgstr ""
+msgstr "ف"
 
 #: student_registration/attendances/models.py:328
 #: student_registration/mscc/models.py:1655
 msgid "R"
-msgstr ""
+msgstr "ص"
 
 #: student_registration/attendances/models.py:329
 #: student_registration/mscc/models.py:1656
 msgid "S"
-msgstr ""
+msgstr "ق"
 
 #: student_registration/attendances/models.py:330
 #: student_registration/mscc/models.py:1657
 msgid "T"
-msgstr ""
+msgstr "ر"
 
 #: student_registration/attendances/models.py:331
 #: student_registration/mscc/models.py:1658
 msgid "U"
-msgstr ""
+msgstr "ش"
 
 #: student_registration/attendances/models.py:332
 #: student_registration/mscc/models.py:1659
 msgid "V"
-msgstr ""
+msgstr "ت"
 
 #: student_registration/attendances/models.py:333
 #: student_registration/mscc/models.py:1660
 msgid "W"
-msgstr ""
+msgstr "ث"
 
 #: student_registration/attendances/models.py:334
 #: student_registration/mscc/models.py:1661
 msgid "X"
-msgstr ""
+msgstr "خ"
 
 #: student_registration/attendances/models.py:335
 #: student_registration/mscc/models.py:1662
 msgid "Y"
-msgstr ""
+msgstr "ذ"
 
 #: student_registration/attendances/models.py:336
 #: student_registration/mscc/models.py:1663
 msgid "Z"
-msgstr ""
+msgstr "ض"
 
 #: student_registration/attendances/models.py:344
 #: student_registration/mscc/filters.py:214
@@ -725,7 +725,7 @@ msgstr "هل حضر الطالب"
 
 #: student_registration/backends/models.py:41
 msgid "NFR Sector List"
-msgstr ""
+msgstr "قائمة قطاع التعليم غير النظامي"
 
 #: student_registration/backends/models.py:42
 #, fuzzy
@@ -735,7 +735,7 @@ msgstr "تصدير الحضور"
 
 #: student_registration/backends/models.py:43
 msgid "NFR Sector Total Attendance"
-msgstr ""
+msgstr "إجمالي الحضور في قطاع التعليم غير النظامي"
 
 #: student_registration/backends/models.py:44
 #: student_registration/templates/location/center_list.html:9
@@ -747,7 +747,7 @@ msgstr "شهرة ولي الأمر"
 
 #: student_registration/backends/models.py:45
 msgid "Bridging Absence Raw Data"
-msgstr ""
+msgstr "البيانات الأولية للغياب في التجسير"
 
 #: student_registration/backends/models.py:46
 #, fuzzy
@@ -757,18 +757,18 @@ msgstr " الحضور ام غائب؟"
 
 #: student_registration/backends/models.py:47
 msgid "Bridging Absence Consecutive"
-msgstr ""
+msgstr "الغياب المتتالي في التجسير"
 
 #: student_registration/backends/models.py:48
 #: student_registration/templates/mscc/teacher_form.html:23
 #: student_registration/templates/mscc/teacher_list.html:8
 #: student_registration/templates/mscc/teacher_list.html:17
 msgid "Teacher List"
-msgstr ""
+msgstr "قائمة المعلمين"
 
 #: student_registration/backends/models.py:49
 msgid "Bridging List"
-msgstr ""
+msgstr "قائمة التجسير"
 
 #: student_registration/backends/models.py:50
 #, fuzzy
@@ -963,7 +963,7 @@ msgstr "أعزب / عزباء"
 
 #: student_registration/child/models.py:58
 msgid "Child pregnant or expecting children"
-msgstr ""
+msgstr "طفل حامل أو يتوقع أطفال"
 
 #: student_registration/child/models.py:62
 #: student_registration/clm/bridging_forms.py:692
@@ -1023,11 +1023,11 @@ msgstr "اكمال"
 
 #: student_registration/child/models.py:77
 msgid "Separated"
-msgstr ""
+msgstr "منفصل"
 
 #: student_registration/child/models.py:78
 msgid "Living with one caregivers"
-msgstr ""
+msgstr "يعيش مع مقدم رعاية واحد"
 
 #: student_registration/child/models.py:79
 #, fuzzy
@@ -1037,11 +1037,11 @@ msgstr "من هو ولي الأمر الرئيسي"
 
 #: student_registration/child/models.py:80
 msgid "Child headed household"
-msgstr ""
+msgstr "أسرة يعيلها طفل"
 
 #: student_registration/child/models.py:81
 msgid "Married and living with extended family"
-msgstr ""
+msgstr "متزوج ويعيش مع عائلة ممتدة"
 
 #: student_registration/child/models.py:88
 #: student_registration/clm/bridging_forms.py:151
@@ -1084,7 +1084,7 @@ msgstr "إسم الأم و شهرتها"
 #: student_registration/templates/location/teachers_tab.html:23
 #: student_registration/templates/mscc/main_form.html:290
 msgid "Gender"
-msgstr ""
+msgstr "الجنس"
 
 #: student_registration/child/models.py:120
 #: student_registration/clm/bridging_forms.py:187
@@ -1154,7 +1154,7 @@ msgstr "تاريخ الولادة - اليوم"
 #: student_registration/child/models.py:154
 #: student_registration/mscc/forms.py:128
 msgid "Insert Pcode if the child lives in Internal Settlement/Camp"
-msgstr ""
+msgstr "أدخل الرمز البريدي إذا كان الطفل يعيش في مستوطنة/مخيم داخلي"
 
 #: student_registration/child/models.py:159
 #, fuzzy
@@ -1164,7 +1164,7 @@ msgstr "المستوى المسجل به حالياً "
 
 #: student_registration/child/models.py:166
 msgid "Child’s Living Arrangement"
-msgstr ""
+msgstr "ترتيب معيشة الطفل"
 
 #: student_registration/child/models.py:173
 #: student_registration/clm/bridging_forms.py:213
@@ -1180,7 +1180,7 @@ msgstr "احتياجات خاصة"
 
 #: student_registration/child/models.py:185
 msgid "Child’s Marital Status"
-msgstr ""
+msgstr "الحالة الاجتماعية للطفل"
 
 #: student_registration/child/models.py:192
 #: student_registration/clm/bridging_forms.py:429
@@ -1189,7 +1189,7 @@ msgstr " هل لدى الطفل المشارك أطفال؟"
 
 #: student_registration/child/models.py:198
 msgid "If yes, how many?"
-msgstr ""
+msgstr "إذا نعم، كم؟"
 
 #: student_registration/child/models.py:205
 #: student_registration/mscc/forms.py:172
@@ -1208,7 +1208,7 @@ msgstr "هل يعاني الطفل من أي إعاقة أو حاجة خاصة؟
 #: student_registration/child/models.py:219
 #: student_registration/mscc/forms.py:182
 msgid "Is the mother pregnant or expecting?"
-msgstr ""
+msgstr "هل الأم حامل أو تتوقع مولوداً؟"
 
 #: student_registration/child/models.py:225
 #: student_registration/mscc/forms.py:187
@@ -1220,7 +1220,7 @@ msgstr "إحالة إلى التعليم النظامي"
 #: student_registration/child/models.py:228
 #: student_registration/mscc/models.py:190
 msgid "UNIQUE ID"
-msgstr ""
+msgstr "المعرف الفريد"
 
 #: student_registration/child/models.py:229
 #: student_registration/mscc/forms.py:80
@@ -1255,11 +1255,11 @@ msgstr "البطاقة الفلسطنية"
 
 #: student_registration/child/models.py:259
 msgid "Parent individual ID confirm"
-msgstr ""
+msgstr "تأكيد المعرف الفردي للوالد"
 
 #: student_registration/child/models.py:265
 msgid "Child individual ID"
-msgstr ""
+msgstr "المعرف الفردي للطفل"
 
 #: student_registration/child/models.py:271
 #, fuzzy
