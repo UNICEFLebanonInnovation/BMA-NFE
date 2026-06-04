@@ -104,25 +104,22 @@
                                         </h6>
                                         <small class="text-muted">{{ export.created|timesince }}</small>
                                     </div>
-                                    <p class="mb-2 small text-muted">
-                                        {% if export.status == 'done' %}
-                                            {% trans "Export completed successfully." %} ({{ export.file_format|upper }})
-                                        {% elif export.status == 'failed' %}
-                                            {% trans "Export failed to process." %}
-                                        {% else %}
-                                            {% trans "Export is being processed..." %}
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <small class="text-muted">
+                                            {% if export.status == 'done' %}
+                                                {% trans "Completed successfully" %}
+                                            {% elif export.status == 'failed' %}
+                                                {% trans "Export failed" %}
+                                            {% else %}
+                                                {% trans "Processing..." %}
+                                            {% endif %}
+                                        </small>
+                                        {% if export.status == 'done' and export.file %}
+                                        <a href="{{ export.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank" download>
+                                            <i class="bi bi-download"></i>
+                                        </a>
                                         {% endif %}
-                                    </p>
-                                    {% if export.status == 'done' %}
-                                    <a href="{{ export.file_url }}" class="btn btn-sm btn-outline-primary fw-bold">
-                                        <i class="bi bi-download me-1"></i> {% trans "Download" %}
-                                    </a>
-                                    {% endif %}
-                                </div>
-                                {% empty %}
-                                <div class="p-5 text-center text-muted">
-                                    <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
-                                    <p class="small mb-0">{% trans "No recent exports found" %}</p>
+                                    </div>
                                 </div>
                                 {% endfor %}
                             </div>
@@ -132,6 +129,30 @@
                             </div>
                             {% endif %}
                         </div>
+                    </div>
+
+
+                    <!-- Language Selection -->
+                    <div class="dropdown me-3">
+                        <button class="btn btn-link p-1 text-dark" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-globe fs-5"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <form action="{% url 'set_language' %}" method="post">
+                                {% csrf_token %}
+                                <input name="next" type="hidden" value="{{ redirect_to }}" />
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% get_available_languages as LANGUAGES %}
+                                {% get_language_info_list for LANGUAGES as languages %}
+                                {% for language in languages %}
+                                    <li>
+                                        <button type="submit" name="language" value="{{ language.code }}" class="dropdown-item py-2 {% if language.code == LANGUAGE_CODE %}active{% endif %}">
+                                            {{ language.name_local }} ({{ language.code }})
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </form>
+                        </ul>
                     </div>
 
                     <!-- User Profile -->
