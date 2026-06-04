@@ -18,7 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db import connection, transaction
+from django.db import connection
 import csv
 import io
 import zipfile
@@ -77,7 +77,7 @@ from .models import (
 )
 from student_registration.backends.models import ExportHistory
 
-from .education_form import EducationServiceForm
+from .education_form import NewRoundForm
 from .forms import (
     MainForm,
     ReferralForm,
@@ -562,10 +562,10 @@ class NewRoundView(LoginRequiredMixin,
 
     group_required = [u"MSCC", u"MSCC_CENTER"]
     template_name = 'mscc/new_round.html'
-    form_class = EducationServiceForm
+    form_class = NewRoundForm
 
     def get_success_url(self):
-        return reverse('mscc:child_profile', kwargs={'pk': self.new_registration.id}) + '?current_tab=services'
+        return reverse('mscc:child_profile', kwargs={'pk': self.new_registration_id}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         context = super(NewRoundView, self).get_context_data(**kwargs)
@@ -575,40 +575,22 @@ class NewRoundView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         registry = self.kwargs['pk']
         if self.request.method == "POST":
-            return EducationServiceForm(self.request.POST, registry=registry, request=self.request)
+            return NewRoundForm(self.request.POST, registry=registry, request=self.request)
         else:
             # Try to pre-fill from the latest EducationService
             from student_registration.mscc.utils import to_array
             latest_education = EducationService.objects.filter(registration_id=registry).order_by('-created').first()
             if latest_education:
-                data = to_array(EducationServiceForm.Meta.fields, latest_education)
-                return EducationServiceForm(data, registry=registry, request=self.request)
-            return EducationServiceForm(registry=registry, request=self.request)
+                data = to_array(NewRoundForm.Meta.fields, latest_education)
+                return NewRoundForm(data, registry=registry, request=self.request)
+            return NewRoundForm(registry=registry, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['pk']
-        import copy
 
-        with transaction.atomic():
-            registration = Registration.objects.get(id=registry)
-            new_registration = copy.copy(registration)
-            new_registration.pk = None
-            new_registration.round = None
-            # Do NOT set deleted=True because we have the education form data to complete it
-            new_registration.deleted = False
-            new_registration.deleted_by = None
-            new_registration.owner = self.request.user
-            new_registration.modified_by = self.request.user
-            if self.request.user.center:
-                new_registration.center = self.request.user.center
-            if self.request.user.partner:
-                new_registration.partner = self.request.user.partner
-            new_registration.save()
-
-            self.new_registration = new_registration
-
-            # Save the education service, linking it to the NEW registration
-            form.save(request=self.request, registry=new_registration.id, instance=None)
+        # Save the form (which duplicates registration and saves education service)
+        instance = form.save(request=self.request, registry=registry, instance=None)
+        self.new_registration_id = form.new_registration.id
 
         return super(NewRoundView, self).form_valid(form)
 
