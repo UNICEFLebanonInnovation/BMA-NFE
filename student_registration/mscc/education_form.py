@@ -559,12 +559,10 @@ class EducationServiceForm(forms.ModelForm):
 
             self.fields['round'].queryset = available_rounds
 
-        form_action = reverse('mscc:service_education_add', kwargs={'registry': self.registry})
-        if instance:
-            form_action = reverse(
-                'mscc:service_education_edit',
-                kwargs={'registry': self.registry, 'pk': instance}
-            )
+        # By default, use empty action so it posts to the current URL.
+        # This handles service_education_add, service_education_edit, and new_round correctly.
+        form_action = ""
+
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True

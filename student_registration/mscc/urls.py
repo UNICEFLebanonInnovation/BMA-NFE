@@ -43,11 +43,7 @@ urlpatterns = [
         view=views.NewRoundView.as_view(),
         name='new_round'
     ),
-    re_path(
-        r'^new-round-redirect/$',
-        view=views.NewRoundRedirectView.as_view(),
-        name='new_round_redirect'
-    ),
+
     re_path(
         r'^child-mark-delete/(?P<pk>[\w.@+-]+)/$',
         view=views.main_mark_delete_view,
