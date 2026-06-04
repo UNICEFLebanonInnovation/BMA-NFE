@@ -55,13 +55,13 @@
                         <span class="uppercase">Filters</span>
 
                         <div class="form-group">
-                            <label for="dirasa-month">Select Month</label>
+                            <label for="dirasa-month">{% trans "Select Month" %}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                                 </div>
                                 <select id="dirasa-month" class="form-control">
-                                    <option value="">Select Month</option>
+                                    <option value="">{% trans "Select Month" %}</option>
                                     <option value="01">January</option>
                                     <option value="02">February</option>
                                     <option value="03">March</option>
@@ -79,13 +79,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="dirasa-year">Select Year</label>
+                            <label for="dirasa-year">{% trans "Select Year" %}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                                 </div>
                                 <select id="dirasa-year" class="form-control">
-                                    <option value="">Select Year</option>
+                                    <option value="">{% trans "Select Year" %}</option>
                                     <option value="2023">2023</option>
                                     <option value="2024">2024</option>
                                     <option value="2025">2025</option>
@@ -113,13 +113,13 @@
                         <div class="p-icon green"></div>
                         <span class="uppercase">Filters</span>
                         <div class="form-group">
-                            <label for="dirasa-round">Select Round</label>
+                            <label for="dirasa-round">{% trans "Select Round" %}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
                                 </div>
                                 <select id="dirasa-round" class="form-control">
-                                    <option value="">Select Round</option>
+                                    <option value="">{% trans "Select Round" %}</option>
                                     {% for round in rounds %}
                                         <option value="{{ round.id }}">{{ round.name }}</option>
                                     {% endfor %}
