@@ -55,7 +55,7 @@
                                                               <div class="input-group  {% if item.attended == 'Yes' or item.attended == ''  %} hidden {% endif %} " id="reason_block_{{ item.registration_id }}">
                                                                   <div class="input-group-prepend">
                                                                       <select id="absence_reason_{{ item.registration_id }}" class="btn-primary absence_reason">
-                                                                          <option value="">Select Reason</option>
+                                                                          <option value="">{% trans "Select Reason" %}</option>
                                                                           <option value="Sick" {% if item.absence_reason == 'Sick'  %} selected {% endif %} >Sick</option>
                                                                           <option value="Transportation" {% if item.absence_reason == 'Transportation'  %} selected {% endif %} >Transportation</option>
                                                                           <option value="Other" {% if item.absence_reason == 'Other'  %}  selected {% endif %} >Other</option>
