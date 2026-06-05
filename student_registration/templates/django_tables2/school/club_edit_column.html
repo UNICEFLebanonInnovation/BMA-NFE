@@ -1,10 +1,11 @@
 {% load custom_tags %}
 {% load util_tags %}
+{% load i18n %}
 {% if column.attrs.url %}
 <a href="{{ column.attrs.url }}{{ record.school_id }}/{{ record.id }}" class="btn btn-info">
     <i class="icon-edit-sign icon-white"></i>
-    Edit
+    {% trans "Edit" %}
 </a>
 {% else %}
-    Not allowed
+    {% trans "Not allowed" %}
 {% endif %}

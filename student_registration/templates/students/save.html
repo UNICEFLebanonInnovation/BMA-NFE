@@ -1,14 +1,15 @@
 {% load custom_tags %}
 {% load util_tags %}
+{% load i18n %}
 <html>
    <body>
 
       {% if saved %}
-         <strong>Your profile was saved.</strong>
+         <strong>{% trans "Your profile was saved." %}</strong>
       {% endif %}
 
       {% if not saved %}
-         <strong>Your profile was not saved.</strong>
+         <strong>{% trans "Your profile was not saved." %}</strong>
       {% endif %}
 
    </body>

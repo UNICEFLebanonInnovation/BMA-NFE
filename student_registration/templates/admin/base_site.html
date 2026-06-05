@@ -1,6 +1,7 @@
 {% extends "admin/base.html" %}
 {% load util_tags %}
 {% load custom_tags %}
+{% load i18n %}
 
 {% block title %}{{ title }} | {{ site_title|default:_('BMA') }}{% endblock %}
 
@@ -9,6 +10,6 @@
 {% endblock %}
 
 {% block nav-global %}
-<a href="{% url 'home' %}" target="_blank">Frontend Home</a>
+<a href="{% url 'home' %}" target="_blank">{% trans "Frontend Home" %}</a>
 {% endblock %}
 

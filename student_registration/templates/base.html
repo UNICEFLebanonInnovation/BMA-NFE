@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BMA | {% block project_title %}Home{% endblock %}</title>
+    <title>{% trans "BMA |" %} {% block project_title %}{% trans "Home" %}{% endblock %}</title>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-icon-180x180.png' %}">
@@ -161,7 +161,7 @@
                         <button class="btn d-flex align-items-center p-1" type="button" data-bs-toggle="dropdown">
                             <img src="{% static 'images/avatars/user.png' %}" alt="User" class="rounded-circle me-2" width="32">
                             <span class="d-none d-md-inline small fw-medium">
-                                {% if request.user.is_authenticated %}{{ request.user.get_full_name|default:request.user.username }}{% else %}Guest{% endif %}
+                                {% if request.user.is_authenticated %}{{ request.user.get_full_name|default:request.user.username }}{% else %}{% trans "Guest" %}{% endif %}
                             </span>
                             <i class="bi bi-chevron-down ms-1 small"></i>
                         </button>
@@ -208,8 +208,8 @@
             <!-- Footer -->
             <footer class="p-4 bg-white border-top mt-auto">
                 <div class="d-flex justify-content-between align-items-center small text-muted">
-                    <div>&copy; 2026 MEHE BMA - Beneficiary Monitoring & Assessment</div>
-                    <div>Version 1.0 </div>
+                    <div>{% trans "&copy; 2026 MEHE BMA - Beneficiary Monitoring & Assessment" %}</div>
+                    <div>{% trans "Version 1.0" %} </div>
                 </div>
             </footer>
         </main>
@@ -314,7 +314,7 @@
                     <i class="bi bi-exclamation-circle text-danger display-1 mb-4"></i>
                     <h4 class="fw-bold mb-3">{% trans "Verification Required" %}</h4>
                     <div id="swal2-content" class="text-muted mb-4">{% trans "Please check the form mandatory fields." %}</div>
-                    <button type="button" class="btn btn-danger px-5 fw-bold" data-bs-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-danger px-5 fw-bold" data-bs-dismiss="modal">{% trans "OK" %}</button>
                 </div>
             </div>
         </div>
@@ -345,7 +345,7 @@
                     <i class="bi bi-check-circle text-success display-1 mb-4"></i>
                     <h4 class="fw-bold mb-3">{% trans "Success" %}</h4>
                     <div class="text-muted mb-4">{% trans "Information has been successfully saved." %}</div>
-                    <button type="button" class="btn btn-success px-5 fw-bold" data-bs-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-success px-5 fw-bold" data-bs-dismiss="modal">{% trans "OK" %}</button>
                 </div>
             </div>
         </div>

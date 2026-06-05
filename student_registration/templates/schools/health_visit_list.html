@@ -28,25 +28,25 @@
                                             <ol class="breadcrumb">
                                               <li class="breadcrumb-item">
                                                     <a href="/">
-                                                        Home
+                                                        {% trans "Home" %}
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     <a href="{% url 'clm:bridging_page' %}">
-                                                        Dirasa
+                                                        {% trans "Dirasa" %}
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                  <a href="{% url 'schools:school_list' %}">Schools</a></li>
+                                                  <a href="{% url 'schools:school_list' %}">{% trans "Schools" %}</a></li>
                                                 <li class="breadcrumb-item">
-                                                  <a href="{% url 'schools:health_visit_list' school_id %}">Health Visit List</a></li>
+                                                  <a href="{% url 'schools:health_visit_list' school_id %}">{% trans "Health Visit List" %}</a></li>
                                             </ol>
                                         </nav>
                                     </div>
                                 </div>
                             </div>
                         <div class="page-title-actions">
-                          <a href="{% url 'schools:health_visit_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Health Visit</a>
+                          <a href="{% url 'schools:health_visit_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>{% trans "Add New Health Visit" %}</a>
                         </div>
                         </div>
 </div>
@@ -59,7 +59,7 @@
             <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
                 <h5 class="m-0 p-0">
                     <i class="pe-7s-filter text-primary"></i>
-                    Filters</h5>
+                    {% trans "Filters" %}</h5>
             </button>
         </div>
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
@@ -80,7 +80,7 @@
                     <i class="lnr-download"></i>
                 </a>
                 <div class = "downloading-message" style = "display:none">
-                  Loading...
+                  {% trans "Loading..." %}
                 </div>
               {% endif %}
 

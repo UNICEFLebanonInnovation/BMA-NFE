@@ -25,20 +25,20 @@
                           <i class="fa fa-id-card"></i>
                       </span>
                       <span class="d-inline-block">
-                        Digital Component
+                        {% trans "Digital Component" %}
                       </span>
                   </div>
                   <div class="page-title-subheading opacity-10">
                       <nav class="" aria-label="breadcrumb">
                           <ol class="breadcrumb">
                               <li class="breadcrumb-item">
-                                  <a href="{% url 'mscc:list' %}">Home</a>
+                                  <a href="{% url 'mscc:list' %}">{% trans "Home" %}</a>
                               </li>
                               <li class="breadcrumb-item">
                                     <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname  registry %}</a>
                               </li>
                                <li class="breadcrumb-item">
-                                     Digital
+                                     {% trans "Digital" %}
                               </li>
 
                           </ol>
@@ -58,7 +58,7 @@
                                         <ul class="forms-wizard">
                                             <li>
                                                 <a href="#step-1">
-                                                    <em>1</em><span>Digital</span>
+                                                    <em>1</em><span>{% trans "Digital" %}</span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -71,7 +71,7 @@
 
                                     <div class="clearfix">
                                         <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
-                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">{% trans "Back to list" %}</a>
 
                                         <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
                                         <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->

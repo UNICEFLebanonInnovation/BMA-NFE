@@ -24,14 +24,14 @@
                                             <i class="fa fa-child"></i>
                                         </span>
                                         <span class="d-inline-block">
-                                          Daily Attendance
+                                          {% trans "Daily Attendance" %}
                                         </span>
                                     </div>
                                     <div class="page-title-subheading opacity-10">
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">Home</a>
+                                                    <a href="{% url 'mscc:list' %}">{% trans "Home" %}</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.governorate }}
@@ -58,14 +58,14 @@
 
 <div class="row">
 {% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
-  <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
+  <div class="alert alert-danger fade show" role="alert"> {% trans "You don't have a center assigned to your profile please contact the administrator" %}</div>
 {% endif %}
 </div>
 
 <div class="row">
 <div class="col-md-4">
                                     <div class="main-card mb-3 card">
-                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
+                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>{% trans "Daily Attendance" %}
 
                                         </div>
                                         <div class="card-body">
@@ -144,10 +144,10 @@
                                           </div>
 
                                         <div class="d-block text-right card-footer">
-                                            <a href="{% url 'mscc:attendance_report' %}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary"><i class="pe-7s-cloud-download btn-icon-wrapper"></i>Download</a>
-                                            <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
+                                            <a href="{% url 'mscc:attendance_report' %}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary"><i class="pe-7s-cloud-download btn-icon-wrapper"></i>{% trans "Download" %}</a>
+                                            <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>{% trans "Load" %}</a>
 {% if request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
-                                            <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
+                                            <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>{% trans "Save" %}</a>
 {% endif %}
                                         </div>
                                       </div>
@@ -158,7 +158,7 @@
 
                 <div class="main-card mb-3 card">
                   <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>
-                    <p class="mb-0">Children Registered: <span id="children_count">0</span></p>
+                    <p class="mb-0">{% trans "Children Registered:" %} <span id="children_count">0</span></p>
                   </div>
                   <div class="card-body" style="height: 400px; overflow: auto;">
                       <div id="attendance_children"></div>

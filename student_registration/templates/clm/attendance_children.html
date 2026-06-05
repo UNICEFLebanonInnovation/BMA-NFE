@@ -40,10 +40,10 @@
 
                                                                 <div class="btn-group btn-group-toggle attendance_status" data-toggle="buttons">
                                                                   <label class="btn btn-light {% if item.attended == 'Yes' or item.attended == ''  %} active {% endif %} " itemscope="#reason_block_{{ item.registration_id }}">
-                                                                    <input type="radio" class="status" name="attendance_status_{{ item.registration_id }}" value="Yes" {% if item.attended == 'Yes'  %} checked {% endif %} /> Attended
+                                                                    <input type="radio" class="status" name="attendance_status_{{ item.registration_id }}" value="Yes" {% if item.attended == 'Yes'  %} checked {% endif %} /> {% trans "Attended" %}
                                                                   </label>
                                                                   <label class="btn btn-light {% if item.attended == 'No'  %} active {% endif %} " itemscope="#reason_block_{{ item.registration_id }}" >
-                                                                    <input type="radio" class="status" name="attendance_status_{{ item.registration_id }}" value="No" {% if item.attended == 'No'  %} checked {% endif %} /> Absent
+                                                                    <input type="radio" class="status" name="attendance_status_{{ item.registration_id }}" value="No" {% if item.attended == 'No'  %} checked {% endif %} /> {% trans "Absent" %}
                                                                   </label>
                                                                 </div>
 
@@ -55,10 +55,10 @@
                                                               <div class="input-group  {% if item.attended == 'Yes' or item.attended == ''  %} hidden {% endif %} " id="reason_block_{{ item.registration_id }}">
                                                                   <div class="input-group-prepend">
                                                                       <select id="absence_reason_{{ item.registration_id }}" class="btn-primary absence_reason">
-                                                                          <option value="">Select Reason</option>
-                                                                          <option value="Sick" {% if item.absence_reason == 'Sick'  %} selected {% endif %} >Sick</option>
-                                                                          <option value="Transportation" {% if item.absence_reason == 'Transportation'  %} selected {% endif %} >Transportation</option>
-                                                                          <option value="Other" {% if item.absence_reason == 'Other'  %}  selected {% endif %} >Other</option>
+                                                                          <option value="">{% trans "Select Reason" %}</option>
+                                                                          <option value="Sick" {% if item.absence_reason == 'Sick'  %} selected {% endif %} >{% trans "Sick" %}</option>
+                                                                          <option value="Transportation" {% if item.absence_reason == 'Transportation'  %} selected {% endif %} >{% trans "Transportation" %}</option>
+                                                                          <option value="Other" {% if item.absence_reason == 'Other'  %}  selected {% endif %} >{% trans "Other" %}</option>
                                                                       </select>
                                                                   <input id="absence_reason_other_{{ item.registration_id }}" type="text" class="form-control absence_reason_other" placeholder="Absence Other reasons" value="{{ item.absence_reason_other }}">
                                                                 </div>
