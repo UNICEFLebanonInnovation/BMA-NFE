@@ -27,7 +27,7 @@
                                         <span class="d-inline-block pr-2">
                                             <i class="pe-7s-display1"></i>
                                         </span>
-                                        <span class="d-inline-block">Dashboard</span>
+                                        <span class="d-inline-block">{% trans "Dashboard" %}</span>
                                     </div>
                                 </div>
                             </div>
@@ -40,7 +40,7 @@
                             <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Total Registration</div>
+                                        <div class="widget-title opacity-5 text-uppercase">{% trans "Total Registration" %}</div>
                                         <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
@@ -216,9 +216,9 @@
                   <div class="table-responsive shadow-sm border rounded-3 overflow-hidden"><table class="mb-0 table table-striped">
                       <thead>
                           <tr>
-                              <th>Child</th>
-                              <th>Rounds</th>
-                              <th>Programme</th>
+                              <th>{% trans "Child" %}</th>
+                              <th>{% trans "Rounds" %}</th>
+                              <th>{% trans "Programme" %}</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -230,7 +230,7 @@
                           </tr>
                           {% empty %}
                           <tr>
-                              <td colspan="3">No data available</td>
+                              <td colspan="3">{% trans "No data available" %}</td>
                           </tr>
                           {% endfor %}
                       </tbody>
