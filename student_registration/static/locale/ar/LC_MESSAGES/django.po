@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-04 14:30+0300\n"
+"POT-Creation-Date: 2026-06-05 11:08+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -714,6 +714,7 @@ msgstr "يرجى التحديد"
 #: student_registration/attendances/models.py:420
 #: student_registration/clm/models.py:138
 #: student_registration/mscc/models.py:527
+#: student_registration/templates/mscc/dashboard_d3.html:219
 msgid "Child"
 msgstr "الطفل"
 
@@ -812,6 +813,7 @@ msgstr "اسم الاب"
 #: student_registration/clm/bridging_forms.py:51
 #: student_registration/clm/models.py:103
 #: student_registration/students/models.py:80
+#: student_registration/templates/clm/bridging_attendance_report.html:65
 #: student_registration/templates/mscc/attendance_report.html:31
 msgid "January"
 msgstr "كانون الثاني"
@@ -820,6 +822,7 @@ msgstr "كانون الثاني"
 #: student_registration/clm/bridging_forms.py:52
 #: student_registration/clm/models.py:104
 #: student_registration/students/models.py:81
+#: student_registration/templates/clm/bridging_attendance_report.html:66
 #: student_registration/templates/mscc/attendance_report.html:32
 msgid "February"
 msgstr "شباط"
@@ -828,6 +831,7 @@ msgstr "شباط"
 #: student_registration/clm/bridging_forms.py:53
 #: student_registration/clm/models.py:105
 #: student_registration/students/models.py:82
+#: student_registration/templates/clm/bridging_attendance_report.html:67
 #: student_registration/templates/mscc/attendance_report.html:33
 msgid "March"
 msgstr "آذار"
@@ -836,6 +840,7 @@ msgstr "آذار"
 #: student_registration/clm/bridging_forms.py:54
 #: student_registration/clm/models.py:106
 #: student_registration/students/models.py:83
+#: student_registration/templates/clm/bridging_attendance_report.html:68
 #: student_registration/templates/mscc/attendance_report.html:34
 msgid "April"
 msgstr "نيسان"
@@ -844,6 +849,7 @@ msgstr "نيسان"
 #: student_registration/clm/bridging_forms.py:55
 #: student_registration/clm/models.py:107
 #: student_registration/students/models.py:84
+#: student_registration/templates/clm/bridging_attendance_report.html:69
 #: student_registration/templates/mscc/attendance_heatmap.html:70
 #: student_registration/templates/mscc/attendance_report.html:35
 msgid "May"
@@ -853,6 +859,7 @@ msgstr "أيار"
 #: student_registration/clm/bridging_forms.py:56
 #: student_registration/clm/models.py:108
 #: student_registration/students/models.py:85
+#: student_registration/templates/clm/bridging_attendance_report.html:70
 #: student_registration/templates/mscc/attendance_report.html:36
 msgid "June"
 msgstr "حزيران"
@@ -861,6 +868,7 @@ msgstr "حزيران"
 #: student_registration/clm/bridging_forms.py:57
 #: student_registration/clm/models.py:109
 #: student_registration/students/models.py:86
+#: student_registration/templates/clm/bridging_attendance_report.html:71
 #: student_registration/templates/mscc/attendance_report.html:37
 msgid "July"
 msgstr "تموز"
@@ -869,6 +877,7 @@ msgstr "تموز"
 #: student_registration/clm/bridging_forms.py:58
 #: student_registration/clm/models.py:110
 #: student_registration/students/models.py:87
+#: student_registration/templates/clm/bridging_attendance_report.html:72
 #: student_registration/templates/mscc/attendance_report.html:38
 msgid "August"
 msgstr "آب"
@@ -877,6 +886,7 @@ msgstr "آب"
 #: student_registration/clm/bridging_forms.py:59
 #: student_registration/clm/models.py:111
 #: student_registration/students/models.py:88
+#: student_registration/templates/clm/bridging_attendance_report.html:73
 #: student_registration/templates/mscc/attendance_report.html:39
 msgid "September"
 msgstr "أيلول"
@@ -885,6 +895,7 @@ msgstr "أيلول"
 #: student_registration/clm/bridging_forms.py:60
 #: student_registration/clm/models.py:112
 #: student_registration/students/models.py:89
+#: student_registration/templates/clm/bridging_attendance_report.html:74
 #: student_registration/templates/mscc/attendance_report.html:40
 msgid "October"
 msgstr "تشرين الأول"
@@ -893,6 +904,7 @@ msgstr "تشرين الأول"
 #: student_registration/clm/bridging_forms.py:61
 #: student_registration/clm/models.py:113
 #: student_registration/students/models.py:90
+#: student_registration/templates/clm/bridging_attendance_report.html:75
 #: student_registration/templates/mscc/attendance_report.html:41
 msgid "November"
 msgstr "تشرين الثاني"
@@ -901,6 +913,7 @@ msgstr "تشرين الثاني"
 #: student_registration/clm/bridging_forms.py:62
 #: student_registration/clm/models.py:114
 #: student_registration/students/models.py:91
+#: student_registration/templates/clm/bridging_attendance_report.html:76
 #: student_registration/templates/mscc/attendance_report.html:42
 msgid "December"
 msgstr "كانون الأول"
@@ -3826,6 +3839,7 @@ msgid "Primary Healthcare Center closest to this location."
 msgstr ""
 
 #: student_registration/locations/forms.py:200
+#: student_registration/templates/clm/bridging_form.html:68
 #: student_registration/templates/location/center_info_tab.html:12
 msgid "General Information"
 msgstr "معلومات عامة عن الدورة"
@@ -6379,6 +6393,7 @@ msgid "Maharati"
 msgstr ""
 
 #: student_registration/mscc/models.py:2259
+#: student_registration/templates/mscc/service_youth_gil_form.html:60
 msgid "GIL"
 msgstr ""
 
@@ -7323,7 +7338,10 @@ msgstr ""
 #: student_registration/templates/_sidebar_links.html:7
 #: student_registration/templates/admin/export_history_change_list.html:7
 #: student_registration/templates/admin/user_activity_change_list.html:7
+#: student_registration/templates/clm/dashboard.html:29
 #: student_registration/templates/mscc/dashboard.html:8
+#: student_registration/templates/mscc/dashboard_d3.html:30
+#: student_registration/templates/mscc/dashboard_youth.html:28
 #, fuzzy
 #| msgid "Attendance Dashboard"
 msgid "Dashboard"
@@ -7574,7 +7592,7 @@ msgstr ""
 #: student_registration/templates/account/password_change.html:16
 #: student_registration/templates/account/password_reset_from_key.html:7
 #: student_registration/templates/account/password_reset_from_key_done.html:6
-#: student_registration/templates/base.html:176
+#: student_registration/templates/base.html:174
 #: student_registration/templates/users/profile.html:64
 #: student_registration/templates/users/user_detail.html:45
 msgid "Change Password"
@@ -7876,119 +7894,108 @@ msgstr "تسجيل الحضور غير مكتمل"
 msgid "Validate all"
 msgstr "التصديق على الحضور"
 
-#: student_registration/templates/base.html:88
+#: student_registration/templates/base.html:89
 #, fuzzy
 #| msgid "Export"
 msgid "Recent Exports"
 msgstr "تصدير البيانات على اكسيل"
 
-#: student_registration/templates/base.html:109
+#: student_registration/templates/base.html:111
 #, fuzzy
 #| msgid "Course completed successfully"
-msgid "Export completed successfully."
+msgid "Completed successfully"
 msgstr "انقر خانة الاختيار إذا تم اكمال الدورة بنجاح"
 
-#: student_registration/templates/base.html:111
-msgid "Export failed to process."
-msgstr ""
-
 #: student_registration/templates/base.html:113
-msgid "Export is being processed..."
-msgstr ""
-
-#: student_registration/templates/base.html:118
 #, fuzzy
-#| msgid "Download file"
-msgid "Download"
-msgstr "تحميل الملف"
+#| msgid "Export data"
+msgid "Export failed"
+msgstr "تصدير البيانات"
 
-#: student_registration/templates/base.html:125
-msgid "No recent exports found"
+#: student_registration/templates/base.html:115
+#: student_registration/templates/base.html:305
+#: student_registration/templates/dashboard/advanced_exporter.html:262
+msgid "Processing..."
 msgstr ""
 
-#: student_registration/templates/base.html:131
+#: student_registration/templates/base.html:129
 #, fuzzy
 #| msgid "History"
 msgid "View All History"
 msgstr "تاريخ"
 
-#: student_registration/templates/base.html:172
+#: student_registration/templates/base.html:170
 #, fuzzy
 #| msgid "School Profile"
 msgid "Profile"
 msgstr "ملف المدرسة"
 
-#: student_registration/templates/base.html:174
+#: student_registration/templates/base.html:172
 msgid "Admin"
 msgstr "قائمة الأعدادات"
 
-#: student_registration/templates/base.html:178
+#: student_registration/templates/base.html:176
 msgid "Logout"
 msgstr "خروج"
 
-#: student_registration/templates/base.html:180
+#: student_registration/templates/base.html:178
 msgid "Login"
 msgstr ""
 
-#: student_registration/templates/base.html:201
+#: student_registration/templates/base.html:199
 msgid "Please review and check the error messages."
 msgstr ""
 
-#: student_registration/templates/base.html:239
+#: student_registration/templates/base.html:237
 msgid "Details"
 msgstr ""
 
-#: student_registration/templates/base.html:245
+#: student_registration/templates/base.html:243
 #, fuzzy
 #| msgid "Lesson details"
 msgid "Loading details..."
 msgstr "الدرس الحالي"
 
-#: student_registration/templates/base.html:307
-#: student_registration/templates/dashboard/advanced_exporter.html:262
-msgid "Processing..."
-msgstr ""
-
-#: student_registration/templates/base.html:308
+#: student_registration/templates/base.html:306
 msgid "This may take a few moments."
 msgstr ""
 
-#: student_registration/templates/base.html:317
+#: student_registration/templates/base.html:315
 #, fuzzy
 #| msgid "Identification picture"
 msgid "Verification Required"
 msgstr "المعلومات الشخصية للطفل"
 
-#: student_registration/templates/base.html:318
+#: student_registration/templates/base.html:316
 msgid "Please check the form mandatory fields."
 msgstr ""
 
-#: student_registration/templates/base.html:330
+#: student_registration/templates/base.html:328
 #, fuzzy
 #| msgid "Export data"
 msgid "Export Ready"
 msgstr "تصدير البيانات"
 
-#: student_registration/templates/base.html:331
+#: student_registration/templates/base.html:329
 msgid ""
 "Your requested export file has been processed and is ready for download."
 msgstr ""
 
-#: student_registration/templates/base.html:334
+#: student_registration/templates/base.html:332
 #, fuzzy
 #| msgid "Download file"
 msgid "Download Now"
 msgstr "تحميل الملف"
 
-#: student_registration/templates/base.html:336
+#: student_registration/templates/base.html:334
 msgid "Close"
 msgstr ""
 
-#: student_registration/templates/base.html:348
+#: student_registration/templates/base.html:346
 msgid "Success"
 msgstr ""
 
-#: student_registration/templates/base.html:349
+#: student_registration/templates/base.html:347
 #, fuzzy
 #| msgid "Your data has been sent successfully to the server"
 msgid "Information has been successfully saved."
@@ -8013,6 +8020,105 @@ msgstr "العمر لا يتناسب مع الصف - متابعة التسجيل
 #: student_registration/templates/bootstrap4/common_form.html:43
 msgid "Age does not fit the grade - max age - continue registration?"
 msgstr "العمر لا يتناسب مع الصف - متابعة التسجيل؟"
+
+#: student_registration/templates/clm/attendance_children.html:58
+#: student_registration/templates/mscc/attendance.html:134
+#: student_registration/templates/mscc/attendance_children.html:76
+#: student_registration/templates/mscc/attendance_children.html:167
+#, fuzzy
+#| msgid "Close reason"
+msgid "Select Reason"
+msgstr "سبب الاقفال "
+
+#: student_registration/templates/clm/bridging_attendance_report.html:55
+#: student_registration/templates/clm/bridging_attendance_report.html:114
+#: student_registration/templates/mscc/dashboard.html:106
+#: student_registration/templates/mscc/teacher_dashboard.html:57
+#: student_registration/templates/mscc/wellbeing_dashboard.html:66
+#, fuzzy
+#| msgid "filter"
+msgid "Filters"
+msgstr "بحث"
+
+#: student_registration/templates/clm/bridging_attendance_report.html:58
+#: student_registration/templates/clm/bridging_attendance_report.html:64
+#: student_registration/templates/mscc/attendance_report.html:30
+msgid "Select Month"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_attendance_report.html:82
+#: student_registration/templates/clm/bridging_attendance_report.html:88
+#, fuzzy
+#| msgid "Close reason"
+msgid "Select Year"
+msgstr "سبب الاقفال "
+
+#: student_registration/templates/clm/bridging_attendance_report.html:116
+#: student_registration/templates/clm/bridging_attendance_report.html:122
+#: student_registration/templates/mscc/attendance.html:100
+msgid "Select Round"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_followup.html:68
+#: student_registration/templates/django_tables2/clm_action_column.html:56
+#: student_registration/templates/django_tables2/clm_bridging_followup_column.html:12
+#: student_registration/templates/django_tables2/clm_followup_column.html:8
+msgid "Follow-up"
+msgstr "المتابعة"
+
+#: student_registration/templates/clm/bridging_followup.html:73
+msgid "Parents Meeting and Health Exam"
+msgstr "اجتماعات الأهل و الفحص الطبي"
+
+#: student_registration/templates/clm/bridging_followup.html:88
+#: student_registration/templates/clm/bridging_followup.html:89
+#: student_registration/templates/clm/bridging_form.html:108
+msgid "Next"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_followup.html:90
+#: student_registration/templates/clm/bridging_form.html:109
+#: student_registration/templates/mscc/main_form.html:335
+#, fuzzy
+#| msgid "Previous school"
+msgid "Previous"
+msgstr "المدرسة السابقة"
+
+#: student_registration/templates/clm/bridging_form.html:63
+#: student_registration/templates/location/center_list.html:30
+#: student_registration/templates/location/center_list.html:61
+#: student_registration/templates/mscc/list.html:31
+#: student_registration/templates/mscc/list.html:72
+#: student_registration/templates/mscc/teacher_list.html:29
+#: student_registration/templates/mscc/teacher_list.html:57
+#, fuzzy
+#| msgid "March"
+msgid "Search"
+msgstr "آذار"
+
+#: student_registration/templates/clm/bridging_form.html:73
+#, fuzzy
+#| msgid "Child Information"
+msgid "Child Information"
+msgstr "المعلومات الشخصية للطفل"
+
+#: student_registration/templates/clm/bridging_form.html:83
+#: student_registration/templates/mscc/child_info_tab.html:50
+#: student_registration/templates/mscc/dashboard.html:196
+msgid "Family Status"
+msgstr "الوضع الاجتماعي للطفل"
+
+#: student_registration/templates/clm/bridging_form.html:88
+#, fuzzy
+#| msgid "Assessment type"
+msgid "Assessment data"
+msgstr "نوع التقييم"
+
+#: student_registration/templates/clm/bridging_form.html:93
+#, fuzzy
+#| msgid "Absent"
+msgid "Consent"
+msgstr "غائب"
 
 #: student_registration/templates/clm/create_form.html:26
 #: student_registration/templates/clm/edit_form.html:25
@@ -8088,6 +8194,7 @@ msgid "All centers"
 msgstr "كل الفصول "
 
 #: student_registration/templates/dashboard/advanced_analytics.html:43
+#: student_registration/templates/mscc/dashboard_d3.html:221
 #, fuzzy
 #| msgid "Programme Type"
 msgid "Programme"
@@ -8326,6 +8433,7 @@ msgid "Loading..."
 msgstr ""
 
 #: student_registration/templates/dashboard/centers_map.html:235
+#: student_registration/templates/mscc/dashboard_d3.html:233
 #, fuzzy
 #| msgid "Parents are not available"
 msgid "No data available"
@@ -8583,12 +8691,6 @@ msgstr " التقييم في آخر البرنامج"
 #| msgid "Post-Assessment"
 msgid "Mid-Assessment 2"
 msgstr " التقييم في آخر البرنامج"
-
-#: student_registration/templates/django_tables2/clm_action_column.html:56
-#: student_registration/templates/django_tables2/clm_bridging_followup_column.html:12
-#: student_registration/templates/django_tables2/clm_followup_column.html:8
-msgid "Follow-up"
-msgstr "المتابعة"
 
 #: student_registration/templates/django_tables2/clm_action_column.html:60
 #, fuzzy
@@ -9108,17 +9210,6 @@ msgstr "احتياجات خاصة"
 msgid "Human Resources"
 msgstr ""
 
-#: student_registration/templates/location/center_list.html:30
-#: student_registration/templates/location/center_list.html:61
-#: student_registration/templates/mscc/list.html:31
-#: student_registration/templates/mscc/list.html:72
-#: student_registration/templates/mscc/teacher_list.html:29
-#: student_registration/templates/mscc/teacher_list.html:57
-#, fuzzy
-#| msgid "March"
-msgid "Search"
-msgstr "آذار"
-
 #: student_registration/templates/location/center_list.html:33
 #: student_registration/templates/mscc/list.html:34
 #: student_registration/templates/mscc/teacher_list.html:32
@@ -9243,10 +9334,6 @@ msgstr "تاريخ الحضور"
 msgid "Select Program"
 msgstr "حدد نوع البرنامج"
 
-#: student_registration/templates/mscc/attendance.html:100
-msgid "Select Round"
-msgstr ""
-
 #: student_registration/templates/mscc/attendance.html:111
 #, fuzzy
 #| msgid "Current Section"
@@ -9273,14 +9360,6 @@ msgstr "يوم عطلة؟"
 #, fuzzy
 #| msgid "Close reason"
 msgid "Closing Reason"
-msgstr "سبب الاقفال "
-
-#: student_registration/templates/mscc/attendance.html:134
-#: student_registration/templates/mscc/attendance_children.html:76
-#: student_registration/templates/mscc/attendance_children.html:167
-#, fuzzy
-#| msgid "Close reason"
-msgid "Select Reason"
 msgstr "سبب الاقفال "
 
 #: student_registration/templates/mscc/attendance_children.html:53
@@ -9437,10 +9516,6 @@ msgstr ""
 #| msgid "Monthly"
 msgid "Month"
 msgstr "شهرياً"
-
-#: student_registration/templates/mscc/attendance_report.html:30
-msgid "Select Month"
-msgstr ""
 
 #: student_registration/templates/mscc/attendance_report.html:87
 #, fuzzy
@@ -9612,11 +9687,6 @@ msgstr ""
 msgid "ID Type"
 msgstr "نوع العمل"
 
-#: student_registration/templates/mscc/child_info_tab.html:50
-#: student_registration/templates/mscc/dashboard.html:196
-msgid "Family Status"
-msgstr "الوضع الاجتماعي للطفل"
-
 #: student_registration/templates/mscc/child_info_tab.html:73
 msgid "Household & Care"
 msgstr ""
@@ -9758,14 +9828,6 @@ msgstr ""
 msgid "Operational Insights"
 msgstr "من جنسية أخرى"
 
-#: student_registration/templates/mscc/dashboard.html:106
-#: student_registration/templates/mscc/teacher_dashboard.html:57
-#: student_registration/templates/mscc/wellbeing_dashboard.html:66
-#, fuzzy
-#| msgid "filter"
-msgid "Filters"
-msgstr "بحث"
-
 #: student_registration/templates/mscc/dashboard.html:116
 #, fuzzy
 #| msgid "ALP Registrations"
@@ -9863,6 +9925,7 @@ msgid "Select Centers"
 msgstr "إسم الموقع/المركز"
 
 #: student_registration/templates/mscc/dashboard.html:277
+#: student_registration/templates/mscc/dashboard_d3.html:220
 #: student_registration/templates/mscc/teacher_dashboard.html:186
 #: student_registration/templates/mscc/wellbeing_dashboard.html:334
 #, fuzzy
@@ -9873,6 +9936,12 @@ msgstr "رقم الدورة"
 #: student_registration/templates/mscc/dashboard.html:278
 msgid "Select Rounds"
 msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:43
+#, fuzzy
+#| msgid "ALP Registrations"
+msgid "Total Registration"
+msgstr "معلومات خاصة بالتلامذة ALP"
 
 #: student_registration/templates/mscc/list.html:38
 #, fuzzy
@@ -10043,12 +10112,6 @@ msgid ""
 "verified against physical documentation."
 msgstr ""
 
-#: student_registration/templates/mscc/main_form.html:335
-#, fuzzy
-#| msgid "Previous school"
-msgid "Previous"
-msgstr "المدرسة السابقة"
-
 #: student_registration/templates/mscc/main_form.html:339
 msgid "Next Step"
 msgstr ""
@@ -10202,6 +10265,10 @@ msgstr ""
 msgid "Assessment Form"
 msgstr " التقييم"
 
+#: student_registration/templates/mscc/service_digital_form.html:61
+msgid "Digital"
+msgstr ""
+
 #: student_registration/templates/mscc/service_education_grading_form.html:9
 #, fuzzy
 #| msgid "Education year"
@@ -10258,6 +10325,16 @@ msgstr ""
 #: student_registration/templates/mscc/service_education_service_form.html:62
 msgid "Data is encrypted and saved securely."
 msgstr ""
+
+#: student_registration/templates/mscc/service_lego_form.html:60
+msgid "LEGO"
+msgstr ""
+
+#: student_registration/templates/mscc/service_youth_referral_form.html:60
+#, fuzzy
+#| msgid "Referral"
+msgid "Youth Referral"
+msgstr "الإحالة"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:53
 msgid "Overview of teacher demographics and training"
@@ -10720,6 +10797,16 @@ msgstr "التواريخ المهمة"
 #: student_registration/users/models.py:69
 msgid "User"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Course completed successfully"
+#~ msgid "Export completed successfully."
+#~ msgstr "انقر خانة الاختيار إذا تم اكمال الدورة بنجاح"
+
+#, fuzzy
+#~| msgid "Download file"
+#~ msgid "Download"
+#~ msgstr "تحميل الملف"
 
 #~ msgid "Entrance test"
 #~ msgstr "امتحان الدخول"
@@ -11385,9 +11472,6 @@ msgstr ""
 #~| msgid "Referred to CBT"
 #~ msgid "Referred to YCBECE"
 #~ msgstr "أحيل إلى برنامج CBT"
-
-#~ msgid "Assessment type"
-#~ msgstr "نوع التقييم"
 
 #~ msgid "Assessment answers"
 #~ msgstr "اجوبة التقييم"
