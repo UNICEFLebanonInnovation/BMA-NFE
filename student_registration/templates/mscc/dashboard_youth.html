@@ -38,7 +38,7 @@
       <div class="col-md-4">
           <div class="main-card mb-3 card">
               <div class="card-body">
-                  <h5 class="card-title">Select one or more center</h5>
+                  <h5 class="card-title">{% trans "Select one or more center" %}</h5>
                   <select multiple="multiple" class="multiselect-dropdown form-control">
                     {% for item in centers %}
                       <option value="{{ item.id }}">{{ item }}</option>
@@ -50,7 +50,7 @@
       <div class="col-md-4">
           <div class="main-card mb-3 card">
               <div class="card-body">
-                  <h5 class="card-title">Select one or more governorate</h5>
+                  <h5 class="card-title">{% trans "Select one or more governorate" %}</h5>
                   <select multiple="multiple" class="multiselect-dropdown form-control">
                     {% for item in governorates %}
                       <option value="{{ item.id }}">{{ item }}</option>
@@ -63,7 +63,7 @@
       <div class="col-md-4">
           <div class="main-card mb-3 card">
               <div class="card-body">
-                  <h5 class="card-title">Select one or more partner</h5>
+                  <h5 class="card-title">{% trans "Select one or more partner" %}</h5>
                   <select multiple="multiple" class="multiselect-dropdown form-control">
                     {% for item in partners %}
                       <option value="{{ item.id }}">{{ item }}</option>
@@ -79,21 +79,21 @@
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Children per Nationality <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Breakdown of registered youth by their nationality."></i></div>
+              <div class="card-header">{% trans "Children per Nationality" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Breakdown of registered youth by their nationality."></i></div>
               <div class="card-body" id="children_per_nationality"></div>
           </div>
       </div>
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Children per Gender <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Distribution of registered youth by gender."></i></div>
+              <div class="card-header">{% trans "Children per Gender" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Distribution of registered youth by gender."></i></div>
               <div class="card-body" id="children_per_gender"></div>
           </div>
       </div>
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Gender age group distribution <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Distribution of registered youth by gender and age group."></i></div>
+              <div class="card-header">{% trans "Gender age group distribution" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Distribution of registered youth by gender and age group."></i></div>
               <div class="card-body" id="children_gender_age"></div>
           </div>
       </div>
@@ -104,21 +104,21 @@
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Children per Source of Identification <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="How the youth were identified or referred to the programme."></i></div>
+              <div class="card-header">{% trans "Children per Source of Identification" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="How the youth were identified or referred to the programme."></i></div>
               <div class="card-body" id="children_per_source"></div>
           </div>
       </div>
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Children per Family Status <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Overview of the family living arrangements of the registered youth."></i></div>
+              <div class="card-header">{% trans "Children per Family Status" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Overview of the family living arrangements of the registered youth."></i></div>
               <div class="card-body" id="children_per_status"></div>
           </div>
       </div>
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Cash Support <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Number of youth or families receiving cash support assistance."></i></div>
+              <div class="card-header">{% trans "Cash Support" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Number of youth or families receiving cash support assistance."></i></div>
               <div class="card-body" id="children_cash_support"></div>
           </div>
       </div>
@@ -129,21 +129,21 @@
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Children per Disability Type <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Count of youth classified by reported disability types."></i></div>
+              <div class="card-header">{% trans "Children per Disability Type" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Count of youth classified by reported disability types."></i></div>
               <div class="card-body" id="children_per_disability"></div>
           </div>
       </div>
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Children Vulnerability <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Distribution of specific vulnerabilities among the registered youth."></i></div>
+              <div class="card-header">{% trans "Children Vulnerability" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Distribution of specific vulnerabilities among the registered youth."></i></div>
               <div class="card-body" id="children_per_vulnerability"></div>
           </div>
       </div>
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Volunteering <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Youth participation in volunteering activities."></i></div>
+              <div class="card-header">{% trans "Volunteering" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Youth participation in volunteering activities."></i></div>
               <div class="card-body" id="children_volunteering"></div>
           </div>
       </div>
@@ -153,7 +153,7 @@
 <div class="row">
       <div class="col-md-12">
           <div class="main-card mb-3 card">
-              <div class="card-header">Attendance trends <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Historical trends of youth attendance rates over time."></i></div>
+              <div class="card-header">{% trans "Attendance trends" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Historical trends of youth attendance rates over time."></i></div>
               <div class="card-body" id="attendance"></div>
           </div>
       </div>

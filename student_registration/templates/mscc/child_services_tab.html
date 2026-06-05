@@ -112,7 +112,7 @@
                                     </div>
                                     {% endif %}
                                 {% empty %}
-                                    <p class="text-muted small">No pre-grading data available for this programme.</p>
+                                    <p class="text-muted small">{% trans "No pre-grading data available for this programme." %}</p>
                                 {% endfor %}
                             </div>
                         </div>
@@ -135,7 +135,7 @@
                                         <i class="bi bi-info-circle fs-5"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-1 fw-bold">Child Level of participation / Absence</h6>
+                                        <h6 class="mb-1 fw-bold">{% trans "Child Level of participation / Absence" %}</h6>
                                         <p class="mb-0 text-dark">{{ result.post_test.participation|default:"N/A" }}</p>
                                     </div>
                                 </div>
@@ -144,7 +144,7 @@
                                         <i class="bi bi-info-circle fs-5"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-1 fw-bold">Main barriers affecting attendance/participation, performance, or causing drop-out</h6>
+                                        <h6 class="mb-1 fw-bold">{% trans "Main barriers affecting attendance/participation, performance, or causing drop-out" %}</h6>
                                         {% if result.post_test.barriers == 'Yes' %}
                                             <p class="mb-0 text-dark">{{ result.post_test.barriers }} - {{ result.post_test.barriers_other }}</p>
                                         {% else %}
@@ -157,7 +157,7 @@
                                         <i class="bi bi-info-circle fs-5"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-1 fw-bold">Undertake the Post tests?</h6>
+                                        <h6 class="mb-1 fw-bold">{% trans "Undertake the Post tests?" %}</h6>
                                         <p class="mb-0 text-dark">{{ result.post_test.post_test_done|default:"N/A" }}</p>
                                     </div>
                                 </div>
@@ -166,7 +166,7 @@
                                         <i class="bi bi-info-circle fs-5"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-1 fw-bold">Did the child fully complete the school year?</h6>
+                                        <h6 class="mb-1 fw-bold">{% trans "Did the child fully complete the school year?" %}</h6>
                                         <p class="mb-0 text-dark">{{ result.post_test.school_year_completed|default:"N/A" }}</p>
                                     </div>
                                 </div>
@@ -206,7 +206,7 @@
                                     </div>
                                     {% endif %}
                                 {% empty %}
-                                    <p class="text-muted small">No improvement data available.</p>
+                                    <p class="text-muted small">{% trans "No improvement data available." %}</p>
                                 {% endfor %}
                             </div>
                         </div>
@@ -236,7 +236,7 @@
                                     </div>
                                     {% endif %}
                                 {% empty %}
-                                    <p class="text-muted small">No school grading data available.</p>
+                                    <p class="text-muted small">{% trans "No school grading data available." %}</p>
                                 {% endfor %}
                             </div>
                         </div>
@@ -267,7 +267,7 @@
                                     </div>
                                     {% endif %}
                                 {% empty %}
-                                    <p class="text-muted small">No school grading data available.</p>
+                                    <p class="text-muted small">{% trans "No school grading data available." %}</p>
                                 {% endfor %}
                             </div>
                         </div>

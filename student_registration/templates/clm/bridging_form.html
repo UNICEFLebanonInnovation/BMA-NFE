@@ -25,7 +25,7 @@
                           <i class="fa fa-id-card"></i>
                       </span>
                       <span class="d-inline-block">
-                        Dirasa
+                        {% trans "Dirasa" %}
                       </span>
                   </div>
                   <div class="page-title-subheading opacity-10">
@@ -33,14 +33,14 @@
                           <ol class="breadcrumb">
                               <li class="breadcrumb-item">
                                   <a href="{% url 'home' %}">
-                                      Home
+                                      {% trans "Home" %}
                                   </a>
                               </li>
                               <li class="breadcrumb-item">
-                                    <a href="{% url 'clm:bridging_list' %}">Dirasa List</a>
+                                    <a href="{% url 'clm:bridging_list' %}">{% trans "Dirasa List" %}</a>
                               </li>
                                <li class="breadcrumb-item">
-                                 {% if form.instance.id %}Edit{% else %}New{% endif %}
+                                 {% if form.instance.id %}{% trans "Edit" %}{% else %}{% trans "New" %}{% endif %}
                               </li>
 
                           </ol>
@@ -75,7 +75,7 @@
                                             </li>
                                             <li>
                                                 <a href="#step-4">
-                                                    <em>4</em><span>Parent/Caregiver Information</span>
+                                                    <em>4</em><span>{% trans "Parent/Caregiver Information" %}</span>
                                                 </a>
                                             </li>
                                             <li>
@@ -103,7 +103,7 @@
                                     <div class="divider"></div>
 
                                     <div class="clearfix">
-                                        <a href="{% url 'clm:bridging_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <a href="{% url 'clm:bridging_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">{% trans "Back to list" %}</a>
 
                                         <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">{% trans "Next" %}</button>
                                         <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">{% trans "Previous" %}</button>

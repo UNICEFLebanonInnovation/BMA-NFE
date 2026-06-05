@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% load util_tags %}
 {% load custom_tags %}
+{% load i18n %}
 
 {% block title %}Page Not found{% endblock %}
 
 {% block content %}
-<h1>Page Not found</h1>
+<h1>{% trans "Page Not found" %}</h1>
 
-<p>This is not the page you were looking for.</p>
+<p>{% trans "This is not the page you were looking for." %}</p>
 {% endblock content %}

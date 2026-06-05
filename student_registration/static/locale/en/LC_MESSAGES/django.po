@@ -9465,3 +9465,1737 @@ msgstr ""
 #~| msgid "synchronize"
 #~ msgid "Synchronization done"
 #~ msgstr "Send your data"
+
+#: student_registration/templates/base.html:211
+msgid "&copy; 2026 MEHE BMA - Beneficiary Monitoring & Assessment"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2625
+#: student_registration/templates/mscc/child_services_tab_org.html:2733
+msgid "= 6 and instance.child.age"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3349
+msgid "= 7 and instance.child.age"
+msgstr ""
+
+#: student_registration/templates/dashboard/chart_builder.html:125
+msgid "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, {\"label\": \"C\", \"value\": 45} ]"
+msgstr ""
+
+#: student_registration/templates/mscc/service_recreational_form.html:40
+#: student_registration/templates/mscc/service_recreational_form.html:58
+msgid "Activities"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_list.html:46
+msgid "Add New Beneficiary"
+msgstr ""
+
+#: student_registration/templates/schools/club_list.html:50
+msgid "Add New Club"
+msgstr ""
+
+#: student_registration/templates/schools/community_initiative_list.html:50
+msgid "Add New Community Initiative"
+msgstr ""
+
+#: student_registration/templates/schools/health_visit_list.html:49
+msgid "Add New Health Visit"
+msgstr ""
+
+#: student_registration/templates/schools/meeting_list.html:50
+msgid "Add New Meeting"
+msgstr ""
+
+#: student_registration/templates/schools/school_list.html:50
+msgid "Add New School"
+msgstr ""
+
+#: student_registration/templates/students/teacher_list.html:49
+msgid "Add new Teacher"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3500
+msgid "Additional parenting or psychosocial support"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3518
+msgid "Additional support for taking care or better dealing with the children"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3987
+msgid "Adolescent benefit from social innovation/entrepreneurship course"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3995
+msgid "Adolescent complete the YFS course"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3978
+msgid "Adolescent participate in any volunteering opportunity during the course of the program"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:4013
+msgid "Adolescent participate in community based initiatives"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3962
+msgid "Adolescent receive a passing grade for the tests"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3953
+msgid "Adolescent undertake any Post Diagnostic tests"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2874
+#: student_registration/templates/mscc/service_youth_kit_form.html:28
+#: student_registration/templates/mscc/service_youth_kit_form.html:41
+msgid "Adolescents Kit"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2351
+msgid "Akelius"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:156
+msgid "Any disability or special need?"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1676
+#: student_registration/templates/mscc/child_services_tab_org.html:1742
+#: student_registration/templates/mscc/child_services_tab_org.html:1808
+msgid "Arabic Assessment - Level"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1394
+#: student_registration/templates/mscc/child_services_tab_org.html:1451
+#: student_registration/templates/mscc/child_services_tab_org.html:1508
+#: student_registration/templates/mscc/child_services_tab_org.html:1570
+msgid "Arabic Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:484
+#: student_registration/templates/mscc/child_services_tab_org.html:530
+#: student_registration/templates/mscc/child_services_tab_org.html:919
+#: student_registration/templates/mscc/child_services_tab_org.html:964
+msgid "Arabic Development / 20"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1009
+#: student_registration/templates/mscc/child_services_tab_org.html:1050
+#: student_registration/templates/mscc/child_services_tab_org.html:1091
+#: student_registration/templates/mscc/child_services_tab_org.html:1132
+#: student_registration/templates/mscc/child_services_tab_org.html:1170
+#: student_registration/templates/mscc/child_services_tab_org.html:1264
+#: student_registration/templates/mscc/child_services_tab_org.html:1329
+#: student_registration/templates/mscc/child_services_tab_org.html:2236
+msgid "Arabic Language Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1941
+#: student_registration/templates/mscc/child_services_tab_org.html:1973
+#: student_registration/templates/mscc/child_services_tab_org.html:2109
+#: student_registration/templates/mscc/child_services_tab_org.html:2139
+msgid "Arabic Language Development / 12"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:280
+#: student_registration/templates/mscc/child_services_tab_org.html:712
+msgid "Arabic Language Development / 46"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:312
+#: student_registration/templates/mscc/child_services_tab_org.html:742
+msgid "Arabic Language Development / 56"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:816
+msgid "Arabic Language Development / 66"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:175
+#: student_registration/templates/mscc/child_services_tab_org.html:613
+msgid "Arabic Language Development / 68"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:245
+#: student_registration/templates/mscc/child_services_tab_org.html:679
+msgid "Arabic Language Development / 69"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:210
+#: student_registration/templates/mscc/child_services_tab_org.html:646
+msgid "Arabic Language Development / 70"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:867
+msgid "Arabic Language Development / 74"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1159
+#: student_registration/templates/mscc/child_services_tab_org.html:1197
+#: student_registration/templates/mscc/child_services_tab_org.html:1253
+#: student_registration/templates/mscc/child_services_tab_org.html:1318
+#: student_registration/templates/mscc/child_services_tab_org.html:1383
+msgid "Artistic Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:301
+#: student_registration/templates/mscc/child_services_tab_org.html:333
+#: student_registration/templates/mscc/child_services_tab_org.html:379
+#: student_registration/templates/mscc/child_services_tab_org.html:733
+#: student_registration/templates/mscc/child_services_tab_org.html:763
+#: student_registration/templates/mscc/child_services_tab_org.html:807
+msgid "Artistic Development / 10"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:858
+msgid "Artistic Development / 14"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:425
+#: student_registration/templates/mscc/child_services_tab_org.html:472
+#: student_registration/templates/mscc/child_services_tab_org.html:909
+msgid "Artistic Development / 16"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2508
+#: student_registration/templates/mscc/child_services_tab_org.html:2900
+#: student_registration/templates/mscc/child_services_tab_org.html:3434
+#: student_registration/templates/mscc/child_services_tab_org.html:3921
+#: student_registration/templates/mscc/service_pss_form.html:65
+#: student_registration/templates/mscc/service_youth_kit_form.html:65
+msgid "Assessment"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_form.html:88
+msgid "Assessment data"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2568
+msgid "At which age?"
+msgstr ""
+
+#: student_registration/templates/students/teacher_form.html:68
+msgid "Attachments"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_youth.html:156
+msgid "Attendance trends"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_followup.html:86
+#: student_registration/templates/clm/bridging_form.html:106
+#: student_registration/templates/clm/bridging_mid_assessment.html:68
+#: student_registration/templates/clm/bridging_post_assessment.html:68
+#: student_registration/templates/clm/bridging_service.html:67
+#: student_registration/templates/mscc/form.html:281
+#: student_registration/templates/mscc/service_digital_form.html:74
+#: student_registration/templates/mscc/service_education_assessment_form.html:73
+#: student_registration/templates/mscc/service_education_rs_service_form.html:79
+#: student_registration/templates/mscc/service_follow_up_form.html:78
+#: ... and 20 more locations
+msgid "Back to list"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3732
+msgid "Badge"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2894
+msgid "Basic"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:505
+#: student_registration/templates/mscc/child_services_tab_org.html:940
+msgid "Biology / 20"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3448
+msgid "Birth registration"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3668
+msgid "Caregiver attend parent meeting/engagment sessions"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2702
+msgid "Caregiver attended ECD group counselling"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2692
+msgid "Caregiver receive one on one counselling"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3492
+msgid "Caregivers distress"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3581
+#: student_registration/templates/mscc/service_follow_up_form.html:28
+#: student_registration/templates/mscc/service_follow_up_form.html:41
+msgid "Caregivers Package"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:325
+msgid "Caretaker's Full Name"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:332
+msgid "Caretaker's Mother Full Name"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:186
+msgid "Cash support programmes that the child is already benefitting from"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2402
+#: student_registration/templates/mscc/child_services_tab_org.html:2454
+msgid "Change in attitude towards learning"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2392
+#: student_registration/templates/mscc/child_services_tab_org.html:2444
+msgid "Change in motivation & output about Literacy"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2397
+#: student_registration/templates/mscc/child_services_tab_org.html:2449
+msgid "Change in motivation & output about Math"
+msgstr ""
+
+#: student_registration/templates/account/verified_email_required.html:22
+msgid "change your e-mail address"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:512
+#: student_registration/templates/mscc/child_services_tab_org.html:947
+msgid "Chemistry / 20"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:4132
+msgid "Child Attended Community Events?"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:4123
+msgid "Child Attended Qudwa initiatives?"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:4114
+msgid "Child Attended Sports for Development Programmes?"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2387
+#: student_registration/templates/mscc/child_services_tab_org.html:2439
+msgid "Child equipped at home"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2576
+#: student_registration/templates/mscc/child_services_tab_org.html:2723
+msgid "Child immunization record screened"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_form.html:73
+#: student_registration/templates/mscc/form.html:83
+msgid "Child Information"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3526
+msgid "Child know where to seek help in case he is exposed to violence, abuse, or exploitation"
+msgstr ""
+
+#: student_registration/templates/mscc/programme_details.html:105
+msgid "Child MUAC"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2651
+msgid "Child practicing physical activity at least twice a week"
+msgstr ""
+
+#: student_registration/templates/mscc/form.html:44
+msgid "Child Profile"
+msgstr ""
+
+#: student_registration/templates/mscc/service_pss_form.html:60
+#: student_registration/templates/mscc/service_youth_kit_form.html:60
+msgid "Child Protection and Psychosocial Support"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3858
+msgid "Child receive all needed materials and resources (Stationery, Books, Learning bundle)"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2822
+msgid "Child Referred for any observed developmental delays"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2768
+msgid "Child Referred for development delays"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2781
+msgid "Child Referred for malnutrition treatment center"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3865
+msgid "Child referred to a service"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3850
+msgid "Child referred to formal education (CBECE Grade 1)"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2713
+msgid "Child screened for malnutrition using MUAC tapes"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:313
+#: student_registration/templates/mscc/child_profile_preview.html:338
+#: student_registration/templates/mscc/child_profile_preview.html:350
+msgid "Child's primary caretaker"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3509
+msgid "Children in the HH experiencing any signs of distress or negative mental health symptoms"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:214
+msgid "Children moved between rounds"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:172
+#: student_registration/templates/mscc/dashboard_youth.html:132
+msgid "Children per Disability Type"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:154
+#: student_registration/templates/mscc/dashboard_youth.html:114
+msgid "Children per Family Status"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:129
+#: student_registration/templates/mscc/dashboard_youth.html:89
+msgid "Children per Gender"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:122
+#: student_registration/templates/mscc/dashboard_youth.html:82
+msgid "Children per Nationality"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:197
+msgid "Children per Round"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:147
+#: student_registration/templates/mscc/dashboard_youth.html:107
+msgid "Children per Source of Identification"
+msgstr ""
+
+#: student_registration/templates/mscc/attendance.html:161
+msgid "Children Registered:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2644
+msgid "Children respond to and understand stressful and traumatic events"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:179
+#: student_registration/templates/mscc/dashboard_youth.html:139
+msgid "Children Vulnerability"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:520
+msgid "Child’s educational level when registering for the round"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:555
+msgid "Class section"
+msgstr ""
+
+#: student_registration/templates/schools/club_form.html:27
+#: student_registration/templates/schools/club_form.html:50
+msgid "Club"
+msgstr ""
+
+#: student_registration/templates/schools/club_form.html:47
+#: student_registration/templates/schools/club_list.html:43
+msgid "Club List"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1217
+#: student_registration/templates/mscc/child_services_tab_org.html:1282
+#: student_registration/templates/mscc/child_services_tab_org.html:1347
+msgid "Cognitive Development - Mathematics"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:351
+#: student_registration/templates/mscc/child_services_tab_org.html:779
+msgid "Cognitive Development - Mathematics / 24"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:397
+#: student_registration/templates/mscc/child_services_tab_org.html:830
+msgid "Cognitive Development - Mathematics / 48"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:444
+#: student_registration/templates/mscc/child_services_tab_org.html:881
+msgid "Cognitive Development - Mathematics / 50"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1226
+#: student_registration/templates/mscc/child_services_tab_org.html:1291
+#: student_registration/templates/mscc/child_services_tab_org.html:1356
+msgid "Cognitive Development - Science"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:358
+#: student_registration/templates/mscc/child_services_tab_org.html:786
+msgid "Cognitive Development - Science / 18"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:888
+msgid "Cognitive Development - Science / 34"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:837
+msgid "Cognitive Development - Science / 36"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:404
+#: student_registration/templates/mscc/child_services_tab_org.html:451
+msgid "Cognitive Development - Science / 38"
+msgstr ""
+
+#: student_registration/templates/schools/community_initiative_form.html:27
+#: student_registration/templates/schools/community_initiative_form.html:50
+msgid "Community Initiative"
+msgstr ""
+
+#: student_registration/templates/schools/community_initiative_form.html:47
+#: student_registration/templates/schools/community_initiative_list.html:43
+msgid "Community Initiative List"
+msgstr ""
+
+#: student_registration/templates/base.html:111
+msgid "Completed successfully"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3005
+msgid "Completed the YFS course?"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_form.html:93
+msgid "Consent"
+msgstr ""
+
+#: student_registration/templates/admin/export_history_dashboard.html:11
+#: student_registration/templates/admin/export_history_dashboard.html:22
+#: student_registration/templates/admin/export_history_dashboard.html:34
+#: student_registration/templates/admin/user_activity_dashboard.html:11
+#: student_registration/templates/admin/user_activity_dashboard.html:22
+msgid "Count"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3290
+msgid "Course made me feel"
+msgstr ""
+
+#: student_registration/templates/403_csrf.html:11
+msgid "CSRF verification failed. Request aborted."
+msgstr ""
+
+#: student_registration/templates/dashboard/advanced_exporter.html:88
+#: student_registration/templates/location/center_list.html:104
+#: student_registration/templates/mscc/list.html:133
+#: student_registration/templates/mscc/teacher_list.html:100
+msgid "CSV"
+msgstr ""
+
+#: student_registration/templates/schools/school_create_form.html:78
+#: student_registration/templates/schools/school_edit_form.html:78
+msgid "Current Academic Year"
+msgstr ""
+
+#: student_registration/templates/mscc/attendance.html:27
+#: student_registration/templates/mscc/attendance.html:68
+msgid "Daily Attendance"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2619
+msgid "Delays identified in the development milestones"
+msgstr ""
+
+#: student_registration/templates/mscc/service_digital_form.html:41
+#: student_registration/templates/mscc/service_digital_form.html:61
+msgid "Digital"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2335
+#: student_registration/templates/mscc/service_digital_form.html:28
+msgid "Digital Component"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_attendance_report.html:32
+#: student_registration/templates/clm/bridging_followup.html:41
+#: student_registration/templates/clm/bridging_form.html:28
+#: student_registration/templates/schools/club_form.html:40
+#: student_registration/templates/schools/club_list.html:37
+#: student_registration/templates/schools/community_initiative_form.html:40
+#: student_registration/templates/schools/community_initiative_list.html:37
+#: student_registration/templates/schools/health_visit_form.html:54
+#: student_registration/templates/schools/health_visit_list.html:36
+#: student_registration/templates/schools/meeting_form.html:58
+#: ... and 5 more locations
+msgid "Dirasa"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_attendance_report.html:19
+msgid "Dirasa Daily Attendance"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_followup.html:45
+#: student_registration/templates/clm/bridging_form.html:40
+#: student_registration/templates/clm/bridging_mid_assessment.html:40
+#: student_registration/templates/clm/bridging_post_assessment.html:40
+#: student_registration/templates/clm/bridging_service.html:40
+msgid "Dirasa List"
+msgstr ""
+
+#: student_registration/templates/clm/bridging.html:38
+#: student_registration/templates/clm/index.html:37
+msgid "Dirasa Registration"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:528
+msgid "Dropout date from school"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:536
+msgid "Dropout Programme"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:548
+msgid "Education programme"
+msgstr ""
+
+#: student_registration/templates/mscc/programme_details.html:60
+msgid "Education Status"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2006
+#: student_registration/templates/mscc/child_services_tab_org.html:2032
+#: student_registration/templates/mscc/child_services_tab_org.html:2171
+#: student_registration/templates/mscc/child_services_tab_org.html:2197
+msgid "English Development / 100"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1029
+#: student_registration/templates/mscc/child_services_tab_org.html:1070
+#: student_registration/templates/mscc/child_services_tab_org.html:1111
+msgid "English Language Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:191
+#: student_registration/templates/mscc/child_services_tab_org.html:629
+msgid "English Language Development / 43"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:261
+#: student_registration/templates/mscc/child_services_tab_org.html:695
+msgid "English Language Development / 64"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:226
+#: student_registration/templates/mscc/child_services_tab_org.html:662
+msgid "English Language Development / 65"
+msgstr ""
+
+#: student_registration/templates/schools/school_create_form.html:73
+#: student_registration/templates/schools/school_edit_form.html:73
+msgid "Enrollment Information"
+msgstr ""
+
+#: student_registration/templates/dashboard/advanced_exporter.html:92
+msgid "Excel (.xlsx)"
+msgstr ""
+
+#: student_registration/templates/location/center_list.html:111
+#: student_registration/templates/mscc/list.html:140
+#: student_registration/templates/mscc/teacher_list.html:107
+msgid "Excel (XLSX)"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_attendance_report.html:137
+msgid "Export Consecutive Absence"
+msgstr ""
+
+#: student_registration/templates/base.html:113
+msgid "Export failed"
+msgstr ""
+
+#: student_registration/templates/admin/export_history_dashboard.html:7
+msgid "Export History Dashboard"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_attendance_report.html:102
+msgid "Export Raw Attendance"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_attendance_report.html:131
+msgid "Export Total Attendances"
+msgstr ""
+
+#: student_registration/templates/admin/export_history_dashboard.html:20
+msgid "Exports by Partner"
+msgstr ""
+
+#: student_registration/templates/admin/export_history_dashboard.html:9
+msgid "Exports by Type"
+msgstr ""
+
+#: student_registration/templates/mscc/child_info_tab.html:89
+msgid "F:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3533
+msgid "Facilitator identify any child protection concern or the caregiver expressed any of the below signs on their children"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:270
+msgid "Father’s educational level"
+msgstr ""
+
+#: student_registration/templates/admin/export_history_dashboard.html:34
+msgid "Field / Filter Used"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2013
+#: student_registration/templates/mscc/child_services_tab_org.html:2039
+#: student_registration/templates/mscc/child_services_tab_org.html:2178
+#: student_registration/templates/mscc/child_services_tab_org.html:2204
+msgid "Financial Literacy Development / 100"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_followup.html:28
+msgid "Follow-up & Parents Meeting and Health Exam"
+msgstr ""
+
+#: student_registration/templates/403_csrf.html:9
+msgid "Forbidden (403)"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:491
+#: student_registration/templates/mscc/child_services_tab_org.html:537
+#: student_registration/templates/mscc/child_services_tab_org.html:926
+#: student_registration/templates/mscc/child_services_tab_org.html:971
+msgid "Foreign Language / 20"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1273
+#: student_registration/templates/mscc/child_services_tab_org.html:1338
+#: student_registration/templates/mscc/child_services_tab_org.html:1948
+#: student_registration/templates/mscc/child_services_tab_org.html:2116
+#: student_registration/templates/mscc/child_services_tab_org.html:2245
+msgid "Foreign Language Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1980
+#: student_registration/templates/mscc/child_services_tab_org.html:2146
+msgid "Foreign Language Development / 12"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:823
+msgid "Foreign Language Development / 66"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:874
+msgid "Foreign Language Development / 74"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3710
+msgid "FPSS sessions"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1684
+#: student_registration/templates/mscc/child_services_tab_org.html:1750
+#: student_registration/templates/mscc/child_services_tab_org.html:1816
+msgid "French Assessment - Level"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1019
+#: student_registration/templates/mscc/child_services_tab_org.html:1060
+#: student_registration/templates/mscc/child_services_tab_org.html:1101
+msgid "French Language Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:183
+#: student_registration/templates/mscc/child_services_tab_org.html:621
+msgid "French Language Development / 43"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:253
+#: student_registration/templates/mscc/child_services_tab_org.html:687
+msgid "French Language Development / 59"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:218
+#: student_registration/templates/mscc/child_services_tab_org.html:654
+msgid "French Language Development / 65"
+msgstr ""
+
+#: student_registration/templates/admin/base_site.html:13
+msgid "Frontend Home"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:235
+msgid "General info."
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:401
+msgid "Governorate / District"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2494
+msgid "Health & Nutrition"
+msgstr ""
+
+#: student_registration/templates/schools/health_visit_form.html:41
+#: student_registration/templates/schools/health_visit_form.html:64
+msgid "Health Visit"
+msgstr ""
+
+#: student_registration/templates/schools/health_visit_form.html:61
+#: student_registration/templates/schools/health_visit_list.html:42
+msgid "Health Visit List"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:252
+msgid "Household"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:285
+#: student_registration/templates/mscc/child_profile_preview.html:299
+msgid "Household's/Relatives Primary phone number"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:77
+msgid "ID type - Number"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2658
+msgid "In case of a child marriage to ask if the child is accessing in reproductive health services?"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3754
+#: student_registration/templates/mscc/service_inclusion_form.html:28
+#: student_registration/templates/mscc/service_inclusion_form.html:41
+#: student_registration/templates/mscc/service_inclusion_form.html:60
+msgid "Inclusion"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2551
+msgid "Is it exclusively breastfeeding for infants between 0-6 months?"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2421
+msgid "Is the child using lp?"
+msgstr ""
+
+#: student_registration/templates/account/email_confirm.html:29
+msgid "issue a new e-mail confirmation request"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2020
+#: student_registration/templates/mscc/child_services_tab_org.html:2046
+#: student_registration/templates/mscc/child_services_tab_org.html:2185
+#: student_registration/templates/mscc/child_services_tab_org.html:2211
+msgid "IT Development / 100"
+msgstr ""
+
+#: student_registration/templates/mscc/programme_details.html:15
+msgid "Language"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1208
+msgid "Language Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:344
+#: student_registration/templates/mscc/child_services_tab_org.html:772
+msgid "Language Development / 48"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:390
+msgid "Language Development / 66"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:437
+msgid "Language Development / 74"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2357
+msgid "Learning Passport"
+msgstr ""
+
+#: student_registration/templates/mscc/programme_details.html:114
+msgid "Learning Result"
+msgstr ""
+
+#: student_registration/templates/location/center_info_tab.html:131
+msgid "Lebanese:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3330
+#: student_registration/templates/mscc/service_lego_form.html:28
+#: student_registration/templates/mscc/service_lego_form.html:41
+#: student_registration/templates/mscc/service_lego_form.html:60
+msgid "LEGO"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2263
+msgid "Life skills Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1962
+#: student_registration/templates/mscc/child_services_tab_org.html:1994
+#: student_registration/templates/mscc/child_services_tab_org.html:2130
+#: student_registration/templates/mscc/child_services_tab_org.html:2160
+msgid "Life skills Development / 12"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2978
+msgid "Life skills package"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3456
+msgid "Living arrangement"
+msgstr ""
+
+#: student_registration/templates/mscc/attendance.html:148
+msgid "Load"
+msgstr ""
+
+#: student_registration/templates/500.html:11
+msgid "Looks like something went wrong!"
+msgstr ""
+
+#: student_registration/templates/mscc/child_info_tab.html:90
+msgid "M:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab.html:147
+#: student_registration/templates/mscc/child_services_tab_org.html:586
+#: student_registration/templates/mscc/child_services_tab_org.html:2082
+msgid "Main barriers affecting attendance/participation, performance, or causing drop-out"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1955
+#: student_registration/templates/mscc/child_services_tab_org.html:2123
+msgid "Mathematics / 15"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:287
+#: student_registration/templates/mscc/child_services_tab_org.html:498
+#: student_registration/templates/mscc/child_services_tab_org.html:544
+#: student_registration/templates/mscc/child_services_tab_org.html:719
+#: student_registration/templates/mscc/child_services_tab_org.html:933
+#: student_registration/templates/mscc/child_services_tab_org.html:978
+msgid "Mathematics / 20"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1987
+#: student_registration/templates/mscc/child_services_tab_org.html:2153
+msgid "Mathematics / 21"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:199
+#: student_registration/templates/mscc/child_services_tab_org.html:637
+msgid "Mathematics / 22"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:234
+#: student_registration/templates/mscc/child_services_tab_org.html:269
+#: student_registration/templates/mscc/child_services_tab_org.html:670
+#: student_registration/templates/mscc/child_services_tab_org.html:703
+msgid "Mathematics / 32"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:319
+#: student_registration/templates/mscc/child_services_tab_org.html:749
+msgid "Mathematics / 36"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1692
+#: student_registration/templates/mscc/child_services_tab_org.html:1758
+#: student_registration/templates/mscc/child_services_tab_org.html:1824
+msgid "Mathematics Assessment - Level"
+msgstr ""
+
+#: student_registration/templates/schools/meeting_form.html:45
+#: student_registration/templates/schools/meeting_form.html:68
+msgid "Meeting"
+msgstr ""
+
+#: student_registration/templates/schools/meeting_form.html:65
+#: student_registration/templates/schools/meeting_list.html:43
+msgid "Meeting List"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3677
+msgid "Meeting Type"
+msgstr ""
+
+#: student_registration/templates/admin/user_activity_dashboard.html:11
+msgid "Method"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1642
+msgid "Mid Grading"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_mid_assessment.html:28
+#: student_registration/templates/clm/bridging_mid_assessment.html:43
+msgid "Mid-Test"
+msgstr ""
+
+#: student_registration/templates/admin/export_history_dashboard.html:32
+msgid "Most Frequently Exported Fields (Filters)"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:278
+msgid "Mother’s educational level"
+msgstr ""
+
+#: student_registration/templates/mscc/attendance_children.html:109
+#: student_registration/templates/schools/school_create_form.html:48
+#: student_registration/templates/schools/school_edit_form.html:48
+msgid "New"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_followup.html:88
+#: student_registration/templates/clm/bridging_followup.html:89
+#: student_registration/templates/clm/bridging_form.html:108
+#: student_registration/templates/mscc/service_follow_up_form.html:83
+#: student_registration/templates/mscc/service_health_nutrition_form.html:83
+#: student_registration/templates/mscc/service_lego_form.html:78
+#: student_registration/templates/mscc/service_pss_form.html:83
+#: student_registration/templates/mscc/service_youth_gil_form.html:78
+#: student_registration/templates/mscc/service_youth_kit_form.html:83
+#: student_registration/templates/mscc/service_youth_maharati_form.html:77
+#: ... and 6 more locations
+msgid "Next"
+msgstr ""
+
+#: student_registration/templates/mscc/form.html:284
+msgid "Next btn"
+msgstr ""
+
+#: student_registration/templates/mscc/form.html:285
+msgid "Next Page"
+msgstr ""
+
+#: student_registration/templates/admin/export_history_dashboard.html:16
+#: student_registration/templates/admin/export_history_dashboard.html:27
+#: student_registration/templates/admin/user_activity_dashboard.html:16
+#: student_registration/templates/admin/user_activity_dashboard.html:27
+msgid "No data"
+msgstr ""
+
+#: student_registration/templates/admin/export_history_dashboard.html:39
+msgid "No filter data available"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab.html:209
+msgid "No improvement data available."
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab.html:115
+msgid "No pre-grading data available for this programme."
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab.html:239
+#: student_registration/templates/mscc/child_services_tab.html:270
+msgid "No school grading data available."
+msgstr ""
+
+#: student_registration/templates/location/center_info_tab.html:134
+msgid "Non-Lebanese:"
+msgstr ""
+
+#: student_registration/templates/account/verified_email_required.html:22
+msgid "Note:"
+msgstr ""
+
+#: student_registration/templates/base.html:317
+#: student_registration/templates/base.html:348
+msgid "OK"
+msgstr ""
+
+#: student_registration/templates/500.html:9
+msgid "Ooops!!! 500"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:374
+msgid "P-Code where the child lives in Internal Settlement/Camp"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:203
+msgid "Packages received/to be provided to child"
+msgstr ""
+
+#: student_registration/templates/404.html:9
+msgid "Page Not found"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_form.html:78
+#: student_registration/templates/mscc/form.html:88
+msgid "Parent/Caregiver Information"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_followup.html:73
+msgid "Parents Meeting and Health Exam"
+msgstr ""
+
+#: student_registration/templates/mscc/service_follow_up_form.html:65
+msgid "Parents Meeting, Engagement and Support"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3026
+msgid "Participate in community based initiatives"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3352
+msgid "Participating in CBPSS LEGO sessions"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3362
+msgid "Participating in Education sessions supported by LEGO activities"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3370
+msgid "Participating in LEGO free-play sessions"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:4054
+msgid "Partner refer youth who are above 18 to the innovation hubs GIL"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:4047
+msgid "Partner refer youth who are above 18 to the TVET centers"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:123
+msgid "Partner Unique Number"
+msgstr ""
+
+#: student_registration/templates/admin/user_activity_dashboard.html:22
+msgid "Path"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:519
+#: student_registration/templates/mscc/child_services_tab_org.html:954
+msgid "Physics / 20"
+msgstr ""
+
+#: student_registration/templates/dashboard/pivot_dashboard.html:16
+msgid "Pivot Dashboard"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2962
+msgid "Post Diagnostic tests"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1914
+msgid "Post Scoring"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_post_assessment.html:28
+#: student_registration/templates/clm/bridging_post_assessment.html:43
+msgid "Post-Test"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3169
+msgid "Practiced YLI civic engagement"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1909
+msgid "Pre Scoring"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2942
+msgid "Pre-tests administered to assess adolescents' level"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2795
+msgid "Pregnant lactating women/child referred for ANC and PNC follow up and to receive MMS (multivitamins) to PHC"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2808
+msgid "Pregnant lactating women/child with challenges on breastfeeding referred to IYCF specialists"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2926
+msgid "Previous community based initiative"
+msgstr ""
+
+#: student_registration/templates/mscc/form.html:295
+msgid "Previous data"
+msgstr ""
+
+#: student_registration/templates/mscc/programme_details.html:87
+msgid "Programme Site"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1244
+#: student_registration/templates/mscc/child_services_tab_org.html:1309
+#: student_registration/templates/mscc/child_services_tab_org.html:1374
+msgid "Psychomotor Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:372
+#: student_registration/templates/mscc/child_services_tab_org.html:800
+msgid "Psychomotor Development / 20"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:418
+#: student_registration/templates/mscc/child_services_tab_org.html:851
+msgid "Psychomotor Development / 40"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:465
+#: student_registration/templates/mscc/child_services_tab_org.html:902
+msgid "Psychomotor Development / 42"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3428
+msgid "Psychosocial Support"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2934
+msgid "Reason for the adolescent enrollment in the programme"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3472
+msgid "Reasons being out of school"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2970
+msgid "Receive a passing grade for the tests?"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3017
+#: student_registration/templates/mscc/child_services_tab_org.html:4005
+msgid "Recommended future path for the adolescent"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3875
+msgid "Recommended learning path/outcome"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:4086
+msgid "Recreational"
+msgstr ""
+
+#: student_registration/templates/mscc/service_recreational_form.html:27
+msgid "Recreational Activities"
+msgstr ""
+
+#: student_registration/templates/mscc/programme_details.html:33
+msgid "Registered in School"
+msgstr ""
+
+#: student_registration/templates/admin/user_activity_dashboard.html:9
+msgid "Requests by Method"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3631
+msgid "Result of follow-up"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:107
+msgid "RS Grade 9 - Grading"
+msgstr ""
+
+#: student_registration/templates/schools/school_create_form.html:68
+#: student_registration/templates/schools/school_edit_form.html:68
+msgid "School Information"
+msgstr ""
+
+#: student_registration/templates/clm/bridging.html:64
+#: student_registration/templates/clm/index.html:63
+#: student_registration/templates/schools/club_list.html:41
+#: student_registration/templates/schools/community_initiative_list.html:41
+#: student_registration/templates/schools/health_visit_list.html:40
+#: student_registration/templates/schools/meeting_list.html:41
+msgid "Schools"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:551
+#: student_registration/templates/mscc/child_services_tab_org.html:985
+msgid "Science / 20"
+msgstr ""
+
+#: student_registration/templates/mscc/service_youth_scoring_form.html:27
+msgid "Scoring"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_youth.html:41
+msgid "Select one or more center"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_youth.html:53
+msgid "Select one or more governorate"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_youth.html:66
+msgid "Select one or more partner"
+msgstr ""
+
+#: student_registration/templates/clm/bridging_attendance_report.html:82
+#: student_registration/templates/clm/bridging_attendance_report.html:88
+msgid "Select Year"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2513
+msgid "Session"
+msgstr ""
+
+#: student_registration/templates/mscc/service_health_nutrition_form.html:65
+msgid "Sessions"
+msgstr ""
+
+#: student_registration/templates/mscc/programme_details.html:42
+msgid "Shift"
+msgstr ""
+
+#: student_registration/templates/account/signup.html:13
+msgid "sign in"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:500
+msgid "Situation"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2997
+#: student_registration/templates/mscc/child_services_tab_org.html:3240
+msgid "Social innovation/entrepreneurship course"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1150
+#: student_registration/templates/mscc/child_services_tab_org.html:1188
+#: student_registration/templates/mscc/child_services_tab_org.html:1235
+#: student_registration/templates/mscc/child_services_tab_org.html:1300
+#: student_registration/templates/mscc/child_services_tab_org.html:1365
+msgid "Social-Emotional Development"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:365
+#: student_registration/templates/mscc/child_services_tab_org.html:793
+msgid "Social-Emotional Development / 14"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:294
+#: student_registration/templates/mscc/child_services_tab_org.html:326
+#: student_registration/templates/mscc/child_services_tab_org.html:726
+#: student_registration/templates/mscc/child_services_tab_org.html:756
+msgid "Social-Emotional Development / 24"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:844
+msgid "Social-Emotional Development / 34"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:411
+#: student_registration/templates/mscc/child_services_tab_org.html:458
+#: student_registration/templates/mscc/child_services_tab_org.html:895
+msgid "Social-Emotional Development / 40"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:257
+msgid "Social/Economic"
+msgstr ""
+
+#: student_registration/templates/attendances/attendance_students.html:10
+msgid "Students Attendance"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1628
+msgid "TARL - Grading"
+msgstr ""
+
+#: student_registration/templates/students/teacher_form.html:28
+msgid "Teacher"
+msgstr ""
+
+#: student_registration/templates/students/teacher_form.html:63
+msgid "Teacher General Information"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1668
+#: student_registration/templates/mscc/child_services_tab_org.html:1734
+#: student_registration/templates/mscc/child_services_tab_org.html:1800
+msgid "Test Taken?"
+msgstr ""
+
+#: student_registration/templates/404.html:11
+msgid "This is not the page you were looking for."
+msgstr ""
+
+#: student_registration/templates/clm/execs.html:8
+msgid "Title"
+msgstr ""
+
+#: student_registration/templates/clm/list.html:63
+#: student_registration/templates/django_tables2/clm_action_column.html:8
+#: student_registration/templates/django_tables2/school/club_action_column.html:8
+#: student_registration/templates/django_tables2/school/initiative_action_column.html:8
+#: student_registration/templates/django_tables2/school/meeting_action_column.html:8
+#: student_registration/templates/django_tables2/students/teacher_action_column.html:9
+msgid "Toggle Dropdown"
+msgstr ""
+
+#: student_registration/templates/admin/user_activity_dashboard.html:20
+msgid "Top Paths"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:43
+msgid "Total Registration"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3061
+msgid "Trained on Mental health"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3255
+msgid "Trainer encouraged discussions"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3262
+msgid "Trainer provided feedback"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3248
+msgid "Trainer showed knowledge"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3269
+msgid "Trainer was patient and helped"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3283
+msgid "Training part difficult"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3276
+msgid "Training part most useful"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3622
+msgid "Type and number of follow-up done"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:431
+msgid "Type of Labor"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:597
+#: student_registration/templates/mscc/child_services_tab_org.html:2093
+msgid "Undertake the Post tests ?"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab.html:160
+msgid "Undertake the Post tests?"
+msgstr ""
+
+#: student_registration/templates/admin/user_activity_dashboard.html:7
+msgid "User Activity Dashboard"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2583
+msgid "Vaccine missing"
+msgstr ""
+
+#: student_registration/templates/base.html:212
+msgid "Version 1.0"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3733
+msgid "View All"
+msgstr ""
+
+#: student_registration/templates/mscc/dashboard_d3.html:186
+#: student_registration/templates/mscc/dashboard_youth.html:146
+msgid "Volunteering"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2918
+msgid "volunteering experience"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2986
+msgid "Volunteering opportunity"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3464
+msgid "Vulnerabilites of the child"
+msgstr ""
+
+#: student_registration/templates/500.html:13
+msgid "We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing."
+msgstr ""
+
+#: student_registration/templates/schools/school_create_form.html:83
+#: student_registration/templates/schools/school_edit_form.html:83
+msgid "WFP"
+msgstr ""
+
+#: student_registration/templates/mscc/programme_details.html:96
+msgid "Where was the child referred?"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1700
+#: student_registration/templates/mscc/child_services_tab_org.html:1766
+#: student_registration/templates/mscc/child_services_tab_org.html:1832
+msgid "Word Problem Q1"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1707
+#: student_registration/templates/mscc/child_services_tab_org.html:1773
+#: student_registration/templates/mscc/child_services_tab_org.html:1839
+msgid "Word Problem Q2"
+msgstr ""
+
+#: student_registration/templates/mscc/form.html:93
+msgid "Work Status"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:439
+msgid "Working hours during a week? (in hours)"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1892
+msgid "YFS Level 1 - Scoring"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:1894
+msgid "YFS Level 2 - Scoring"
+msgstr ""
+
+#: student_registration/templates/account/verified_email_required.html:22
+msgid "you can still"
+msgstr ""
+
+#: student_registration/templates/mscc/attendance.html:61
+msgid "You don't have a center assigned to your profile please contact the administrator"
+msgstr ""
+
+#: student_registration/templates/students/save.html:12
+msgid "Your profile was not saved."
+msgstr ""
+
+#: student_registration/templates/students/save.html:8
+msgid "Your profile was saved."
+msgstr ""
+
+#: student_registration/templates/mscc/service_youth_assessment_form.html:28
+#: student_registration/templates/mscc/service_youth_assessment_form.html:41
+#: student_registration/templates/mscc/service_youth_assessment_form.html:60
+#: student_registration/templates/mscc/service_youth_referral_form.html:28
+msgid "Youth Assessment"
+msgstr ""
+
+#: student_registration/templates/mscc/service_youth_gil_form.html:28
+#: student_registration/templates/mscc/service_youth_gil_form.html:41
+msgid "Youth GIL"
+msgstr ""
+
+#: student_registration/templates/mscc/service_youth_maharati_form.html:27
+#: student_registration/templates/mscc/service_youth_maharati_form.html:40
+msgid "Youth Maharati"
+msgstr ""
+
+#: student_registration/templates/mscc/service_youth_referral_form.html:41
+#: student_registration/templates/mscc/service_youth_referral_form.html:60
+msgid "Youth Referral"
+msgstr ""
+
+
+#: student_registration/templates/pages/home.html:35
+msgid "Core Package"
+msgstr ""
+
+#: student_registration/templates/mscc/form.html:30
+msgid "Edit Child Info."
+msgstr ""
+
+#: student_registration/templates/pages/home.html:60
+msgid "Walk-in"
+msgstr ""
+
+#: student_registration/templates/pages/home.html:13
+msgid "Welcome"
+msgstr ""
+
+
+#: student_registration/templates/mscc/child_education_details.html:47
+msgid "(Round:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:109
+#: student_registration/templates/mscc/child_services_tab_org.html:1896
+msgid "- Grading"
+msgstr ""
+
+#: student_registration/templates/clm/index.html:38
+msgid "- Kayany"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2695
+#: student_registration/templates/mscc/child_services_tab_org.html:2705
+msgid "- Next session date:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2813
+#: student_registration/templates/mscc/child_services_tab_org.html:2827
+msgid "- Organization:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2800
+msgid "- PHC Center:"
+msgstr ""
+
+#: student_registration/templates/location/center_info_tab.html:149
+msgid "Admin:"
+msgstr ""
+
+#: student_registration/templates/base.html:11
+msgid "BMA |"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:591
+msgid "Center:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:140
+msgid "child"
+msgstr ""
+
+#: student_registration/templates/mscc/service_follow_up_all.html:14
+msgid "Dropout reason:"
+msgstr ""
+
+#: student_registration/templates/dashboard/pivot_dashboard.html:378
+msgid "Error loading pivot data:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_attendance_tab.html:167
+msgid "Failed to load attendance data."
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:48
+msgid "Father:"
+msgstr ""
+
+#: student_registration/templates/base.html:164
+msgid "Guest"
+msgstr ""
+
+#: student_registration/templates/mscc/child_info_tab.html:129
+msgid "h"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3598
+#: student_registration/templates/mscc/child_services_tab_org.html:3603
+msgid "Last"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:592
+msgid "Level:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_attendance_tab.html:130
+msgid "Loading attendance..."
+msgstr ""
+
+#: student_registration/templates/mscc/service_education_grading_form.html:86
+msgid "Maximum possible:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:49
+msgid "Mother:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_attendance_tab.html:155
+msgid "No attendance data was returned for this month."
+msgstr ""
+
+#: student_registration/templates/dashboard/pivot_dashboard.html:372
+msgid "No data available for the pivot table."
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:3603
+msgid "Parents meeting"
+msgstr ""
+
+#: student_registration/templates/mscc/child_education_details.html:50
+msgid "Registered:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:590
+msgid "Registration Date:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_education_details.html:84
+msgid "Round:"
+msgstr ""
+
+#: student_registration/templates/mscc/service_youth_scoring_form.html:58
+msgid "Scoring -"
+msgstr ""
+
+#: student_registration/templates/mscc/child_education_details.html:49
+msgid "Section:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2695
+#: student_registration/templates/mscc/child_services_tab_org.html:2705
+#: student_registration/templates/mscc/child_services_tab_org.html:2716
+#: student_registration/templates/mscc/child_services_tab_org.html:2726
+msgid "Session date:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2741
+msgid "Session Date:"
+msgstr ""
+
+#: student_registration/templates/mscc/child_services_tab_org.html:2740
+msgid "Session Title:"
+msgstr ""
+
+#: student_registration/templates/location/center_info_tab.html:150
+msgid "Teachers:"
+msgstr ""
+
+#: student_registration/templates/pages/home.html:17
+msgid "to CLM"
+msgstr ""
+
+#: student_registration/templates/admin/export_history_dashboard.html:8
+#: student_registration/templates/admin/user_activity_dashboard.html:8
+msgid "Total records:"
+msgstr ""
+
+#: student_registration/templates/mscc/profile.html:34
+msgid "y)"
+msgstr ""
+
+#: student_registration/templates/mscc/child_profile_preview.html:96
+msgid "years"
+msgstr ""
+
+#: student_registration/templates/mscc/child_education_details.html:84
+msgid "| Section:"
+msgstr ""

@@ -29,16 +29,16 @@
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
                                                     <a href="">
-                                                        Home
+                                                        {% trans "Home" %}
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     <a href="{% url 'clm:bridging_page' %}">
-                                                        Dirasa
+                                                        {% trans "Dirasa" %}
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                  <a href="{% url 'students:teacher_list' %}">Teacher List</a></li>
+                                                  <a href="{% url 'students:teacher_list' %}">{% trans "Teacher List" %}</a></li>
                                             </ol>
                                         </nav>
                                     </div>
@@ -46,7 +46,7 @@
                             </div>
                         <div class="page-title-actions">
      {% if 'Bridging'|is_allowed_create %}
-<a href="{% url 'students:teacher_add' %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add new Teacher</a>
+<a href="{% url 'students:teacher_add' %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>{% trans "Add new Teacher" %}</a>
 {% endif %}
 
                         </div>
@@ -61,7 +61,7 @@
             <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
                 <h5 class="m-0 p-0">
                     <i class="pe-7s-filter text-primary"></i>
-                    Filters</h5>
+                    {% trans "Filters" %}</h5>
             </button>
         </div>
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">

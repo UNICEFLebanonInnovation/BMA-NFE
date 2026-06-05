@@ -44,10 +44,10 @@
                             <span class="vertical-timeline-element-icon"><i class="bi bi-journal-check text-success"></i></span>
                             <div class="vertical-timeline-element-content">
                                 <h6 class="fw-bold mb-1">{% trans "Program & Round" %}</h6>
-                                <p class="small text-muted mb-0">{{ result.education_program }} (Round: {{ result.round }})</p>
+                                <p class="small text-muted mb-0">{{ result.education_program }} {% trans "(Round:" %} {{ result.round }})</p>
                                 <div class="mt-1">
-                                    <span class="badge bg-light text-dark border fw-normal">Section: {{ result.class_section }}</span>
-                                    <span class="badge bg-light text-dark border fw-normal">Registered: {{ result.registration_date }}</span>
+                                    <span class="badge bg-light text-dark border fw-normal">{% trans "Section:" %} {{ result.class_section }}</span>
+                                    <span class="badge bg-light text-dark border fw-normal">{% trans "Registered:" %} {{ result.registration_date }}</span>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="small text-muted">
                             <div><i class="bi bi-building me-1"></i> {{ item.registration.center }}</div>
-                            <div><i class="bi bi-arrow-repeat me-1"></i> Round: {{ item.round }} | Section: {{ item.class_section }}</div>
+                            <div><i class="bi bi-arrow-repeat me-1"></i> {% trans "Round:" %} {{ item.round }} {% trans "| Section:" %} {{ item.class_section }}</div>
                         </div>
                     </div>
                     {% endfor %}

@@ -122,11 +122,7 @@
                 </div>
                 <div class="mt-4">
                     <label for="chart-data" class="form-label">{% trans "Data (JSON)" %}</label>
-                    <textarea id="chart-data" class="form-control" rows="5" style="font-family: monospace;">[
-{"label": "A", "value": 30},
-{"label": "B", "value": 80},
-{"label": "C", "value": 45}
-]</textarea>
+                    <textarea id="chart-data" class="form-control" rows="5" style="font-family: monospace;">{% trans "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, {\"label\": \"C\", \"value\": 45} ]" %}</textarea>
                 </div>
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary px-4 fw-bold">

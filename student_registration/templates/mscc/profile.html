@@ -31,7 +31,7 @@
                             <h2 class="fw-bold mb-1 text-dark">{{ instance.child.full_name }}</h2>
                             <div class="d-flex flex-wrap gap-3 text-muted">
                                 <span><i class="bi bi-fingerprint me-1"></i> <span class="fw-bold text-dark">{{ instance.child.id }}</span></span>
-                                <span><i class="bi bi-calendar3 me-1"></i> {{ instance.child.birthday }} ({{ instance.child.age }}y)</span>
+                                <span><i class="bi bi-calendar3 me-1"></i> {{ instance.child.birthday }} ({{ instance.child.age }}{% trans "y)" %}</span>
                                 <span><i class="bi bi-geo-alt me-1"></i> {{ instance.child.governorate }} / {{ instance.child.cadaster }}</span>
                             </div>
                         </div>

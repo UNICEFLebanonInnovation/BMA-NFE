@@ -13,7 +13,7 @@
         <span class="d-inline-block pr-2">
           <i class="pe-7s-graph1"></i>
         </span>
-        <span class="d-inline-block">Pivot Dashboard</span>
+        <span class="d-inline-block">{% trans "Pivot Dashboard" %}</span>
       </div>
     </div>
   </div>
@@ -26,7 +26,7 @@
   <div id="pivot">
     <div class="text-center p-5">
       <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-2">Loading data...</p>
+      <p class="mt-2">{% trans "Loading data..." %}</p>
     </div>
   </div>
 </div>
@@ -369,13 +369,13 @@
           renderPivot(data);
         } else {
           $pivot.html(
-            '<div class="alert alert-info">No data available for the pivot table.</div>'
+            '<div class="alert alert-info">{% trans "No data available for the pivot table." %}</div>'
           );
         }
       })
       .fail(function (jqXHR, textStatus, errorThrown) {
         $pivot.html(
-          '<div class="alert alert-danger">Error loading pivot data: ' + textStatus + '</div>'
+          '<div class="alert alert-danger">{% trans "Error loading pivot data:" %} ' + textStatus + '</div>'
         );
         console.error("Pivot data load failed:", textStatus, errorThrown);
       });

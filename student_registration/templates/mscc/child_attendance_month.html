@@ -1,12 +1,13 @@
 
 {% load custom_tags %}
 {% load util_tags %}
+{% load i18n %}
                                                 <div class="card">
                                                     <div class="b-radius-0 card-header">
-                                                        <h5 class="m-0 p-0">{{ attendance_month }} Attendance</h5>
+                                                        <h5 class="m-0 p-0">{{ attendance_month }} {% trans "Attendance" %}</h5>
                                             <div class="btn-actions-pane-right actions-icon-btn">
-                                              <button class="mb-2 mr-2 btn btn-success">Attendance<span class="badge badge-pill badge-light">{{ nbr_attended }}</span></button>
-                                              <button class="mb-2 mr-2 btn btn-danger">Absence<span class="badge badge-pill badge-light">{{ nbr_absent }}</span></button>
+                                              <button class="mb-2 mr-2 btn btn-success">{% trans "Attendance" %}<span class="badge badge-pill badge-light">{{ nbr_attended }}</span></button>
+                                              <button class="mb-2 mr-2 btn btn-danger">{% trans "Absence" %}<span class="badge badge-pill badge-light">{{ nbr_absent }}</span></button>
                                               <!--<button class="mb-2 mr-2 btn btn-primary">Day Off<span class="badge badge-pill badge-light">1</span></button>-->
                                             </div>
 
@@ -31,9 +32,9 @@
                                                             </div>
                                                             <div class="widget-content-right">
                                                                 {% if item.attended == 'Yes' %}
-                                                                  <div class="widget-numbers text-success">Attended</div>
+                                                                  <div class="widget-numbers text-success">{% trans "Attended" %}</div>
                                                                 {% else %}
-                                                                  <div class="widget-numbers text-danger">Absent</div>
+                                                                  <div class="widget-numbers text-danger">{% trans "Absent" %}</div>
                                                                 {% endif %}
                                                             </div>
                                                         </div>

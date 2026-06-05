@@ -34,8 +34,8 @@
                                                     <div class="icon-wrapper rounded-circle">
                                                         <div class="icon-wrapper-bg bg-primary"></div>
                                                         <i class="lnr-cog text-primary"></i></div>
-                                                  <div class="widget-numbers"><a href="{% url 'clm:bridging_list' %}">Dirasa Registration</a></div>
-                                                    <div class="widget-subheading">{% if request.user.partner.is_Kayany %} - Kayany {% endif %} </div>
+                                                  <div class="widget-numbers"><a href="{% url 'clm:bridging_list' %}">{% trans "Dirasa Registration" %}</a></div>
+                                                    <div class="widget-subheading">{% if request.user.partner.is_Kayany %} {% trans "- Kayany" %} {% endif %} </div>
                                                     <div class="widget-description text-success">
                                                         <!--<i class="fa fa-angle-up"></i>-->
                                                         <span class="pl-1"> </span></div>
@@ -47,7 +47,7 @@
                                                         <div class="icon-wrapper-bg bg-info"></div>
                                                         <i class="lnr-laptop-phone text-info"></i>
                                                     </div>
-                                                  <div class="widget-numbers"><a href="{% url 'clm:attendance' %}">Attendance</a></div>
+                                                  <div class="widget-numbers"><a href="{% url 'clm:attendance' %}">{% trans "Attendance" %}</a></div>
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-info">
                                                         <!--<i class="fa fa-arrow-right"></i>-->
@@ -60,7 +60,7 @@
                                                         <div class="icon-wrapper-bg bg-danger"></div>
                                                         <i class="lnr-apartment text-danger"></i>
                                                     </div>
-                                                  <div class="widget-numbers"> <a href="{% url 'schools:school_list' %}">Schools</a></div>
+                                                  <div class="widget-numbers"> <a href="{% url 'schools:school_list' %}">{% trans "Schools" %}</a></div>
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-primary"><span class="pr-1"></span>
                                                         <!--<i class="fa fa-angle-up"></i>-->
@@ -72,7 +72,7 @@
                                                     <div class="icon-wrapper rounded-circle">
                                                         <div class="icon-wrapper-bg bg-success"></div>
                                                         <i class="lnr-graduation-hat"></i></div>
-                                                  <div class="widget-numbers"><a href="{% url 'students:teacher_list' %}">Teachers</a></div>
+                                                  <div class="widget-numbers"><a href="{% url 'students:teacher_list' %}">{% trans "Teachers" %}</a></div>
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-warning"><span class="pr-1"></span>
                                                         <!--<i class="fa fa-arrow-left"></i>-->

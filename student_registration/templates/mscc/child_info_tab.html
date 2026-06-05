@@ -86,8 +86,8 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Parents Education" %}</div>
-                                <div class="small"><span class="text-muted">F:</span> {{ instance.child.father_educational_level }}</div>
-                                <div class="small"><span class="text-muted">M:</span> {{ instance.child.mother_educational_level }}</div>
+                                <div class="small"><span class="text-muted">{% trans "F:" %}</span> {{ instance.child.father_educational_level }}</div>
+                                <div class="small"><span class="text-muted">{% trans "M:" %}</span> {{ instance.child.mother_educational_level }}</div>
                             </div>
                             <div class="col-6">
                                 <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Primary Phone" %}</div>
@@ -126,7 +126,7 @@
                             <div class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> {% trans "Engaged in work" %}</div>
                             <div class="small mt-2 p-2 bg-danger-subtle rounded border border-danger-subtle">
                                 <div><strong>{% trans "Type" %}:</strong> {{ instance.labour_type }}</div>
-                                <div><strong>{% trans "Hours/Week" %}:</strong> {{ instance.labour_hours }}h</div>
+                                <div><strong>{% trans "Hours/Week" %}:</strong> {{ instance.labour_hours }}{% trans "h" %}</div>
                                 <div><strong>{% trans "Income/Week" %}:</strong> {{ instance.labour_weekly_income }}</div>
                             </div>
                         {% else %}

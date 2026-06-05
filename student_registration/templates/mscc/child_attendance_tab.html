@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
             detailsBody.innerHTML = `
                 <div class="attendance-loading">
                     <div class="spinner-border text-primary" role="status"></div>
-                    <p class="mt-3 mb-0">Loading attendance...</p>
+                    <p class="mt-3 mb-0">{% trans "Loading attendance..." %}</p>
                 </div>
             `;
 
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!html || html.trim() === "") {
                     detailsBody.innerHTML = `
                         <div class="alert alert-warning mb-0">
-                            No attendance data was returned for this month.
+                            {% trans "No attendance data was returned for this month." %}
                         </div>
                     `;
                     return;
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Attendance load error:", error);
                 detailsBody.innerHTML = `
                     <div class="alert alert-danger mb-0">
-                        Failed to load attendance data.
+                        {% trans "Failed to load attendance data." %}
                     </div>
                 `;
             });
