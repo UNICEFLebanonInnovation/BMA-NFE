@@ -1,3 +1,7 @@
+function translateMessage(message) {
+    return window.gettext ? window.gettext(message) : message;
+}
+
 
 
 function initialise_absence_form()
@@ -22,7 +26,7 @@ function absence_export() {
     }
     else
     {
-        showModal('Number Of Absences is mandatory')
+        showModal(translateMessage('Number Of Absences is mandatory'))
     }
 
 }
