@@ -1,3 +1,7 @@
+function translateMessage(message) {
+    return window.gettext ? window.gettext(message) : message;
+}
+
 var protocol = window.location.protocol;
 var host = protocol + window.location.host;
 
@@ -30,12 +34,12 @@ $(document).on('click', '#save_attendance_children', function(e){
     var registration_level = $("#registration_level").val();
 
     if (!attendance_date || !attendance_day_off || !round_id || !school_id || !registration_level) {
-        showModal(window.gettext ? window.gettext('Please fill all mandatory fields: Attendance Date, Attendance Day Off, Round, School, and Registration Level.') : 'Please fill all mandatory fields: Attendance Date, Attendance Day Off, Round, School, and Registration Level.');
+        showModal(translateMessage('Please fill all mandatory fields: Attendance Date, Attendance Day Off, Round, School, and Registration Level.'));
         return false;
     }
 
     if (attendance_day_off == 'Yes' && !close_reason) {
-        showModal(window.gettext ? window.gettext('Close reason is mandatory.') : 'Close reason is mandatory.');
+        showModal(translateMessage('Close reason is mandatory.'));
         return false;
     }
 
@@ -78,7 +82,7 @@ $(document).on('click', '#save_attendance_children', function(e){
         return;
     }
     if (attendance_day_off === 'No' && children_attendance.length === 0) {
-        showError(window.gettext ? window.gettext('Cannot save attendance: no children attendance was provided.') : 'Cannot save attendance: no children attendance was provided.');
+        showError(translateMessage('Cannot save attendance: no children attendance was provided.'));
         return false;
     }
 
@@ -125,7 +129,7 @@ $(document).on('click', '#load_attendance_children', function(e) {
     var registration_level = $("#registration_level").val();
 
     if (!attendance_date || !round_id || !school_id || !registration_level) {
-        showModal(window.gettext ? window.gettext('Please fill: Attendance Date, Round, School, and Registration Level.') : 'Please fill: Attendance Date, Round, School, and Registration Level.');
+        showModal(translateMessage('Please fill: Attendance Date, Round, School, and Registration Level.'));
         return false;
     }
 

@@ -12631,10 +12631,6 @@ msgstr ""
 msgid "Assessment"
 msgstr ""
 
-#: student_registration/templates/clm/bridging_form.html:88
-msgid "Assessment data"
-msgstr ""
-
 #: student_registration/templates/mscc/child_services_tab_org.html:2568
 msgid "At which age?"
 msgstr ""
@@ -12756,11 +12752,6 @@ msgstr ""
 #: student_registration/templates/mscc/child_services_tab_org.html:2576
 #: student_registration/templates/mscc/child_services_tab_org.html:2723
 msgid "Child immunization record screened"
-msgstr ""
-
-#: student_registration/templates/clm/bridging_form.html:73
-#: student_registration/templates/mscc/form.html:83
-msgid "Child Information"
 msgstr ""
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3526
@@ -12941,16 +12932,8 @@ msgstr ""
 msgid "Community Initiative List"
 msgstr ""
 
-#: student_registration/templates/base.html:111
-msgid "Completed successfully"
-msgstr ""
-
 #: student_registration/templates/mscc/child_services_tab_org.html:3005
 msgid "Completed the YFS course?"
-msgstr ""
-
-#: student_registration/templates/clm/bridging_form.html:93
-msgid "Consent"
 msgstr ""
 
 #: student_registration/templates/admin/export_history_dashboard.html:11
@@ -12988,11 +12971,6 @@ msgstr ""
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2619
 msgid "Delays identified in the development milestones"
-msgstr ""
-
-#: student_registration/templates/mscc/service_digital_form.html:41
-#: student_registration/templates/mscc/service_digital_form.html:61
-msgid "Digital"
 msgstr ""
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2335
@@ -13092,10 +13070,6 @@ msgstr ""
 
 #: student_registration/templates/clm/bridging_attendance_report.html:137
 msgid "Export Consecutive Absence"
-msgstr ""
-
-#: student_registration/templates/base.html:113
-msgid "Export failed"
 msgstr ""
 
 #: student_registration/templates/admin/export_history_dashboard.html:7
@@ -13310,13 +13284,6 @@ msgstr ""
 msgid "Lebanese:"
 msgstr ""
 
-#: student_registration/templates/mscc/child_services_tab_org.html:3330
-#: student_registration/templates/mscc/service_lego_form.html:28
-#: student_registration/templates/mscc/service_lego_form.html:41
-#: student_registration/templates/mscc/service_lego_form.html:60
-msgid "LEGO"
-msgstr ""
-
 #: student_registration/templates/mscc/child_services_tab_org.html:2263
 msgid "Life skills Development"
 msgstr ""
@@ -13437,20 +13404,6 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: student_registration/templates/clm/bridging_followup.html:88
-#: student_registration/templates/clm/bridging_followup.html:89
-#: student_registration/templates/clm/bridging_form.html:108
-#: student_registration/templates/mscc/service_follow_up_form.html:83
-#: student_registration/templates/mscc/service_health_nutrition_form.html:83
-#: student_registration/templates/mscc/service_lego_form.html:78
-#: student_registration/templates/mscc/service_pss_form.html:83
-#: student_registration/templates/mscc/service_youth_gil_form.html:78
-#: student_registration/templates/mscc/service_youth_kit_form.html:83
-#: student_registration/templates/mscc/service_youth_maharati_form.html:77
-#: ... and 6 more locations
-msgid "Next"
-msgstr ""
-
 #: student_registration/templates/mscc/form.html:284
 msgid "Next btn"
 msgstr ""
@@ -13515,10 +13468,6 @@ msgstr ""
 #: student_registration/templates/clm/bridging_form.html:78
 #: student_registration/templates/mscc/form.html:88
 msgid "Parent/Caregiver Information"
-msgstr ""
-
-#: student_registration/templates/clm/bridging_followup.html:73
-msgid "Parents Meeting and Health Exam"
 msgstr ""
 
 #: student_registration/templates/mscc/service_follow_up_form.html:65
@@ -13716,11 +13665,6 @@ msgstr ""
 msgid "Select one or more partner"
 msgstr ""
 
-#: student_registration/templates/clm/bridging_attendance_report.html:82
-#: student_registration/templates/clm/bridging_attendance_report.html:88
-msgid "Select Year"
-msgstr ""
-
 #: student_registration/templates/mscc/child_services_tab_org.html:2513
 msgid "Session"
 msgstr ""
@@ -13821,10 +13765,6 @@ msgstr ""
 
 #: student_registration/templates/admin/user_activity_dashboard.html:20
 msgid "Top Paths"
-msgstr ""
-
-#: student_registration/templates/mscc/dashboard_d3.html:43
-msgid "Total Registration"
 msgstr ""
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3061
@@ -13978,12 +13918,6 @@ msgstr ""
 #: student_registration/templates/mscc/service_youth_maharati_form.html:40
 msgid "Youth Maharati"
 msgstr ""
-
-#: student_registration/templates/mscc/service_youth_referral_form.html:41
-#: student_registration/templates/mscc/service_youth_referral_form.html:60
-msgid "Youth Referral"
-msgstr ""
-
 
 #: student_registration/templates/pages/home.html:35
 msgid "Core Package"

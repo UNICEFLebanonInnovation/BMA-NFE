@@ -1,3 +1,7 @@
+function translateMessage(message) {
+    return window.gettext ? window.gettext(message) : message;
+}
+
 
 
 var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, " +
@@ -670,11 +674,11 @@ function validateField(field) {
         var val = field.val() ? field.val().trim() : '';
         if (val && !regexMap[selector].test(val)) {
             var placeholder = field.attr('placeholder');
-            var msg = window.gettext ? window.gettext('Please enter a valid value') : 'Please enter a valid value';
+            var msg = translateMessage('Please enter a valid value');
             if (selector.indexOf('phone') !== -1) {
-                msg = window.gettext ? window.gettext('Please enter a valid phone number (XX-XXXXXX)') : 'Please enter a valid phone number (XX-XXXXXX)';
+                msg = translateMessage('Please enter a valid phone number (XX-XXXXXX)');
             } else if (placeholder) {
-                msg = (window.gettext ? window.gettext('Please follow the format ') : 'Please follow the format ') + placeholder.replace('Format:', '').trim();
+                msg = (translateMessage('Please follow the format ')) + placeholder.replace('Format:', '').trim();
             }
             showError(selector, msg);
         }
@@ -922,11 +926,11 @@ function validateMainForm(showModal, step) {
             var val = field.val() ? field.val().trim() : '';
             if (val && !regexMap[selector].test(val)) {
                 var placeholder = $(selector).attr('placeholder');
-                var msg = window.gettext ? window.gettext('Please enter a valid value') : 'Please enter a valid value';
+                var msg = translateMessage('Please enter a valid value');
                 if (selector.indexOf('phone') !== -1) {
-                    msg = window.gettext ? window.gettext('Please enter a valid phone number (XX-XXXXXX)') : 'Please enter a valid phone number (XX-XXXXXX)';
+                    msg = translateMessage('Please enter a valid phone number (XX-XXXXXX)');
                 } else if (placeholder) {
-                    msg = (window.gettext ? window.gettext('Please follow the format ') : 'Please follow the format ') + placeholder.replace('Format:', '').trim();
+                    msg = (translateMessage('Please follow the format ')) + placeholder.replace('Format:', '').trim();
                 }
                 showError(selector, msg);
                 valid = false;
@@ -1120,6 +1124,6 @@ $(document).ready(function() {
 
 
     $('#formErrorModal').on('hidden.bs.modal', function(){
-        $('#formErrorModal #swal2-content').text(window.gettext ? window.gettext('Please check the form mandatory fields.') : 'Please check the form mandatory fields.');
+        $('#formErrorModal #swal2-content').text(translateMessage('Please check the form mandatory fields.'));
     });
 });
