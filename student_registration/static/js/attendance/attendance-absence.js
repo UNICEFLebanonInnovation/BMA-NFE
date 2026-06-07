@@ -22,7 +22,7 @@ function absence_export() {
     }
     else
     {
-        showModal('Number Of Absences is mandatory')
+        showModal(window.gettext ? window.gettext('Number Of Absences is mandatory') : 'Number Of Absences is mandatory')
     }
 
 }

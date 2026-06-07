@@ -60,7 +60,7 @@ function load_students()
             }
             else
             {
-                showModal("Please specify the reason for day off");
+                showModal(window.gettext ? window.gettext('Please specify the reason for day off') : 'Please specify the reason for day off');
             }
         }
         else
@@ -75,7 +75,7 @@ function load_students()
     }
     else
     {
-        showModal("School and Registration Level are mandatory")
+        showModal(window.gettext ? window.gettext('School and Registration Level are mandatory') : 'School and Registration Level are mandatory')
     }
 
  }

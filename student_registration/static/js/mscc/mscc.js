@@ -670,11 +670,11 @@ function validateField(field) {
         var val = field.val() ? field.val().trim() : '';
         if (val && !regexMap[selector].test(val)) {
             var placeholder = field.attr('placeholder');
-            var msg = 'Please enter a valid value';
+            var msg = window.gettext ? window.gettext('Please enter a valid value') : 'Please enter a valid value';
             if (selector.indexOf('phone') !== -1) {
-                msg = 'Please enter a valid phone number (XX-XXXXXX)';
+                msg = window.gettext ? window.gettext('Please enter a valid phone number (XX-XXXXXX)') : 'Please enter a valid phone number (XX-XXXXXX)';
             } else if (placeholder) {
-                msg = 'Please follow the format ' + placeholder.replace('Format:', '').trim();
+                msg = (window.gettext ? window.gettext('Please follow the format ') : 'Please follow the format ') + placeholder.replace('Format:', '').trim();
             }
             showError(selector, msg);
         }
@@ -922,11 +922,11 @@ function validateMainForm(showModal, step) {
             var val = field.val() ? field.val().trim() : '';
             if (val && !regexMap[selector].test(val)) {
                 var placeholder = $(selector).attr('placeholder');
-                var msg = 'Please enter a valid value';
+                var msg = window.gettext ? window.gettext('Please enter a valid value') : 'Please enter a valid value';
                 if (selector.indexOf('phone') !== -1) {
-                    msg = 'Please enter a valid phone number (XX-XXXXXX)';
+                    msg = window.gettext ? window.gettext('Please enter a valid phone number (XX-XXXXXX)') : 'Please enter a valid phone number (XX-XXXXXX)';
                 } else if (placeholder) {
-                    msg = 'Please follow the format ' + placeholder.replace('Format:', '').trim();
+                    msg = (window.gettext ? window.gettext('Please follow the format ') : 'Please follow the format ') + placeholder.replace('Format:', '').trim();
                 }
                 showError(selector, msg);
                 valid = false;
@@ -1120,6 +1120,6 @@ $(document).ready(function() {
 
 
     $('#formErrorModal').on('hidden.bs.modal', function(){
-        $('#formErrorModal #swal2-content').text('Please check the form mandatory fields.');
+        $('#formErrorModal #swal2-content').text(window.gettext ? window.gettext('Please check the form mandatory fields.') : 'Please check the form mandatory fields.');
     });
 });

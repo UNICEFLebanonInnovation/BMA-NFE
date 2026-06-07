@@ -66,8 +66,8 @@ onMessage(messaging, (payload) => {
                 }
             }, { once: true });
         } else {
-            const reason = payload.data.reason || 'Unknown error';
-            alert('Export failed: ' + reason);
+            const reason = payload.data.reason || (window.gettext ? window.gettext('Unknown error') : 'Unknown error');
+            alert((window.gettext ? window.gettext('Export failed: ') : 'Export failed: ') + reason);
             if (window.location.pathname.includes('/mscc/list/') || window.location.pathname.includes('/mscc/dashboard/')) {
                 window.location.reload();
             }
