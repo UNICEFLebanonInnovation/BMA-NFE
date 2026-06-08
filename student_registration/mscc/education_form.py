@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import, division
+import copy
 from datetime import date, datetime
 
 from django.utils.translation import gettext as _
@@ -731,6 +732,294 @@ class EducationServiceForm(forms.ModelForm):
             'class_section',
             'registration_date',
         )
+
+
+
+
+class NewRoundForm(forms.ModelForm):
+    education_status = forms.ChoiceField(
+        label=_("Child\'s educational level when registering for the round"),
+        widget=forms.Select, required=True,
+        choices=EducationService.EDUCATION_STATUS,
+    )
+    dropout_date = forms.DateField(
+        label=_("Please Specify dropout date from school"),
+        required=False,
+        widget=DatePickerInput(),
+        help_text=_('Last date the child attended formal school.')
+    )
+    round = forms.ModelChoiceField(
+        queryset=Round.objects.filter(current_year=True),
+        widget=forms.Select,
+        label=_('Round'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+    education_program = forms.ChoiceField(
+        label=_("Program"),
+        widget=forms.Select, required=True,
+        choices=EducationService.EDUCATION_PROGRAM,
+    )
+    catch_up_registered = forms.ChoiceField(
+        label=_("Is the child registered in catch-up program"),
+        widget=forms.Select, required=False,
+        choices=EducationService.CATCH_UP_REGISTERED,
+    )
+    registration_date = forms.DateField(
+        label=_("Date of registration in the round"),
+        widget=forms.DateInput(attrs={
+            'type': 'date',
+        }),
+        required=True,
+        help_text=_('The date the child joined the current round.')
+    )
+    class_section = forms.ChoiceField(
+        label=_("Class Section"),
+        widget=forms.Select,
+        required=True,
+        choices=EducationService._meta.get_field('class_section').choices,
+    )
+
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        self.registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
+        super(NewRoundForm, self).__init__(*args, **kwargs)
+        self.fields['registration_date'].widget.attrs['max'] = date.today().strftime('%Y-%m-%d')
+
+        if self.registry:
+            self.fields['registration_id'].initial = self.registry
+
+        choices = []
+
+        available_service_names = ()
+        if self.registry:
+            registry_obj = Registration.objects.select_related('child').filter(id=self.registry).first()
+            if registry_obj:
+                available_service_names = set(
+                    Packages.objects.filter(
+                        min_age__lte=registry_obj.child_age,
+                        max_age__gte=registry_obj.child_age
+                    ).values_list('name', flat=True)
+                )
+
+        if getattr(registry_obj, 'registration_date', None):
+            self.fields['registration_date'].widget.attrs['min'] = (
+                registry_obj.registration_date.strftime('%Y-%m-%d')
+            )
+
+        for option in available_service_names:
+            choices.append((option, option))
+
+        self.fields['education_program'].choices = choices
+
+        display_edu_section = ''
+
+        if self.registry:
+            child_id = Registration.objects.filter(id=self.registry).values_list('child_id', flat=True).first()
+
+            if instance:
+                try:
+                    education_service = EducationService.objects.get(pk=instance)
+                    current_round_id = education_service.round_id
+                except EducationService.DoesNotExist:
+                    current_round_id = None
+            else:
+                current_round_id = None
+
+            if current_round_id:
+                rounds_registered = EducationService.objects.filter(
+                    registration__child_id=child_id,
+                    registration__deleted=False
+                ).exclude(
+                    round_id=current_round_id
+                ).values_list('round_id', flat=True)
+            else:
+                rounds_registered = EducationService.objects.filter(
+                    registration__child_id=child_id,
+                    registration__deleted=False
+                ).values_list('round_id', flat=True)
+
+            rounds_registered = [r for r in rounds_registered if r is not None]
+
+            if current_round_id:
+                available_rounds = Round.objects.filter(
+                    Q(current_year=True) & (
+                        ~Q(id__in=rounds_registered) | Q(id=current_round_id)
+                    )
+                )
+            else:
+                available_rounds = Round.objects.filter(current_year=True).exclude(id__in=rounds_registered)
+
+            self.fields['round'].queryset = available_rounds
+
+        form_action = ''
+
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Div(
+                Fieldset(
+                    _('Current Educational Status'),
+                    Div(
+                        Div('education_status', css_class='col-md-6'),
+                        Div('dropout_date', css_class='col-md-6'),
+                        css_class='row mb-3'
+                    ),
+                    Div(
+                        Div('round', css_class='col-md-6'),
+                        css_class='row mb-3'
+                    ),
+                ),
+                Fieldset(
+                    _('Program Enrollment Details'),
+                    Div(
+                        Div('education_program', css_class='col-md-6'),
+                        Div('catch_up_registered', css_class='col-md-6'),
+                        css_class='row mb-3' + display_edu_section
+                    ),
+                    Div(
+                        Div('class_section', css_class='col-md-6'),
+                        Div('registration_date', css_class='col-md-6'),
+                        css_class='row mb-3' + display_edu_section
+                    ),
+                    css_class='mt-4'
+                ),
+                css_id='step-1'
+            ),
+            FormActions(
+                Submit('save', _('Save Education Data'),
+                       css_class='btn btn-primary px-5 fw-bold shadow-sm'),
+                HTML(
+                    '<a class="btn btn-outline-secondary ms-2" id="cancel-id-cancel" href="/mscc/child-registration-cancel/{}/">Cancel</a>'.format(
+                        self.registry)
+                ),
+                css_class='d-flex justify-content-end border-top pt-4 mt-4'
+            ),
+        )
+
+    def save(self, request=None, instance=None, registry=None):
+
+        validated_data = request.POST
+
+        from django.db import transaction
+        with transaction.atomic():
+            # Duplicate the registration first
+            old_registration = Registration.objects.get(id=registry)
+            new_registration = copy.copy(old_registration)
+            new_registration.pk = None
+            new_registration.round = None
+            new_registration.deleted = False
+            new_registration.deleted_by = None
+            new_registration.owner = request.user
+            new_registration.modified_by = request.user
+            if request.user.center:
+                new_registration.center = request.user.center
+            if request.user.partner:
+                new_registration.partner = request.user.partner
+            new_registration.save()
+
+            # Now save the new education service
+            instance = EducationService.objects.create(registration_id=new_registration.id)
+
+            instance.education_status = validated_data.get('education_status')
+
+            dropout_date_str = validated_data.get('dropout_date')
+            if dropout_date_str:
+                try:
+                    instance.dropout_date = validate_date(dropout_date_str)
+                except ValidationError as e:
+                    raise ValidationError("Dropout date error: {}".format(e))
+
+            instance.education_program = validated_data.get('education_program')
+            instance.class_section = validated_data.get('class_section')
+            instance.round_id = validated_data.get('round')
+
+            registration_date_str = validated_data.get('registration_date')
+            if registration_date_str:
+                try:
+                    parsed_registration_date = validate_date(registration_date_str)
+                    if parsed_registration_date > date.today():
+                        raise ValidationError("Date of registration in the round cannot be in the future")
+                    instance.registration_date = parsed_registration_date
+                except ValidationError as e:
+                    raise ValidationError("Registration date error: {}".format(e))
+
+            instance.save()
+
+            # Update the new registration round_id
+            new_registration.round_id = instance.round_id
+            new_registration.save()
+
+            messages.success(request, _('Your data has been sent successfully to the server'))
+
+            self.new_registration = new_registration
+            return instance
+    def clean(self):
+        cleaned_data = super(NewRoundForm, self).clean()
+
+        class_section = cleaned_data.get("class_section")
+        registration_date = cleaned_data.get("registration_date")
+        dropout_date = cleaned_data.get("dropout_date")
+        education_status = cleaned_data.get("education_status")
+
+        if not class_section:
+            self.add_error("class_section", "This field is required")
+
+        if not registration_date:
+            self.add_error("registration_date", "This field is required")
+        else:
+            if registration_date > date.today():
+                self.add_error(
+                    "registration_date",
+                    "Date of registration in the round cannot be in the future"
+                )
+
+            if self.registry:
+                try:
+                    registration_obj = Registration.objects.get(id=self.registry)
+
+                # IMPORTANT:
+                # replace registration_date below with the REAL field name from Registration model
+                    main_registration_date = registration_obj.registration_date
+
+                    if main_registration_date and registration_date < main_registration_date:
+                        self.add_error(
+                            "registration_date",
+                            "Date of registration in the round cannot be before Registration date"
+                        )
+
+                except Registration.DoesNotExist:
+                    self.add_error("registration_date", "Invalid registration")
+
+        if dropout_date:
+            try:
+                validate_date(dropout_date)
+            except ValidationError as e:
+                self.add_error("dropout_date", str(e))
+
+        if education_status == 'Currently registered in Formal Education school but not attending' and not dropout_date:
+            self.add_error('dropout_date', 'This field is required')
+
+        return cleaned_data
+
+    class Meta:
+        model = EducationService
+        fields = (
+            'registration_id',
+            'education_status',
+            'dropout_date',
+            'round',
+            'education_program',
+            'class_section',
+            'registration_date',
+        )
+
 
 
 class EducationRSServiceForm(forms.ModelForm):

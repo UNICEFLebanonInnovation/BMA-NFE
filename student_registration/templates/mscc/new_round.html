@@ -22,7 +22,7 @@
             </ol>
         </nav>
         <h2 class="fw-bold text-primary">{% trans "Register in a New Round" %}</h2>
-        <p class="text-muted">{% trans "Enroll the beneficiary into a new educational cycle." %}</p>
+        <p class="text-muted">{% trans "Enroll the beneficiary into a new educational cycle and provide current enrollment details." %}</p>
     </div>
 </div>
 
@@ -35,9 +35,9 @@
                 </div>
             </div>
             <div class="col">
-                <h4 class="mb-1">{% trans "Confirm Enrollment" %}</h4>
+                <h4 class="mb-1">{% trans "Education Details" %}</h4>
                 <p class="mb-0 text-muted">
-                    {% trans "To add this child to a new round, please confirm the action below. This will create a new registration record for the current active cycle." %}
+                    {% trans "To add this child to a new round, please confirm the education situation below. This will create a new registration record for the current active cycle." %}
                 </p>
             </div>
         </div>
@@ -58,39 +58,33 @@
 
         <hr class="my-4 opacity-25">
 
-        <div class="d-flex justify-content-end gap-2">
-            <a href="{% url 'mscc:child_profile' registry %}?current_tab=services" class="btn btn-outline-secondary px-4 fw-bold">
-                {% trans "Cancel" %}
-            </a>
-            <a href="{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed"
-               id="submit-id-save" class="btn btn-primary px-5 fw-bold">
-                <i class="bi bi-check-circle me-2"></i>{% trans "Confirm Registration" %}
-            </a>
+        <div class="row justify-content-center">
+            <div class="col-xl-12">
+                <div class="alert alert-info border-0 bg-info-subtle small d-flex align-items-start py-3 px-4 mb-4">
+                    <i class="bi bi-info-circle-fill me-3 fs-5 text-info"></i>
+                    <div>
+                        {% trans "The education situation determines which support packages and services are available for this beneficiary. Ensure all dates and programs match official records." %}
+                    </div>
+                </div>
+
+                {% crispy form %}
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const confirmButton = document.getElementById("submit-id-save");
-        const radioButtons = document.querySelectorAll("input[name='registrationType']");
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/education.js' %}?v=8"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=2"></script>
+    <script>
+        $(document).ready(function() {
+            // Modernize any legacy class-based styling if needed
+            $('.btn-success').addClass('px-5 fw-bold');
+            $('.btn-warning').removeClass('btn-warning').addClass('btn-outline-secondary');
 
-        const updateHref = () => {
-            const selectedRadio = document.querySelector("input[name='registrationType']:checked");
-            if (selectedRadio) {
-                const selectedType = selectedRadio.value;
-                confirmButton.href = `{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}`;
-            }
-        };
-
-        if (radioButtons.length > 0) {
-            updateHref();
-            radioButtons.forEach((radio) => {
-                radio.addEventListener("change", updateHref);
-            });
-        }
-    });
-</script>
+            // Native HTML5 date field enhancement if needed, though forms.py should handle it
+            $('input[type="date"]').addClass('form-control');
+        });
+    </script>
 {% endblock %}

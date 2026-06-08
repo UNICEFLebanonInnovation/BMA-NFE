@@ -77,6 +77,7 @@ from .models import (
 )
 from student_registration.backends.models import ExportHistory
 
+from .education_form import NewRoundForm
 from .forms import (
     MainForm,
     ReferralForm,
@@ -557,44 +558,34 @@ class MainEditView(LoginRequiredMixin,
 
 class NewRoundView(LoginRequiredMixin,
                    GroupRequiredMixin,
-                   TemplateView):
+                   FormView):
 
     group_required = [u"MSCC", u"MSCC_CENTER"]
     template_name = 'mscc/new_round.html'
+    form_class = NewRoundForm
+
+    def get_success_url(self):
+        return reverse('mscc:child_profile', kwargs={'pk': self.new_registration_id}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
-        registry = kwargs.get('pk')
-        return {
-            'registry': registry
-        }
+        context = super(NewRoundView, self).get_context_data(**kwargs)
+        context['registry'] = self.kwargs.get('pk')
+        return context
 
+    def get_form(self, form_class=None):
+        registry = self.kwargs['pk']
+        if self.request.method == "POST":
+            return NewRoundForm(self.request.POST, registry=registry, request=self.request)
+        return NewRoundForm(registry=registry, request=self.request)
 
-class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
-    permanent = False
+    def form_valid(self, form):
+        registry = self.kwargs['pk']
 
-    def get_redirect_url(self):
+        # Save the form (which duplicates registration and saves education service)
+        instance = form.save(request=self.request, registry=registry, instance=None)
+        self.new_registration_id = form.new_registration.id
 
-        registry = self.request.GET.get('registry')
-
-        if self.request.GET.get('new_round_confirmation', None) == 'confirmed':
-            import copy
-            registration = Registration.objects.get(id=registry)
-            new_registration = copy.copy(registration)
-            new_registration.pk = None
-            new_registration.round = None
-            new_registration.deleted = True
-            new_registration.deleted_by = self.request.user
-            new_registration.owner = self.request.user
-            new_registration.modified_by = self.request.user
-            if self.request.user.center:
-                new_registration.center = self.request.user.center
-            if self.request.user.partner:
-                new_registration.partner = self.request.user.partner
-            new_registration.save()
-
-            return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id})
-
-        return reverse('mscc:new_round', kwargs={'registry': registry})
+        return super(NewRoundView, self).form_valid(form)
 
 
 def main_mark_delete_view(request, pk):
