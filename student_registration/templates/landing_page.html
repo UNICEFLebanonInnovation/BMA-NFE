@@ -94,7 +94,8 @@
                             <tr>
                                 <th class="ps-3">{% trans "Type" %}</th>
                                 <th>{% trans "Created" %}</th>
-                                <th class="text-end pe-3">{% trans "Status" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th class="text-end pe-3">{% trans "Action" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,15 +103,23 @@
                             <tr>
                                 <td class="ps-3"><span class="fw-medium">{{ export.export_type }}</span></td>
                                 <td class="small">{{ export.created_display }}</td>
-                                <td class="text-end pe-3">
+                                <td>
                                     <span class="badge rounded-pill bg-{% if export.status == 'done' %}success{% elif export.status == 'failed' %}danger{% else %}warning text-dark{% endif %}">
                                         {{ export.status|title }}
                                     </span>
                                 </td>
+                                <td class="text-end pe-3">
+                                    {% if export.status == 'done' %}
+                                    <a href="{{ export.file_url }}" class="btn btn-sm btn-outline-primary fw-bold" title="{% trans 'Download' %}">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                    {% endif %}
+
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="3" class="text-center py-4 text-muted small">{% trans "No recent export history." %}</td>
+                                <td colspan="4" class="text-center py-4 text-muted small">{% trans "No recent export history." %}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
