@@ -8162,6 +8162,23 @@ msgstr "حفظ التغييرات"
 msgid "Updating visualization..."
 msgstr "جارٍ تحديث العرض المرئي..."
 
+#: student_registration/templates/django_tables2/bootstrap4.html:63
+#: student_registration/templates/django_tables2/bootstrap5.html:68
+msgid "Table navigation"
+msgstr "التنقل في الجدول"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:68
+#: student_registration/templates/django_tables2/bootstrap5.html:72
+#: student_registration/templates/django_tables2/bootstrap5.html:77
+msgid "Previous page"
+msgstr "الصفحة السابقة"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:81
+#: student_registration/templates/django_tables2/bootstrap5.html:90
+#: student_registration/templates/django_tables2/bootstrap5.html:95
+msgid "Next page"
+msgstr "الصفحة التالية"
+
 #: student_registration/templates/django_tables2/bootstrap4.html:70
 #| msgid "Previous school"
 msgid "previous"
@@ -13473,3 +13490,60 @@ msgstr "خطأ غير معروف"
 #: student_registration/static/js/firebase-messaging.js:70
 msgid "Export failed: "
 msgstr "فشل التصدير: "
+
+# Datatable header labels translated dynamically from column.header.
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Owner"
+msgstr "المالك"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Modified"
+msgstr "تاريخ التعديل"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "modified"
+msgstr "تاريخ التعديل"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "created"
+msgstr "تاريخ الإنشاء"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Full name"
+msgstr "الاسم الكامل"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Unicef id"
+msgstr "المعرف الفريد"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Owner name"
+msgstr "اسم المالك"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Modified by name"
+msgstr "اسم آخر من قام بالتعديل"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Longitude"
+msgstr "خط الطول"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Latitude"
+msgstr "خط العرض"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Is closed"
+msgstr "مغلقة"
+
