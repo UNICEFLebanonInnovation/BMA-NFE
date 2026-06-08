@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block project_title %}{{ page_title }} — Documentation{% endblock %}
+{% block module_name %}📚 {% trans "Documentation" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Break out of the p-4 wrapper to fill full content area */
+.wiki-outer {
+    margin: -1.5rem;
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
+
+/* Left sidebar */
+.wiki-sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: #1a2540;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: calc(100vh - 60px);
+}
+
+.wiki-sidebar-header {
+    padding: 20px 18px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}
+
+.wiki-sidebar-header .ws-logo {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.2px;
+}
+
+.wiki-sidebar-header .ws-version {
+    font-size: 11px;
+    color: #6b8099;
+    margin-top: 2px;
+}
+
+.wiki-sidebar nav {
+    padding: 8px 0 20px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.wiki-sidebar .ws-section {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #4a6278;
+    padding: 12px 18px 4px;
+}
+
+.wiki-sidebar a.ws-link {
+    display: block;
+    padding: 7px 18px;
+    color: #c8d6e5;
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.4;
+    border-left: 3px solid transparent;
+    transition: all 0.14s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wiki-sidebar a.ws-link:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+    border-left-color: #00b5e2;
+}
+
+.wiki-sidebar a.ws-link.active {
+    color: #fff;
+    background: rgba(0,181,226,0.15);
+    border-left-color: #00b5e2;
+    font-weight: 600;
+}
+
+/* Main content area */
+.wiki-main {
+    flex: 1;
+    background: #f4f7fb;
+    min-width: 0;
+}
+
+.wiki-content-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 36px 40px 80px;
+}
+
+/* ── Typography ── */
+.wiki-content-wrap h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #134f7d;
+    border-bottom: 2px solid #dde3ed;
+    padding-bottom: 12px;
+    margin-top: 0;
+    margin-bottom: 24px;
+    line-height: 1.3;
+}
+.wiki-content-wrap h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: #1a6faf;
+    margin: 36px 0 12px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid #dde3ed;
+}
+.wiki-content-wrap h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 24px 0 8px;
+}
+.wiki-content-wrap h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6c7a8d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 20px 0 6px;
+}
+.wiki-content-wrap p {
+    line-height: 1.75;
+    margin-bottom: 12px;
+    color: #2c3e50;
+}
+.wiki-content-wrap a { color: #1a6faf; text-decoration: none; }
+.wiki-content-wrap a:hover { text-decoration: underline; }
+.wiki-content-wrap ul,
+.wiki-content-wrap ol {
+    margin: 8px 0 14px 22px;
+    line-height: 1.8;
+}
+.wiki-content-wrap li { margin-bottom: 3px; }
+.wiki-content-wrap hr {
+    border: none;
+    border-top: 1px solid #dde3ed;
+    margin: 32px 0;
+}
+.wiki-content-wrap strong { color: #134f7d; }
+.wiki-content-wrap blockquote {
+    border-left: 4px solid #00b5e2;
+    background: #f0f8ff;
+    padding: 10px 16px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+    color: #2c4a6e;
+}
+.wiki-content-wrap blockquote p { margin: 0; color: inherit; }
+
+/* ── Tables ── */
+.wiki-content-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 22px;
+    font-size: 13px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.wiki-content-wrap thead tr { background: #1a6faf; color: #fff; }
+.wiki-content-wrap th {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12.5px;
+}
+.wiki-content-wrap td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #dde3ed;
+    vertical-align: top;
+}
+.wiki-content-wrap tr:last-child td { border-bottom: none; }
+.wiki-content-wrap tbody tr:nth-child(even) { background: #f0f5fb; }
+.wiki-content-wrap tbody tr:hover { background: #e8f2fb; }
+
+/* ── Code ── */
+.wiki-content-wrap code {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 12.5px;
+    background: #e8edf5;
+    color: #c0392b;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+.wiki-content-wrap pre {
+    background: #1e2533;
+    color: #e8edf5;
+    padding: 18px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 14px 0 18px;
+    font-size: 12.5px;
+    line-height: 1.65;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.wiki-content-wrap pre code {
+    background: transparent;
+    color: #e8edf5;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* ── Callout boxes ── */
+.wiki-content-wrap .callout {
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+.wiki-content-wrap .callout-tip  { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.wiki-content-wrap .callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.wiki-content-wrap .callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+.wiki-content-wrap .callout p { margin: 0; color: inherit; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .wiki-sidebar { display: none; }
+    .wiki-content-wrap { padding: 20px 16px 60px; }
+}
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="wiki-outer">
+
+    <!-- Wiki navigation sidebar -->
+    <aside class="wiki-sidebar">
+        <div class="wiki-sidebar-header">
+            <div class="ws-logo">BMA Documentation</div>
+            <div class="ws-version">Version 2.35 · UNICEF Lebanon NFE</div>
+        </div>
+        <nav>
+            <div class="ws-section">{% trans "Navigation" %}</div>
+            <a href="{% url 'dashboard:wiki_guide_index' %}"
+               class="ws-link {% if page_name == 'index' %}active{% endif %}">
+                🏠 {% trans "Home" %}
+            </a>
+            <a href="{% url 'dashboard:wiki_guide' 'end_user' %}"
+               class="ws-link {% if page_name == 'end_user' %}active{% endif %}">
+                📖 {% trans "End User Manual" %}
+            </a>
+
+            <div class="ws-section">{% trans "Developer Guides" %}</div>
+            {% for pg_key, pg_label, pg_section in wiki_pages %}
+                {% if pg_section == 'Developer' %}
+                <a href="{% url 'dashboard:wiki_guide' pg_key %}"
+                   class="ws-link {% if page_name == pg_key %}active{% endif %}">
+                    {{ pg_label }}
+                </a>
+                {% endif %}
+            {% endfor %}
+        </nav>
+    </aside>
+
+    <!-- Page content -->
+    <div class="wiki-main">
+        <div class="wiki-content-wrap">
+            {{ wiki_content }}
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

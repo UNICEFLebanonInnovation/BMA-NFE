@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7. Authentication & Permissions — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html" class="active">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>7. Authentication & Permissions</span></span>
+  </div>
+  <div id="content">
+    <h1 id="7-authentication-permissions">7. Authentication &amp; Permissions</h1>
+<h2 id="authentication-system">Authentication System</h2>
+<p>The system uses <strong>username + password</strong> authentication via Django's built-in auth and <strong>django-allauth</strong>.</p>
+<ul>
+<li>Email login is <strong>disabled</strong> (<code>ACCOUNT_LOGIN_METHODS = {'username'}</code>)</li>
+<li>Social authentication is configured but not actively used</li>
+<li>Email verification is <strong>off</strong> (<code>ACCOUNT_EMAIL_VERIFICATION = 'none'</code>)</li>
+<li>Auto-logout after <strong>30 minutes</strong> of inactivity (production)</li>
+</ul>
+<h3 id="login-flow">Login Flow</h3>
+<pre class="highlight"><code>Browser POST /accounts/login/
+    │
+    ▼
+django-allauth AccountAdapter.login()
+    │ validates username + password
+    ▼
+Django session created (stored in Redis)
+    │
+    ▼
+Redirect to /login-success/
+    │ (determines role-based redirect target)
+    ▼
+User lands on their default dashboard
+</code></pre>
+
+<h3 id="password-requirements">Password Requirements</h3>
+<p>Enforced by custom validators in <code>config/settings/base.py</code>:<br />
+- Minimum 8 characters<br />
+- At least 3 digits<br />
+- At least one uppercase letter<br />
+- At least one lowercase letter<br />
+- At least one special symbol</p>
+<p>Passwords are hashed with <strong>Argon2</strong> (preferred), falling back to PBKDF2 and BCrypt.</p>
+<h3 id="session-security">Session Security</h3>
+<ul>
+<li>Session cookie: <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite=Lax</code></li>
+<li>CSRF protection: enabled on all state-changing requests</li>
+<li>Idle timeout: 30 minutes (production), 1000 minutes (development)</li>
+<li>Implemented via <code>AutoLogout</code> middleware in <code>middleware.py</code></li>
+</ul>
+<h3 id="rate-limits-production">Rate Limits (Production)</h3>
+<pre class="highlight"><code class="language-python">ACCOUNT_RATE_LIMITS = {
+    &quot;login_user&quot;:     &quot;10/m&quot;,    # 10 attempts per minute
+    &quot;login_failed&quot;:   &quot;5/5m&quot;,    # 5 failures per 5 minutes
+    &quot;signup&quot;:         &quot;3/h&quot;,     # 3 new accounts per hour
+    &quot;email&quot;:          &quot;10/m&quot;,
+    &quot;password_change&quot;: &quot;5/h&quot;,
+}
+</code></pre>
+
+<hr />
+<h2 id="authorization-system">Authorization System</h2>
+<p>Authorization uses Django's <strong>Group-based permissions</strong>. Each user belongs to one or more groups, and views check group membership to allow or deny access.</p>
+<h3 id="user-roles-groups">User Roles (Groups)</h3>
+<table>
+<thead>
+<tr>
+<th>Group Name</th>
+<th>Access Level</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MSCC</code></td>
+<td>MSCC module</td>
+<td>Basic MSCC data entry — register children, record services, mark attendance</td>
+</tr>
+<tr>
+<td><code>MSCC_CENTER</code></td>
+<td>MSCC center-scoped</td>
+<td>Same as <code>MSCC</code> but limited to their assigned center</td>
+</tr>
+<tr>
+<td><code>MSCC_FULL</code></td>
+<td>MSCC unrestricted</td>
+<td>No center/partner filter — can see all MSCC data</td>
+</tr>
+<tr>
+<td><code>MSCC_PARTNER</code></td>
+<td>MSCC partner-scoped</td>
+<td>See all data for their assigned partner organization</td>
+</tr>
+<tr>
+<td><code>MSCC_UNICEF</code></td>
+<td>MSCC read-only analytics</td>
+<td>Can view dashboards and run reports across all partners</td>
+</tr>
+<tr>
+<td><code>CLM_ATTENDANCE</code></td>
+<td>CLM attendance only</td>
+<td>Can only record CLM attendance</td>
+</tr>
+<tr>
+<td><code>CLM_Bridging</code></td>
+<td>CLM bridging data entry</td>
+<td>Register students, record CLM services</td>
+</tr>
+<tr>
+<td><code>CLM_BRIDGING_ALL</code></td>
+<td>CLM bridging admin</td>
+<td>Full CLM bridging access across partners</td>
+</tr>
+<tr>
+<td><code>CLM_TEACHER</code></td>
+<td>CLM teacher management</td>
+<td>Add/edit CLM teachers</td>
+</tr>
+<tr>
+<td><code>EXPORT</code></td>
+<td>Data export</td>
+<td>Access to export functionality</td>
+</tr>
+<tr>
+<td>Superuser</td>
+<td>Everything</td>
+<td>Full Django admin access</td>
+</tr>
+</tbody>
+</table>
+<h3 id="data-scoping-rules">Data Scoping Rules</h3>
+<p>Most views filter querysets based on the logged-in user's assignments:</p>
+<pre class="highlight"><code class="language-python"># Example — how MSCC list view filters data
+def get_queryset(self):
+    user = self.request.user
+    qs = Registration.objects.filter(deleted=False)
+
+    if user.groups.filter(name='MSCC_FULL').exists():
+        return qs  # No filter — sees everything
+
+    if user.groups.filter(name='MSCC_PARTNER').exists():
+        return qs.filter(partner=user.partner)
+
+    if user.groups.filter(name='MSCC_CENTER').exists():
+        return qs.filter(center=user.center)
+
+    # Default MSCC: filter by center
+    return qs.filter(center=user.center)
+</code></pre>
+
+<p>The <code>User</code> model stores assignment context:<br />
+- <code>user.partner</code> — Restricts to a single partner organization<br />
+- <code>user.center</code> — Restricts to a single center<br />
+- <code>user.centers</code> (M2M) — Multi-center access<br />
+- <code>user.school</code> / <code>user.schools</code> — School assignments</p>
+<h3 id="checking-groups-in-views">Checking Groups in Views</h3>
+<p><strong>Using <code>GroupRequiredMixin</code> (CBV):</strong></p>
+<pre class="highlight"><code class="language-python">from braces.views import GroupRequiredMixin
+
+class MyView(GroupRequiredMixin, ListView):
+    group_required = ['MSCC', 'MSCC_FULL']  # Any of these groups
+</code></pre>
+
+<p><strong>Manual check in a view:</strong></p>
+<pre class="highlight"><code class="language-python">def my_view(request):
+    if not request.user.groups.filter(name__in=['MSCC', 'MSCC_FULL']).exists():
+        raise PermissionDenied
+</code></pre>
+
+<p><strong>In templates:</strong></p>
+<pre class="highlight"><code class="language-django">{% load has_group %}
+
+{% if request.user|has_group:&quot;MSCC_FULL&quot; %}
+    &lt;a href=&quot;{% url 'mscc:export' %}&quot;&gt;Export All Data&lt;/a&gt;
+{% endif %}
+</code></pre>
+
+<p>The <code>has_group</code> template tag is defined in <code>student_registration/contrib/</code>.</p>
+<hr />
+<h2 id="rest-api-authentication">REST API Authentication</h2>
+<p>DRF uses:<br />
+- <strong>Session authentication</strong> — Automatic for browser clients (uses Django session cookie)<br />
+- <strong>Token authentication</strong> — For programmatic API access</p>
+<p>Configuration in <code>base.py</code>:</p>
+<pre class="highlight"><code class="language-python">REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+</code></pre>
+
+<p>All API endpoints require a logged-in user — there are no public endpoints.</p>
+<hr />
+<h2 id="managing-users-roles">Managing Users &amp; Roles</h2>
+<h3 id="via-admin-panel">Via Admin Panel</h3>
+<ol>
+<li>Go to <code>/admin/users/user/</code></li>
+<li>Create or edit a user</li>
+<li>Set their partner, center, school assignments</li>
+<li>Under <strong>Permissions → Groups</strong>, assign the appropriate role group</li>
+</ol>
+<h3 id="creating-groups">Creating Groups</h3>
+<p>Groups must be created before users can be assigned to them. Either:<br />
+- Create via <code>/admin/auth/group/</code><br />
+- Or via a data migration / management command</p>
+<h3 id="programmatic-user-creation">Programmatic User Creation</h3>
+<pre class="highlight"><code class="language-python">from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
+User = get_user_model()
+user = User.objects.create_user(
+    username='fieldworker1',
+    password='Secure@Pass123',
+    partner_id=5,
+    center_id=12,
+)
+group = Group.objects.get(name='MSCC_CENTER')
+user.groups.add(group)
+</code></pre>
+
+<hr />
+<h2 id="activity-logging">Activity Logging</h2>
+<p>Every HTTP request is recorded in the <code>UserActivity</code> model by the <code>UserActivityMiddleware</code>:</p>
+<ul>
+<li>Logs: username, URL path, HTTP method, POST data (sanitized), IP address, user agent</li>
+<li>Admin requests (<code>/admin/</code>) are excluded</li>
+<li>Stored in <code>backends_useractivity</code> table</li>
+<li>Viewable via the admin panel at <code>/admin/backends/useractivity/</code></li>
+</ul>
+<p>This provides a full audit trail for compliance and debugging.</p>
+<hr />
+<h2 id="security-headers-production">Security Headers (Production)</h2>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Value</th>
+<th>Middleware</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Strict-Transport-Security</code></td>
+<td><code>max-age=31536000; includeSubDomains</code></td>
+<td><code>HSTSMiddleware</code></td>
+</tr>
+<tr>
+<td><code>X-Frame-Options</code></td>
+<td><code>DENY</code></td>
+<td><code>XFrameMiddleware</code></td>
+</tr>
+<tr>
+<td><code>X-Content-Type-Options</code></td>
+<td><code>nosniff</code></td>
+<td>Django <code>SecurityMiddleware</code></td>
+</tr>
+<tr>
+<td><code>Referrer-Policy</code></td>
+<td><code>same-origin</code></td>
+<td>Django <code>SecurityMiddleware</code></td>
+</tr>
+</tbody>
+</table>
+<p>SSL redirect is enforced in production (<code>SECURE_SSL_REDIRECT = True</code>).</p>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4. Database Schema & Models — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html" class="active">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>4. Database Schema & Models</span></span>
+  </div>
+  <div id="content">
+    <h1 id="4-database-schema-models">4. Database Schema &amp; Models</h1>
+<p>All models use Django's ORM. The database is PostgreSQL. This page documents every significant model, its key fields, and how models relate to each other.</p>
+<hr />
+<h2 id="entity-relationship-summary">Entity Relationship Summary</h2>
+<pre class="highlight"><code>PartnerOrganization ◄──── User ────► School
+        │                  │           │
+        │                  ▼           │
+        │              Center ◄────────┤
+        │                  │           │
+        ▼                  ▼           ▼
+  Registration ────► Child        Section
+        │
+        ├──► ProvidedServices
+        ├──► EducationAssessment
+        ├──► HealthNutrition
+        ├──► YouthAssessment
+        ├──► PSS
+        ├──► DigitalService
+        └──► Referral
+
+Location (MPTT tree)
+  └── Governorate
+       └── Caza
+            └── Cadaster
+</code></pre>
+
+<hr />
+<h2 id="users-app"><code>users</code> App</h2>
+<h3 id="user"><code>User</code></h3>
+<p>Extends Django's <code>AbstractUser</code>. Every person who logs in has a <code>User</code> record.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>username</code></td>
+<td>CharField</td>
+<td>Login credential (email login disabled)</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>EmailField</td>
+<td>Stored but not used for login</td>
+</tr>
+<tr>
+<td><code>partner</code></td>
+<td>FK → <code>PartnerOrganization</code></td>
+<td>The NGO/partner this user belongs to</td>
+</tr>
+<tr>
+<td><code>school</code></td>
+<td>FK → <code>School</code></td>
+<td>Primary school assignment (nullable)</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>FK → <code>Location</code></td>
+<td>Primary location (nullable)</td>
+</tr>
+<tr>
+<td><code>center</code></td>
+<td>FK → <code>Center</code></td>
+<td>Primary center assignment (nullable)</td>
+</tr>
+<tr>
+<td><code>locations</code></td>
+<td>M2M → <code>Location</code></td>
+<td>Multi-location access list</td>
+</tr>
+<tr>
+<td><code>schools</code></td>
+<td>M2M → <code>School</code></td>
+<td>Multi-school access list</td>
+</tr>
+<tr>
+<td><code>regions</code></td>
+<td>M2M → <code>Location</code></td>
+<td>Regional access (related_name <code>regions</code>)</td>
+</tr>
+<tr>
+<td><code>phone_number</code></td>
+<td>CharField</td>
+<td>Optional contact number</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>partner</code>, <code>school</code>, <code>center</code>, and <code>location</code> fields control what data the user can see — most views filter querysets based on <code>request.user.partner</code> or <code>request.user.center</code>.</p>
+<h3 id="login"><code>Login</code></h3>
+<p>Tracks login sessions for audit purposes.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user</code></td>
+<td>FK → <code>User</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>created</code></td>
+<td>DateTimeField</td>
+<td>When the session was created</td>
+</tr>
+</tbody>
+</table>
+<h3 id="webpushtoken"><code>WebPushToken</code></h3>
+<p>Stores Firebase Cloud Messaging tokens for push notifications.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user</code></td>
+<td>FK → <code>User</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>token</code></td>
+<td>TextField</td>
+<td>FCM registration token from the browser</td>
+</tr>
+<tr>
+<td><code>created</code></td>
+<td>DateTimeField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="schools-app"><code>schools</code> App</h2>
+<h3 id="partnerorganization"><code>PartnerOrganization</code></h3>
+<p>NGO or implementing partner.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td>Display name</td>
+</tr>
+<tr>
+<td><code>abreviation</code></td>
+<td>CharField</td>
+<td>Short code (e.g., <code>IRC</code>)</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>CharField</td>
+<td>Type classification</td>
+</tr>
+<tr>
+<td><code>hq_address</code></td>
+<td>CharField</td>
+<td>Head office address</td>
+</tr>
+<tr>
+<td><code>contact_person</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>contact_email</code></td>
+<td>EmailField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>contact_number</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>logo</code></td>
+<td>ImageField</td>
+<td>Uploaded partner logo</td>
+</tr>
+<tr>
+<td><code>twitter</code></td>
+<td>URLField</td>
+<td>Social link</td>
+</tr>
+</tbody>
+</table>
+<h3 id="school"><code>School</code></h3>
+<p>A physical school or education center.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td>Official school name</td>
+</tr>
+<tr>
+<td><code>number</code></td>
+<td>CharField</td>
+<td>CERD number (Ministry identifier)</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>FK → <code>Location</code></td>
+<td>Geographic location</td>
+</tr>
+<tr>
+<td><code>director_name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>director_phone</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>land_line_phone</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gps_location</code></td>
+<td>CharField</td>
+<td>Lat/lng string</td>
+</tr>
+<tr>
+<td><code>fax</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>comments</code></td>
+<td>TextField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="section"><code>Section</code></h3>
+<p>A class or section within a school.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td>e.g., <code>Grade 1A</code></td>
+</tr>
+<tr>
+<td><code>school</code></td>
+<td>FK → <code>School</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="publicholidays"><code>PublicHolidays</code></h3>
+<p>Calendar entries used when calculating attendance.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td>Holiday name</td>
+</tr>
+<tr>
+<td><code>date</code></td>
+<td>DateField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="club-meeting-communityinitiative-healthvisit"><code>Club</code>, <code>Meeting</code>, <code>CommunityInitiative</code>, <code>HealthVisit</code></h3>
+<p>Secondary models for school-level activity tracking. All have FK to <code>School</code> and date/description fields.</p>
+<hr />
+<h2 id="locations-app"><code>locations</code> App</h2>
+<h3 id="locationtype"><code>LocationType</code></h3>
+<p>Classification for geographic levels.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td>e.g., <code>Governorate</code>, <code>Caza</code>, <code>Cadaster</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="location"><code>Location</code></h3>
+<p>Hierarchical tree of geographic areas using <strong>MPTT</strong> (Modified Preorder Tree Traversal). Lebanon's geography: Governorate → Caza → Cadaster → Locality.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td>Arabic or English place name</td>
+</tr>
+<tr>
+<td><code>name_ar</code></td>
+<td>CharField</td>
+<td>Arabic name</td>
+</tr>
+<tr>
+<td><code>parent</code></td>
+<td>TreeForeignKey → <code>Location</code></td>
+<td>Parent node in the tree</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>FK → <code>LocationType</code></td>
+<td>Level in the hierarchy</td>
+</tr>
+<tr>
+<td><code>latitude</code></td>
+<td>DecimalField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>longitude</code></td>
+<td>DecimalField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>MPTT adds <code>lft</code>, <code>rght</code>, <code>tree_id</code>, <code>level</code> columns automatically for fast subtree queries.</p>
+</blockquote>
+<h3 id="center"><code>Center</code></h3>
+<p>A service delivery center (physical location for MSCC/CLM programs).</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>partner</code></td>
+<td>FK → <code>PartnerOrganization</code></td>
+<td>Operating partner</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>FK → <code>Location</code></td>
+<td>Cadaster-level location</td>
+</tr>
+<tr>
+<td><code>governorate</code></td>
+<td>FK → <code>Location</code></td>
+<td>Governorate</td>
+</tr>
+<tr>
+<td><code>caza</code></td>
+<td>FK → <code>Location</code></td>
+<td>Caza</td>
+</tr>
+<tr>
+<td><code>cadaster</code></td>
+<td>FK → <code>Location</code></td>
+<td>Cadaster</td>
+</tr>
+<tr>
+<td><code>latitude</code></td>
+<td>DecimalField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>longitude</code></td>
+<td>DecimalField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="child-app"><code>child</code> App</h2>
+<h3 id="child"><code>Child</code></h3>
+<p>Core demographic profile of a beneficiary child or youth. Used by both MSCC and CLM.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>first_name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>father_name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>last_name</code></td>
+<td>CharField</td>
+<td>Family name</td>
+</tr>
+<tr>
+<td><code>mother_fullname</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gender</code></td>
+<td>CharField</td>
+<td><code>Male</code> / <code>Female</code></td>
+</tr>
+<tr>
+<td><code>birthday_year</code></td>
+<td>IntegerField</td>
+<td>Stored as separate components</td>
+</tr>
+<tr>
+<td><code>birthday_month</code></td>
+<td>IntegerField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>birthday_day</code></td>
+<td>IntegerField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>nationality</code></td>
+<td>FK → <code>Nationality</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>id_type</code></td>
+<td>FK → <code>IDType</code></td>
+<td>Document type (UNHCR, Lebanese ID, etc.)</td>
+</tr>
+<tr>
+<td><code>id_number</code></td>
+<td>CharField</td>
+<td>Document number</td>
+</tr>
+<tr>
+<td><code>marital_status</code></td>
+<td>CharField</td>
+<td>Married/Single/etc.</td>
+</tr>
+<tr>
+<td><code>caregiver</code></td>
+<td>CharField</td>
+<td>Who the child lives with</td>
+</tr>
+<tr>
+<td><code>p_code</code></td>
+<td>CharField</td>
+<td>Geographic p-code</td>
+</tr>
+<tr>
+<td><code>disability</code></td>
+<td>BooleanField</td>
+<td>Has a disability</td>
+</tr>
+<tr>
+<td><code>disability_type</code></td>
+<td>CharField</td>
+<td>Type of disability</td>
+</tr>
+<tr>
+<td><code>phone_number</code></td>
+<td>CharField</td>
+<td>Contact phone</td>
+</tr>
+<tr>
+<td><code>phone_owner</code></td>
+<td>CharField</td>
+<td>Who owns the phone</td>
+</tr>
+<tr>
+<td><code>created</code></td>
+<td>DateTimeField</td>
+<td>Auto</td>
+</tr>
+<tr>
+<td><code>modified</code></td>
+<td>DateTimeField</td>
+<td>Auto</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>Child</code> extends <code>TimeStampedModel</code> from <code>django-model-utils</code>, providing <code>created</code> and <code>modified</code> timestamps automatically.</p>
+</blockquote>
+<hr />
+<h2 id="students-app"><code>students</code> App</h2>
+<h3 id="nationality"><code>Nationality</code></h3>
+<p>Reference table of nationalities.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td>English name</td>
+</tr>
+<tr>
+<td><code>name_ar</code></td>
+<td>CharField</td>
+<td>Arabic name</td>
+</tr>
+</tbody>
+</table>
+<h3 id="idtype"><code>IDType</code></h3>
+<p>Reference table of document/ID types.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="student"><code>Student</code></h3>
+<p>Student profile used in CLM programs (separate from <code>Child</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>first_name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>father_name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>last_name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>mother_fullname</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gender</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>birthday</code></td>
+<td>DateField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>nationality</code></td>
+<td>FK → <code>Nationality</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>id_type</code></td>
+<td>FK → <code>IDType</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>id_number</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>school</code></td>
+<td>FK → <code>School</code></td>
+<td>Enrolled school</td>
+</tr>
+<tr>
+<td><code>section</code></td>
+<td>FK → <code>Section</code></td>
+<td>Class section</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="mscc-app"><code>mscc</code> App</h2>
+<p>This is the largest app (~2,686 lines). It owns the complete MSCC service delivery workflow.</p>
+<h3 id="round"><code>Round</code></h3>
+<p>A program year or operational period.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td>e.g., <code>Round 2024-2025</code></td>
+</tr>
+<tr>
+<td><code>current_round</code></td>
+<td>BooleanField</td>
+<td>Is this the active round?</td>
+</tr>
+<tr>
+<td><code>start_date</code></td>
+<td>DateField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>end_date</code></td>
+<td>DateField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="roundpartner"><code>RoundPartner</code></h3>
+<p>Joins a <code>Round</code> to a <code>PartnerOrganization</code> with enrollment capacity.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>round</code></td>
+<td>FK → <code>Round</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>partner</code></td>
+<td>FK → <code>PartnerOrganization</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>capacity</code></td>
+<td>IntegerField</td>
+<td>Maximum registrations allowed</td>
+</tr>
+</tbody>
+</table>
+<h3 id="teacher"><code>Teacher</code></h3>
+<p>A teacher or facilitator working in an MSCC center.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>first_name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>last_name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>sex</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>partner</code></td>
+<td>FK → <code>PartnerOrganization</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>center</code></td>
+<td>FK → <code>Center</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>nationality</code></td>
+<td>FK → <code>Nationality</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>id_type</code></td>
+<td>FK → <code>IDType</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>id_number</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="registration"><code>Registration</code></h3>
+<p>The central record linking a <code>Child</code> to a program <code>Round</code> at a <code>Center</code>. One child can have one active registration per round.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>child</code></td>
+<td>FK → <code>Child</code></td>
+<td>The beneficiary</td>
+</tr>
+<tr>
+<td><code>round</code></td>
+<td>FK → <code>Round</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>partner</code></td>
+<td>FK → <code>PartnerOrganization</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>center</code></td>
+<td>FK → <code>Center</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>school</code></td>
+<td>FK → <code>School</code></td>
+<td>Formal school (if enrolled)</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>CharField</td>
+<td><code>active</code>, <code>inactive</code>, <code>deleted</code></td>
+</tr>
+<tr>
+<td><code>programme_type</code></td>
+<td>CharField</td>
+<td>Which MSCC programme stream</td>
+</tr>
+<tr>
+<td><code>deleted</code></td>
+<td>BooleanField</td>
+<td>Soft delete flag</td>
+</tr>
+<tr>
+<td><code>created</code></td>
+<td>DateTimeField</td>
+<td>Auto (TimeStampedModel)</td>
+</tr>
+<tr>
+<td><code>modified</code></td>
+<td>DateTimeField</td>
+<td>Auto</td>
+</tr>
+</tbody>
+</table>
+<h3 id="packages"><code>Packages</code></h3>
+<p>Which service packages are assigned to a registration.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>registration</code></td>
+<td>FK → <code>Registration</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>education</code></td>
+<td>BooleanField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>youth</code></td>
+<td>BooleanField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>health_nutrition</code></td>
+<td>BooleanField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>child_protection</code></td>
+<td>BooleanField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>social_protection</code></td>
+<td>BooleanField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="providedservices"><code>ProvidedServices</code></h3>
+<p>A summary record of services delivered to a registration (one row per registration).</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>registration</code></td>
+<td>FK → <code>Registration</code></td>
+<td></td>
+</tr>
+<tr>
+<td>(various Boolean and date fields for each service type)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="education-service-models">Education Service Models</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EducationAssessment</code></td>
+<td>Initial reading/numeracy assessment scores</td>
+</tr>
+<tr>
+<td><code>DiagnosticAssessment</code></td>
+<td>Diagnostic scores per subject</td>
+</tr>
+<tr>
+<td><code>EducationService</code></td>
+<td>Education sessions delivered</td>
+</tr>
+<tr>
+<td><code>EducationGrading</code></td>
+<td>End-of-cycle grades</td>
+</tr>
+<tr>
+<td><code>RemedialSupport</code></td>
+<td>Remedial support sessions</td>
+</tr>
+</tbody>
+</table>
+<p>All have FK to <code>Registration</code>.</p>
+<h3 id="health-nutrition-models">Health &amp; Nutrition Models</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HealthNutrition</code></td>
+<td>Health check records (weight, height, MUAC, vaccination)</td>
+</tr>
+<tr>
+<td><code>HealthNutritionReferral</code></td>
+<td>Referral to external health services</td>
+</tr>
+</tbody>
+</table>
+<h3 id="youth-models">Youth Models</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>YouthAssessment</code></td>
+<td>Youth baseline assessment</td>
+</tr>
+<tr>
+<td><code>YouthKit</code></td>
+<td>Kit distribution record</td>
+</tr>
+<tr>
+<td><code>YouthMaharati</code></td>
+<td>Maharati vocational training sessions</td>
+</tr>
+<tr>
+<td><code>YouthGil</code></td>
+<td>Gil youth programme sessions</td>
+</tr>
+<tr>
+<td><code>YouthScoring</code></td>
+<td>Youth outcome scoring</td>
+</tr>
+</tbody>
+</table>
+<h3 id="other-service-models">Other Service Models</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PSS</code></td>
+<td>Psychosocial support sessions</td>
+</tr>
+<tr>
+<td><code>Inclusion</code></td>
+<td>Inclusion programme sessions</td>
+</tr>
+<tr>
+<td><code>DigitalService</code></td>
+<td>Digital skills training sessions</td>
+</tr>
+<tr>
+<td><code>Recreational</code></td>
+<td>Recreational activity sessions</td>
+</tr>
+<tr>
+<td><code>Lego</code></td>
+<td>LEGO therapy sessions</td>
+</tr>
+<tr>
+<td><code>Referral</code></td>
+<td>Cross-program / external referrals</td>
+</tr>
+<tr>
+<td><code>FollowUp</code></td>
+<td>Case follow-up records</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="clm-app"><code>clm</code> App</h2>
+<h3 id="cycle"><code>Cycle</code></h3>
+<p>A CLM program cycle (semester/term).</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>CharField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>current_cycle</code></td>
+<td>BooleanField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="clm"><code>CLM</code></h3>
+<p>Main enrollment record for a student in a CLM bridging cycle.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>student</code></td>
+<td>FK → <code>Student</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>cycle</code></td>
+<td>FK → <code>Cycle</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>center</code></td>
+<td>FK → <code>Center</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>partner</code></td>
+<td>FK → <code>PartnerOrganization</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>CharField</td>
+<td><code>enrolled</code>, <code>pre_test</code>, <code>post_test</code></td>
+</tr>
+<tr>
+<td><code>teacher</code></td>
+<td>FK → <code>Teacher</code></td>
+<td>Assigned teacher</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bridging"><code>Bridging</code></h3>
+<p>Bridging program enrollment (sub-type of CLM).</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clm</code></td>
+<td>FK → <code>CLM</code></td>
+<td></td>
+</tr>
+<tr>
+<td>(assessment and progress fields)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="assessment"><code>Assessment</code></h3>
+<p>Reference data for assessment tools used in CLM.</p>
+<h3 id="center-clm-app"><code>Center</code> (CLM app)</h3>
+<p>CLM-specific center configuration (note: also a model in <code>locations</code> — CLM has its own variant).</p>
+<hr />
+<h2 id="attendances-app"><code>attendances</code> App</h2>
+<h3 id="msccattendance"><code>MSCCAttendance</code></h3>
+<p>Daily attendance session at an MSCC center.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>center</code></td>
+<td>FK → <code>Center</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>date</code></td>
+<td>DateField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>partner</code></td>
+<td>FK → <code>PartnerOrganization</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>created_by</code></td>
+<td>FK → <code>User</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="msccattendancechild"><code>MSCCAttendanceChild</code></h3>
+<p>Per-child attendance record within a session.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>attendance</code></td>
+<td>FK → <code>MSCCAttendance</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>registration</code></td>
+<td>FK → <code>Registration</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>present</code></td>
+<td>BooleanField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="clmattendance-clmattendancestudent"><code>CLMAttendance</code> / <code>CLMAttendanceStudent</code></h3>
+<p>Same pattern for CLM programs — session-level and student-level records.</p>
+<hr />
+<h2 id="backends-app"><code>backends</code> App</h2>
+<h3 id="exporthistory"><code>ExportHistory</code></h3>
+<p>Tracks every async export job.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>created_by</code></td>
+<td>FK → <code>User</code></td>
+<td>Who requested the export</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>CharField</td>
+<td><code>pending</code>, <code>processing</code>, <code>done</code>, <code>failed</code></td>
+</tr>
+<tr>
+<td><code>file_format</code></td>
+<td>CharField</td>
+<td><code>xlsx</code> or <code>csv</code></td>
+</tr>
+<tr>
+<td><code>file_name</code></td>
+<td>CharField</td>
+<td>Azure Blob filename</td>
+</tr>
+<tr>
+<td><code>fields</code></td>
+<td>TextField</td>
+<td>JSON list of selected fields</td>
+</tr>
+<tr>
+<td><code>created</code></td>
+<td>DateTimeField</td>
+<td></td>
+</tr>
+<tr>
+<td><code>modified</code></td>
+<td>DateTimeField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="useractivity"><code>UserActivity</code></h3>
+<p>Audit log — every HTTP request that modifies data is recorded here.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>username</code></td>
+<td>CharField</td>
+<td>Logged-in username (stored as string, not FK)</td>
+</tr>
+<tr>
+<td><code>path</code></td>
+<td>CharField</td>
+<td>URL path</td>
+</tr>
+<tr>
+<td><code>method</code></td>
+<td>CharField</td>
+<td><code>GET</code>, <code>POST</code>, etc.</td>
+</tr>
+<tr>
+<td><code>data</code></td>
+<td>TextField</td>
+<td>Request body / POST data</td>
+</tr>
+<tr>
+<td><code>ip_address</code></td>
+<td>GenericIPAddressField</td>
+<td>Client IP</td>
+</tr>
+<tr>
+<td><code>user_agent</code></td>
+<td>CharField</td>
+<td>Browser user agent</td>
+</tr>
+<tr>
+<td><code>created</code></td>
+<td>DateTimeField</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-database-conventions">Key Database Conventions</h2>
+<ul>
+<li>All models use Django's default <code>AutoField</code> (integer primary keys), not <code>BigAutoField</code></li>
+<li>Soft deletes are used in <code>Registration</code> (<code>deleted = BooleanField(default=False)</code>) rather than hard deletes</li>
+<li><code>TimeStampedModel</code> from <code>django-model-utils</code> is used as a base for models that need <code>created</code>/<code>modified</code> timestamps</li>
+<li>MPTT is only used for the <code>Location</code> model</li>
+<li>No raw SQL — all queries go through the ORM</li>
+</ul>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

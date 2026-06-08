@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8. Admin Portal Guide — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html" class="active">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>8. Admin Portal Guide</span></span>
+  </div>
+  <div id="content">
+    <h1 id="8-admin-portal-guide">8. Admin Portal Guide</h1>
+<h2 id="overview">Overview</h2>
+<p>The admin portal is available at <code>/admin/</code> (or the path set in <code>DJANGO_ADMIN_URL</code>). It uses <a href="https://django-jazzmin.readthedocs.io/">Jazzmin</a> — a Jinja-compatible Bootstrap 4 skin for Django admin.</p>
+<p>Access the admin panel with a <strong>superuser</strong> account. Creating one:</p>
+<pre class="highlight"><code class="language-bash">python manage.py createsuperuser
+</code></pre>
+
+<hr />
+<h2 id="jazzmin-configuration">Jazzmin Configuration</h2>
+<p>All branding and navigation is configured in <code>JAZZMIN_SETTINGS</code> inside <code>config/settings/base.py</code>.</p>
+<h3 id="current-settings-summary">Current Settings Summary</h3>
+<pre class="highlight"><code class="language-python">JAZZMIN_SETTINGS = {
+    &quot;site_title&quot;: &quot;BMA Sector&quot;,
+    &quot;site_header&quot;: &quot;BMA Sector&quot;,
+    &quot;welcome_sign&quot;: &quot;Welcome to BMA Admin&quot;,
+    &quot;copyright&quot;: &quot;MEHE&quot;,
+    &quot;show_sidebar&quot;: True,
+    &quot;navigation_expanded&quot;: True,
+}
+</code></pre>
+
+<h3 id="top-menu-links">Top Menu Links</h3>
+<p>The admin top bar shows shortcuts to key app sections:</p>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Home</td>
+<td><code>admin:index</code></td>
+</tr>
+<tr>
+<td>MSCC</td>
+<td>MSCC app model list</td>
+</tr>
+<tr>
+<td>Users</td>
+<td>Users app model list</td>
+</tr>
+<tr>
+<td>Schools</td>
+<td>Schools app model list</td>
+</tr>
+<tr>
+<td>Locations</td>
+<td>Locations app model list</td>
+</tr>
+</tbody>
+</table>
+<h3 id="model-icons">Model Icons</h3>
+<p>Each model has a Font Awesome icon in the sidebar:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Icon</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>users.User</code></td>
+<td><code>fas fa-user</code></td>
+</tr>
+<tr>
+<td><code>mscc.Registration</code></td>
+<td><code>fas fa-id-card</code></td>
+</tr>
+<tr>
+<td><code>mscc.Teacher</code></td>
+<td><code>fas fa-chalkboard-teacher</code></td>
+</tr>
+<tr>
+<td><code>schools.School</code></td>
+<td><code>fas fa-school</code></td>
+</tr>
+<tr>
+<td><code>locations.Center</code></td>
+<td><code>fas fa-map-marker-alt</code></td>
+</tr>
+</tbody>
+</table>
+<p>To add an icon for a new model:</p>
+<pre class="highlight"><code class="language-python"># In JAZZMIN_SETTINGS['icons']:
+&quot;myapp.MyModel&quot;: &quot;fas fa-icon-name&quot;,
+</code></pre>
+
+<p>Browse available icons at <a href="https://fontawesome.com/icons">fontawesome.com/icons</a>.</p>
+<hr />
+<h2 id="registered-admin-models">Registered Admin Models</h2>
+<h3 id="users-app"><code>users</code> app</h3>
+<p><strong><code>User</code></strong><br />
+- List display: username, email, partner, center, is_staff, is_active<br />
+- Filters: is_staff, is_superuser, groups<br />
+- Search: username, email<br />
+- Import/Export enabled (django-import-export)<br />
+- Inline: group assignments</p>
+<p><strong><code>WebPushToken</code></strong><br />
+- List display: user, token (truncated), created<br />
+- Readonly for auditing</p>
+<hr />
+<h3 id="mscc-app"><code>mscc</code> app</h3>
+<p><strong><code>Registration</code></strong><br />
+- List display: child name, round, partner, center, status, created<br />
+- Filters: partner, center, round, programme_type, status, deleted<br />
+- Search: child first/last name, ID number<br />
+- Custom actions: bulk activate, bulk deactivate<br />
+- Range filter on <code>created</code> date (django-admin-rangefilter)<br />
+- Import/Export enabled</p>
+<p><strong><code>Teacher</code></strong><br />
+- Standard CRUD<br />
+- Filter by partner, center, nationality</p>
+<p><strong><code>Round</code></strong><br />
+- List display: name, current_round, start_date, end_date<br />
+- Only one round can be <code>current_round=True</code> (enforced in save logic)</p>
+<p><strong><code>Packages</code></strong> / <strong><code>ProvidedServices</code></strong><br />
+- Inline within <code>Registration</code> admin</p>
+<hr />
+<h3 id="schools-app"><code>schools</code> app</h3>
+<p><strong><code>School</code></strong><br />
+- List display: name, number (CERD), location, director_name<br />
+- Search: name, number<br />
+- Import/Export enabled</p>
+<p><strong><code>PartnerOrganization</code></strong><br />
+- List display: name, abbreviation, type<br />
+- Import/Export enabled</p>
+<p><strong><code>Section</code></strong><br />
+- Inline within <code>School</code> admin</p>
+<hr />
+<h3 id="locations-app"><code>locations</code> app</h3>
+<p><strong><code>Location</code></strong><br />
+- MPTT tree structure — uses <code>django-mptt</code> tree admin<br />
+- List display: name, type, parent<br />
+- Filter by type (Governorate / Caza / Cadaster)</p>
+<p><strong><code>Center</code></strong><br />
+- List display: name, partner, governorate, caza, cadaster<br />
+- Filter by partner, governorate</p>
+<hr />
+<h3 id="attendances-app"><code>attendances</code> app</h3>
+<p><strong><code>MSCCAttendance</code></strong><br />
+- List display: center, date, created_by<br />
+- Filter by center, partner, date range</p>
+<p><strong><code>MSCCAttendanceChild</code></strong><br />
+- Inline within <code>MSCCAttendance</code></p>
+<hr />
+<h3 id="backends-app"><code>backends</code> app</h3>
+<p><strong><code>ExportHistory</code></strong><br />
+- List display: created_by, status, file_format, created<br />
+- Filter by status, file_format<br />
+- Read-only — do not manually edit export records</p>
+<p><strong><code>UserActivity</code></strong><br />
+- List display: username, path, method, ip_address, created<br />
+- Filters: method, created date range<br />
+- Search: username, path<br />
+- All fields are read-only (audit log)</p>
+<hr />
+<h2 id="customizing-admin-classes">Customizing Admin Classes</h2>
+<p>Each model's admin class lives in its app's <code>admin.py</code>. Standard patterns used throughout the project:</p>
+<pre class="highlight"><code class="language-python">from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
+from rangefilter.filter import DateRangeFilter
+
+@admin.register(MyModel)
+class MyModelAdmin(ImportExportModelAdmin):
+    list_display = ['name', 'partner', 'created']
+    list_filter = [
+        'partner',
+        ('created', DateRangeFilter),  # Date range picker
+    ]
+    search_fields = ['name']
+    autocomplete_fields = ['partner', 'location']  # Select2 autocomplete
+    readonly_fields = ['created', 'modified']
+
+    # For import/export resource definition:
+    resource_class = MyModelResource
+</code></pre>
+
+<hr />
+<h2 id="importexport">Import/Export</h2>
+<p>Most key models support bulk import (Excel/CSV upload) and export via django-import-export.</p>
+<p>To export from admin:<br />
+1. Navigate to the model list<br />
+2. Select rows (or select all)<br />
+3. Choose "Export" from the Actions dropdown<br />
+4. Select format (XLSX, CSV, JSON, etc.)</p>
+<p>To import:<br />
+1. Click the "Import" button at the top of the model list<br />
+2. Upload a CSV or XLSX file following the template format<br />
+3. Review the diff preview<br />
+4. Confirm import</p>
+<p>Export resource definitions are in each app's <code>resources.py</code>.</p>
+<hr />
+<h2 id="admin-performance-tips">Admin Performance Tips</h2>
+<p>The admin panel can be slow on large datasets (100,000+ registrations). Tips:</p>
+<ol>
+<li><strong>Always use <code>list_select_related</code></strong> to avoid N+1 queries on FK fields in <code>list_display</code></li>
+<li><strong>Use <code>raw_id_fields</code></strong> for high-cardinality FK fields (child, registration) instead of <code>autocomplete_fields</code> if the dataset is huge</li>
+<li><strong>Paginate aggressively</strong> — default is 100 rows per page; reduce to 50 for heavy views</li>
+<li><strong>Avoid <code>count()</code> on large tables</strong> — Django admin runs <code>COUNT(*)</code> for pagination; consider setting <code>show_full_result_count = False</code></li>
+</ol>
+<pre class="highlight"><code class="language-python">class HeavyModelAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    show_full_result_count = False
+    list_select_related = ['partner', 'center']
+</code></pre>
+
+<hr />
+<h2 id="admin-url-customization">Admin URL Customization</h2>
+<p>The admin URL is configurable via <code>DJANGO_ADMIN_URL</code> environment variable to avoid exposing the default <code>/admin/</code> path in production:</p>
+<pre class="highlight"><code class="language-dotenv">DJANGO_ADMIN_URL=secret-admin-path
+</code></pre>
+
+<p>The admin will then be at <code>/secret-admin-path/</code>.</p>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

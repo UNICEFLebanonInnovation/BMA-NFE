@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Overview & Infrastructure — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>System Overview & Infrastructure</span></span>
+  </div>
+  <div id="content">
+    <h1 id="system-overview-infrastructure">System Overview &amp; Infrastructure</h1>
+<p>This document automatically generates a snapshot of the technical codebase and infrastructure used in the Student Registration Compiler system.</p>
+<h2 id="codebase-and-structure">Codebase and Structure</h2>
+<h3 id="backend-core-packages-django-requirements">Backend Core Packages (Django &amp; Requirements)</h3>
+<pre class="highlight"><code>wheel==0.45.1
+django==5.2.7
+django-environ==0.4.3
+whitenoise==6.9.0
+django-braces==1.17.0
+django-crispy-forms==2.4
+crispy-bootstrap5==2025.6
+crispy-bootstrap3==2024.1
+django-model-utils==5.0.0
+Pillow==11.3.0
+argon2-cffi==21.3.0
+django-allauth==65.9.0
+psycopg==3.2.9
+awesome-slugify==1.6.5
+pytz==2025.2
+django-redis==4.8.0
+redis&gt;=2.10.5
+celery==5.5.3
+django-celery-beat==2.8.1
+django-celery-results==2.6.0
+honcho==2.0.0
+rcssmin==1.0.6
+django-compressor==2.1.1
+django-datatables-view==1.13.0
+django-mptt==0.16.0
+django-makemessages-xgettext==0.1.1
+djangorestframework==3.15.2
+djangorestframework-jwt-5==1.13.0
+markdown==3.8
+django-filter==25.1
+drf-spectacular==0.27.2
+drf-nested-routers==0.11.1
+xlsxwriter==0.9.2
+tablib==3.7.0
+django-import-export==4.3.7
+django-jazzmin==3.0.1
+django-autocomplete-light==3.9.7
+django-admin-rangefilter==0.3.0
+django-bootstrap5==25.1
+bootstrap3-datetime==2.4
+django-tables2==2.7.5
+azure-core==1.34.0
+azure-storage-blob==12.25.1
+openpyxl==2.4.9
+django-prettyjson==0.4.1
+xlwt==1.3.0
+fuzzywuzzy==0.18.0
+Levenshtein&gt;=0.27.3
+django-storages==1.14.2
+six==1.17.0
+firebase-admin==6.8.0
+grpcio==1.65.5
+azure-monitor-opentelemetry==1.8.1
+bleach==6.3.0
+</code></pre>
+
+<h3 id="frontend-ecosystem">Frontend Ecosystem</h3>
+<pre class="highlight"><code class="language-json">{
+  &quot;name&quot;: &quot;student_registration&quot;,
+  &quot;version&quot;: &quot;2.0.0&quot;,
+  &quot;dependencies&quot;: {},
+  &quot;devDependencies&quot;: {
+
+    &quot;browser-sync&quot;: &quot;^2.14.0&quot;,
+    &quot;del&quot;: &quot;^2.2.2&quot;,
+    &quot;gulp&quot;: &quot;^3.9.1&quot;,
+    &quot;gulp-autoprefixer&quot;: &quot;^3.1.1&quot;,
+    &quot;gulp-cssnano&quot;: &quot;^2.1.2&quot;,
+    &quot;gulp-imagemin&quot;: &quot;^3.0.3&quot;,
+    &quot;gulp-pixrem&quot;: &quot;^1.0.0&quot;,
+    &quot;gulp-plumber&quot;: &quot;^1.1.0&quot;,
+    &quot;gulp-rename&quot;: &quot;^1.2.2&quot;,
+    &quot;gulp-sass&quot;: &quot;^2.3.2&quot;,
+    &quot;gulp-uglify&quot;: &quot;^2.0.0&quot;,
+    &quot;gulp-util&quot;: &quot;^3.0.7&quot;,
+    &quot;run-sequence&quot;: &quot;^1.2.2&quot;
+
+  },
+  &quot;engines&quot;: {
+    &quot;node&quot;: &quot;&gt;=0.8.0&quot;
+  }
+}
+</code></pre>
+
+<h3 id="django-applications-database-models">Django Applications &amp; Database Models</h3>
+<p>The main Django project (<code>student_registration</code>) is divided into the following apps, containing the listed database models:</p>
+<h4 id="student_registrationlocations"><code>student_registration.locations</code></h4>
+<ul>
+<li><strong><code>LocationType</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>name_en (CharField)</code></li>
+<li><strong><code>Location</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>name_en (CharField)</code></li>
+<li><code>type (ForeignKey)</code></li>
+<li><code>latitude (FloatField)</code></li>
+<li><code>longitude (FloatField)</code></li>
+<li><code>p_code (CharField)</code></li>
+<li><strong><code>Center</code></strong></li>
+<li><code>partner (ForeignKey)</code></li>
+<li><code>name (CharField)</code></li>
+<li><code>governorate (ForeignKey)</code></li>
+<li><code>caza (ForeignKey)</code></li>
+<li><code>cadaster (ForeignKey)</code></li>
+<li><code>longitude (FloatField)</code></li>
+<li><code>latitude (FloatField)</code></li>
+<li><code>manager_name (CharField)</code></li>
+<li><code>phone_number (CharField)</code></li>
+<li><code>email (EmailField)</code></li>
+<li><code>type (CharField)</code></li>
+<li><code>admin_staff_number (IntegerField)</code></li>
+<li><code>cwd_accessible (CharField)</code></li>
+<li><code>p_code (CharField)</code></li>
+<li><code>is_active (BooleanField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><code>offer_digital_learning (CharField)</code></li>
+<li><code>have_digital_hub (CharField)</code></li>
+<li><code>neaby_phcc (CharField)</code></li>
+</ul>
+<h4 id="student_registrationchild"><code>student_registration.child</code></h4>
+<ul>
+<li><strong><code>Child</code></strong></li>
+<li><code>first_name (CharField)</code></li>
+<li><code>last_name (CharField)</code></li>
+<li><code>father_name (CharField)</code></li>
+<li><code>mother_fullname (CharField)</code></li>
+<li><code>gender (CharField)</code></li>
+<li><code>nationality (ForeignKey)</code></li>
+<li><code>nationality_other (TextField)</code></li>
+<li><code>birthday_year (CharField)</code></li>
+<li><code>birthday_month (CharField)</code></li>
+<li><code>birthday_day (CharField)</code></li>
+<li><code>p_code (CharField)</code></li>
+<li><code>address (TextField)</code></li>
+<li><code>living_arrangement (CharField)</code></li>
+<li><code>disability (ForeignKey)</code></li>
+<li><code>marital_status (CharField)</code></li>
+<li><code>have_children (CharField)</code></li>
+<li><code>children_number (IntegerField)</code></li>
+<li><code>have_sibling (CharField)</code></li>
+<li><code>siblings_have_disability (CharField)</code></li>
+<li><code>mother_pregnant_expecting (CharField)</code></li>
+<li><code>fe_unique_id (CharField)</code></li>
+<li><code>number (CharField)</code></li>
+<li><code>unicef_id (CharField)</code></li>
+<li><code>id_type (ForeignKey)</code></li>
+<li><code>case_number (CharField)</code></li>
+<li><code>case_number_confirm (CharField)</code></li>
+<li><code>parent_individual_case_number (CharField)</code></li>
+<li><code>parent_individual_case_number_confirm (CharField)</code></li>
+<li><code>individual_case_number (CharField)</code></li>
+<li><code>individual_case_number_confirm (CharField)</code></li>
+<li><code>recorded_number (CharField)</code></li>
+<li><code>recorded_number_confirm (CharField)</code></li>
+<li><code>parent_national_number (CharField)</code></li>
+<li><code>parent_national_number_confirm (CharField)</code></li>
+<li><code>national_number (CharField)</code></li>
+<li><code>national_number_confirm (CharField)</code></li>
+<li><code>parent_extract_record (CharField)</code></li>
+<li><code>parent_extract_record_confirm (CharField)</code></li>
+<li><code>parent_syrian_national_number (CharField)</code></li>
+<li><code>parent_syrian_national_number_confirm (CharField)</code></li>
+<li><code>syrian_national_number (CharField)</code></li>
+<li><code>syrian_national_number_confirm (CharField)</code></li>
+<li><code>parent_sop_national_number (CharField)</code></li>
+<li><code>parent_sop_national_number_confirm (CharField)</code></li>
+<li><code>sop_national_number (CharField)</code></li>
+<li><code>sop_national_number_confirm (CharField)</code></li>
+<li><code>parent_other_number (CharField)</code></li>
+<li><code>parent_other_number_confirm (CharField)</code></li>
+<li><code>other_number (CharField)</code></li>
+<li><code>other_number_confirm (CharField)</code></li>
+<li><code>father_educational_level (ForeignKey)</code></li>
+<li><code>mother_educational_level (ForeignKey)</code></li>
+<li><code>first_phone_owner (CharField)</code></li>
+<li><code>first_phone_number (CharField)</code></li>
+<li><code>first_phone_number_confirm (CharField)</code></li>
+<li><code>second_phone_owner (CharField)</code></li>
+<li><code>second_phone_number (CharField)</code></li>
+<li><code>second_phone_number_confirm (CharField)</code></li>
+<li><code>main_caregiver (CharField)</code></li>
+<li><code>main_caregiver_other (TextField)</code></li>
+<li><code>children_number_under18 (IntegerField)</code></li>
+<li><code>caregiver_first_name (CharField)</code></li>
+<li><code>caregiver_middle_name (CharField)</code></li>
+<li><code>caregiver_last_name (CharField)</code></li>
+<li><code>caregiver_mother_name (CharField)</code></li>
+<li><code>main_caregiver_nationality (ForeignKey)</code></li>
+<li><code>main_caregiver_nationality_other (TextField)</code></li>
+</ul>
+<h4 id="student_registrationcontrib"><code>student_registration.contrib</code></h4>
+<ul>
+<li>No models defined.</li>
+</ul>
+<h4 id="student_registrationdashboard"><code>student_registration.dashboard</code></h4>
+<ul>
+<li>No models defined.</li>
+</ul>
+<h4 id="student_registrationstudents"><code>student_registration.students</code></h4>
+<ul>
+<li><strong><code>Nationality</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>code (CharField)</code></li>
+<li><code>name_en (CharField)</code></li>
+<li><strong><code>IDType</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>active (BooleanField)</code></li>
+<li><strong><code>Labour</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><strong><code>Person</code></strong></li>
+<li><code>first_name (CharField)</code></li>
+<li><code>last_name (CharField)</code></li>
+<li><code>father_name (CharField)</code></li>
+<li><code>mother_fullname (CharField)</code></li>
+<li><code>mother_firstname (CharField)</code></li>
+<li><code>mother_lastname (CharField)</code></li>
+<li><code>sex (CharField)</code></li>
+<li><code>birthday_year (CharField)</code></li>
+<li><code>birthday_month (CharField)</code></li>
+<li><code>birthday_day (CharField)</code></li>
+<li><code>place_of_birth (CharField)</code></li>
+<li><code>family_status (CharField)</code></li>
+<li><code>have_children (CharField)</code></li>
+<li><code>phone (CharField)</code></li>
+<li><code>phone_prefix (CharField)</code></li>
+<li><code>registered_in_unhcr (CharField)</code></li>
+<li><code>id_number (CharField)</code></li>
+<li><code>id_type (ForeignKey)</code></li>
+<li><code>nationality (ForeignKey)</code></li>
+<li><code>mother_nationality (ForeignKey)</code></li>
+<li><code>address (TextField)</code></li>
+<li><code>p_code (CharField)</code></li>
+<li><code>number (CharField)</code></li>
+<li><code>unicef_id (CharField)</code></li>
+<li><strong><code>Training</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><strong><code>AttachmentType</code></strong></li>
+<li><code>name (CharField)</code></li>
+</ul>
+<h4 id="student_registrationschools"><code>student_registration.schools</code></h4>
+<ul>
+<li><strong><code>PublicHolidays</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>start_date (DateField)</code></li>
+<li><code>end_date (DateField)</code></li>
+<li><strong><code>School</code></strong></li>
+<li><code>number (CharField)</code></li>
+<li><code>type (CharField)</code></li>
+<li><code>name (CharField)</code></li>
+<li><code>director_name (CharField)</code></li>
+<li><code>land_phone_number (CharField)</code></li>
+<li><code>email (CharField)</code></li>
+<li><code>governorate (ForeignKey)</code></li>
+<li><code>district (ForeignKey)</code></li>
+<li><code>cadaster (ForeignKey)</code></li>
+<li><code>longitude (FloatField)</code></li>
+<li><code>latitude (FloatField)</code></li>
+<li><code>school_capacity (IntegerField)</code></li>
+<li><code>empty_building (CharField)</code></li>
+<li><code>number_children (IntegerField)</code></li>
+<li><code>number_children_male (IntegerField)</code></li>
+<li><code>number_children_female (IntegerField)</code></li>
+<li><code>number_children_lebanese (IntegerField)</code></li>
+<li><code>number_children_non_lebanese (IntegerField)</code></li>
+<li><code>number_children_sbp (IntegerField)</code></li>
+<li><code>number_children_male_sbp (IntegerField)</code></li>
+<li><code>number_children_female_sbp (IntegerField)</code></li>
+<li><code>number_children_lebanese_sbp (IntegerField)</code></li>
+<li><code>number_children_non_lebanese_sbp (IntegerField)</code></li>
+<li><code>CWD_accessible (CharField)</code></li>
+<li><code>internet_available (CharField)</code></li>
+<li><code>digital_learning_programme (CharField)</code></li>
+<li><code>school_digital_capacity (IntegerField)</code></li>
+<li><code>weekend (CharField)</code></li>
+<li><code>academic_year_start (DateField)</code></li>
+<li><code>academic_year_end (DateField)</code></li>
+<li><code>academic_year_exam_end (DateField)</code></li>
+<li><code>director_phone_number (CharField)</code></li>
+<li><code>fax_number (CharField)</code></li>
+<li><code>certified_foreign_language (CharField)</code></li>
+<li><code>comments (TextField)</code></li>
+<li><code>it_name (CharField)</code></li>
+<li><code>it_phone_number (CharField)</code></li>
+<li><code>attendance_range (IntegerField)</code></li>
+<li><code>attendance_from_beginning (BooleanField)</code></li>
+<li><code>location (ForeignKey)</code></li>
+<li><code>is_bma (BooleanField)</code></li>
+<li><code>is_closed (BooleanField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><strong><code>ClubType</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><strong><code>Club</code></strong></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>club_name (CharField)</code></li>
+<li><code>number_clubs (IntegerField)</code></li>
+<li><code>club_type (ForeignKey)</code></li>
+<li><code>number_children (IntegerField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><strong><code>Meeting</code></strong></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>meeting_name (CharField)</code></li>
+<li><code>meeting_date (DateField)</code></li>
+<li><code>number_participants (IntegerField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><strong><code>CommunityInitiative</code></strong></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>community_group_name (CharField)</code></li>
+<li><code>number_initiatives (IntegerField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><strong><code>HealthVisit</code></strong></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>focal_point_name (CharField)</code></li>
+<li><code>number_visits (IntegerField)</code></li>
+<li><code>date_first_visit (DateField)</code></li>
+<li><code>date_last_visit (DateField)</code></li>
+<li><code>summary (TextField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><strong><code>EducationalLevel</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><strong><code>Section</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><strong><code>CLMRound</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>current_year (BooleanField)</code></li>
+<li><code>current_round_bridging (BooleanField)</code></li>
+<li><code>start_date_bridging (DateField)</code></li>
+<li><code>end_date_bridging (DateField)</code></li>
+<li><code>start_date_bridging_edit (DateField)</code></li>
+<li><code>end_date_bridging_edit (DateField)</code></li>
+<li><strong><code>PartnerOrganization</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>schools (ManyToManyField)</code></li>
+<li><code>short_name (CharField)</code></li>
+<li><code>monitoring_evaluation_focal_point_name (CharField)</code></li>
+<li><code>monitoring_evaluation_focal_point_phone (CharField)</code></li>
+<li><code>monitoring_evaluation_focal_point_email (CharField)</code></li>
+<li><code>program_manager_focal_point_name (CharField)</code></li>
+<li><code>program_manager_focal_point_phone (CharField)</code></li>
+<li><code>program_manager_focal_point_email (CharField)</code></li>
+<li><code>active (BooleanField)</code></li>
+</ul>
+<h4 id="student_registrationclm"><code>student_registration.clm</code></h4>
+<ul>
+<li><strong><code>Assessment</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>slug (SlugField)</code></li>
+<li><code>overview (TextField)</code></li>
+<li><code>start_date (DateField)</code></li>
+<li><code>end_date (DateField)</code></li>
+<li><code>capacity (IntegerField)</code></li>
+<li><code>assessment_form (URLField)</code></li>
+<li><strong><code>Cycle</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>current_cycle (BooleanField)</code></li>
+<li><strong><code>Disability</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>name_en (CharField)</code></li>
+<li><code>active (BooleanField)</code></li>
+<li><strong><code>Center</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>partner (ForeignKey)</code></li>
+<li><strong><code>CLM</code></strong></li>
+<li><code>first_attendance_date (DateField)</code></li>
+<li><code>round (ForeignKey)</code></li>
+<li><code>governorate (ForeignKey)</code></li>
+<li><code>district (ForeignKey)</code></li>
+<li><code>cadaster (ForeignKey)</code></li>
+<li><code>location (CharField)</code></li>
+<li><code>center (ForeignKey)</code></li>
+<li><code>language (CharField)</code></li>
+<li><code>student (ForeignKey)</code></li>
+<li><code>disability (ForeignKey)</code></li>
+<li><code>have_labour_single_selection (CharField)</code></li>
+<li><code>labour_weekly_income (CharField)</code></li>
+<li><code>labours_single_selection (CharField)</code></li>
+<li><code>labours_other_specify (CharField)</code></li>
+<li><code>labour_hours (IntegerField)</code></li>
+<li><code>hh_educational_level (ForeignKey)</code></li>
+<li><code>father_educational_level (ForeignKey)</code></li>
+<li><code>status (CharField)</code></li>
+<li><code>pre_test_score (CharField)</code></li>
+<li><code>post_test_score (CharField)</code></li>
+<li><code>participation (CharField)</code></li>
+<li><code>learning_result (CharField)</code></li>
+<li><code>barriers_single (CharField)</code></li>
+<li><code>barriers_other (TextField)</code></li>
+<li><code>test_done (CharField)</code></li>
+<li><code>round_complete (CharField)</code></li>
+<li><code>follow_up_type (CharField)</code></li>
+<li><code>phone_call_number (IntegerField)</code></li>
+<li><code>house_visit_number (IntegerField)</code></li>
+<li><code>family_visit_number (IntegerField)</code></li>
+<li><code>phone_call_follow_up_result (CharField)</code></li>
+<li><code>house_visit_follow_up_result (CharField)</code></li>
+<li><code>family_visit_follow_up_result (CharField)</code></li>
+<li><code>cp_referral (CharField)</code></li>
+<li><code>parent_attended_visits (CharField)</code></li>
+<li><code>pss_session_attended (CharField)</code></li>
+<li><code>pss_session_number (IntegerField)</code></li>
+<li><code>pss_parent_attended (CharField)</code></li>
+<li><code>pss_parent_attended_other (TextField)</code></li>
+<li><code>covid_session_attended (CharField)</code></li>
+<li><code>covid_session_number (IntegerField)</code></li>
+<li><code>covid_parent_attended (CharField)</code></li>
+<li><code>covid_parent_attended_other (TextField)</code></li>
+<li><code>followup_session_attended (CharField)</code></li>
+<li><code>followup_session_number (IntegerField)</code></li>
+<li><code>followup_parent_attended (CharField)</code></li>
+<li><code>followup_parent_attended_other (TextField)</code></li>
+<li><code>visits_number (IntegerField)</code></li>
+<li><code>child_health_examed (CharField)</code></li>
+<li><code>child_health_concern (CharField)</code></li>
+<li><code>registration_level (CharField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><code>deleted (BooleanField)</code></li>
+<li><code>dropout_status (BooleanField)</code></li>
+<li><code>moved (BooleanField)</code></li>
+<li><code>registration_date (DateField)</code></li>
+<li><code>partner (ForeignKey)</code></li>
+<li><code>internal_number (CharField)</code></li>
+<li><code>comments (TextField)</code></li>
+<li><code>unsuccessful_pretest_reason (CharField)</code></li>
+<li><code>unsuccessful_posttest_reason (CharField)</code></li>
+<li><code>phone_number (CharField)</code></li>
+<li><code>phone_number_confirm (CharField)</code></li>
+<li><code>education_status (CharField)</code></li>
+<li><code>id_type (CharField)</code></li>
+<li><code>case_number (CharField)</code></li>
+<li><code>case_number_confirm (CharField)</code></li>
+<li><code>individual_case_number (CharField)</code></li>
+<li><code>individual_case_number_confirm (CharField)</code></li>
+<li><code>recorded_number (CharField)</code></li>
+<li><code>recorded_number_confirm (CharField)</code></li>
+<li><code>other_nationality (CharField)</code></li>
+<li><code>national_number (CharField)</code></li>
+<li><code>national_number_confirm (CharField)</code></li>
+<li><code>parent_extract_record (CharField)</code></li>
+<li><code>parent_extract_record_confirm (CharField)</code></li>
+<li><code>individual_extract_record (CharField)</code></li>
+<li><code>individual_extract_record_confirm (CharField)</code></li>
+<li><code>syrian_national_number (CharField)</code></li>
+<li><code>syrian_national_number_confirm (CharField)</code></li>
+<li><code>sop_national_number (CharField)</code></li>
+<li><code>sop_national_number_confirm (CharField)</code></li>
+<li><code>source_of_identification (CharField)</code></li>
+<li><code>source_of_identification_specify (TextField)</code></li>
+<li><code>rims_case_number (CharField)</code></li>
+<li><code>source_of_transportation (CharField)</code></li>
+<li><code>no_child_id_confirmation (CharField)</code></li>
+<li><code>no_parent_id_confirmation (CharField)</code></li>
+<li><code>parent_id_type (CharField)</code></li>
+<li><code>parent_case_number (CharField)</code></li>
+<li><code>parent_case_number_confirm (CharField)</code></li>
+<li><code>parent_individual_case_number (CharField)</code></li>
+<li><code>parent_individual_case_number_confirm (CharField)</code></li>
+<li><code>parent_national_number (CharField)</code></li>
+<li><code>parent_national_number_confirm (CharField)</code></li>
+<li><code>parent_syrian_national_number (CharField)</code></li>
+<li><code>parent_syrian_national_number_confirm (CharField)</code></li>
+<li><code>parent_sop_national_number (CharField)</code></li>
+<li><code>parent_sop_national_number_confirm (CharField)</code></li>
+<li><code>parent_other_number (CharField)</code></li>
+<li><code>parent_other_number_confirm (CharField)</code></li>
+<li><code>other_number (CharField)</code></li>
+<li><code>other_number_confirm (CharField)</code></li>
+<li><code>referral_programme_type_1 (CharField)</code></li>
+<li><code>referral_partner_1 (CharField)</code></li>
+<li><code>referral_date_1 (DateField)</code></li>
+<li><code>confirmation_date_1 (DateField)</code></li>
+<li><code>referral_programme_type_2 (CharField)</code></li>
+<li><code>referral_partner_2 (CharField)</code></li>
+<li><code>referral_date_2 (DateField)</code></li>
+<li><code>confirmation_date_2 (DateField)</code></li>
+<li><code>referral_programme_type_3 (CharField)</code></li>
+<li><code>referral_partner_3 (CharField)</code></li>
+<li><code>referral_date_3 (DateField)</code></li>
+<li><code>confirmation_date_3 (DateField)</code></li>
+<li><code>followup_call_reason_1 (TextField)</code></li>
+<li><code>followup_call_result_1 (TextField)</code></li>
+<li><code>followup_call_date_1 (DateField)</code></li>
+<li><code>followup_call_reason_2 (TextField)</code></li>
+<li><code>followup_call_result_2 (TextField)</code></li>
+<li><code>followup_call_date_2 (DateField)</code></li>
+<li><code>followup_visit_reason_1 (TextField)</code></li>
+<li><code>followup_visit_result_1 (TextField)</code></li>
+<li><code>followup_visit_date_1 (DateField)</code></li>
+<li><code>caretaker_first_name (CharField)</code></li>
+<li><code>caretaker_middle_name (CharField)</code></li>
+<li><code>caretaker_last_name (CharField)</code></li>
+<li><code>caretaker_mother_name (CharField)</code></li>
+<li><code>caretaker_birthday_year (CharField)</code></li>
+<li><code>caretaker_birthday_month (CharField)</code></li>
+<li><code>caretaker_birthday_day (CharField)</code></li>
+<li><code>cycle_completed (BooleanField)</code></li>
+<li><code>enrolled_at_school (BooleanField)</code></li>
+<li><code>basic_stationery (CharField)</code></li>
+<li><code>pss_kit (CharField)</code></li>
+<li><code>remote_learning (CharField)</code></li>
+<li><code>remote_learning_reasons_not_engaged (CharField)</code></li>
+<li><code>reasons_not_engaged_other (TextField)</code></li>
+<li><code>reliable_internet (CharField)</code></li>
+<li><code>gender_participate (CharField)</code></li>
+<li><code>gender_participate_explain (TextField)</code></li>
+<li><code>remote_learning_engagement (CharField)</code></li>
+<li><code>meet_learning_outcomes (CharField)</code></li>
+<li><code>parent_learning_support_rate (CharField)</code></li>
+<li><code>covid_message (CharField)</code></li>
+<li><code>covid_message_how_often (CharField)</code></li>
+<li><code>covid_parents_message (CharField)</code></li>
+<li><code>covid_parents_message_how_often (CharField)</code></li>
+<li><code>follow_up_done (CharField)</code></li>
+<li><code>follow_up_done_with_who (CharField)</code></li>
+<li><code>child_received_books (CharField)</code></li>
+<li><code>child_received_printout (CharField)</code></li>
+<li><code>child_received_internet (CharField)</code></li>
+<li><code>referal_wash (CharField)</code></li>
+<li><code>referal_health (CharField)</code></li>
+<li><code>referal_other (CharField)</code></li>
+<li><code>referal_other_specify (TextField)</code></li>
+</ul>
+<h4 id="student_registrationattendances"><code>student_registration.attendances</code></h4>
+<ul>
+<li><strong><code>CLMAttendance</code></strong></li>
+<li><code>round_id (IntegerField)</code></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>registration_level (CharField)</code></li>
+<li><code>attendance_date (DateField)</code></li>
+<li><code>day_off (CharField)</code></li>
+<li><code>close_reason (CharField)</code></li>
+<li><strong><code>CLMAttendanceStudent</code></strong></li>
+<li><code>attendance_day (ForeignKey)</code></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>student (ForeignKey)</code></li>
+<li><code>attended (CharField)</code></li>
+<li><code>absence_reason (CharField)</code></li>
+<li><code>absence_reason_other (CharField)</code></li>
+<li><strong><code>CLMStudentAbsences</code></strong></li>
+<li><code>student_id (IntegerField)</code></li>
+<li><code>registration_id (IntegerField)</code></li>
+<li><code>round_id (IntegerField)</code></li>
+<li><code>partner_id (IntegerField)</code></li>
+<li><code>school_id (IntegerField)</code></li>
+<li><code>student_first_name (CharField)</code></li>
+<li><code>student_father_name (CharField)</code></li>
+<li><code>student_last_name (CharField)</code></li>
+<li><code>school_name (CharField)</code></li>
+<li><code>registation_level (CharField)</code></li>
+<li><code>absence_starting_date (DateField)</code></li>
+<li><code>absence_ending_date (DateField)</code></li>
+<li><code>consecutive_absence_days (IntegerField)</code></li>
+<li><strong><code>CLMStudentTotalAttendance</code></strong></li>
+<li><code>student_id (IntegerField)</code></li>
+<li><code>registration_id (IntegerField)</code></li>
+<li><code>round_id (IntegerField)</code></li>
+<li><code>partner_id (IntegerField)</code></li>
+<li><code>school_id (IntegerField)</code></li>
+<li><code>student_first_name (CharField)</code></li>
+<li><code>student_father_name (CharField)</code></li>
+<li><code>student_last_name (CharField)</code></li>
+<li><code>school_name (CharField)</code></li>
+<li><code>registation_level (CharField)</code></li>
+<li><code>total_attendance_days (IntegerField)</code></li>
+<li><code>total_absence_days (IntegerField)</code></li>
+<li><strong><code>MSCCAttendance</code></strong></li>
+<li><code>round_id (IntegerField)</code></li>
+<li><code>center (ForeignKey)</code></li>
+<li><code>education_program (CharField)</code></li>
+<li><code>class_section (CharField)</code></li>
+<li><code>attendance_date (DateField)</code></li>
+<li><code>day_off (CharField)</code></li>
+<li><code>close_reason (CharField)</code></li>
+<li><strong><code>MSCCAttendanceChild</code></strong></li>
+<li><code>attendance_day (ForeignKey)</code></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>child (ForeignKey)</code></li>
+<li><code>attended (CharField)</code></li>
+<li><code>absence_reason (CharField)</code></li>
+<li><code>absence_reason_other (CharField)</code></li>
+</ul>
+<h4 id="student_registrationtaskapp"><code>student_registration.taskapp</code></h4>
+<ul>
+<li><strong><code>TaskRunLog</code></strong></li>
+<li><code>task_id (CharField)</code></li>
+<li><code>task_name (CharField)</code></li>
+<li><code>status (CharField)</code></li>
+<li><code>started_at (DateTimeField)</code></li>
+<li><code>finished_at (DateTimeField)</code></li>
+<li><code>result (TextField)</code></li>
+</ul>
+<h4 id="student_registrationaccounts"><code>student_registration.accounts</code></h4>
+<ul>
+<li><strong><code>LoggedInUser</code></strong></li>
+<li><code>user (OneToOneField)</code></li>
+<li><code>session_key (CharField)</code></li>
+</ul>
+<h4 id="student_registrationusers"><code>student_registration.users</code></h4>
+<ul>
+<li><strong><code>User</code></strong></li>
+<li><code>partner (ForeignKey)</code></li>
+<li><code>phone_number (CharField)</code></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>location (ForeignKey)</code></li>
+<li><code>center (ForeignKey)</code></li>
+<li><code>locations (ManyToManyField)</code></li>
+<li><code>schools (ManyToManyField)</code></li>
+<li><code>regions (ManyToManyField)</code></li>
+<li><strong><code>Login</code></strong></li>
+<li><code>user (ForeignKey)</code></li>
+<li><code>active (BooleanField)</code></li>
+<li><strong><code>WebPushToken</code></strong></li>
+<li><code>user (ForeignKey)</code></li>
+<li><code>token (CharField)</code></li>
+<li><code>created (DateTimeField)</code></li>
+</ul>
+<h4 id="student_registrationmscc"><code>student_registration.mscc</code></h4>
+<ul>
+<li><strong><code>Round</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>current_year (BooleanField)</code></li>
+<li><code>year (PositiveSmallIntegerField)</code></li>
+<li><strong><code>RoundPartner</code></strong></li>
+<li><code>round (ForeignKey)</code></li>
+<li><code>partner (ForeignKey)</code></li>
+<li><code>start_date (DateField)</code></li>
+<li><code>end_date (DateField)</code></li>
+<li><strong><code>Teacher</code></strong></li>
+<li><code>first_name (CharField)</code></li>
+<li><code>father_name (CharField)</code></li>
+<li><code>last_name (CharField)</code></li>
+<li><code>mother_fullname (CharField)</code></li>
+<li><code>sex (CharField)</code></li>
+<li><code>birthdate (DateField)</code></li>
+<li><code>id_number (CharField)</code></li>
+<li><code>id_type (ForeignKey)</code></li>
+<li><code>nationality (ForeignKey)</code></li>
+<li><code>unicef_id (CharField)</code></li>
+<li><code>round (ForeignKey)</code></li>
+<li><code>center (ForeignKey)</code></li>
+<li><code>email (CharField)</code></li>
+<li><code>primary_phone_number (CharField)</code></li>
+<li><code>teacher_assignment (CharField)</code></li>
+<li><code>teaching_hours_private_school (IntegerField)</code></li>
+<li><code>teaching_hours_mscc (IntegerField)</code></li>
+<li><code>trainings (ManyToManyField)</code></li>
+<li><code>training_sessions_attended (IntegerField)</code></li>
+<li><code>training_date_of_completion (DateField)</code></li>
+<li><code>extra_coaching (CharField)</code></li>
+<li><code>extra_coaching_specify (TextField)</code></li>
+<li><code>attach_short_description_1 (CharField)</code></li>
+<li><code>attach_file_1 (FileField)</code></li>
+<li><code>attach_type_1 (ForeignKey)</code></li>
+<li><code>attach_short_description_2 (CharField)</code></li>
+<li><code>attach_file_2 (FileField)</code></li>
+<li><code>attach_type_2 (ForeignKey)</code></li>
+<li><code>attach_short_description_3 (CharField)</code></li>
+<li><code>attach_file_3 (FileField)</code></li>
+<li><code>attach_type_3 (ForeignKey)</code></li>
+<li><code>attach_short_description_4 (CharField)</code></li>
+<li><code>attach_file_4 (FileField)</code></li>
+<li><code>attach_type_4 (ForeignKey)</code></li>
+<li><code>attach_short_description_5 (CharField)</code></li>
+<li><code>attach_file_5 (FileField)</code></li>
+<li><code>attach_type_5 (ForeignKey)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><strong><code>Registration</code></strong></li>
+<li><code>center (ForeignKey)</code></li>
+<li><code>child (ForeignKey)</code></li>
+<li><code>student_old (IntegerField)</code></li>
+<li><code>partner (ForeignKey)</code></li>
+<li><code>round (ForeignKey)</code></li>
+<li><code>have_labour (CharField)</code></li>
+<li><code>labour_type (CharField)</code></li>
+<li><code>labour_type_specify (CharField)</code></li>
+<li><code>labour_hours (IntegerField)</code></li>
+<li><code>labour_weekly_income (CharField)</code></li>
+<li><code>source_of_identification (CharField)</code></li>
+<li><code>source_of_identification_specify (TextField)</code></li>
+<li><code>type (CharField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><code>deleted (BooleanField)</code></li>
+<li><code>deleted_by (ForeignKey)</code></li>
+<li><code>registration_date (DateField)</code></li>
+<li><code>partner_unique_number (CharField)</code></li>
+<li><strong><code>EducationHistory</code></strong></li>
+<li><code>child (IntegerField)</code></li>
+<li><code>student_old (IntegerField)</code></li>
+<li><code>registration_id (IntegerField)</code></li>
+<li><code>programme_type (CharField)</code></li>
+<li><code>programme_id (IntegerField)</code></li>
+<li><strong><code>ProvidedServices</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>type (CharField)</code></li>
+<li><code>category (CharField)</code></li>
+<li><code>service_id (IntegerField)</code></li>
+<li><code>completed (BooleanField)</code></li>
+<li><code>required (BooleanField)</code></li>
+<li><code>completion_date (DateField)</code></li>
+<li><strong><code>Packages</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>type (CharField)</code></li>
+<li><code>category (CharField)</code></li>
+<li><code>required (BooleanField)</code></li>
+<li><code>age (IntegerField)</code></li>
+<li><code>min_age (IntegerField)</code></li>
+<li><code>max_age (IntegerField)</code></li>
+<li><strong><code>InclusionService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>dropout (CharField)</code></li>
+<li><code>parental_engagement (CharField)</code></li>
+<li><strong><code>DigitalService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>using_akelius (CharField)</code></li>
+<li><code>akelius_sessions_number (IntegerField)</code></li>
+<li><code>akelius_access (CharField)</code></li>
+<li><code>akelius_child_equipped (CharField)</code></li>
+<li><code>akelius_change_literacy (CharField)</code></li>
+<li><code>akelius_change_math (CharField)</code></li>
+<li><code>akelius_change_learning (CharField)</code></li>
+<li><code>using_lp (CharField)</code></li>
+<li><code>lp_sessions_number (IntegerField)</code></li>
+<li><code>lp_access (CharField)</code></li>
+<li><code>lp_child_equipped (CharField)</code></li>
+<li><code>lp_change_literacy (CharField)</code></li>
+<li><code>lp_change_math (CharField)</code></li>
+<li><code>lp_change_learning (CharField)</code></li>
+<li><strong><code>PSSService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>child_registered (CharField)</code></li>
+<li><code>child_living_arrangement (CharField)</code></li>
+<li><code>child_vulnerability (CharField)</code></li>
+<li><code>child_out_school_reasons (CharField)</code></li>
+<li><code>caregivers_distress (CharField)</code></li>
+<li><code>caregivers_additional_parenting (CharField)</code></li>
+<li><code>child_distress (CharField)</code></li>
+<li><code>child_additional_parenting (CharField)</code></li>
+<li><code>child_know_seek_help (CharField)</code></li>
+<li><code>child_protection_concern (CharField)</code></li>
+<li><strong><code>HealthNutritionService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>baby_breastfed (CharField)</code></li>
+<li><code>infant_exclusively_breastfed (CharField)</code></li>
+<li><code>eat_solid_food (CharField)</code></li>
+<li><code>age_eat_solid_food (CharField)</code></li>
+<li><code>immunization_record_screened (CharField)</code></li>
+<li><code>vaccine_missing (TextField)</code></li>
+<li><code>muac_malnutrition_screening (CharField)</code></li>
+<li><code>eating_minimum_meals (CharField)</code></li>
+<li><code>child_vaccinated (CharField)</code></li>
+<li><code>positive_parenting (CharField)</code></li>
+<li><code>development_delays_identified (CharField)</code></li>
+<li><code>respond_stressful_events (TextField)</code></li>
+<li><code>physical_activity (CharField)</code></li>
+<li><code>accessing_reproductive_health (CharField)</code></li>
+<li><code>caregiver_counselling (CharField)</code></li>
+<li><code>counselling_date (DateField)</code></li>
+<li><code>next_counselling_date (DateField)</code></li>
+<li><code>caregiver_ecd_counselling (CharField)</code></li>
+<li><code>ecd_counselling_date (DateField)</code></li>
+<li><code>next_ecd_counselling_date (DateField)</code></li>
+<li><code>child_screened_malnutrition (CharField)</code></li>
+<li><code>child_malnutrition_screening (CharField)</code></li>
+<li><code>child_immunization_screened (CharField)</code></li>
+<li><code>missing_vaccine (TextField)</code></li>
+<li><code>attended_health_nutrition_session (CharField)</code></li>
+<li><code>health_nutrition_session_title (TextField)</code></li>
+<li><code>health_nutrition_session_date (DateField)</code></li>
+<li><strong><code>HealthNutritionReferral</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>referred_development_delays (CharField)</code></li>
+<li><code>development_delays (CharField)</code></li>
+<li><code>referred_malnutrition (CharField)</code></li>
+<li><code>malnutrition_treatment_center (CharField)</code></li>
+<li><code>referred_anc_pnc (CharField)</code></li>
+<li><code>phc_center (TextField)</code></li>
+<li><code>women_child_referred_iycf (CharField)</code></li>
+<li><code>women_child_referred_organization (TextField)</code></li>
+<li><code>infant_child_referred_iycf (CharField)</code></li>
+<li><code>infant_child_referred_organization (TextField)</code></li>
+<li><strong><code>NFEToFEReferralMapping</code></strong></li>
+<li><code>education_component (CharField)</code></li>
+<li><code>min_age (IntegerField)</code></li>
+<li><code>max_age (IntegerField)</code></li>
+<li><strong><code>EducationService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>education_status (CharField)</code></li>
+<li><code>dropout_date (DateField)</code></li>
+<li><code>education_program (CharField)</code></li>
+<li><code>catch_up_registered (CharField)</code></li>
+<li><code>class_section (CharField)</code></li>
+<li><code>registration_date (DateField)</code></li>
+<li><code>round (ForeignKey)</code></li>
+<li><strong><code>EducationRSService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>foreign_language_grade (IntegerField)</code></li>
+<li><code>arabic_grade (IntegerField)</code></li>
+<li><code>math_grade (IntegerField)</code></li>
+<li><code>sciences_grade (IntegerField)</code></li>
+<li><code>shift (CharField)</code></li>
+<li><code>grade_level (CharField)</code></li>
+<li><strong><code>EducationAssessment</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>pre_attended_arabic (CharField)</code></li>
+<li><code>pre_modality_arabic (CharField)</code></li>
+<li><code>pre_arabic_grade (IntegerField)</code></li>
+<li><code>pre_attended_language (CharField)</code></li>
+<li><code>pre_modality_language (CharField)</code></li>
+<li><code>pre_language_grade (IntegerField)</code></li>
+<li><code>pre_attended_math (CharField)</code></li>
+<li><code>pre_modality_math (CharField)</code></li>
+<li><code>pre_math_grade (IntegerField)</code></li>
+<li><code>participation (CharField)</code></li>
+<li><code>barriers (CharField)</code></li>
+<li><code>barriers_other (TextField)</code></li>
+<li><code>post_test_done (CharField)</code></li>
+<li><code>school_year_completed (CharField)</code></li>
+<li><code>post_attended_arabic (CharField)</code></li>
+<li><code>post_modality_arabic (CharField)</code></li>
+<li><code>post_arabic_grade (IntegerField)</code></li>
+<li><code>post_attended_language (CharField)</code></li>
+<li><code>post_modality_language (CharField)</code></li>
+<li><code>post_language_grade (IntegerField)</code></li>
+<li><code>post_attended_math (CharField)</code></li>
+<li><code>post_modality_math (CharField)</code></li>
+<li><code>post_math_grade (IntegerField)</code></li>
+<li><strong><code>EducationProgrammeAssessment</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>programme_type (CharField)</code></li>
+<li><strong><code>YouthKitService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>volunteering_experience (CharField)</code></li>
+<li><code>previous_community_initiative (CharField)</code></li>
+<li><code>enrollment_reason (CharField)</code></li>
+<li><code>pre_tests_administered (CharField)</code></li>
+<li><code>test_diagnostic_done (CharField)</code></li>
+<li><code>receive_passing_grade (CharField)</code></li>
+<li><code>life_skills_completed (CharField)</code></li>
+<li><code>participate_volunteering (CharField)</code></li>
+<li><code>volunteering_specify (CharField)</code></li>
+<li><code>social_course (CharField)</code></li>
+<li><code>yfs_course_completed (CharField)</code></li>
+<li><code>training_material (CharField)</code></li>
+<li><code>future_path (CharField)</code></li>
+<li><code>participate_community_initiatives (CharField)</code></li>
+<li><code>community_initiatives_specify (TextField)</code></li>
+<li><code>adolescent_attendance (CharField)</code></li>
+<li><code>adolescent_dropout_reason (TextField)</code></li>
+<li><code>adolescent_dropout_date (DateField)</code></li>
+<li><code>youth_trained_mental_health (CharField)</code></li>
+<li><strong><code>YouthService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>service_type (CharField)</code></li>
+<li><strong><code>FollowUpService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>follow_up_type (CharField)</code></li>
+<li><code>follow_up_number (IntegerField)</code></li>
+<li><code>follow_up_result (CharField)</code></li>
+<li><code>dropout_reason (TextField)</code></li>
+<li><code>dropout_date (DateField)</code></li>
+<li><code>parent_attended_meeting (CharField)</code></li>
+<li><code>meeting_type (CharField)</code></li>
+<li><code>meeting_number (IntegerField)</code></li>
+<li><code>meeting_modality (CharField)</code></li>
+<li><code>caregiver_attended (CharField)</code></li>
+<li><code>caregiver_attended_other (TextField)</code></li>
+<li><code>pfss_sessions (CharField)</code></li>
+<li><code>pfss_sessions_number (IntegerField)</code></li>
+<li><strong><code>Referral</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>referred_formal_education (CharField)</code></li>
+<li><code>referred_school (ForeignKey)</code></li>
+<li><code>receive_needed_material (CharField)</code></li>
+<li><code>referred_service (CharField)</code></li>
+<li><code>referred_service_other (TextField)</code></li>
+<li><code>recommended_learning_path (CharField)</code></li>
+<li><code>dropout_date (DateField)</code></li>
+<li><strong><code>YouthAssessment</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>undertake_post_diagnostic (CharField)</code></li>
+<li><code>receive_passing_grade (CharField)</code></li>
+<li><code>complete_life_skills (CharField)</code></li>
+<li><code>participate_volunteering (CharField)</code></li>
+<li><code>volunteering_opportunity (CharField)</code></li>
+<li><code>benefit_innovation_course (CharField)</code></li>
+<li><code>compelete_yfs_course (CharField)</code></li>
+<li><code>training_material (CharField)</code></li>
+<li><code>future_path (CharField)</code></li>
+<li><code>participate_community_initiatives (CharField)</code></li>
+<li><code>attendance (CharField)</code></li>
+<li><strong><code>YouthReferral</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>refer_tvet (CharField)</code></li>
+<li><code>refer_innovation (CharField)</code></li>
+<li><strong><code>Recreational</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><strong><code>LegoService</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>participating_lego_sessions (CharField)</code></li>
+<li><code>participating_education_sessions (CharField)</code></li>
+<li><code>participating_lego_play_sessions (CharField)</code></li>
+</ul>
+<h4 id="student_registrationbackends"><code>student_registration.backends</code></h4>
+<ul>
+<li><strong><code>ExportHistory</code></strong></li>
+<li><code>export_type (CharField)</code></li>
+<li><code>created_by (ForeignKey)</code></li>
+<li><code>partner_name (CharField)</code></li>
+<li><code>file_format (CharField)</code></li>
+<li><code>file_url (URLField)</code></li>
+<li><code>status (CharField)</code></li>
+<li><strong><code>UserActivity</code></strong></li>
+<li><code>username (CharField)</code></li>
+<li><code>path (TextField)</code></li>
+<li><code>method (CharField)</code></li>
+<li><code>data (TextField)</code></li>
+<li><code>timestamp (DateTimeField)</code></li>
+</ul>
+<h3 id="deployment-and-docker-configuration">Deployment and Docker Configuration</h3>
+<h4 id="django-dockerfile">Django Dockerfile</h4>
+<pre class="highlight"><code class="language-dockerfile">FROM python:3.10-slim-bullseye
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV SSH_PASSWD=&quot;root:Docker!&quot;
+
+# Pre-install tools and openssh-server but disable triggers/postinst
+RUN apt-get update &amp;&amp; \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+        curl &amp;&amp; \
+    apt-get install -y --no-install-recommends \
+        openssh-server --option=Dpkg::Options::=&quot;--force-confdef&quot; \
+                       --option=Dpkg::Options::=&quot;--force-confold&quot; \
+                       --option=Dpkg::Options::=&quot;--force-overwrite&quot; || true &amp;&amp; \
+    echo &quot;$SSH_PASSWD&quot; | chpasswd &amp;&amp; \
+    mkdir -p /var/run/sshd /root/.ssh &amp;&amp; \
+    apt-get clean &amp;&amp; \
+    rm -rf /var/lib/apt/lists/*
+
+COPY ./compose/django/sshd_config /etc/ssh/sshd_config
+
+WORKDIR /code/
+
+ARG REQUIREMENTS_FILE=production.txt
+COPY requirements /code/requirements
+RUN pip install --no-cache-dir -r /code/requirements/$REQUIREMENTS_FILE
+
+COPY . /code/
+
+RUN python manage.py collectstatic --noinput --settings=config.settings.test
+
+EXPOSE 2222 80
+
+ENTRYPOINT [&quot;/code/compose/django/entrypoint.sh&quot;]
+CMD [&quot;/code/compose/django/gunicorn.sh&quot;]
+</code></pre>
+
+<h4 id="localyml-docker-compose">local.yml (Docker Compose)</h4>
+<pre class="highlight"><code class="language-yaml">version: '2'
+
+volumes:
+  postgres_data_dev: {}
+  postgres_backup_dev: {}
+
+services:
+  postgres:
+    build: ./compose/postgres
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - postgres_backup_dev:/backups
+    environment:
+      - POSTGRES_USER=student_registration
+
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+      args:
+        - REQUIREMENTS_FILE=local.txt
+    command: ./compose/django/start-dev.sh
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_USER=student_registration
+      - DATABASE_URL=postgres://student_registration:postgres@postgres:5432/student_registration
+      - USE_DOCKER=yes
+    volumes:
+      - .:/code
+      - .:/home/LogFiles
+    ports:
+      - &quot;8000:8000&quot;
+
+
+  pycharm:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+      args:
+        - REQUIREMENTS_FILE=local.txt
+    command: ./compose/django/start-dev.sh
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_USER=student_registration
+      - DATABASE_URL=postgres://student_registration:postgres@postgres:5432/student_registration
+    volumes:
+      - .:/code
+      - .:/home/LogFiles
+</code></pre>
+
+<h3 id="environment-configurations">Environment Configurations</h3>
+<pre class="highlight"><code class="language-bash"># PostgreSQL
+POSTGRES_PASSWORD=mysecretpass
+POSTGRES_USER=postgresuser
+
+# General settings
+# DJANGO_READ_DOT_ENV_FILE=True
+DJANGO_ADMIN_URL=
+DJANGO_SETTINGS_MODULE=
+DJANGO_SECRET_KEY=
+DJANGO_ALLOWED_HOSTS=
+
+# AWS Settings
+DJANGO_AWS_ACCESS_KEY_ID=
+DJANGO_AWS_SECRET_ACCESS_KEY=
+DJANGO_AWS_STORAGE_BUCKET_NAME=
+
+# Used with email
+DJANGO_MAILGUN_API_KEY=
+DJANGO_SERVER_EMAIL=
+MAILGUN_SENDER_DOMAIN=
+
+# Security! Better to use DNS for this task, but you can use redirect
+DJANGO_SECURE_SSL_REDIRECT=False
+
+# django-allauth
+DJANGO_ACCOUNT_ALLOW_REGISTRATION=True
+# Sentry
+DJANGO_SENTRY_DSN=
+
+# Firebase Cloud Messaging server key
+FCM_SERVER_KEY=
+# Firebase web app configuration
+FIREBASE_API_KEY=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKET=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_APP_ID=
+FIREBASE_MEASUREMENT_ID=
+
+DJANGO_OPBEAT_ORGANIZATION_ID
+DJANGO_OPBEAT_APP_ID
+DJANGO_OPBEAT_SECRET_TOKEN
+
+COMPRESS_ENABLED=
+</code></pre>
+
+<h3 id="database-schema-graph">Database Schema Graph</h3>
+<p>An ER Diagram of the database schema is generated as <code>schema.png</code> at the root of the project.</p>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

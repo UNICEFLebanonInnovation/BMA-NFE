@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>12. Deployment Guide — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html" class="active">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>12. Deployment Guide</span></span>
+  </div>
+  <div id="content">
+    <h1 id="12-deployment-guide">12. Deployment Guide</h1>
+<h2 id="production-stack">Production Stack</h2>
+<pre class="highlight"><code>Internet
+    │ HTTPS (443)
+    ▼
+Nginx (SSL termination, reverse proxy)
+    │ HTTP (8000)
+    ▼
+Gunicorn (WSGI, gevent workers)
+    │
+    ▼
+Django Application
+    ├── PostgreSQL (persistent data)
+    ├── Redis (broker + cache)
+    ├── Celery Worker (background exports)
+    ├── Celery Beat (scheduled tasks)
+    └── Azure Blob Storage (files)
+</code></pre>
+
+<hr />
+<h2 id="docker-compose-production">Docker Compose (Production)</h2>
+<p>The <code>production.yml</code> file defines all services. Key services:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Image</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>django</code></td>
+<td>Custom (<code>compose/django/</code>)</td>
+<td>Gunicorn WSGI server</td>
+</tr>
+<tr>
+<td><code>postgres</code></td>
+<td><code>postgres:14</code></td>
+<td>Database</td>
+</tr>
+<tr>
+<td><code>redis</code></td>
+<td><code>redis:6</code></td>
+<td>Broker + cache</td>
+</tr>
+<tr>
+<td><code>nginx</code></td>
+<td>Custom (<code>compose/nginx/</code>)</td>
+<td>Reverse proxy + SSL</td>
+</tr>
+<tr>
+<td><code>certbot</code></td>
+<td><code>certbot/certbot</code></td>
+<td>SSL certificate renewal</td>
+</tr>
+<tr>
+<td><code>celeryworker</code></td>
+<td>Same as <code>django</code></td>
+<td>Background task worker</td>
+</tr>
+<tr>
+<td><code>celerybeat</code></td>
+<td>Same as <code>django</code></td>
+<td>Periodic task scheduler</td>
+</tr>
+<tr>
+<td><code>flower</code></td>
+<td>Same as <code>django</code></td>
+<td>Celery monitoring (optional)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="starting-production">Starting Production</h3>
+<pre class="highlight"><code class="language-bash"># First deploy
+docker-compose -f production.yml up -d --build
+
+# View logs
+docker-compose -f production.yml logs -f django
+
+# Run migrations after deploy
+docker-compose -f production.yml run --rm django python manage.py migrate
+
+# Collect static files
+docker-compose -f production.yml run --rm django python manage.py collectstatic --no-input
+</code></pre>
+
+<hr />
+<h2 id="environment-setup-production">Environment Setup (Production)</h2>
+<ol>
+<li>Copy and populate environment file:</li>
+</ol>
+<pre class="highlight"><code class="language-bash">cp env.example .env
+</code></pre>
+
+<ol>
+<li>Key production values to set:</li>
+</ol>
+<pre class="highlight"><code class="language-dotenv">DJANGO_SETTINGS_MODULE=config.settings.production
+DJANGO_SECRET_KEY=&lt;unique-50-char-key&gt;
+DJANGO_DEBUG=False
+DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+DATABASE_URL=postgres://user:pass@postgres:5432/mscc_10012023
+CELERY_BROKER_URL=redis://redis:6379/0
+AZURE_ACCOUNT_NAME=&lt;azure-storage-account&gt;
+AZURE_ACCOUNT_KEY=&lt;azure-storage-key&gt;
+AZURE_CONTAINER=media
+DJANGO_SENTRY_DSN=&lt;sentry-dsn&gt;
+DJANGO_SECURE_SSL_REDIRECT=True
+</code></pre>
+
+<hr />
+<h2 id="ssl-certificates">SSL Certificates</h2>
+<p>SSL is handled by Certbot (Let's Encrypt) via the <code>certbot</code> service in <code>production.yml</code>.</p>
+<p>Initial certificate issuance:</p>
+<pre class="highlight"><code class="language-bash">docker-compose -f production.yml run --rm certbot certonly \
+  --webroot -w /var/www/certbot \
+  -d yourdomain.com -d www.yourdomain.com \
+  --email admin@yourdomain.com --agree-tos --no-eff-email
+</code></pre>
+
+<p>Certificates auto-renew via the certbot service. Nginx reloads automatically.</p>
+<hr />
+<h2 id="database-backups">Database Backups</h2>
+<h3 id="manual-backup">Manual Backup</h3>
+<pre class="highlight"><code class="language-bash">docker-compose -f production.yml exec postgres \
+  pg_dump -U postgresuser mscc_10012023 &gt; backup_$(date +%Y%m%d).sql
+</code></pre>
+
+<h3 id="restore">Restore</h3>
+<pre class="highlight"><code class="language-bash">docker-compose -f production.yml exec -T postgres \
+  psql -U postgresuser mscc_10012023 &lt; backup_20240101.sql
+</code></pre>
+
+<h3 id="automated-backups">Automated Backups</h3>
+<p>The <code>compose/postgres/</code> directory contains backup scripts. Configure a cron job or use Azure Database for PostgreSQL which has automated backup built in.</p>
+<hr />
+<h2 id="deploying-updates">Deploying Updates</h2>
+<h3 id="standard-update-process">Standard Update Process</h3>
+<pre class="highlight"><code class="language-bash"># 1. Pull latest code
+git pull origin main
+
+# 2. Rebuild Django image
+docker-compose -f production.yml build django
+
+# 3. Run migrations (zero-downtime if additive)
+docker-compose -f production.yml run --rm django python manage.py migrate
+
+# 4. Collect static files
+docker-compose -f production.yml run --rm django python manage.py collectstatic --no-input
+
+# 5. Restart application with zero downtime
+docker-compose -f production.yml up -d --no-deps django celeryworker celerybeat
+</code></pre>
+
+<h3 id="rolling-back">Rolling Back</h3>
+<pre class="highlight"><code class="language-bash"># Roll back to previous image
+git checkout &lt;previous-commit&gt;
+docker-compose -f production.yml build django
+docker-compose -f production.yml up -d --no-deps django
+
+# Roll back migration (if needed)
+docker-compose -f production.yml run --rm django python manage.py migrate myapp &lt;previous-migration&gt;
+</code></pre>
+
+<hr />
+<h2 id="process-management">Process Management</h2>
+<h3 id="gunicorn-configuration">Gunicorn Configuration</h3>
+<p>Gunicorn is started with the gevent worker class for high concurrency:</p>
+<pre class="highlight"><code class="language-bash"># From compose/django/start
+gunicorn config.wsgi:application \
+  --bind 0.0.0.0:5000 \
+  --worker-class gevent \
+  --workers 4 \
+  --timeout 120 \
+  --log-level info
+</code></pre>
+
+<p>Tune <code>--workers</code> to <code>2 * CPU_CORES + 1</code> as a starting point.</p>
+<h3 id="celery-workers">Celery Workers</h3>
+<pre class="highlight"><code class="language-bash"># Worker (started by docker-compose celeryworker service)
+celery -A config.celery_app worker \
+  -Q default,mscc_export \
+  --concurrency 4 \
+  -l info
+
+# Beat scheduler
+celery -A config.celery_app beat -l info
+</code></pre>
+
+<hr />
+<h2 id="monitoring">Monitoring</h2>
+<h3 id="application-health">Application Health</h3>
+<pre class="highlight"><code class="language-bash"># Check Django is responding
+curl -f http://localhost:8000/about/ || echo &quot;Django is down&quot;
+
+# Check Gunicorn workers
+docker-compose -f production.yml exec django ps aux | grep gunicorn
+
+# Check Celery
+docker-compose -f production.yml exec celeryworker celery -A config.celery_app status
+</code></pre>
+
+<h3 id="log-locations">Log Locations</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Log location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django / Gunicorn</td>
+<td><code>docker-compose logs django</code></td>
+</tr>
+<tr>
+<td>Nginx</td>
+<td><code>docker-compose logs nginx</code></td>
+</tr>
+<tr>
+<td>Celery</td>
+<td><code>docker-compose logs celeryworker</code></td>
+</tr>
+<tr>
+<td>PostgreSQL</td>
+<td><code>docker-compose logs postgres</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sentry">Sentry</h3>
+<p>Unhandled exceptions are automatically captured and sent to Sentry (configured via <code>DJANGO_SENTRY_DSN</code>). Check the Sentry dashboard for error rates and stack traces.</p>
+<hr />
+<h2 id="scaling">Scaling</h2>
+<h3 id="horizontal-scaling-multiple-django-instances">Horizontal Scaling (multiple Django instances)</h3>
+<ul>
+<li>Run multiple Gunicorn containers behind the Nginx load balancer</li>
+<li>All instances must share the same Redis and PostgreSQL</li>
+<li>Session storage is in Redis (supports multiple nodes)</li>
+<li>Static files served by Nginx (shared volume or Azure CDN)</li>
+</ul>
+<h3 id="celery-worker-scaling">Celery Worker Scaling</h3>
+<ul>
+<li>Increase <code>--concurrency</code> for the default queue</li>
+<li>Keep <code>mscc_export</code> queue concurrency at 1 to avoid DB overload during large exports</li>
+<li>Run additional celeryworker containers as needed</li>
+</ul>
+<hr />
+<h2 id="windows-iis-deployment">Windows / IIS Deployment</h2>
+<p>A <code>web.config</code> file is included in the project root for IIS-based deployments (Azure App Service or on-premise IIS). This configures URL rewriting and WSGI handler mapping. Refer to <code>web.config</code> and the Azure App Service docs for specifics.</p>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

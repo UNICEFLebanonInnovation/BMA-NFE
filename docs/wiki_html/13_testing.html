@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>13. Testing Guide — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html" class="active">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>13. Testing Guide</span></span>
+  </div>
+  <div id="content">
+    <h1 id="13-testing-guide">13. Testing Guide</h1>
+<h2 id="testing-stack">Testing Stack</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pytest</code></td>
+<td>Test runner</td>
+</tr>
+<tr>
+<td><code>pytest-django</code></td>
+<td>Django integration for pytest</td>
+</tr>
+<tr>
+<td><code>factory-boy</code></td>
+<td>Test data factories (replaces fixtures)</td>
+</tr>
+<tr>
+<td><code>django-test-plus</code></td>
+<td>Helpers for testing Django views</td>
+</tr>
+<tr>
+<td><code>coverage</code> / <code>django-coverage-plugin</code></td>
+<td>Code coverage measurement</td>
+</tr>
+<tr>
+<td><code>flake8</code></td>
+<td>Linting</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="running-tests">Running Tests</h2>
+<pre class="highlight"><code class="language-bash"># Run all tests
+docker-compose -f local.yml run --rm django pytest
+
+# Run tests in a specific app
+docker-compose -f local.yml run --rm django pytest student_registration/mscc/
+
+# Run a specific test file
+docker-compose -f local.yml run --rm django pytest student_registration/mscc/tests/test_views.py
+
+# Run a specific test
+docker-compose -f local.yml run --rm django pytest student_registration/mscc/tests/test_views.py::TestRegistrationListView::test_requires_login
+
+# Run with verbose output
+docker-compose -f local.yml run --rm django pytest -v
+
+# Stop on first failure
+docker-compose -f local.yml run --rm django pytest -x
+</code></pre>
+
+<hr />
+<h2 id="code-coverage">Code Coverage</h2>
+<pre class="highlight"><code class="language-bash"># Run tests with coverage
+docker-compose -f local.yml run --rm django coverage run -m pytest
+
+# View coverage report in terminal
+docker-compose -f local.yml run --rm django coverage report
+
+# Generate HTML report
+docker-compose -f local.yml run --rm django coverage html
+# Open htmlcov/index.html in a browser
+</code></pre>
+
+<p>Coverage configuration is in <code>.coveragerc</code> (or <code>setup.cfg</code>). The <code>django-coverage-plugin</code> ensures template coverage is counted.</p>
+<hr />
+<h2 id="test-settings">Test Settings</h2>
+<p>Tests use <code>config/settings/test.py</code> (configured in <code>pytest.ini</code>):</p>
+<pre class="highlight"><code class="language-ini"># pytest.ini
+[pytest]
+DJANGO_SETTINGS_MODULE = config.settings.test
+</code></pre>
+
+<p>Test settings differences from local:<br />
+- In-memory SQLite database (faster) or a separate test PostgreSQL database<br />
+- Celery tasks always run eagerly<br />
+- Password hashing uses MD5 (faster than Argon2 for tests)<br />
+- No external API calls (mock any external services)</p>
+<hr />
+<h2 id="writing-tests">Writing Tests</h2>
+<h3 id="model-tests">Model Tests</h3>
+<pre class="highlight"><code class="language-python"># student_registration/mscc/tests/test_models.py
+import pytest
+from student_registration.mscc.tests.factories import RegistrationFactory
+
+@pytest.mark.django_db
+class TestRegistration:
+    def test_str(self):
+        reg = RegistrationFactory()
+        assert str(reg)  # has a __str__ representation
+
+    def test_soft_delete(self):
+        reg = RegistrationFactory()
+        reg.deleted = True
+        reg.save()
+        assert not Registration.objects.filter(pk=reg.pk, deleted=False).exists()
+</code></pre>
+
+<h3 id="view-tests">View Tests</h3>
+<pre class="highlight"><code class="language-python"># student_registration/mscc/tests/test_views.py
+import pytest
+from django.urls import reverse
+from student_registration.users.tests.factories import UserFactory
+
+@pytest.mark.django_db
+class TestRegistrationListView:
+    def test_requires_login(self, client):
+        url = reverse('mscc:list')
+        response = client.get(url)
+        assert response.status_code == 302  # Redirects to login
+
+    def test_mscc_user_can_access(self, client):
+        user = UserFactory(groups=['MSCC'])
+        client.force_login(user)
+        url = reverse('mscc:list')
+        response = client.get(url)
+        assert response.status_code == 200
+
+    def test_filters_by_center(self, client):
+        user = UserFactory(groups=['MSCC_CENTER'])
+        reg_own = RegistrationFactory(center=user.center)
+        reg_other = RegistrationFactory()  # different center
+        client.force_login(user)
+        response = client.get(reverse('mscc:list'))
+        assert reg_own in response.context['object_list']
+        assert reg_other not in response.context['object_list']
+</code></pre>
+
+<h3 id="api-tests">API Tests</h3>
+<pre class="highlight"><code class="language-python"># student_registration/mscc/tests/test_api.py
+import pytest
+from rest_framework.test import APIClient
+
+@pytest.mark.django_db
+class TestSchoolAPI:
+    def test_list_requires_auth(self):
+        client = APIClient()
+        response = client.get('/api/schools/')
+        assert response.status_code == 401
+
+    def test_authenticated_user_can_list(self):
+        user = UserFactory()
+        client = APIClient()
+        client.force_authenticate(user=user)
+        response = client.get('/api/schools/')
+        assert response.status_code == 200
+</code></pre>
+
+<hr />
+<h2 id="test-factories">Test Factories</h2>
+<p>Use <code>factory-boy</code> to create test data. Define factories in each app's <code>tests/factories.py</code>:</p>
+<pre class="highlight"><code class="language-python"># student_registration/mscc/tests/factories.py
+import factory
+from factory.django import DjangoModelFactory
+from student_registration.mscc.models import Registration
+
+class RegistrationFactory(DjangoModelFactory):
+    class Meta:
+        model = Registration
+
+    child = factory.SubFactory('student_registration.child.tests.factories.ChildFactory')
+    round = factory.SubFactory('student_registration.mscc.tests.factories.RoundFactory')
+    partner = factory.SubFactory('student_registration.schools.tests.factories.PartnerFactory')
+    center = factory.SubFactory('student_registration.locations.tests.factories.CenterFactory')
+    status = 'active'
+    deleted = False
+</code></pre>
+
+<hr />
+<h2 id="linting">Linting</h2>
+<pre class="highlight"><code class="language-bash"># Run flake8
+docker-compose -f local.yml run --rm django flake8 student_registration/
+
+# Flake8 configuration (in setup.cfg or .flake8):
+# max-line-length = 120
+# exclude = migrations
+</code></pre>
+
+<hr />
+<h2 id="ci-integration">CI Integration</h2>
+<p>The test suite should run on every pull request. Configure your CI pipeline to:</p>
+<pre class="highlight"><code class="language-yaml"># Example GitHub Actions step
+- name: Run tests
+  run: |
+    docker-compose -f local.yml run --rm django pytest
+    docker-compose -f local.yml run --rm django flake8 student_registration/
+</code></pre>
+
+<hr />
+<h2 id="common-test-patterns">Common Test Patterns</h2>
+<h3 id="testing-with-permissions">Testing with permissions</h3>
+<pre class="highlight"><code class="language-python">from django.contrib.auth.models import Group
+
+def make_user_with_group(group_name):
+    user = UserFactory()
+    group, _ = Group.objects.get_or_create(name=group_name)
+    user.groups.add(group)
+    return user
+</code></pre>
+
+<h3 id="mocking-external-apis">Mocking external APIs</h3>
+<pre class="highlight"><code class="language-python">from unittest.mock import patch
+
+@patch('student_registration.mscc.views.call_unique_id_api')
+def test_registration_with_mocked_api(mock_api, client):
+    mock_api.return_value = {'id': '12345'}
+    # ... test body
+</code></pre>
+
+<h3 id="testing-celery-tasks">Testing Celery tasks</h3>
+<p>In test settings, <code>CELERY_TASK_ALWAYS_EAGER = True</code> makes tasks run synchronously, so you can test the full flow without a worker:</p>
+<pre class="highlight"><code class="language-python">@pytest.mark.django_db
+def test_export_task():
+    history = ExportHistoryFactory(status='pending')
+    generate_mscc_export(export_id=history.pk)  # runs synchronously in tests
+    history.refresh_from_db()
+    assert history.status == 'done'
+</code></pre>
+
+<hr />
+<h2 id="debugging-real-issues">Debugging Real Issues</h2>
+<p>This section covers step-by-step debugging approaches for the most commonly reported production issues.</p>
+
+<h3 id="missing-attendance-records">Missing Attendance Records</h3>
+<p>When attendance records are not appearing, trace the filtering pipeline using print statements at each step:</p>
+<pre class="highlight"><code class="language-python">print("STEP 1:", registrations.count())
+print("STEP 2:", education_services.count())
+print("STEP 3:", attendance_records.count())
+</code></pre>
+<p>Check each step in order. If STEP 1 is empty, the registration filter is the problem (wrong center/round). If STEP 2 is empty, the education service filter is the problem (wrong programme/section). If STEP 3 is empty, attendance was never saved.</p>
+
+<h3 id="date-validation-not-working">Date Validation Not Working</h3>
+<p>Ensure validation exists at BOTH layers:</p>
+<ul>
+<li><strong>Frontend</strong>: JavaScript must block invalid dates before the form submits.</li>
+<li><strong>Backend</strong>: Django Forms <code>clean()</code> method must re-validate — never rely only on frontend validation.</li>
+</ul>
+
+<h3 id="export-failures">Export Failures</h3>
+<p>Exports depend on database views. If an export fails or returns no data, check that the relevant view exists and is populated:</p>
+<pre class="highlight"><code class="language-sql">SELECT * FROM vw_mscc_attendance_absence;
+</code></pre>
+<p>Common causes: the view definition is stale, a migration dropped/altered an underlying table, or the filter parameters return no rows.</p>
+
+<h3 id="conditional-field-logic">Frontend Conditional Field Logic</h3>
+<p>Conditional fields are controlled via jQuery. If a conditional field is not showing or hiding correctly, inspect the JS event handler for the controlling field:</p>
+<pre class="highlight"><code class="language-javascript">if (education_status == 'Dropout') {
+    $('#dropout_date').show();
+    $('#dropout_date').prop('required', true);
+}
+</code></pre>
+<p>Ensure the selector matches the actual rendered field ID, and that the triggering event (<code>change</code>, <code>input</code>) is correct for the field type.</p>
+
+<h3 id="general-troubleshooting-checklist">General Troubleshooting Checklist</h3>
+<table>
+<thead><tr><th>Symptom</th><th>First checks</th></tr></thead>
+<tbody>
+<tr><td>System does not start</td><td>Check database connection; run <code>python manage.py migrate</code></td></tr>
+<tr><td>Data missing from lists</td><td>Check applied filters and date constraints</td></tr>
+<tr><td>Export fails</td><td>Check DB views exist; verify filter parameters return rows</td></tr>
+<tr><td>Attendance list empty</td><td>Verify center, round, programme filters; check registration dates</td></tr>
+<tr><td>Validation not triggering</td><td>Confirm both JS and Django Forms <code>clean()</code> have the check</td></tr>
+</tbody>
+</table>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

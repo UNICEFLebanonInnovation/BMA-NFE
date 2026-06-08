@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2. Setup & Installation — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html" class="active">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>2. Setup & Installation</span></span>
+  </div>
+  <div id="content">
+    <h1 id="2-setup-installation">2. Setup &amp; Installation</h1>
+<p>This guide walks you through running the project locally using Docker Compose — the recommended approach, since it replicates production services (PostgreSQL, Redis, Celery).</p>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Minimum version</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker</td>
+<td>24+</td>
+<td></td>
+</tr>
+<tr>
+<td>Docker Compose</td>
+<td>2.x (Compose V2)</td>
+<td>Use <code>docker compose</code> or <code>docker-compose</code></td>
+</tr>
+<tr>
+<td>Git</td>
+<td>Any recent</td>
+<td></td>
+</tr>
+<tr>
+<td>Python</td>
+<td>3.10+</td>
+<td>Only needed if running outside Docker</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-clone-the-repository">1. Clone the Repository</h2>
+<pre class="highlight"><code class="language-bash">git clone &lt;repo-url&gt;
+cd BMA-DOCS
+</code></pre>
+
+<hr />
+<h2 id="2-configure-environment-variables">2. Configure Environment Variables</h2>
+<pre class="highlight"><code class="language-bash">cp env.example .env
+</code></pre>
+
+<p>Open <code>.env</code> and fill in the required values. For local development, the minimum required set is:</p>
+<pre class="highlight"><code class="language-dotenv"># Django
+DJANGO_SECRET_KEY=&lt;generate-a-50-char-random-string&gt;
+DJANGO_DEBUG=True
+DJANGO_ALLOWED_HOSTS=localhost,0.0.0.0,127.0.0.1
+
+# Database (matches the docker-compose postgres service)
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=mscc_10012023
+POSTGRES_USER=postgresuser
+POSTGRES_PASSWORD=mysecretpass
+DATABASE_URL=postgres://postgresuser:mysecretpass@postgres:5432/mscc_10012023
+
+# Redis (matches the docker-compose redis service)
+CELERY_BROKER_URL=redis://redis:6379/0
+
+# File storage — use local filesystem for development
+DJANGO_DEFAULT_FILE_STORAGE=django.core.files.storage.FileSystemStorage
+</code></pre>
+
+<blockquote>
+<p>For Azure Blob Storage, Firebase, Sentry, and email variables, see <a href="11_environment_variables.html">Environment Variables reference</a>.</p>
+</blockquote>
+<hr />
+<h2 id="3-start-docker-services">3. Start Docker Services</h2>
+<pre class="highlight"><code class="language-bash">docker-compose -f local.yml up --build
+</code></pre>
+
+<p>This starts:<br />
+- <code>django</code> — Django development server on port <code>8000</code><br />
+- <code>postgres</code> — PostgreSQL on port <code>5432</code><br />
+- <code>redis</code> — Redis on port <code>6379</code><br />
+- <code>celeryworker</code> — Celery worker<br />
+- <code>celerybeat</code> — Celery beat scheduler<br />
+- <code>flower</code> — Celery monitoring UI on port <code>5555</code><br />
+- <code>mailhog</code> — Local SMTP catcher on port <code>8025</code></p>
+<hr />
+<h2 id="4-run-database-migrations">4. Run Database Migrations</h2>
+<pre class="highlight"><code class="language-bash">docker-compose -f local.yml run --rm django python manage.py migrate
+</code></pre>
+
+<hr />
+<h2 id="5-create-a-superuser">5. Create a Superuser</h2>
+<pre class="highlight"><code class="language-bash">docker-compose -f local.yml run --rm django python manage.py createsuperuser
+</code></pre>
+
+<hr />
+<h2 id="6-load-initial-data-optional">6. Load Initial Data (Optional)</h2>
+<pre class="highlight"><code class="language-bash"># Load location tree (governorates, cazas, cadasters)
+docker-compose -f local.yml run --rm django python manage.py loaddata locations
+
+# Load nationality reference data
+docker-compose -f local.yml run --rm django python manage.py loaddata nationalities
+</code></pre>
+
+<hr />
+<h2 id="7-access-the-application">7. Access the Application</h2>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>Service</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>http://localhost:8000</code></td>
+<td>Application</td>
+</tr>
+<tr>
+<td><code>http://localhost:8000/admin/</code></td>
+<td>Admin panel (Jazzmin)</td>
+</tr>
+<tr>
+<td><code>http://localhost:5555</code></td>
+<td>Flower (Celery monitor)</td>
+</tr>
+<tr>
+<td><code>http://localhost:8025</code></td>
+<td>Mailhog (caught emails)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="running-without-docker">Running Without Docker</h2>
+<p>If you prefer to run without Docker:</p>
+<pre class="highlight"><code class="language-bash"># Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements/local.txt
+
+# Set environment variables
+export DJANGO_SETTINGS_MODULE=config.settings.local
+export DATABASE_URL=postgres://postgresuser:mysecretpass@localhost:5432/mscc_10012023
+
+# Start PostgreSQL and Redis separately, then:
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+</code></pre>
+
+<hr />
+<h2 id="common-development-commands">Common Development Commands</h2>
+<pre class="highlight"><code class="language-bash"># Run tests
+docker-compose -f local.yml run --rm django pytest
+
+# Run tests with coverage
+docker-compose -f local.yml run --rm django coverage run -m pytest
+docker-compose -f local.yml run --rm django coverage report
+
+# Make and apply migrations
+docker-compose -f local.yml run --rm django python manage.py makemigrations
+docker-compose -f local.yml run --rm django python manage.py migrate
+
+# Open a Django shell
+docker-compose -f local.yml run --rm django python manage.py shell
+
+# Generate translation files
+docker-compose -f local.yml run --rm django python manage.py makemessages -l ar
+docker-compose -f local.yml run --rm django python manage.py compilemessages
+
+# Collect static files (needed for production-like testing)
+docker-compose -f local.yml run --rm django python manage.py collectstatic --no-input
+</code></pre>
+
+<hr />
+<h2 id="settings-files">Settings Files</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Used when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config/settings/base.py</code></td>
+<td>Always — shared base</td>
+</tr>
+<tr>
+<td><code>config/settings/local.py</code></td>
+<td><code>DJANGO_SETTINGS_MODULE=config.settings.local</code></td>
+</tr>
+<tr>
+<td><code>config/settings/production.py</code></td>
+<td><code>DJANGO_SETTINGS_MODULE=config.settings.production</code></td>
+</tr>
+<tr>
+<td><code>config/settings/test.py</code></td>
+<td>When running <code>pytest</code></td>
+</tr>
+</tbody>
+</table>
+<p>The local settings activate:<br />
+- <code>DEBUG = True</code><br />
+- Django Debug Toolbar<br />
+- Eager Celery task execution (tasks run synchronously, no worker needed)<br />
+- LocMemCache instead of Redis cache<br />
+- Mailhog for email</p>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p><strong>Port already in use:</strong></p>
+<pre class="highlight"><code class="language-bash">docker-compose -f local.yml down
+# then restart
+</code></pre>
+
+<p><strong>Database connection refused:</strong><br />
+Make sure <code>POSTGRES_HOST=postgres</code> in <code>.env</code> (not <code>localhost</code>) when using Docker.</p>
+<p><strong>Missing migrations:</strong></p>
+<pre class="highlight"><code class="language-bash">docker-compose -f local.yml run --rm django python manage.py showmigrations
+docker-compose -f local.yml run --rm django python manage.py migrate --run-syncdb
+</code></pre>
+
+<p><strong>Static files 404:</strong></p>
+<pre class="highlight"><code class="language-bash">docker-compose -f local.yml run --rm django python manage.py collectstatic --no-input
+</code></pre>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

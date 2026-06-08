@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5. Django Apps Reference — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html" class="active">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>5. Django Apps Reference</span></span>
+  </div>
+  <div id="content">
+    <h1 id="5-django-apps-reference">5. Django Apps Reference</h1>
+<p>The project is organized as a standard Django project with multiple apps, each owning a specific domain. All apps live under <code>student_registration/</code>.</p>
+<hr />
+<h2 id="app-directory">App Directory</h2>
+<pre class="highlight"><code>student_registration/
+├── accounts/          Thin wrapper — account-related views/templates
+├── attendances/       MSCCAttendance and CLMAttendance tracking
+├── backends/          Async export jobs, user activity logging
+├── child/             Child demographic profile model
+├── clm/               Community Learning Management program
+├── contrib/           Shared utilities, custom Sites migration
+├── dashboard/         Analytics and reporting views
+├── locations/         Location hierarchy (MPTT), Centers
+├── mscc/              MSCC service delivery (the primary module)
+├── schools/           Schools, sections, partner organizations
+├── students/          Student model, nationalities, ID types
+├── taskapp/           Celery app initialization
+└── users/             Custom user model, auth adapters, groups
+</code></pre>
+
+<hr />
+<h2 id="users"><code>users</code></h2>
+<p><strong>Owns:</strong> Authentication, user profiles, group/role management, Firebase token storage.</p>
+<p>Key files:<br />
+- <code>models.py</code> — <code>User</code>, <code>Login</code>, <code>WebPushToken</code><br />
+- <code>admin.py</code> — User admin with import/export<br />
+- <code>adapters.py</code> — django-allauth account adapter<br />
+- <code>views.py</code> — Profile page, language switcher</p>
+<p>The <code>User</code> model is the central spine of authorization. Most views check <code>request.user.partner</code>, <code>request.user.center</code>, or group membership to filter querysets.</p>
+<hr />
+<h2 id="mscc"><code>mscc</code></h2>
+<p><strong>Owns:</strong> Everything related to the MSCC (Multi-Service Community Centers) program — registrations, service delivery, teachers, rounds, attendance, exports, dashboards.</p>
+<p>This is the <strong>largest and most complex app</strong> in the system (~2,686 lines of models alone).</p>
+<p>Key files:<br />
+- <code>models.py</code> — <code>Registration</code>, <code>Child</code>, <code>Round</code>, <code>Teacher</code>, all service models<br />
+- <code>views.py</code> — List, add, edit, profile views; AJAX service delivery endpoints; dashboard views<br />
+- <code>urls.py</code> — All <code>/mscc/</code> routes<br />
+- <code>admin.py</code> — Admin registrations with import/export and custom filters<br />
+- <code>tasks.py</code> — Celery <code>generate_mscc_export</code> task<br />
+- <code>serializers.py</code> — DRF serializers for API endpoints<br />
+- <code>forms.py</code> — Registration and service delivery forms<br />
+- <code>resources.py</code> — django-import-export resource definitions</p>
+<hr />
+<h2 id="clm"><code>clm</code></h2>
+<p><strong>Owns:</strong> Community Learning Management — bridging program enrollment, CLM attendance, CLM teacher management, assessments.</p>
+<p>Structure mirrors <code>mscc</code> but for the CLM program type. CLM-specific models include <code>CLM</code>, <code>Bridging</code>, <code>BridgingService</code>, and cycle-based attendance.</p>
+<hr />
+<h2 id="attendances"><code>attendances</code></h2>
+<p><strong>Owns:</strong> Attendance models and attendance recording views for both MSCC and CLM.</p>
+<p>Key files:<br />
+- <code>models.py</code> — <code>MSCCAttendance</code>, <code>MSCCAttendanceChild</code>, <code>CLMAttendance</code>, <code>CLMAttendanceStudent</code><br />
+- <code>views.py</code> — Attendance entry, attendance child view, attendance report, heatmap</p>
+<p>The attendance heatmap endpoint is also exposed via the DRF API (<code>AttendanceHeatmapViewSet</code>).</p>
+<hr />
+<h2 id="child"><code>child</code></h2>
+<p><strong>Owns:</strong> The <code>Child</code> model — the shared demographic record used by both MSCC registrations.</p>
+<p>The <code>Child</code> model is intentionally kept separate from program-specific data so that a child can be registered across multiple programs without duplicating demographics.</p>
+<hr />
+<h2 id="students"><code>students</code></h2>
+<p><strong>Owns:</strong> The <code>Student</code> model (used by CLM), and reference data: <code>Nationality</code>, <code>IDType</code>, <code>Labour</code>.</p>
+<p>The distinction between <code>Child</code> (MSCC) and <code>Student</code> (CLM) is historical — both represent a person, but they have slightly different fields and were developed for different programs.</p>
+<hr />
+<h2 id="schools"><code>schools</code></h2>
+<p><strong>Owns:</strong> <code>School</code>, <code>Section</code>, <code>PartnerOrganization</code>, <code>Club</code>, <code>Meeting</code>, <code>CommunityInitiative</code>, <code>HealthVisit</code>, <code>PublicHolidays</code>.</p>
+<p>Partner organizations are central to access control — almost every record is scoped to a partner. Schools are used for formal enrollment tracking within MSCC registrations.</p>
+<hr />
+<h2 id="locations"><code>locations</code></h2>
+<p><strong>Owns:</strong> <code>LocationType</code>, <code>Location</code> (MPTT tree), <code>Center</code>.</p>
+<p>The <code>Location</code> model uses MPTT for efficient subtree queries. Lebanon's hierarchy is:</p>
+<pre class="highlight"><code>Governorate (e.g., Beirut)
+  └── Caza (e.g., Beirut)
+       └── Cadaster (e.g., Ashrafieh)
+            └── Locality / Village
+</code></pre>
+
+<p><code>Center</code> maps to a specific cadaster-level location and partner organization.</p>
+<hr />
+<h2 id="backends"><code>backends</code></h2>
+<p><strong>Owns:</strong> <code>ExportHistory</code> (tracks async export jobs), <code>UserActivity</code> (HTTP audit log), export generation logic, Azure Blob storage backend, activity logging middleware.</p>
+<p>Key files:<br />
+- <code>models.py</code> — <code>ExportHistory</code>, <code>UserActivity</code><br />
+- <code>export.py</code> — Core export generation functions called by Celery tasks<br />
+- <code>storage.py</code> — Custom storage backend configuration</p>
+<hr />
+<h2 id="dashboard"><code>dashboard</code></h2>
+<p><strong>Owns:</strong> Analytics and summary views. Queries aggregate data across registrations, services, and attendance for charts and KPI tiles.</p>
+<p>Views in this app tend to be read-only and query-intensive — they rely heavily on Django ORM aggregations (<code>annotate</code>, <code>values</code>, <code>Count</code>, <code>Sum</code>).</p>
+<hr />
+<h2 id="accounts"><code>accounts</code></h2>
+<p>A thin app providing account-related template views (login, password reset) that wrap django-allauth.</p>
+<hr />
+<h2 id="taskapp"><code>taskapp</code></h2>
+<p>Celery application initialization. Contains only the Celery app definition and <code>autodiscover_tasks()</code> call. All actual tasks are defined in their respective app <code>tasks.py</code> files.</p>
+<hr />
+<h2 id="contrib"><code>contrib</code></h2>
+<p>Shared utilities and customizations:<br />
+- Custom migration for Django's <code>sites</code> framework<br />
+- Shared template tags and filters (e.g., <code>has_group</code> template tag)</p>
+<hr />
+<h2 id="adding-a-new-app">Adding a New App</h2>
+<pre class="highlight"><code class="language-bash"># 1. Create the app
+python manage.py startapp my_new_app student_registration/my_new_app/
+
+# 2. Register it in config/settings/base.py
+LOCAL_APPS = [
+    ...
+    'student_registration.my_new_app',
+]
+
+# 3. Create and apply migrations
+python manage.py makemigrations my_new_app
+python manage.py migrate
+
+# 4. Add URL patterns in config/urls.py
+urlpatterns += [path('my-app/', include('student_registration.my_new_app.urls'))]
+</code></pre>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

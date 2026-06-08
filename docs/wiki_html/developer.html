@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Guide: Student Registration Compiler — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>Developer Guide: Student Registration Compiler</span></span>
+  </div>
+  <div id="content">
+    <h1 id="developer-guide-student-registration-compiler">Developer Guide: Student Registration Compiler</h1>
+<p>Welcome to the <strong>Developer Guide</strong>. This document details the technical architecture, core Django applications, and the frontend ecosystem, providing context for maintaining and extending the platform.</p>
+<hr />
+<h2 id="1-codebase-architecture-overview">1. Codebase Architecture Overview</h2>
+<p>The system is a monolithic Django application designed for high operational data throughput.</p>
+<ul>
+<li><strong>Django Backend (<code>student_registration/</code>)</strong>: The core application logic, relying on PostgreSQL for persistence and Redis for caching/brokering.</li>
+<li><strong>Frontend Redesign</strong>: Modernized with Bootstrap 5.3 and Vanilla JS. It utilizes a custom theme based on UNICEF guidelines.</li>
+<li><strong>Asynchronous Processing</strong>: Celery handles background exports, and <code>django-celery-beat</code> manages periodic scheduling.</li>
+<li><strong>Tooling</strong>: Managed via <code>manage.py</code>, configured using environment variables (<code>.env</code>), and deployed via Docker Compose.</li>
+</ul>
+<hr />
+<h2 id="2-core-django-apps">2. Core Django Apps</h2>
+<p>The codebase is organized into domain-specific applications:</p>
+<ol>
+<li><strong><code>users/</code> &amp; <code>accounts/</code></strong>:<ul>
+<li><strong>Responsibilities</strong>: Authentication, RBAC (Role-Based Access Control), profile management.</li>
+<li><strong>Key Components</strong>: Custom User models, <code>MSCCAccessMixin</code> for CBVs, and <code>mscc_access_required</code> decorators for FBVs.</li>
+</ul>
+</li>
+<li><strong><code>students/</code> &amp; <code>mscc/</code></strong>:<ul>
+<li><strong>Responsibilities</strong>: The core Non-Formal Education (NFE) logic.</li>
+<li><strong>Key Components</strong>: Registration workflows (multi-step wizard), <code>Teacher</code> models, <code>School</code> records, and related services (PSS, Education).</li>
+<li><strong>Background Jobs</strong>: <code>mscc.tasks</code> contains Celery tasks for heavy CSV/XLSX generation.</li>
+</ul>
+</li>
+<li><strong><code>attendances/</code></strong>:<ul>
+<li><strong>Responsibilities</strong>: Tracking student presence.</li>
+<li><strong>Key Components</strong>: Bulk attendance entry, heatmaps, and absence logging.</li>
+</ul>
+</li>
+<li><strong><code>locations/</code> &amp; <code>schools/</code></strong>:<ul>
+<li><strong>Responsibilities</strong>: Reference data for physical sites and infrastructure.</li>
+<li><strong>Key Components</strong>: Autocomplete views, maps, and geolocation data.</li>
+</ul>
+</li>
+<li><strong><code>taskapp/</code></strong>:<ul>
+<li><strong>Responsibilities</strong>: Centralized configuration and autodiscovery for Celery tasks.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="3-database-schema-postgresql-optimizations">3. Database Schema &amp; PostgreSQL Optimizations</h2>
+<p>The system leverages PostgreSQL-specific features heavily, meaning <strong>SQLite is not supported for development or testing</strong>.</p>
+<h3 id="key-optimizations">Key Optimizations</h3>
+<ul>
+<li><strong>ArrayField &amp; JSONField</strong>: Used extensively in <code>Registration</code>, <code>Assessment</code>, and <code>School</code> models to handle variable data structures without excessive join tables.</li>
+<li><strong>Analytics Indexing</strong>: Complex queries (like the Wellbeing Dashboard) rely on specific indexes (<code>CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_mscc_registration_created</code>).</li>
+<li><strong>Aggregations</strong>: Use Django's <code>NullIf</code> to safely handle potential division-by-zero errors when calculating educational improvements.</li>
+<li><strong>Age Bucketing</strong>: Advanced ORM usage (<code>Case/When</code> + <code>ExtractYear(Now())</code>) groups beneficiaries into analytical cohorts dynamically.</li>
+</ul>
+<hr />
+<h2 id="4-frontend-ecosystem-redesign">4. Frontend Ecosystem (Redesign)</h2>
+<p>The platform was recently modernized from an older jQuery/ArchitectUI stack to a lighter, more performant Bootstrap 5 architecture.</p>
+<h3 id="key-implementation-patterns">Key Implementation Patterns</h3>
+<ul>
+<li><strong>Entry Points</strong>: <code>student_registration/static/css/redesign.css</code> and <code>student_registration/static/js/mscc/mscc.js</code>.</li>
+<li><strong>Layout Engine</strong>: Flexbox-based sidebar and main content areas (<code>base.html</code>), eliminating nested structural complexity.</li>
+<li><strong>Registration Wizard (<code>mscc.js</code>)</strong>: Implements client-side validation using Bootstrap 5 states (<code>.has-error</code>, <code>.is-invalid</code>), preventing server roundtrips for basic errors.</li>
+<li><strong>Data Visualization</strong>: Uses <strong>D3.js</strong> for the "Wellbeing Analysis" dashboard (<code>wellbeing_dashboard.js</code>) and attendance heatmaps.</li>
+<li><strong>Mapping</strong>: Uses <strong>Leaflet.js</strong> for interactive center/school geographic mapping, fed by a JSON API endpoint.</li>
+<li><strong>Notifications</strong>: Uses <strong>Firebase Cloud Messaging (FCM)</strong>. The <code>firebase-messaging-sw.js</code> service worker handles background pushes, displaying an "Export Ready" modal when Celery tasks complete.</li>
+</ul>
+<hr />
+<h2 id="5-background-processing-celery">5. Background Processing (Celery)</h2>
+<p>Long-running operations, specifically data exports, must not block the main WSGI server.</p>
+<h3 id="export-workflow">Export Workflow</h3>
+<ol>
+<li><strong>Request</strong>: User triggers an export in the UI (e.g., standard reports, or pivot data).</li>
+<li><strong>Task Enqueue</strong>: A Celery task (<code>student_registration/mscc/tasks.py</code>) is dispatched to the <code>mscc_export</code> queue.</li>
+<li><strong>Processing</strong>: The worker iterates over optimized database views (<code>vw_mscc_child</code>, etc.), writing chunks to a CSV/XLSX file within an <code>ExportStorage</code> model.</li>
+<li><strong>Completion</strong>: Upon success (or failure), the worker fires an FCM push notification to the user's browser.</li>
+<li><strong>Retrieval</strong>: The user clicks the notification to download the generated file from the <code>/media/</code> directory.</li>
+</ol>
+<hr />
+<h2 id="6-testing-development-guidelines">6. Testing &amp; Development Guidelines</h2>
+<h3 id="setup-docker-based">Setup (Docker-based)</h3>
+<ol>
+<li>Copy <code>env.example</code> to <code>.env</code>.</li>
+<li>Start the stack: <code>docker compose -f local.yml up --build</code>.</li>
+<li>Run migrations: <code>docker compose -f local.yml exec django python manage.py migrate</code>.</li>
+<li>Create superuser: <code>docker compose -f local.yml exec django python manage.py createsuperuser</code>.</li>
+</ol>
+<h3 id="testing">Testing</h3>
+<ul>
+<li><strong>Unit/Integration Tests</strong>: The system uses <code>pytest</code>. Run tests via <code>pytest.ini</code> or <code>coverage run manage.py test</code>.</li>
+<li><strong>Frontend End-to-End (E2E)</strong>: The registration flow is verified using <strong>Playwright</strong>.<ul>
+<li>Ensure Chromium dependencies are installed: <code>playwright install chromium --with-deps</code>.</li>
+<li>Target local login endpoints (<code>/accounts/login/</code>) accurately.</li>
+</ul>
+</li>
+</ul>
+<h3 id="contributing">Contributing</h3>
+<ul>
+<li>Prioritize modular JavaScript over monolithic jQuery files.</li>
+<li>Ensure RBAC checks (<code>mscc_access_required</code>) are applied to any new API endpoints or views.</li>
+<li>Follow PEP8 guidelines for Python code and run <code>flake8</code> or <code>black</code> before committing.</li>
+</ul>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

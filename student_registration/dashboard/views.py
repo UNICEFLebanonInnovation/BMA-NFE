@@ -602,6 +602,111 @@ def centers_children_data(request):
     })
 
 
+WIKI_HTML_PAGES = [
+    ('index', 'Home', None),
+    ('end_user', 'End User Manual', None),
+    ('admin', 'Administration Guide', 'Additional'),
+    ('developer', 'Developer Guide', 'Additional'),
+    ('system_details', 'System Overview', 'Additional'),
+    ('01_project_overview', '1. Project Overview', 'Developer'),
+    ('02_setup', '2. Setup & Installation', 'Developer'),
+    ('03_architecture', '3. Architecture & Tech Stack', 'Developer'),
+    ('04_database_schema', '4. Database Schema & Models', 'Developer'),
+    ('05_django_apps', '5. Django Apps Reference', 'Developer'),
+    ('06_api_urls', '6. API & URL Reference', 'Developer'),
+    ('07_auth_permissions', '7. Authentication & Permissions', 'Developer'),
+    ('08_admin_portal', '8. Admin Portal Guide', 'Developer'),
+    ('09_celery_tasks', '9. Background Tasks (Celery)', 'Developer'),
+    ('10_frontend', '10. Frontend Guide', 'Developer'),
+    ('11_environment_variables', '11. Environment Variables', 'Developer'),
+    ('12_deployment', '12. Deployment Guide', 'Developer'),
+    ('13_testing', '13. Testing Guide', 'Developer'),
+]
+
+
+def _extract_wiki_content(html_text):
+    """Extract inner HTML of <div id="content"> from a wiki HTML file."""
+    start_tag = '<div id="content">'
+    start = html_text.find(start_tag)
+    if start == -1:
+        return ''
+    content_start = start + len(start_tag)
+    depth = 1
+    i = content_start
+    while depth > 0 and i < len(html_text):
+        next_open = html_text.find('<div', i)
+        next_close = html_text.find('</div>', i)
+        if next_close == -1:
+            break
+        if next_open != -1 and next_open < next_close:
+            depth += 1
+            i = next_open + 4
+        else:
+            depth -= 1
+            if depth == 0:
+                return html_text[content_start:next_close].strip()
+            i = next_close + 6
+    return ''
+
+
+def _rewrite_wiki_links(content):
+    """Rewrite bare .html hrefs in wiki content to Django guide URLs."""
+    import re
+    def replace_link(m):
+        page = m.group(1).replace('.html', '')
+        return f'href="/dashboard/guide/{page}/"'
+    return re.sub(r'href="([\w\-]+\.html)"', replace_link, content)
+
+
+class WikiGuidePageView(LoginRequiredMixin, TemplateView):
+    template_name = 'wiki/html_page.html'
+
+    VALID_PAGES = {p[0]: p[1] for p in WIKI_HTML_PAGES}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        page_name = self.kwargs.get('page_name', 'index')
+
+        if page_name not in self.VALID_PAGES:
+            raise Http404('Guide page not found')
+
+        file_path = os.path.join(
+            str(settings.ROOT_DIR.path('docs').path('wiki_html')), f'{page_name}.html'
+        )
+        if not os.path.exists(file_path):
+            raise Http404('Guide page not found')
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            html_text = f.read()
+
+        raw_content = _extract_wiki_content(html_text)
+        rewritten = _rewrite_wiki_links(raw_content)
+
+        allowed_tags = [
+            'a', 'abbr', 'b', 'blockquote', 'br', 'caption', 'code', 'col', 'colgroup',
+            'dd', 'del', 'details', 'div', 'dl', 'dt', 'em', 'h1', 'h2', 'h3',
+            'h4', 'h5', 'h6', 'hr', 'i', 'img', 'li', 'ol', 'p', 'pre',
+            's', 'span', 'strong', 'sub', 'summary', 'sup', 'table', 'tbody', 'td',
+            'tfoot', 'th', 'thead', 'tr', 'u', 'ul',
+        ]
+        allowed_attrs = {
+            '*': ['class', 'id', 'title', 'style'],
+            'a': ['href', 'title', 'target'],
+            'img': ['src', 'alt', 'title', 'width', 'height'],
+            'td': ['colspan', 'rowspan'],
+            'th': ['colspan', 'rowspan', 'scope'],
+            'col': ['span'],
+            'colgroup': ['span'],
+        }
+        clean = bleach.clean(rewritten, tags=allowed_tags, attributes=allowed_attrs, strip=True)
+
+        context['wiki_content'] = mark_safe(clean)
+        context['page_name'] = page_name
+        context['page_title'] = self.VALID_PAGES.get(page_name, 'Documentation')
+        context['wiki_pages'] = WIKI_HTML_PAGES
+        return context
+
+
 class WikiPageView(LoginRequiredMixin, TemplateView):
     template_name = 'wiki/page.html'
 

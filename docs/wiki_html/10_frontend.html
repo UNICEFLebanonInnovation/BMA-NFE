@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10. Frontend Guide — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html" class="active">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>10. Frontend Guide</span></span>
+  </div>
+  <div id="content">
+    <h1 id="10-frontend-guide">10. Frontend Guide</h1>
+<h2 id="overview">Overview</h2>
+<p>The frontend is <strong>server-rendered</strong> — Django templates generate complete HTML pages. There is no single-page application framework (no React, Vue, or Angular). JavaScript is used selectively for interactivity on top of server-rendered HTML.</p>
+<p>This approach was chosen deliberately:<br />
+- Works on slow field connections in Lebanon<br />
+- No complex build pipeline<br />
+- Simpler maintenance for a small team</p>
+<hr />
+<h2 id="technology-stack">Technology Stack</h2>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bootstrap 5</td>
+<td>5.x</td>
+<td>Layout, components, utilities</td>
+</tr>
+<tr>
+<td>Bootstrap 3 (legacy)</td>
+<td>3.x</td>
+<td>Some older templates still use Bootstrap 3</td>
+</tr>
+<tr>
+<td>jQuery</td>
+<td>3.x</td>
+<td>DOM manipulation, AJAX</td>
+</tr>
+<tr>
+<td>Select2</td>
+<td>4.x</td>
+<td>Searchable dropdowns (FK fields)</td>
+</tr>
+<tr>
+<td>D3.js</td>
+<td>6.x</td>
+<td>Attendance heatmap visualization</td>
+</tr>
+<tr>
+<td>Chart.js</td>
+<td>3.x</td>
+<td>Dashboard charts (bar, pie, line)</td>
+</tr>
+<tr>
+<td>DataTables</td>
+<td>1.13</td>
+<td>Sortable/searchable tables</td>
+</tr>
+<tr>
+<td>Font Awesome</td>
+<td>5.x</td>
+<td>Icons</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="template-organization">Template Organization</h2>
+<p>Templates live in <code>student_registration/templates/</code>. Structure:</p>
+<pre class="highlight"><code>templates/
+├── base.html                    Main layout template
+├── account/                     django-allauth overrides (login, signup)
+├── users/                       User profile templates
+├── mscc/
+│   ├── list.html                Main MSCC registration list
+│   ├── child_add.html           Registration wizard
+│   ├── child_profile.html       Full beneficiary profile
+│   ├── attendance.html          Attendance entry
+│   ├── attendance_heatmap.html  D3 heatmap
+│   ├── dashboard.html           MSCC dashboard
+│   └── services/                Service delivery form fragments
+│       ├── education_assessment.html
+│       ├── health_nutrition.html
+│       ├── youth_kit.html
+│       └── ...
+├── clm/
+│   └── ...                      CLM equivalents
+├── schools/
+│   └── ...
+└── partials/
+    ├── navbar.html              Top navigation bar
+    ├── sidebar.html             Sidebar navigation
+    └── pagination.html          Reusable pagination
+</code></pre>
+
+<hr />
+<h2 id="base-template">Base Template</h2>
+<p><code>base.html</code> defines the outer shell:<br />
+- HTML <code>&lt;head&gt;</code> with Bootstrap, Font Awesome, custom CSS<br />
+- Top navbar (includes user menu, language switcher)<br />
+- Sidebar navigation (MSCC / CLM / Admin links, filtered by user group)<br />
+- <code>{% block content %}</code> — main content area<br />
+- Footer<br />
+- JS includes (jQuery, Bootstrap bundle, Select2, app.js)</p>
+<p>Every page template extends <code>base.html</code>:</p>
+<pre class="highlight"><code class="language-django">{% extends &quot;base.html&quot; %}
+{% block content %}
+  &lt;h1&gt;My Page&lt;/h1&gt;
+{% endblock %}
+</code></pre>
+
+<hr />
+<h2 id="common-template-patterns">Common Template Patterns</h2>
+<h3 id="displaying-user-scoped-data">Displaying User-Scoped Data</h3>
+<p>Templates receive context from the view. Views always pass the logged-in user's partner/center context:</p>
+<pre class="highlight"><code class="language-python"># In a view's get_context_data:
+context['partner'] = self.request.user.partner
+context['registrations'] = Registration.objects.filter(center=self.request.user.center)
+</code></pre>
+
+<h3 id="group-based-conditional-ui">Group-Based Conditional UI</h3>
+<pre class="highlight"><code class="language-django">{% load has_group %}
+
+{% if request.user|has_group:&quot;MSCC_FULL&quot; %}
+  &lt;button&gt;Export All Data&lt;/button&gt;
+{% endif %}
+
+{% if request.user|has_group:&quot;MSCC_UNICEF&quot; %}
+  &lt;a href=&quot;{% url 'mscc:dashboard' %}&quot;&gt;Analytics Dashboard&lt;/a&gt;
+{% endif %}
+</code></pre>
+
+<h3 id="ajax-form-submission">AJAX Form Submission</h3>
+<p>Service delivery forms on the child profile page are submitted via AJAX (no full page reload):</p>
+<pre class="highlight"><code class="language-javascript">// Pattern used throughout child_profile.html
+$('#education-form').on('submit', function(e) {
+    e.preventDefault();
+    $.ajax({
+        url: $(this).attr('action'),
+        method: 'POST',
+        data: $(this).serialize(),
+        headers: {'X-CSRFToken': getCookie('csrftoken')},
+        success: function(response) {
+            if (response.success) {
+                showToast('Service saved successfully');
+                refreshServiceTable();
+            } else {
+                showFormErrors(response.errors);
+            }
+        }
+    });
+});
+</code></pre>
+
+<p>All AJAX POST endpoints return:</p>
+<pre class="highlight"><code class="language-json">{&quot;success&quot;: true}
+// or
+{&quot;success&quot;: false, &quot;errors&quot;: {&quot;field_name&quot;: [&quot;error message&quot;]}}
+</code></pre>
+
+<h3 id="csrf-token-in-ajax">CSRF Token in AJAX</h3>
+<p>For all AJAX requests, include the CSRF token:</p>
+<pre class="highlight"><code class="language-javascript">function getCookie(name) {
+    // Standard Django CSRF cookie helper
+    let cookieValue = null;
+    if (document.cookie &amp;&amp; document.cookie !== '') {
+        document.cookie.split(';').forEach(cookie =&gt; {
+            if (cookie.trim().startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.trim().slice(name.length + 1));
+            }
+        });
+    }
+    return cookieValue;
+}
+</code></pre>
+
+<hr />
+<h2 id="select2-autocomplete">Select2 Autocomplete</h2>
+<p>Foreign key dropdowns use Select2 with django-autocomplete-light for server-side search:</p>
+<pre class="highlight"><code class="language-django">&lt;!-- In a form template --&gt;
+{{ form.school|as_crispy_field }}
+</code></pre>
+
+<pre class="highlight"><code class="language-python"># In the form class:
+class RegistrationForm(forms.ModelForm):
+    school = ModelChoiceField(
+        queryset=School.objects.all(),
+        widget=autocomplete.ModelSelect2(url='school-autocomplete')
+    )
+</code></pre>
+
+<p>The autocomplete view (<code>/school-autocomplete/</code>) returns JSON filtered by the search term.</p>
+<hr />
+<h2 id="attendance-heatmap-d3js">Attendance Heatmap (D3.js)</h2>
+<p>The attendance heatmap at <code>/mscc/attendance-heatmap/</code> uses D3.js to render a calendar-style grid showing daily attendance rates per child.</p>
+<p>Data is fetched from <code>/api/attendance-heatmap-data/</code> as JSON. The D3 code lives in <code>student_registration/static/js/heatmap.js</code>.</p>
+<hr />
+<h2 id="dashboard-charts-chartjs">Dashboard Charts (Chart.js)</h2>
+<p>Dashboard pages use Chart.js for bar/pie/line charts. Data is loaded via AJAX from <code>/mscc/dashboard-data/</code> (returns JSON with pre-aggregated counts).</p>
+<pre class="highlight"><code class="language-javascript">// Pattern in dashboard.html
+fetch('/mscc/dashboard-data/?filter=...')
+    .then(r =&gt; r.json())
+    .then(data =&gt; {
+        new Chart(document.getElementById('registrations-chart'), {
+            type: 'bar',
+            data: data.registrations_by_month,
+        });
+    });
+</code></pre>
+
+<hr />
+<h2 id="static-files">Static Files</h2>
+<p>Static files live in <code>student_registration/static/</code>:</p>
+<pre class="highlight"><code>static/
+├── css/
+│   ├── project.css     Custom styles (override Bootstrap)
+│   └── ...
+├── js/
+│   ├── app.js          Global JS utilities
+│   ├── heatmap.js      D3 heatmap
+│   └── ...
+├── fonts/             Webfonts
+├── images/            Logos, icons
+└── locale/            Translation files (.po/.mo)
+</code></pre>
+
+<p>In production, <code>collectstatic</code> copies all static files to <code>STATIC_ROOT</code> and WhiteNoise serves them directly from Gunicorn (no Nginx static serving needed).</p>
+<hr />
+<h2 id="internationalization-i18n">Internationalization (i18n)</h2>
+<p>The UI supports <strong>Arabic</strong> and <strong>English</strong>. Users switch languages via <code>/users/set-language/&lt;language&gt;/</code>.</p>
+<p>Templates use Django's <code>{% trans %}</code> and <code>{% blocktrans %}</code> tags:</p>
+<pre class="highlight"><code class="language-django">{% load i18n %}
+&lt;h1&gt;{% trans &quot;Child Registration&quot; %}&lt;/h1&gt;
+</code></pre>
+
+<p>RTL (right-to-left) layout is handled by Bootstrap's RTL stylesheet, loaded conditionally based on the active language.</p>
+<p>To add a new translated string:</p>
+<pre class="highlight"><code class="language-bash"># Extract strings from templates and Python files
+python manage.py makemessages -l ar
+
+# Edit locale/ar/LC_MESSAGES/django.po
+# Then compile:
+python manage.py compilemessages
+</code></pre>
+
+<hr />
+<h2 id="forms-with-crispy-forms">Forms with Crispy Forms</h2>
+<p>Most forms use <code>django-crispy-forms</code> with the Bootstrap 5 template pack:</p>
+<pre class="highlight"><code class="language-python">from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Row, Column, Submit
+
+class RegistrationForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column('first_name', css_class='col-md-4'),
+                Column('father_name', css_class='col-md-4'),
+                Column('last_name', css_class='col-md-4'),
+            ),
+            Submit('submit', 'Save', css_class='btn btn-primary'),
+        )
+</code></pre>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

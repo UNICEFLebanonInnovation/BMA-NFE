@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>9. Background Tasks (Celery) — BMA Wiki</title>
+  <style>
+:root {
+  --primary: #1a6faf;
+  --primary-dark: #134f7d;
+  --accent: #00b5e2;
+  --bg: #f4f7fb;
+  --sidebar-bg: #1a2540;
+  --sidebar-text: #c8d6e5;
+  --sidebar-hover: #00b5e2;
+  --sidebar-active-bg: #00b5e2;
+  --sidebar-active-text: #fff;
+  --card-bg: #fff;
+  --border: #dde3ed;
+  --text: #2c3e50;
+  --muted: #6c7a8d;
+  --code-bg: #1e2533;
+  --code-text: #e8edf5;
+  --table-head: #1a6faf;
+  --table-stripe: #f0f5fb;
+  --tag-dev: #e8f0fe;
+  --tag-dev-text: #1a6faf;
+  --tag-user: #e6f9f0;
+  --tag-user-text: #1a7a50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  min-height: 100vh;
+}
+/* ── Sidebar ── */
+#sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar-bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+#sidebar-header .version {
+  font-size: 11px;
+  color: #6b8099;
+  margin-top: 3px;
+}
+#sidebar nav { padding: 10px 0 20px; }
+#sidebar nav .section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #4a6278;
+  padding: 14px 20px 5px;
+}
+#sidebar nav a {
+  display: block;
+  padding: 8px 20px 8px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+#sidebar nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--sidebar-hover);
+}
+#sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  background: rgba(0,181,226,0.15);
+  border-left-color: var(--sidebar-active-bg);
+  font-weight: 600;
+}
+/* ── Main content ── */
+#main {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#topbar .breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+}
+#topbar .breadcrumb span { color: var(--text); font-weight: 500; }
+#content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+/* ── Typography ── */
+#content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  line-height: 1.3;
+}
+#content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+#content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 8px;
+}
+#content p {
+  line-height: 1.75;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+#content a { color: var(--primary); text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+#content ul, #content ol {
+  margin: 10px 0 16px 24px;
+  line-height: 1.8;
+}
+#content li { margin-bottom: 4px; }
+#content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+#content strong { color: var(--primary-dark); }
+#content blockquote {
+  border-left: 4px solid var(--accent);
+  background: #f0f8ff;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #2c4a6e;
+}
+#content blockquote p { margin: 0; color: inherit; }
+/* ── Tables ── */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+#content thead tr {
+  background: var(--table-head);
+  color: #fff;
+}
+#content th {
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+#content td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+#content tr:last-child td { border-bottom: none; }
+#content tbody tr:nth-child(even) { background: var(--table-stripe); }
+#content tbody tr:hover { background: #e8f2fb; }
+/* ── Code ── */
+#content code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #e8edf5;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 20px 22px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+#content pre code {
+  background: transparent;
+  color: var(--code-text);
+  padding: 0;
+  font-size: 13px;
+}
+/* ── Callout boxes ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-tip { background: #e6f9f0; border-left: 4px solid #27ae60; color: #1a5c35; }
+.callout-warn { background: #fff8e6; border-left: 4px solid #f39c12; color: #6b4a00; }
+.callout-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a4a6b; }
+/* ── Footer ── */
+#footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: auto;
+}
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { width: 100%; min-width: unset; position: relative; height: auto; }
+  #main { margin-left: 0; }
+  #content { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">BMA Documentation</div>
+    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+  </div>
+  <nav>
+    <div class="section-label">Navigation</div>
+    <a href="index.html">🏠 Home</a>
+    <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Developer Guides</div>
+    <a href="01_project_overview.html">1. Project Overview</a>
+    <a href="02_setup.html">2. Setup & Installation</a>
+    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="05_django_apps.html">5. Django Apps Reference</a>
+    <a href="06_api_urls.html">6. API & URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="08_admin_portal.html">8. Admin Portal Guide</a>
+    <a href="09_celery_tasks.html" class="active">9. Background Tasks (Celery)</a>
+    <a href="10_frontend.html">10. Frontend Guide</a>
+    <a href="11_environment_variables.html">11. Environment Variables</a>
+    <a href="12_deployment.html">12. Deployment Guide</a>
+    <a href="13_testing.html">13. Testing Guide</a>
+  </nav>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>9. Background Tasks (Celery)</span></span>
+  </div>
+  <div id="content">
+    <h1 id="9-background-tasks-celery">9. Background Tasks (Celery)</h1>
+<h2 id="overview">Overview</h2>
+<p><a href="https://docs.celeryq.dev/">Celery</a> handles operations that are too slow for a synchronous HTTP request — primarily large data export jobs.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Task broker</td>
+<td>Redis</td>
+</tr>
+<tr>
+<td>Result backend</td>
+<td>Django database (django-celery-results)</td>
+</tr>
+<tr>
+<td>Scheduler</td>
+<td>django-celery-beat</td>
+</tr>
+<tr>
+<td>Monitoring</td>
+<td>Flower (port 5555)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="configuration">Configuration</h2>
+<p>Celery is initialized in <code>student_registration/taskapp/celery.py</code> and configured in <code>config/settings/base.py</code>.</p>
+<h3 id="key-settings">Key Settings</h3>
+<pre class="highlight"><code class="language-python"># Broker and result backend
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = 'django-db'
+
+# Two queues
+CELERY_TASK_QUEUES = {
+    Queue('default', routing_key='default'),
+    Queue('mscc_export', routing_key='mscc_export'),
+}
+CELERY_TASK_DEFAULT_QUEUE = 'default'
+CELERY_TASK_ROUTES = {
+    'student_registration.mscc.tasks.generate_mscc_export': {
+        'queue': 'mscc_export'
+    }
+}
+
+# Export queue is throttled to prevent DB overload
+CELERYD_CONCURRENCY_mscc_export = 1
+</code></pre>
+
+<h3 id="development-mode">Development Mode</h3>
+<p>In <code>config/settings/local.py</code>, tasks run <strong>synchronously</strong> (no worker needed):</p>
+<pre class="highlight"><code class="language-python">CELERY_TASK_ALWAYS_EAGER = True
+</code></pre>
+
+<hr />
+<h2 id="task-generate_mscc_export">Task: <code>generate_mscc_export</code></h2>
+<p>Location: <code>student_registration/mscc/tasks.py</code></p>
+<p>This is the only significant Celery task in the system. It runs on the <code>mscc_export</code> queue.</p>
+<h3 id="what-it-does">What it does</h3>
+<ol>
+<li>Receives an <code>export_id</code> (an <code>ExportHistory</code> record's PK)</li>
+<li>Updates <code>ExportHistory.status = 'processing'</code></li>
+<li>Queries <code>Registration</code> + all related service models based on selected fields</li>
+<li>Builds an XLSX or CSV file using <code>openpyxl</code> / <code>tablib</code></li>
+<li>Compresses into a ZIP archive</li>
+<li>Uploads the ZIP to Azure Blob Storage</li>
+<li>Updates <code>ExportHistory.status = 'done'</code> and saves the <code>file_name</code></li>
+<li>Sends a Firebase Cloud Messaging push notification to the requesting user</li>
+</ol>
+<h3 id="triggering-an-export">Triggering an Export</h3>
+<p>From the UI: The user clicks "Export" on the MSCC list page, selects fields, and submits. The view:<br />
+1. Creates an <code>ExportHistory</code> record with <code>status='pending'</code><br />
+2. Calls <code>generate_mscc_export.delay(export_id=history.pk)</code><br />
+3. Returns the <code>export_id</code> to the browser<br />
+4. The browser polls <code>/mscc/export-status/&lt;export_id&gt;/</code> every few seconds<br />
+5. When <code>status='done'</code>, the download link appears</p>
+<pre class="highlight"><code class="language-python"># Trigger manually from Django shell
+from student_registration.mscc.tasks import generate_mscc_export
+generate_mscc_export.delay(export_id=123)
+</code></pre>
+
+<h3 id="error-handling">Error Handling</h3>
+<p>If the task fails, <code>ExportHistory.status</code> is set to <code>'failed'</code> and the exception is logged to Sentry. The user's browser polling will detect the failed status and display an error message.</p>
+<hr />
+<h2 id="periodic-tasks">Periodic Tasks</h2>
+<p>django-celery-beat manages scheduled tasks. The schedule is stored in the database and manageable via:<br />
+- Django admin: <code>/admin/django_celery_beat/</code><br />
+- Management command: <code>python manage.py setup_periodic_tasks</code> (if defined)</p>
+<p>Currently configured periodic tasks are managed via the admin panel.</p>
+<hr />
+<h2 id="running-workers">Running Workers</h2>
+<h3 id="docker-recommended">Docker (recommended)</h3>
+<p>The <code>celeryworker</code> and <code>celerybeat</code> services are defined in <code>local.yml</code> and <code>production.yml</code> and start automatically with <code>docker-compose up</code>.</p>
+<h3 id="manual">Manual</h3>
+<pre class="highlight"><code class="language-bash"># Worker for both queues
+celery -A config.celery_app worker -Q default,mscc_export -l info
+
+# Beat scheduler (runs periodic tasks)
+celery -A config.celery_app beat -l info
+
+# Both in one process (development only)
+celery -A config.celery_app worker --beat -l info
+</code></pre>
+
+<hr />
+<h2 id="monitoring-with-flower">Monitoring with Flower</h2>
+<p>Flower provides a web UI for monitoring task execution.</p>
+<p>Access at: <code>http://localhost:5555</code></p>
+<p>Features:<br />
+- Active, pending, and completed task list<br />
+- Worker status and concurrency<br />
+- Task retry / revoke<br />
+- Queue depth monitoring</p>
+<hr />
+<h2 id="writing-a-new-task">Writing a New Task</h2>
+<pre class="highlight"><code class="language-python"># student_registration/myapp/tasks.py
+from config.celery_app import app
+
+@app.task(bind=True, max_retries=3)
+def my_background_task(self, record_id):
+    try:
+        record = MyModel.objects.get(pk=record_id)
+        # ... do work ...
+    except MyModel.DoesNotExist:
+        # Don't retry if record is missing
+        return
+    except Exception as exc:
+        # Retry with exponential backoff
+        raise self.retry(exc=exc, countdown=2 ** self.request.retries)
+</code></pre>
+
+<p>Then call it:</p>
+<pre class="highlight"><code class="language-python">my_background_task.delay(record_id=42)
+# or with apply_async for more control:
+my_background_task.apply_async(args=[42], countdown=60)  # run after 60s
+</code></pre>
+
+<hr />
+<h2 id="debugging-tasks">Debugging Tasks</h2>
+<pre class="highlight"><code class="language-bash"># View task results in Django shell
+from django_celery_results.models import TaskResult
+TaskResult.objects.filter(status='FAILURE').order_by('-date_done')[:10]
+
+# Check export history
+from student_registration.backends.models import ExportHistory
+ExportHistory.objects.filter(status='failed').order_by('-created')[:10]
+</code></pre>
+  </div>
+  <div id="footer">
+    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+  </div>
+</div>
+
+</body>
+</html>

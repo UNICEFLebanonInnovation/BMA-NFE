@@ -35,3 +35,8 @@ urlpatterns += [
     re_path(r'^wiki/(?P<page_name>[\w\-]+)/$', view=views.WikiPageView.as_view(), name='wiki_page'),
     re_path(r'^wiki/$', views.WikiPageView.as_view(), {'page_name': 'index'}, name='wiki_index'),
 ]
+
+urlpatterns += [
+    re_path(r'^guide/(?P<page_name>[\w\-]+)/$', view=views.WikiGuidePageView.as_view(), name='wiki_guide'),
+    re_path(r'^guide/$', views.WikiGuidePageView.as_view(), {'page_name': 'index'}, name='wiki_guide_index'),
+]

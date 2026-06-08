@@ -72,6 +72,39 @@
                 <h5 class="mb-0 me-auto">{% block module_name %}{% endblock %}</h5>
 
                 <div class="d-flex align-items-center">
+                    <!-- Documentation -->
+                    <div class="dropdown me-3">
+                        <button class="btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-label="Documentation" title="Documentation">
+                            <i class="bi bi-book fs-5 text-dark"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end shadow border-0 py-0" style="width:290px;z-index:1300;">
+                            <div class="px-3 py-2 border-bottom bg-light rounded-top d-flex align-items-center gap-2">
+                                <i class="bi bi-book-half text-primary"></i>
+                                <span class="fw-bold small">{% trans "Documentation" %}</span>
+                            </div>
+                            <a class="dropdown-item py-2" href="{% url 'dashboard:wiki_guide_index' %}">
+                                <i class="bi bi-house-door me-2 text-muted"></i>{% trans "Home" %}
+                            </a>
+                            <a class="dropdown-item py-2" href="{% url 'dashboard:wiki_guide' 'end_user' %}">
+                                <i class="bi bi-person-lines-fill me-2 text-success"></i>{% trans "End User Manual" %}
+                            </a>
+                            <div class="dropdown-divider my-1"></div>
+                            <div class="px-3 py-1 text-muted" style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">{% trans "Developer Guides" %}</div>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '01_project_overview' %}">1. {% trans "Project Overview" %}</a>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '02_setup' %}">2. {% trans "Setup & Installation" %}</a>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '03_architecture' %}">3. {% trans "Architecture & Tech Stack" %}</a>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '04_database_schema' %}">4. {% trans "Database Schema" %}</a>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '05_django_apps' %}">5. {% trans "Django Apps Reference" %}</a>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '06_api_urls' %}">6. {% trans "API & URL Reference" %}</a>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '07_auth_permissions' %}">7. {% trans "Auth & Permissions" %}</a>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '08_admin_portal' %}">8. {% trans "Admin Portal" %}</a>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '12_deployment' %}">12. {% trans "Deployment Guide" %}</a>
+                            <a class="dropdown-item py-1 small" href="{% url 'dashboard:wiki_guide' '13_testing' %}">13. {% trans "Testing Guide" %}</a>
+                            <div class="px-3 pb-2 pt-1">
+                                <a href="{% url 'dashboard:wiki_guide_index' %}" class="btn btn-sm btn-outline-primary w-100">{% trans "View All Docs" %}</a>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Notifications -->
                     <div class="dropdown me-3 export-history-dropdown">
                         {% recent_export_history as exports %}
