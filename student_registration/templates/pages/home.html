@@ -10,11 +10,11 @@
 {% block content %}
 
 <div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
-    Welcome
+    {% trans "Welcome" %}
   {% if request.user.is_authenticated %}
   <i>{{ request.user }}</i>
   {% endif %}
-  to CLM<sup>+</sup>
+  {% trans "to CLM" %}<sup>+</sup>
     <div class="page-title-subheading">
                                     </div>
 </div></div><div class="page-title-actions">
@@ -25,14 +25,14 @@
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-title opacity-5 text-uppercase">{% trans "New Registration" %}</div>
                                         <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
                                                     <span class="opacity-10 text-primary pr-2">
                                                         <i class="fa fa-plus"></i>
                                                     </span>
-                                                    Core Package
+                                                    {% trans "Core Package" %}
                                                     <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
                                                 <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
@@ -50,14 +50,14 @@
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-title opacity-5 text-uppercase">{% trans "New Registration" %}</div>
                                         <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
                                                     <span class="opacity-10 text-danger pr-2">
                                                         <i class="fa fa-plus"></i>
                                                     </span>
-                                                    Walk-in
+                                                    {% trans "Walk-in" %}
                                                     <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
                                                 <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->

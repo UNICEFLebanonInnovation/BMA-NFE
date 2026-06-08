@@ -25,9 +25,9 @@
                                         </span>
                                         <span class="d-inline-block">
                                           {% if form.instance.id == None %}
-                                            Add New Child
+                                            {% trans "Add New Child" %}
                                           {% else %}
-                                            Edit Child Info.
+                                            {% trans "Edit Child Info." %}
                                           {% endif %}
                                         </span>
                                     </div>
@@ -35,13 +35,13 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">Home</a>
+                                                    <a href="{% url 'mscc:list' %}">{% trans "Home" %}</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     {% if form.instance.id == None %}
-                                                      <a href="{% url 'mscc:list' %}">List</a>
+                                                      <a href="{% url 'mscc:list' %}">{% trans "List" %}</a>
                                                     {% else %}
-                                                      <a href="{% url 'mscc:child_profile' form.instance.id %}">Child Profile</a>
+                                                      <a href="{% url 'mscc:child_profile' form.instance.id %}">{% trans "Child Profile" %}</a>
                                                     {% endif %}
                                                 </li>
                                                 <li class="breadcrumb-item">
@@ -80,17 +80,17 @@
                     <ul class="forms-wizard">
                         <li>
                             <a href="#step-1">
-                                <em>1</em><span>Child Information</span>
+                                <em>1</em><span>{% trans "Child Information" %}</span>
                             </a>
                         </li>
                         <li>
                             <a href="#step-2">
-                                <em>2</em><span>Parent/Caregiver Information</span>
+                                <em>2</em><span>{% trans "Parent/Caregiver Information" %}</span>
                             </a>
                         </li>
                         <li>
                             <a href="#step-3">
-                                <em>3</em><span>Work Status</span>
+                                <em>3</em><span>{% trans "Work Status" %}</span>
                             </a>
                         </li>
                     </ul>
@@ -278,12 +278,12 @@
                 <div class="divider"></div>
                 <div class="clearfix">
                     <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
-                    <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                    <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">{% trans "Back to list" %}</a>
 
-                    <button type="button" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>
-                    <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill btn-hover-shine btn btn-primary">Next btn</button>
-                    <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill btn-hover-shine btn btn-primary">Next Page</button>
-                    <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
+                    <button type="button" id="reset-btn22" class="btn-shadow float-left btn btn-link">{% trans "Reset" %}</button>
+                    <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill btn-hover-shine btn btn-primary">{% trans "Next btn" %}</button>
+                    <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill btn-hover-shine btn btn-primary">{% trans "Next Page" %}</button>
+                    <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">{% trans "Previous" %}</button>
                 </div>
             </div>
         </div>
@@ -292,7 +292,7 @@
 {% if form.instance.id == None %}
   <div class="col-md-3" id="outreach-nfe-result">
     <div class="main-card mb-3 card">
-      <div class="card-header"><i class="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Previous data</div>
+      <div class="card-header"><i class="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>{% trans "Previous data" %}</div>
                                                   <div id="nfe_search_loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
                                                     <div class="loader">
                                                         <div class="ball-spin-fade-loader">

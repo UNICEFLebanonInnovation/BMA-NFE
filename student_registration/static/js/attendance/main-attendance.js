@@ -1,3 +1,7 @@
+function translateMessage(message) {
+    return window.gettext ? window.gettext(message) : message;
+}
+
 
 $(document).ready(
    function()
@@ -60,7 +64,7 @@ function load_students()
             }
             else
             {
-                showModal("Please specify the reason for day off");
+                showModal(translateMessage('Please specify the reason for day off'));
             }
         }
         else
@@ -75,7 +79,7 @@ function load_students()
     }
     else
     {
-        showModal("School and Registration Level are mandatory")
+        showModal(translateMessage('School and Registration Level are mandatory'))
     }
 
  }

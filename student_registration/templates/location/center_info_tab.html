@@ -100,9 +100,9 @@
                                     <div class="h3 mb-0 fw-bold text-primary">{{ instance.total_children }}</div>
                                 </div>
                                 <div class="text-end">
-                                    <span class="badge bg-primary-subtle text-primary mb-1">M: {{ instance.total_male }}</span>
+                                    <span class="badge bg-primary-subtle text-primary mb-1">{% trans "M:" %} {{ instance.total_male }}</span>
                                     <br>
-                                    <span class="badge bg-success-subtle text-success">F: {{ instance.total_female }}</span>
+                                    <span class="badge bg-success-subtle text-success">{% trans "F:" %} {{ instance.total_female }}</span>
                                 </div>
                             </div>
                         </div>
@@ -115,8 +115,8 @@
                                     <div class="h4 mb-0 fw-bold text-info">{{ instance.total_disability }}</div>
                                 </div>
                                 <div class="text-end">
-                                    <span class="text-muted small d-block">M: {{ instance.total_disability_male }}</span>
-                                    <span class="text-muted small d-block">F: {{ instance.total_disability_female }}</span>
+                                    <span class="text-muted small d-block">{% trans "M:" %} {{ instance.total_disability_male }}</span>
+                                    <span class="text-muted small d-block">{% trans "F:" %} {{ instance.total_disability_female }}</span>
                                 </div>
                             </div>
                         </div>
@@ -128,10 +128,10 @@
                                     <div class="text-muted small fw-bold text-uppercase">{% trans "Nationality" %}</div>
                                     <div class="row g-2 mt-1">
                                         <div class="col-auto">
-                                            <span class="text-muted small">Lebanese:</span> <span class="fw-bold">{{ instance.total_lebanese }}</span>
+                                            <span class="text-muted small">{% trans "Lebanese:" %}</span> <span class="fw-bold">{{ instance.total_lebanese }}</span>
                                         </div>
                                         <div class="col-auto border-start ps-2">
-                                            <span class="text-muted small">Non-Lebanese:</span> <span class="fw-bold">{{ instance.total_non_lebanese }}</span>
+                                            <span class="text-muted small">{% trans "Non-Lebanese:" %}</span> <span class="fw-bold">{{ instance.total_non_lebanese }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -146,8 +146,8 @@
                                     <div class="h4 mb-0 fw-bold">{{ instance.total_staff }}</div>
                                 </div>
                                 <div class="text-end">
-                                    <span class="text-muted small d-block">Admin: {{ instance.total_admin_staff }}</span>
-                                    <span class="text-muted small d-block">Teachers: {{ instance.total_teachers }}</span>
+                                    <span class="text-muted small d-block">{% trans "Admin:" %} {{ instance.total_admin_staff }}</span>
+                                    <span class="text-muted small d-block">{% trans "Teachers:" %} {{ instance.total_teachers }}</span>
                                 </div>
                             </div>
                         </div>

@@ -1,3 +1,7 @@
+function translateMessage(message) {
+    return window.gettext ? window.gettext(message) : message;
+}
+
 
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
@@ -112,7 +116,7 @@ $(document).ready(function() {
         var class_section = $('#class_section').val();
 
         if (!education_program || !round_id || !class_section) {
-             showModal("Please fill: Attendance Date, Round, School, and Registration Level.");
+             showModal(translateMessage('Please fill: Attendance Date, Round, School, and Registration Level.'));
              return false;
         }
 

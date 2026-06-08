@@ -25,20 +25,20 @@
                           <i class="fa fa-id-card"></i>
                       </span>
                       <span class="d-inline-block">
-                        Caregivers Package
+                        {% trans "Caregivers Package" %}
                       </span>
                   </div>
                   <div class="page-title-subheading opacity-10">
                       <nav class="" aria-label="breadcrumb">
                           <ol class="breadcrumb">
                               <li class="breadcrumb-item">
-                                  <a href="{% url 'mscc:list' %}">Home</a>
+                                  <a href="{% url 'mscc:list' %}">{% trans "Home" %}</a>
                               </li>
                               <li class="breadcrumb-item">
                                     <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname  registry %}</a>
                               </li>
                                <li class="breadcrumb-item">
-                                     Caregivers Package
+                                     {% trans "Caregivers Package" %}
                               </li>
                           </ol>
                       </nav>
@@ -57,12 +57,12 @@
                                         <ul class="forms-wizard">
                                             <li>
                                                 <a href="#step-1">
-                                                    <em>1</em><span>Follow-up</span>
+                                                    <em>1</em><span>{% trans "Follow-up" %}</span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#step-2">
-                                                    <em>2</em><span> Parents Meeting, Engagement and Support</span>
+                                                    <em>2</em><span> {% trans "Parents Meeting, Engagement and Support" %}</span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -75,13 +75,13 @@
 
                                     <div class="clearfix">
                                         <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
-                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">{% trans "Back to list" %}</a>
 
                                         <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
                                         <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
 
-                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
-                                        <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
+                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">{% trans "Next" %}</button>
+                                        <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">{% trans "Previous" %}</button>
                                     </div>
                                 </div>
                             </div>

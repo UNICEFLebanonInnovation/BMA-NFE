@@ -1,3 +1,7 @@
+function translateMessage(message) {
+    return window.gettext ? window.gettext(message) : message;
+}
+
 
 $(document).ready(function() {
 
@@ -46,7 +50,7 @@ $(document).ready(function() {
 
     function pollExportStatus(exportId, attemptsRemaining) {
         if (!exportId) {
-            showModal('Export started successfully. Please check the recent exports menu for the download link.');
+            showModal(translateMessage('Export started successfully. Please check the recent exports menu for the download link.'));
             return;
         }
 
@@ -57,12 +61,12 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.status === "done" && data.file_url) {
                     window.location.href = data.file_url;
-                    showModal('Export successful. Your download should start automatically. If it does not, please use the recent exports menu.');
+                    showModal(translateMessage('Export successful. Your download should start automatically. If it does not, please use the recent exports menu.'));
                     return;
                 }
 
                 if (data.status === "failed") {
-                    showModal('Export failed. Please try again later or contact support.');
+                    showModal(translateMessage('Export failed. Please try again later or contact support.'));
                     return;
                 }
 
@@ -73,10 +77,10 @@ $(document).ready(function() {
                     return;
                 }
 
-                showModal('Export is still processing. Please check the recent exports menu for the download link.');
+                showModal(translateMessage('Export is still processing. Please check the recent exports menu for the download link.'));
             },
             error: function() {
-                showModal('Export started, but the download status could not be checked. Please check the recent exports menu.');
+                showModal(translateMessage('Export started, but the download status could not be checked. Please check the recent exports menu.'));
             }
         });
     }
@@ -96,7 +100,7 @@ $(document).ready(function() {
         paramsObj.set('format', format);
         var params = paramsObj.toString();
 
-        button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Processsing...');
+        button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> ' + translateMessage('Processing...'));
 
         $.ajax({
             url: url + "?" + params,
@@ -109,17 +113,17 @@ $(document).ready(function() {
                     // Centers use direct download sometimes or zip name return
                     if (data.length > 5) {
                          window.open("/mscc/export-download/" + data, "_blank");
-                         showModal('Export successful. Your download should start automatically.');
+                         showModal(translateMessage('Export successful. Your download should start automatically.'));
                     } else {
-                         showModal('Export started successfully. You will be notified when the file is ready.');
+                         showModal(translateMessage('Export started successfully. You will be notified when the file is ready.'));
                     }
                 } else {
-                    showModal('Export started successfully. Processing may take a few minutes depending on the data size.');
+                    showModal(translateMessage('Export started successfully. Processing may take a few minutes depending on the data size.'));
                     pollExportStatus(data.export_id, 90);
                 }
             },
             error: function() {
-                showModal('Failed to start export. Please try again later.');
+                showModal(translateMessage('Failed to start export. Please try again later.'));
             },
             complete: function() {
                 button.prop('disabled', false).html(originalHtml);
@@ -144,7 +148,7 @@ $(document).ready(function() {
         const params = $('#filter-form').serialize();
         const exportUrl = params ? ("/students/teacher-export/?" + params) : "/students/teacher-export/";
 
-        button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Processing...');
+        button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> ' + translateMessage('Processing...'));
 
         $.ajax({
             url: exportUrl,
@@ -156,13 +160,13 @@ $(document).ready(function() {
                 const fileName = (data || '').toString().trim();
                 if (fileName.length > 0) {
                     window.open("/mscc/export-download-csv/" + encodeURIComponent(fileName), "_blank");
-                    showModal('Teacher export completed. Your download should start automatically.');
+                    showModal(translateMessage('Teacher export completed. Your download should start automatically.'));
                 } else {
-                    showModal('Teacher export completed, but no file was returned.');
+                    showModal(translateMessage('Teacher export completed, but no file was returned.'));
                 }
             },
             error: function() {
-                showModal('Failed to export teacher data. Please try again later.');
+                showModal(translateMessage('Failed to export teacher data. Please try again later.'));
             },
             complete: function() {
                 button.prop('disabled', false).html(originalHtml);

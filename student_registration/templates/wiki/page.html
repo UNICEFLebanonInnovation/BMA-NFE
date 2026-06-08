@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 <div class="container-fluid px-4 py-4">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb bg-transparent p-0 m-0">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'dashboard:wiki_page' 'index' %}">Wiki</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:wiki_page' 'index' %}">{% trans "Wiki" %}</a></li>
             {% if page_name != 'index' %}
                 <li class="breadcrumb-item active text-capitalize" aria-current="page">{{ page_name }}</li>
             {% endif %}

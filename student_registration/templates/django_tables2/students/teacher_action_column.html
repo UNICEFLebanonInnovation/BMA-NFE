@@ -4,9 +4,9 @@
 
 {% load util_tags %}
 <div class="mb-2 mr-2 btn-group dropdown" style="position: relative;">
-    <button class="btn btn-outline-primary">Actions</button>
+    <button class="btn btn-outline-primary">{% trans "Actions" %}</button>
     <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="dropdown-toggle-split dropdown-toggle btn btn-outline-primary">
-        <span class="sr-only">Toggle Dropdown</span>
+        <span class="sr-only">{% trans "Toggle Dropdown" %}</span>
     </button>
     <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu" x-placement="bottom-start">
         <a href="{{ column.attrs.url_edit }}{{ record.id }}" tabindex="0" class="dropdown-item">

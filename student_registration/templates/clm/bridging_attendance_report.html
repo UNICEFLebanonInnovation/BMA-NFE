@@ -16,7 +16,7 @@
                                             <i class="fa fa-child"></i>
                                         </span>
                                         <span class="d-inline-block">
-                                          Dirasa Daily Attendance
+                                          {% trans "Dirasa Daily Attendance" %}
                                         </span>
                                     </div>
                                     <div class="page-title-subheading opacity-10">
@@ -24,12 +24,12 @@
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
                                                     <a href="/">
-                                                        Home
+                                                        {% trans "Home" %}
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     <a href="{% url 'clm:bridging_page' %}">
-                                                        Dirasa
+                                                        {% trans "Dirasa" %}
                                                     </a>
                                                 </li>
                                             </ol>
@@ -52,40 +52,40 @@
                 <div class="col-md-6 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-green">
                     <div class="flex-panel padding-44">
                         <div class="p-icon green"></div>
-                        <span class="uppercase">Filters</span>
+                        <span class="uppercase">{% trans "Filters" %}</span>
 
                         <div class="form-group">
-                            <label for="dirasa-month">Select Month</label>
+                            <label for="dirasa-month">{% trans "Select Month" %}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                                 </div>
                                 <select id="dirasa-month" class="form-control">
-                                    <option value="">Select Month</option>
-                                    <option value="01">January</option>
-                                    <option value="02">February</option>
-                                    <option value="03">March</option>
-                                    <option value="04">April</option>
-                                    <option value="05">May</option>
-                                    <option value="06">June</option>
-                                    <option value="07">July</option>
-                                    <option value="08">August</option>
-                                    <option value="09">September</option>
-                                    <option value="10">October</option>
-                                    <option value="11">November</option>
-                                    <option value="12">December</option>
+                                    <option value="">{% trans "Select Month" %}</option>
+                                    <option value="01">{% trans "January" %}</option>
+                                    <option value="02">{% trans "February" %}</option>
+                                    <option value="03">{% trans "March" %}</option>
+                                    <option value="04">{% trans "April" %}</option>
+                                    <option value="05">{% trans "May" %}</option>
+                                    <option value="06">{% trans "June" %}</option>
+                                    <option value="07">{% trans "July" %}</option>
+                                    <option value="08">{% trans "August" %}</option>
+                                    <option value="09">{% trans "September" %}</option>
+                                    <option value="10">{% trans "October" %}</option>
+                                    <option value="11">{% trans "November" %}</option>
+                                    <option value="12">{% trans "December" %}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="dirasa-year">Select Year</label>
+                            <label for="dirasa-year">{% trans "Select Year" %}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                                 </div>
                                 <select id="dirasa-year" class="form-control">
-                                    <option value="">Select Year</option>
+                                    <option value="">{% trans "Select Year" %}</option>
                                     <option value="2023">2023</option>
                                     <option value="2024">2024</option>
                                     <option value="2025">2025</option>
@@ -99,10 +99,10 @@
                         </div>
 
                         <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3 download-report" onclick="generateAndOpenURL()">
-                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Raw Attendance
+                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>{% trans "Export Raw Attendance" %}
                         </button>
                         <div class="downloading-message" style="display:none">
-                            Loading...
+                            {% trans "Loading..." %}
                         </div>
                     </div>
                 </div>
@@ -111,15 +111,15 @@
                 <div class="col-md-6 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-blue">
                     <div class="flex-panel padding-44">
                         <div class="p-icon green"></div>
-                        <span class="uppercase">Filters</span>
+                        <span class="uppercase">{% trans "Filters" %}</span>
                         <div class="form-group">
-                            <label for="dirasa-round">Select Round</label>
+                            <label for="dirasa-round">{% trans "Select Round" %}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
                                 </div>
                                 <select id="dirasa-round" class="form-control">
-                                    <option value="">Select Round</option>
+                                    <option value="">{% trans "Select Round" %}</option>
                                     {% for round in rounds %}
                                         <option value="{{ round.id }}">{{ round.name }}</option>
                                     {% endfor %}
@@ -128,16 +128,16 @@
                         </div>
 
                         <button id="generate-total-url" class="btn btn-primary btn-block btn-icon mt-3 download-total-report" onclick="generateAndOpenTotalURL()">
-                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Total Attendances
+                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>{% trans "Export Total Attendances" %}
                         </button>
                         <div class="downloading-total-message" style="display:none">
-                            Loading...
+                            {% trans "Loading..." %}
                         </div>
                         <button id="generate-round-url" class="btn btn-primary btn-block btn-icon mt-3 download-consecutive-report" onclick="generateAndOpenConsecutiveURL(event)">
-                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Consecutive Absence
+                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>{% trans "Export Consecutive Absence" %}
                         </button>
                         <div class="downloading-consecutive-message" style="display:none">
-                            Loading...
+                            {% trans "Loading..." %}
                         </div>
                     </div>
                 </div>

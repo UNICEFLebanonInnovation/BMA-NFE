@@ -1,6 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging.js";
 
+
+function translateMessage(message) {
+  return window.gettext ? window.gettext(message) : message;
+}
+
 const firebaseConfig = {
   apiKey: "AIzaSyAL2iS7YCesCURrxFViKUzH8LOrDzDIPHg",
   authDomain: "leb-bma.firebaseapp.com",
@@ -66,8 +71,8 @@ onMessage(messaging, (payload) => {
                 }
             }, { once: true });
         } else {
-            const reason = payload.data.reason || 'Unknown error';
-            alert('Export failed: ' + reason);
+            const reason = payload.data.reason || translateMessage('Unknown error');
+            alert(translateMessage('Export failed: ') + reason);
             if (window.location.pathname.includes('/mscc/list/') || window.location.pathname.includes('/mscc/dashboard/')) {
                 window.location.reload();
             }

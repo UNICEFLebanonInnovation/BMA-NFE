@@ -83,7 +83,7 @@
             $('input[type="number"]').each(function() {
                 var max = $(this).attr('max');
                 if (max) {
-                    $(this).after('<div class="form-text small">Maximum possible: ' + max + '</div>');
+                    $(this).after('<div class="form-text small">{% trans "Maximum possible:" %} ' + max + '</div>');
                 }
             });
 

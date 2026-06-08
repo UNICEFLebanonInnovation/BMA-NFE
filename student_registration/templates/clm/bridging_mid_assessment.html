@@ -25,7 +25,7 @@
                           <i class="fa fa-id-card"></i>
                       </span>
                       <span class="d-inline-block">
-                        Mid-Test
+                        {% trans "Mid-Test" %}
                       </span>
                   </div>
                   <div class="page-title-subheading opacity-10">
@@ -33,14 +33,14 @@
                           <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
                                                     <a href="/">
-                                                        Home
+                                                        {% trans "Home" %}
                                                     </a>
                                                 </li>
                               <li class="breadcrumb-item">
-                                    <a href="{% url 'clm:bridging_list' %}">Dirasa List</a>
+                                    <a href="{% url 'clm:bridging_list' %}">{% trans "Dirasa List" %}</a>
                               </li>
                                <li class="breadcrumb-item">
-                                 Mid-Test
+                                 {% trans "Mid-Test" %}
                               </li>
 
                           </ol>
@@ -65,7 +65,7 @@
                                     <div class="divider"></div>
 
                                     <div class="clearfix">
-                                        <a href="{% url 'schools:school_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <a href="{% url 'schools:school_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">{% trans "Back to list" %}</a>
                                     </div>
                                 </div>
                             </div>

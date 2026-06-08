@@ -7,7 +7,7 @@
 
 {% load util_tags %}
 
-<h4 class="text-info">Students Attendance </h4>
+<h4 class="text-info">{% trans "Students Attendance" %} </h4>
 
 {% for dict in attendance_student_formset.errors %}
     {% for error in dict.values %}

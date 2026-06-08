@@ -42,7 +42,7 @@
                           <i class="fa fa-id-card"></i>
                       </span>
                       <span class="d-inline-block">
-                        Meeting
+                        {% trans "Meeting" %}
                       </span>
                   </div>
                   <div class="page-title-subheading opacity-10">
@@ -50,22 +50,22 @@
                           <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
                                                     <a href="/">
-                                                        Home
+                                                        {% trans "Home" %}
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     <a href="{% url 'clm:bridging_page' %}">
-                                                        Dirasa
+                                                        {% trans "Dirasa" %}
                                                     </a>
                                                 </li>
                               <li class="breadcrumb-item">
-                                    <a href="{% url 'schools:school_list' %}">School List</a>
+                                    <a href="{% url 'schools:school_list' %}">{% trans "School List" %}</a>
                               </li>
                               <li class="breadcrumb-item">
-                                    <a href="{% url 'schools:meeting_list' school_id %}">Meeting List</a>
+                                    <a href="{% url 'schools:meeting_list' school_id %}">{% trans "Meeting List" %}</a>
                               </li>
                                <li class="breadcrumb-item">
-                                 Meeting
+                                 {% trans "Meeting" %}
                               </li>
 
                           </ol>
@@ -90,7 +90,7 @@
                                     <div class="divider"></div>
 
                                     <div class="clearfix">
-                                        <a href="{% url 'schools:meeting_list' school_id %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <a href="{% url 'schools:meeting_list' school_id %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">{% trans "Back to list" %}</a>
                                     </div>
                                 </div>
                             </div>

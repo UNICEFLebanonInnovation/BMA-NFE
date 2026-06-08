@@ -1,5 +1,6 @@
 {% load custom_tags %}
 {% load util_tags %}
+{% load i18n %}
 {% for item in instances %}
 <div class="card mb-3">
     <div class="card-body">
@@ -10,7 +11,7 @@
                 <div class="text-muted small">{{ item.follow_up_result }}</div>
                 <div class="mt-2">
                   {% if result.follow_up_result == 'Dropout/No Interest' %}
-                      Dropout reason: {{ item.dropout_reason }} - {{ item.dropout_date }}
+                      {% trans "Dropout reason:" %} {{ item.dropout_reason }} - {{ item.dropout_date }}
                   {% endif %}
                 </div>
             </div>

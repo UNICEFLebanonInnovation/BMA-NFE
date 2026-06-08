@@ -45,8 +45,8 @@
                                             </div>
                                             <div>
                                                 <h5 class="menu-header-title">{{ instance.child.full_name }}</h5>
-                                                <h6 class="menu-header-subtitle">Father: {{ instance.child.father_name  }}</h6>
-                                                <h6 class="menu-header-subtitle">Mother: {{ instance.child.mother_fullname  }}</h6>
+                                                <h6 class="menu-header-subtitle">{% trans "Father:" %} {{ instance.child.father_name  }}</h6>
+                                                <h6 class="menu-header-subtitle">{% trans "Mother:" %} {{ instance.child.mother_fullname  }}</h6>
                                             </div>
                                         </div>
                                     </div>
@@ -57,7 +57,7 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Nationality</div>
+                                                    <div class="widget-heading">{% trans "Nationality" %}</div>
                                                         {% if instance.child.nationality.id == 6  %}
                                                             <div class="widget-subheading">{{ instance.child.nationality.name }} - {{ instance.child.nationality_other }}</div>
                                                         {% else %}
@@ -74,7 +74,7 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">ID type - Number</div>
+                                                    <div class="widget-heading">{% trans "ID type - Number" %}</div>
                                                     <div class="widget-subheading">
                                                       {% if instance.child.id_type and instance.child.id_type.id != 7 %}
                                                         {{ instance.child.id_type.name }} - {{ instance.child.id_number }}
@@ -91,9 +91,9 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Birthday</div>
+                                                    <div class="widget-heading">{% trans "Birthday" %}</div>
                                                     <div class="widget-subheading">
-                                                      {{ instance.child.birthday }} - {{ instance.child.age }} years
+                                                      {{ instance.child.birthday }} - {{ instance.child.age }} {% trans "years" %}
                                                     </div>
                                                 </div>
                                                 <div class="widget-content-right">
@@ -106,7 +106,7 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Number</div>
+                                                    <div class="widget-heading">{% trans "Number" %}</div>
                                                     <div class="widget-subheading">
                                                       {{ instance.child.number }}
                                                     </div>
@@ -120,7 +120,7 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Partner Unique Number</div>
+                                                    <div class="widget-heading">{% trans "Partner Unique Number" %}</div>
                                                     <div class="widget-subheading">
                                                       {{ instance.partner_unique_number }}
                                                     </div>
@@ -134,10 +134,10 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Family Status</div>
+                                                    <div class="widget-heading">{% trans "Family Status" %}</div>
                                                     <div class="widget-subheading">
                                                       {% if instance.child.have_children == 'Yes'  %}
-                                                        <div class="widget-subheading">{{ instance.child.marital_status }} - {{ instance.child.children_number }} child</div>
+                                                        <div class="widget-subheading">{{ instance.child.marital_status }} - {{ instance.child.children_number }} {% trans "child" %}</div>
                                                       {% else %}
                                                         <div class="widget-subheading">{{ instance.child.marital_status }}</div>
                                                       {% endif %}
@@ -153,7 +153,7 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Any disability or special need?</div>
+                                                    <div class="widget-heading">{% trans "Any disability or special need?" %}</div>
                                                     <div class="widget-subheading">
                                                       {{ instance.child.disability }}
                                                     </div>
@@ -168,7 +168,7 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Source of referral of the child</div>
+                                                    <div class="widget-heading">{% trans "Source of referral of the child" %}</div>
                                                     <div class="widget-subheading">
                                                       {{ instance.source_of_identification }}
                                                     </div>
@@ -183,7 +183,7 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Cash support programmes that the child is already benefitting from</div>
+                                                    <div class="widget-heading">{% trans "Cash support programmes that the child is already benefitting from" %}</div>
                                                     <div class="widget-subheading">
                                                       {% for prog in instance.cash_support_programmes %}
                                                         <div> {{prog}} </div>
@@ -200,7 +200,7 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Packages received/to be provided to child</div>
+                                                    <div class="widget-heading">{% trans "Packages received/to be provided to child" %}</div>
                                                     <div class="widget-subheading">
                                                       {% for item in instance.mscc_packages %}
                                                         <div> {{item}} </div>
@@ -232,7 +232,7 @@
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">General info.</h5>
+                                                    <h5 class="menu-header-title">{% trans "General info." %}</h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
                                                         <!--<b class="text-info">21 </b>-->
@@ -244,17 +244,17 @@
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link active show" id="tab-c-1" data-toggle="tab" href="#tab-animated-1" aria-selected="true">
-                                                    <span>Address</span>
+                                                    <span>{% trans "Address" %}</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-0" data-toggle="tab" href="#tab-animated-0">
-                                                    <span>Household</span>
+                                                    <span>{% trans "Household" %}</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-2" data-toggle="tab" href="#tab-animated-2">
-                                                    <span>Social/Economic</span>
+                                                    <span>{% trans "Social/Economic" %}</span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -267,7 +267,7 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Father’s educational level</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Father’s educational level" %}</h4>
                                                                             <p> {{instance.child.father_educational_level}}</p></div>
                                                                     </div>
                                                                 </div>
@@ -275,20 +275,20 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mother’s educational level</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Mother’s educational level" %}</h4>
                                                                             <p> {{instance.child.mother_educational_level}}</p></div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Primary phone number</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Household's/Relatives Primary phone number" %}</h4>
                                                                             <p> {{instance.child.first_phone_number}}</p></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-info text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who will be answering the phone</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Who will be answering the phone" %}</h4>
                                                                             <p> {{instance.child.first_phone_owner}}</p></div>
                                                                     </div>
                                                                 </div>
@@ -296,13 +296,13 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone-handset text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Primary phone number</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Household's/Relatives Primary phone number" %}</h4>
                                                                             <p> {{instance.child.second_phone_number}}</p></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who will be answering the phone</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Who will be answering the phone" %}</h4>
                                                                             <p> {{instance.child.second_phone_owner}}</p></div>
                                                                     </div>
                                                                 </div>
@@ -310,7 +310,7 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Child's primary caretaker" %}</h4>
                                                                           {% if instance.child.main_caregiver == 'Other'  %}
                                                                               <p> {{instance.child.main_caregiver}} - {{instance.child.main_caregiver_other}}</p>
                                                                           {% else %}
@@ -322,20 +322,20 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-cloud text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caretaker's Full Name</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Caretaker's Full Name" %}</h4>
                                                                             <p> {{instance.child.caregiver_full_name}}</p></div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="pe-7s-user-female text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caretaker's Mother Full Name</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Caretaker's Mother Full Name" %}</h4>
                                                                             <p> {{instance.child.caregiver_mother_name}}</p></div>
                                                                     </div>
                                                                 </div>
                                                                <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Child's primary caretaker" %}</h4>
                                                                           {% if instance.child.main_caregiver_nationality.id == 6 %}
                                                                               <p> {{instance.child.main_caregiver_nationality}} - {{instance.child.main_caregiver_other}}</p>
                                                                           {% else %}
@@ -347,7 +347,7 @@
                                                                </div>
                                                               <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Child's primary caretaker" %}</h4>
                                                                           {% if instance.child.id_type and instance.child.id_type.id != 7 %}
                                                                               <p> {{ instance.child.id_type.name }} - {{ instance.child.caregiver_id_number }}</p>
                                                                           {% else %}
@@ -371,7 +371,7 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-culture text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">
-                                                                    P-Code where the child lives in Internal Settlement/Camp
+                                                                    {% trans "P-Code where the child lives in Internal Settlement/Camp" %}
 
                                                                 </h4>
                                                                     <p>
@@ -385,7 +385,7 @@
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-home text-info"></i></div></span>
 
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">
-                                                                    Address
+                                                                    {% trans "Address" %}
 
                                                                 </h4>
                                                                     <p>
@@ -398,7 +398,7 @@
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-map-marker text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Governorate / District</h4>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Governorate / District" %}</h4>
                                                                     <p> {{ instance.center.governorate }} / {{ instance.center.caza }}
                                                                     </p>
                                                                 </div>
@@ -420,7 +420,7 @@
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Does the child participate in work?</h4>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Does the child participate in work?" %}</h4>
                                                                     <p>{{ instance.have_labour }} </p></div>
                                                             </div>
                                                         </div>
@@ -428,7 +428,7 @@
                                                         {% if instance.have_labour == 'Yes' %}
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Type of Labor</h4>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Type of Labor" %}</h4>
                                                                   <p> {{instance.labour_type}} {% if instance.labour_type == 'Other services'%} - {{instance.labour_type_specify}}{% endif %}</p>
                                                                 </div>
                                                             </div>
@@ -436,14 +436,14 @@
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="lnr-hourglass text-info text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Working hours during a week? (in hours)</h4>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Working hours during a week? (in hours)" %}</h4>
                                                                      <p>{{ instance.labour_hours }} </p></div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">How much does the child get paid per week?</h4>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "How much does the child get paid per week?" %}</h4>
                                                                      <p>{{ instance.labour_weekly_income }} </p></div>
                                                             </div>
                                                         </div>
@@ -484,7 +484,7 @@
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">Education
+                                                    <h5 class="menu-header-title">{% trans "Education" %}
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
@@ -497,12 +497,12 @@
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">
-                                                    <span>Situation</span>
+                                                    <span>{% trans "Situation" %}</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
                                                   <a role="tab" class="nav-link" id="tab-c-4" data-toggle="tab" href="#tab-animated-4">
-                                                      <span>Education History</span>
+                                                      <span>{% trans "Education History" %}</span>
                                                   </a>
                                               </li>
                                         </ul>
@@ -517,7 +517,7 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child’s educational level when registering for the round</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Child’s educational level when registering for the round" %}</h4>
                                                                             <p> {{result.education_status}}</p>
                                                                         </div>
                                                                     </div>
@@ -525,7 +525,7 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout date from school</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Dropout date from school" %}</h4>
                                                                             <p> {{result.dropout_date}}</p>
                                                                         </div>
                                                                     </div>
@@ -533,7 +533,7 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout Programme</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Dropout Programme" %}</h4>
                                                                           {% if result.dropout_program == 'Other'  %}
                                                                               <p> {{result.dropout_program}} - {{result.dropout_program_specify}}</p>
                                                                           {% else %}
@@ -545,14 +545,14 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Education programme</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Education programme" %}</h4>
                                                                             <p> {{result.education_program}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Class section</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Class section" %}</h4>
                                                                             <p> {{result.class_section}}</p>
                                                                         </div>
                                                                     </div>
@@ -560,7 +560,7 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-shield text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Date of registration in the round</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{% trans "Date of registration in the round" %}</h4>
                                                                             <p>{{result.registration_date}}</p>
                                                                         </div>
                                                                     </div>
@@ -587,9 +587,9 @@
                                                                               <a href="{% url 'mscc:find_programme_details' %}?programme_id={{ item.programme_id }}&programme_type={{ item.programme_type }}" class="show-progarmme-details" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fa fa-search-plus"> </i></a>
                                                                           </div>
                                                                           </h4>
-                                                                            {% if item.registration_date %}<p>Registration Date: {{ item.registration_date }}</p>{% endif %}
-                                                                            {% if item.center %}<p>Center: {{ item.center }}</p>{% endif %}
-                                                                            {% if item.registration_level %}<p>Level: {{ item.registration_level }}</p>{% endif %}
+                                                                            {% if item.registration_date %}<p>{% trans "Registration Date:" %} {{ item.registration_date }}</p>{% endif %}
+                                                                            {% if item.center %}<p>{% trans "Center:" %} {{ item.center }}</p>{% endif %}
+                                                                            {% if item.registration_level %}<p>{% trans "Level:" %} {{ item.registration_level }}</p>{% endif %}
                                                                         </div>
                                                                     </div>
                                                                 </div>
