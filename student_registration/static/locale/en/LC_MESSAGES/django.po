@@ -7657,6 +7657,23 @@ msgstr ""
 msgid "Updating visualization..."
 msgstr ""
 
+#: student_registration/templates/django_tables2/bootstrap4.html:63
+#: student_registration/templates/django_tables2/bootstrap5.html:68
+msgid "Table navigation"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:68
+#: student_registration/templates/django_tables2/bootstrap5.html:72
+#: student_registration/templates/django_tables2/bootstrap5.html:77
+msgid "Previous page"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:81
+#: student_registration/templates/django_tables2/bootstrap5.html:90
+#: student_registration/templates/django_tables2/bootstrap5.html:95
+msgid "Next page"
+msgstr ""
+
 #: student_registration/templates/django_tables2/bootstrap4.html:70
 msgid "previous"
 msgstr ""
@@ -11148,3 +11165,60 @@ msgstr ""
 #: student_registration/templates/mscc/child_education_details.html:84
 msgid "| Section:"
 msgstr ""
+
+# Datatable header labels translated dynamically from column.header.
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Owner"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Modified"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "modified"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "created"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Full name"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Unicef id"
+msgstr "UNIQUE ID"
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Owner name"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Modified by name"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Longitude"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Latitude"
+msgstr ""
+
+#: student_registration/templates/django_tables2/bootstrap4.html:15
+#: student_registration/templates/django_tables2/bootstrap5.html:14
+msgid "Is closed"
+msgstr ""
+
