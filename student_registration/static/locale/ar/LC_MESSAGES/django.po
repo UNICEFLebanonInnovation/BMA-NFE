@@ -7054,7 +7054,7 @@ msgstr "عناوين البريد الإلكتروني"
 
 #: student_registration/templates/account/email.html:13
 msgid "The following e-mail addresses are associated with your account:"
-msgstr ""
+msgstr "عناوين البريد الإلكتروني التالية مرتبطة بحسابك:"
 
 #: student_registration/templates/account/email.html:27
 msgid "Verified"
@@ -7468,7 +7468,7 @@ msgstr "تصدير الحضور"
 
 #: student_registration/templates/attendances/school_day.html:58
 msgid "School is closed for: "
-msgstr ""
+msgstr "المدرسة مغلقة بسبب: "
 
 #: student_registration/templates/attendances/school_day.html:60
 msgid "Are you sure that the school is closed today for a public holiday?"
@@ -7543,11 +7543,11 @@ msgstr "خروج"
 
 #: student_registration/templates/base.html:178
 msgid "Login"
-msgstr ""
+msgstr "تسجيل الدخول"
 
 #: student_registration/templates/base.html:199
 msgid "Please review and check the error messages."
-msgstr ""
+msgstr "يرجى مراجعة رسائل الخطأ والتحقق منها."
 
 #: student_registration/templates/base.html:237
 msgid "Details"
@@ -7560,7 +7560,7 @@ msgstr "جاري تحميل التفاصيل..."
 
 #: student_registration/templates/base.html:306
 msgid "This may take a few moments."
-msgstr ""
+msgstr "قد يستغرق ذلك بضع لحظات."
 
 #: student_registration/templates/base.html:315
 #| msgid "Identification picture"
@@ -7579,7 +7579,7 @@ msgstr "التصدير جاهز"
 #: student_registration/templates/base.html:329
 msgid ""
 "Your requested export file has been processed and is ready for download."
-msgstr ""
+msgstr "تمت معالجة ملف التصدير المطلوب وهو جاهز للتنزيل."
 
 #: student_registration/templates/base.html:332
 #| msgid "Download file"
@@ -7588,11 +7588,11 @@ msgstr "تنزيل الآن"
 
 #: student_registration/templates/base.html:334
 msgid "Close"
-msgstr ""
+msgstr "إغلاق"
 
 #: student_registration/templates/base.html:346
 msgid "Success"
-msgstr ""
+msgstr "نجاح"
 
 #: student_registration/templates/base.html:347
 #| msgid "Your data has been sent successfully to the server"
@@ -7603,7 +7603,7 @@ msgstr "تم ارسال البيانات بنجاح"
 msgid ""
 "This student is not eligible to go into 2nd shift program, are you sure you "
 "want to register this student"
-msgstr ""
+msgstr "هذا الطالب غير مؤهل للالتحاق ببرنامج الدوام الثاني، هل أنت متأكد من رغبتك في تسجيل هذا الطالب؟"
 
 #: student_registration/templates/bootstrap4/common_form.html:41
 msgid ""
@@ -7640,7 +7640,7 @@ msgstr "عوامل التصفية"
 #: student_registration/templates/clm/bridging_attendance_report.html:64
 #: student_registration/templates/mscc/attendance_report.html:30
 msgid "Select Month"
-msgstr ""
+msgstr "اختر الشهر"
 
 #: student_registration/templates/clm/bridging_attendance_report.html:82
 #: student_registration/templates/clm/bridging_attendance_report.html:88
@@ -7652,7 +7652,7 @@ msgstr "اختر السنة"
 #: student_registration/templates/clm/bridging_attendance_report.html:122
 #: student_registration/templates/mscc/attendance.html:100
 msgid "Select Round"
-msgstr ""
+msgstr "اختر الجولة"
 
 #: student_registration/templates/clm/bridging_followup.html:68
 #: student_registration/templates/django_tables2/clm_action_column.html:56
@@ -7669,7 +7669,7 @@ msgstr "اجتماعات الأهل و الفحص الطبي"
 #: student_registration/templates/clm/bridging_followup.html:89
 #: student_registration/templates/clm/bridging_form.html:108
 msgid "Next"
-msgstr ""
+msgstr "التالي"
 
 #: student_registration/templates/clm/bridging_followup.html:90
 #: student_registration/templates/clm/bridging_form.html:109
@@ -7724,11 +7724,11 @@ msgstr "تسجيل الشباب"
 #: student_registration/templates/clm/list.html:38
 #: student_registration/templates/clm/list.html:47
 msgid "Add new beneficiary"
-msgstr ""
+msgstr "إضافة مستفيد جديد"
 
 #: student_registration/templates/clm/list.html:54
 msgid "Add Initiatives"
-msgstr ""
+msgstr "إضافة مبادرات"
 
 #: student_registration/templates/clm/list.html:60
 msgid "Export data"
@@ -7741,15 +7741,15 @@ msgstr "تصدير بيانات التسجيل"
 
 #: student_registration/templates/clm/list.html:67
 msgid "Export Civic Engagement assessments"
-msgstr ""
+msgstr "تصدير تقييمات المشاركة المدنية"
 
 #: student_registration/templates/clm/list.html:68
 msgid "Export Entrepreneurship assessments"
-msgstr ""
+msgstr "تصدير تقييمات ريادة الأعمال"
 
 #: student_registration/templates/clm/list.html:70
 msgid "Export Beneficiary list"
-msgstr ""
+msgstr "تصدير قائمة المستفيدين"
 
 #: student_registration/templates/clm/list.html:80
 msgid "filter"
@@ -7763,11 +7763,11 @@ msgstr "الغاء"
 
 #: student_registration/templates/dashboard/advanced_analytics.html:13
 msgid "Analytics Filters"
-msgstr ""
+msgstr "فلاتر التحليلات"
 
 #: student_registration/templates/dashboard/advanced_analytics.html:17
 msgid "Date Range"
-msgstr ""
+msgstr "نطاق التاريخ"
 
 #: student_registration/templates/dashboard/advanced_analytics.html:25
 #| msgid "All Terms"
@@ -7837,11 +7837,11 @@ msgstr "توزيع الجنسية"
 
 #: student_registration/templates/dashboard/advanced_analytics.html:121
 msgid "Teacher Gender Distribution"
-msgstr ""
+msgstr "توزيع المعلمين حسب الجنس"
 
 #: student_registration/templates/dashboard/advanced_analytics.html:127
 msgid "Teacher Nationality Distribution"
-msgstr ""
+msgstr "توزيع المعلمين حسب الجنسية"
 
 #: student_registration/templates/dashboard/advanced_analytics.html:133
 #| msgid "School / Center"
@@ -7855,13 +7855,13 @@ msgstr "البرنامج حسب الفئة العمرية"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:21
 msgid "Advanced Data Exporter"
-msgstr ""
+msgstr "مصدّر البيانات المتقدم"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:22
 msgid ""
 "Select a base dataset, choose the fields you need, apply filters, and "
 "generate a customized export file."
-msgstr ""
+msgstr "اختر مجموعة بيانات أساسية، وحدد الحقول التي تحتاجها، وطبّق الفلاتر، وأنشئ ملف تصدير مخصصاً."
 
 #: student_registration/templates/dashboard/advanced_exporter.html:31
 #| msgid "ALP Registrations"
@@ -7870,11 +7870,11 @@ msgstr "إعدادات التصدير"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:37
 msgid "Select Base Dataset"
-msgstr ""
+msgstr "اختر مجموعة البيانات الأساسية"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:39
 msgid "Choose..."
-msgstr ""
+msgstr "اختر..."
 
 #: student_registration/templates/dashboard/advanced_exporter.html:40
 #| msgid "Registration date"
@@ -7889,7 +7889,7 @@ msgstr "التسجيلات والأطفال"
 #: student_registration/templates/mscc/teacher_list.html:66
 #: student_registration/templates/mscc/wellbeing_dashboard.html:342
 msgid "Apply Filters"
-msgstr ""
+msgstr "تطبيق الفلاتر"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:84
 #| msgid "Export data"
@@ -7898,39 +7898,39 @@ msgstr "صيغة التصدير"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:99
 msgid "Generate Export"
-msgstr ""
+msgstr "إنشاء التصدير"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:111
 msgid "Select Fields to Export"
-msgstr ""
+msgstr "اختر الحقول المراد تصديرها"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:113
 msgid "Select All"
-msgstr ""
+msgstr "تحديد الكل"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:114
 msgid "Clear"
-msgstr ""
+msgstr "مسح"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:121
 msgid "Please select a base dataset from the configuration panel first."
-msgstr ""
+msgstr "يرجى اختيار مجموعة بيانات أساسية من لوحة الإعدادات أولاً."
 
 #: student_registration/templates/dashboard/advanced_exporter.html:171
 msgid "fields selected"
-msgstr ""
+msgstr "حقول محددة"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:279
 msgid "Export started! You will receive a notification when it is ready."
-msgstr ""
+msgstr "بدأ التصدير! ستتلقى إشعاراً عندما يصبح جاهزاً."
 
 #: student_registration/templates/dashboard/advanced_exporter.html:285
 msgid "Error starting export."
-msgstr ""
+msgstr "حدث خطأ عند بدء التصدير."
 
 #: student_registration/templates/dashboard/advanced_exporter.html:290
 msgid "An error occurred while requesting the export."
-msgstr ""
+msgstr "حدث خطأ أثناء طلب التصدير."
 
 #: student_registration/templates/dashboard/centers_map.html:5
 #| msgid "Program Information"
@@ -7956,28 +7956,28 @@ msgstr "تصفية"
 
 #: student_registration/templates/dashboard/centers_map.html:101
 msgid "Centers displayed"
-msgstr ""
+msgstr "المراكز المعروضة"
 
 #: student_registration/templates/dashboard/centers_map.html:135
 #: student_registration/templates/dashboard/centers_map.html:444
 msgid "Center Active"
-msgstr ""
+msgstr "المركز نشط"
 
 #: student_registration/templates/dashboard/centers_map.html:141
 #: student_registration/templates/dashboard/centers_map.html:445
 msgid "Offer Digital Learning Services"
-msgstr ""
+msgstr "يوفر خدمات التعلم الرقمي"
 
 #: student_registration/templates/dashboard/centers_map.html:150
 #: student_registration/templates/dashboard/centers_map.html:446
 msgid "Have a Digital Hub"
-msgstr ""
+msgstr "لديه مركز رقمي"
 
 #: student_registration/templates/dashboard/centers_map.html:156
 #: student_registration/templates/dashboard/centers_map.html:448
 #: student_registration/templates/location/center_info_tab.html:75
 msgid "Accessible for CWD"
-msgstr ""
+msgstr "متاح للأطفال ذوي الإعاقة"
 
 #: student_registration/templates/dashboard/centers_map.html:178
 #| msgid "Registered in UNHCR"
@@ -7986,7 +7986,7 @@ msgstr "الأطفال المسجلون"
 
 #: student_registration/templates/dashboard/centers_map.html:185
 msgid "UNICEF ID"
-msgstr ""
+msgstr "معرّف اليونيسف"
 
 #: student_registration/templates/dashboard/centers_map.html:186
 #: student_registration/templates/location/teachers_tab.html:22
@@ -7996,7 +7996,7 @@ msgstr "الاسم"
 #: student_registration/templates/dashboard/centers_map.html:197
 #: student_registration/templates/dashboard/centers_map.html:516
 msgid "Loading..."
-msgstr ""
+msgstr "جارٍ التحميل..."
 
 #: student_registration/templates/dashboard/centers_map.html:235
 #: student_registration/templates/mscc/dashboard_d3.html:233
@@ -8006,11 +8006,11 @@ msgstr "لا توجد بيانات متاحة"
 
 #: student_registration/templates/dashboard/centers_map.html:438
 msgid "Vulnerability Score"
-msgstr ""
+msgstr "درجة الهشاشة"
 
 #: student_registration/templates/dashboard/centers_map.html:447
 msgid "Number of Admin Staff"
-msgstr ""
+msgstr "عدد الموظفين الإداريين"
 
 #: student_registration/templates/dashboard/centers_map.html:451
 #: student_registration/templates/mscc/child_info_tab.html:53
@@ -8026,19 +8026,19 @@ msgstr "عرض الملف"
 
 #: student_registration/templates/dashboard/centers_map.html:531
 msgid "No children found for the selected filters."
-msgstr ""
+msgstr "لم يتم العثور على أطفال للفلاتر المحددة."
 
 #: student_registration/templates/dashboard/centers_map.html:557
 msgid "Error loading data."
-msgstr ""
+msgstr "حدث خطأ أثناء تحميل البيانات."
 
 #: student_registration/templates/dashboard/centers_map.html:566
 msgid "Showing page"
-msgstr ""
+msgstr "عرض الصفحة"
 
 #: student_registration/templates/dashboard/centers_map.html:566
 msgid "of"
-msgstr ""
+msgstr "من"
 
 #: student_registration/templates/dashboard/centers_map.html:566
 #| msgid "main work"
@@ -8048,11 +8048,11 @@ msgstr "إجمالي السجلات"
 #: student_registration/templates/dashboard/chart_builder.html:74
 #: student_registration/templates/dashboard/chart_builder.html:75
 msgid "Chart Builder"
-msgstr ""
+msgstr "منشئ المخططات"
 
 #: student_registration/templates/dashboard/chart_builder.html:81
 msgid "Configure Your Chart"
-msgstr ""
+msgstr "إعداد المخطط"
 
 #: student_registration/templates/dashboard/chart_builder.html:87
 #| msgid "FC Type"
@@ -8061,11 +8061,11 @@ msgstr "نوع الرسم البياني"
 
 #: student_registration/templates/dashboard/chart_builder.html:89
 msgid "Bar"
-msgstr ""
+msgstr "أعمدة"
 
 #: student_registration/templates/dashboard/chart_builder.html:90
 msgid "Line"
-msgstr ""
+msgstr "خط"
 
 #: student_registration/templates/dashboard/chart_builder.html:91
 #| msgid "Partner"
@@ -8129,7 +8129,7 @@ msgstr "تحميل البيانات"
 
 #: student_registration/templates/dashboard/chart_builder.html:114
 msgid "Filter by Round"
-msgstr ""
+msgstr "فلترة حسب الجولة"
 
 #: student_registration/templates/dashboard/chart_builder.html:116
 #| msgid "Round"
@@ -8138,15 +8138,15 @@ msgstr "كل الدورات"
 
 #: student_registration/templates/dashboard/chart_builder.html:124
 msgid "Data (JSON)"
-msgstr ""
+msgstr "البيانات (JSON)"
 
 #: student_registration/templates/dashboard/chart_builder.html:133
 msgid "Render Chart"
-msgstr ""
+msgstr "عرض المخطط"
 
 #: student_registration/templates/dashboard/chart_builder.html:141
 msgid "Dashboard Preview"
-msgstr ""
+msgstr "معاينة لوحة المعلومات"
 
 #: student_registration/templates/dashboard/chart_builder.html:144
 #| msgid "Attendance Dashboard"
@@ -8156,11 +8156,11 @@ msgstr "إضافة إلى لوحة المعلومات"
 #: student_registration/templates/dashboard/chart_builder.html:147
 #: student_registration/templates/users/user_form.html:27
 msgid "Save Changes"
-msgstr ""
+msgstr "حفظ التغييرات"
 
 #: student_registration/templates/dashboard/chart_builder.html:154
 msgid "Updating visualization..."
-msgstr ""
+msgstr "جارٍ تحديث العرض المرئي..."
 
 #: student_registration/templates/django_tables2/bootstrap4.html:70
 #| msgid "Previous school"
@@ -8169,7 +8169,7 @@ msgstr "السابق"
 
 #: student_registration/templates/django_tables2/bootstrap4.html:82
 msgid "next"
-msgstr ""
+msgstr "التالي"
 
 #: student_registration/templates/django_tables2/bootstrap5.html:82
 #, python-format
@@ -8177,7 +8177,7 @@ msgid ""
 "\n"
 "                                Page %(current)s of %(total)s\n"
 "                            "
-msgstr ""
+msgstr "\n                                الصفحة %(current)s من %(total)s\n                            "
 
 #: student_registration/templates/django_tables2/clm_action_column.html:15
 #: student_registration/templates/django_tables2/clm_action_column.html:19
@@ -8278,7 +8278,7 @@ msgstr " التقييم في آخر البرنامج"
 
 #: student_registration/templates/django_tables2/clm_fc_arabic_column.html:13
 msgid "Post-arabic"
-msgstr ""
+msgstr "اختبار بعدي - العربية"
 
 #: student_registration/templates/django_tables2/clm_fc_chemistry_column.html:11
 msgid "Chemistry"
@@ -8288,7 +8288,7 @@ msgstr "كيمياء"
 #: student_registration/templates/django_tables2/clm_fc_physics_column.html:13
 #: student_registration/templates/django_tables2/clm_fc_science_column.html:18
 msgid "--"
-msgstr ""
+msgstr "--"
 
 #: student_registration/templates/django_tables2/clm_fc_language_column.html:8
 msgid "English/French"
@@ -8318,12 +8318,12 @@ msgstr "علوم الحياة"
 
 #: student_registration/templates/django_tables2/clm_monitoring_column.html:8
 msgid "monitoring"
-msgstr ""
+msgstr "المتابعة"
 
 #: student_registration/templates/django_tables2/clm_post_assessment.html:7
 #: student_registration/templates/django_tables2/clm_pre_assessment.html:6
 msgid "fill in"
-msgstr ""
+msgstr "تعبئة"
 
 #: student_registration/templates/django_tables2/clm_referral_column.html:8
 msgid "Refer"
@@ -8335,7 +8335,7 @@ msgstr "هل انت متأكد ان هذا التلميذ غير مسجل في �
 
 #: student_registration/templates/django_tables2/detach_column.html:7
 msgid "Detach"
-msgstr ""
+msgstr "فصل"
 
 #: student_registration/templates/django_tables2/dropout_column.html:4
 msgid "Are you sure you want to tag this student as dropout?"
@@ -8450,7 +8450,7 @@ msgstr "الوضع التعليمي"
 #: student_registration/templates/location/teachers_tab.html:41
 #: student_registration/templates/mscc/teacher_form.html:24
 msgid "Edit Teacher"
-msgstr ""
+msgstr "تعديل المعلم"
 
 #: student_registration/templates/django_tables2/mscc/teacher_action_column.html:19
 #: student_registration/templates/django_tables2/students/teacher_action_column.html:21
@@ -8466,49 +8466,49 @@ msgstr "حذف المعلّم"
 
 #: student_registration/templates/error.html:4
 msgid "Access Required"
-msgstr ""
+msgstr "الوصول مطلوب"
 
 #: student_registration/templates/error.html:6
 msgid "System Access Error"
-msgstr ""
+msgstr "خطأ في الوصول إلى النظام"
 
 #: student_registration/templates/error.html:15
 msgid "Configuration Required"
-msgstr ""
+msgstr "الإعداد مطلوب"
 
 #: student_registration/templates/error.html:18
 msgid ""
 "Your account is registered as a Center User, but you have not been assigned "
 "to a specific center yet."
-msgstr ""
+msgstr "حسابك مسجل كمستخدم مركز، ولكن لم يتم تعيينك لأي مركز محدد بعد."
 
 #: student_registration/templates/error.html:20
 msgid ""
 "Your account is registered as a Partner User, but you have not been assigned "
 "to a partner organization yet."
-msgstr ""
+msgstr "حسابك مسجل كمستخدم شريك، ولكن لم يتم تعيينك لأي منظمة شريكة بعد."
 
 #: student_registration/templates/error.html:22
 msgid "There was an error with your account's role configuration."
-msgstr ""
+msgstr "حدث خطأ في إعداد دور حسابك."
 
 #: student_registration/templates/error.html:27
 msgid ""
 "To manage and view data, your account must be correctly mapped to its "
 "respective center or partner organization."
-msgstr ""
+msgstr "لإدارة البيانات وعرضها، يجب ربط حسابك بشكل صحيح بالمركز أو المنظمة الشريكة المعنية."
 
 #: student_registration/templates/error.html:30
 msgid "Please contact the system administrator to complete your account setup."
-msgstr ""
+msgstr "يرجى التواصل مع مسؤول النظام لإكمال إعداد حسابك."
 
 #: student_registration/templates/error.html:34
 msgid "Return Home"
-msgstr ""
+msgstr "العودة إلى الصفحة الرئيسية"
 
 #: student_registration/templates/error.html:37
 msgid "Contact Admin"
-msgstr ""
+msgstr "التواصل مع المسؤول"
 
 #: student_registration/templates/landing_page.html:5
 #| msgid "Attendance Dashboard"
@@ -8518,15 +8518,15 @@ msgstr "لوحة المعلومات العامة"
 #: student_registration/templates/landing_page.html:10
 #: student_registration/templates/mscc/dashboard.html:40
 msgid "Welcome back,"
-msgstr ""
+msgstr "مرحباً بعودتك،"
 
 #: student_registration/templates/landing_page.html:11
 msgid "Here is what's happening in the NFE Sector today."
-msgstr ""
+msgstr "إليك ما يحدث في قطاع التعليم غير النظامي اليوم."
 
 #: student_registration/templates/landing_page.html:19
 msgid "Today"
-msgstr ""
+msgstr "اليوم"
 
 #: student_registration/templates/landing_page.html:21
 #| msgid "Registrations ALP"
@@ -8535,7 +8535,7 @@ msgstr "التسجيلات"
 
 #: student_registration/templates/landing_page.html:26
 msgid "This Week"
-msgstr ""
+msgstr "هذا الأسبوع"
 
 #: student_registration/templates/landing_page.html:28
 #| msgid "Total Grade"
@@ -8549,7 +8549,7 @@ msgstr "التقارير"
 
 #: student_registration/templates/landing_page.html:42
 msgid "Average"
-msgstr ""
+msgstr "المتوسط"
 
 #: student_registration/templates/landing_page.html:52
 #: student_registration/templates/mscc/dashboard.html:58
@@ -8567,11 +8567,11 @@ msgstr "تسجيل طفل أو طالب جديد في برنامج التعلي�
 #: student_registration/templates/mscc/dashboard.html:69
 #: student_registration/templates/mscc/list.html:19
 msgid "Beneficiary List"
-msgstr ""
+msgstr "قائمة المستفيدين"
 
 #: student_registration/templates/landing_page.html:60
 msgid "Search, filter, and manage existing beneficiary records."
-msgstr ""
+msgstr "ابحث عن سجلات المستفيدين الحالية وفلترها وأدرها."
 
 #: student_registration/templates/landing_page.html:66
 #| msgid "Attendance"
@@ -8580,7 +8580,7 @@ msgstr "تتبع الحضور"
 
 #: student_registration/templates/landing_page.html:67
 msgid "Log daily or monthly attendance for active groups."
-msgstr ""
+msgstr "تسجيل الحضور اليومي أو الشهري للمجموعات النشطة."
 
 #: student_registration/templates/landing_page.html:77
 #| msgid "Registration date"
@@ -8589,11 +8589,11 @@ msgstr "اتجاه التسجيلات (آخر 14 يوماً)"
 
 #: student_registration/templates/landing_page.html:78
 msgid "View Detailed Report"
-msgstr ""
+msgstr "عرض التقرير التفصيلي"
 
 #: student_registration/templates/landing_page.html:89
 msgid "Recent Data Exports"
-msgstr ""
+msgstr "عمليات تصدير البيانات الأخيرة"
 
 #: student_registration/templates/landing_page.html:96
 #| msgid "Created by"
@@ -8607,11 +8607,11 @@ msgstr "الحالة"
 
 #: student_registration/templates/landing_page.html:113
 msgid "No recent export history."
-msgstr ""
+msgstr "لا يوجد سجل تصدير حديث."
 
 #: student_registration/templates/landing_page.html:121
 msgid "Manage All Exports"
-msgstr ""
+msgstr "إدارة جميع عمليات التصدير"
 
 #: student_registration/templates/location/center_form.html:17
 #| msgid "Site / Center"
@@ -8630,7 +8630,7 @@ msgstr "مركز جديد"
 
 #: student_registration/templates/location/center_form.html:38
 msgid "Center Management"
-msgstr ""
+msgstr "إدارة المركز"
 
 #: student_registration/templates/location/center_form.html:38
 #| msgid "ALP Registrations"
@@ -8842,7 +8842,7 @@ msgstr "نوع الحضور"
 
 #: student_registration/templates/mscc/attendance.html:125
 msgid "Working day"
-msgstr ""
+msgstr "يوم عمل"
 
 #: student_registration/templates/mscc/attendance.html:128
 #| msgid "Day off ?"
@@ -8874,11 +8874,11 @@ msgstr "النقليات  "
 #: student_registration/templates/mscc/attendance_children.html:85
 #: student_registration/templates/mscc/attendance_children.html:176
 msgid "Provide more details if other..."
-msgstr ""
+msgstr "يرجى تقديم مزيد من التفاصيل إذا كان الخيار آخر..."
 
 #: student_registration/templates/mscc/attendance_children.html:98
 msgid "Newly Registered Children"
-msgstr ""
+msgstr "الأطفال المسجلون حديثاً"
 
 #: student_registration/templates/mscc/attendance_heatmap.html:6
 #| msgid "Attendance status"
@@ -8887,11 +8887,11 @@ msgstr "تحليلات الحضور"
 
 #: student_registration/templates/mscc/attendance_heatmap.html:33
 msgid "Visualizing attendance patterns across the year"
-msgstr ""
+msgstr "عرض أنماط الحضور خلال السنة"
 
 #: student_registration/templates/mscc/attendance_heatmap.html:37
 msgid "Selected Year"
-msgstr ""
+msgstr "السنة المحددة"
 
 #: student_registration/templates/mscc/attendance_heatmap.html:49
 #| msgid "Attendance"
@@ -8905,7 +8905,7 @@ msgstr "حاضر"
 
 #: student_registration/templates/mscc/attendance_heatmap.html:67
 msgid "total"
-msgstr ""
+msgstr "المجموع"
 
 #: student_registration/templates/mscc/attendance_heatmap.html:69
 #| msgid "January"
@@ -8914,7 +8914,7 @@ msgstr "كانون الثاني"
 
 #: student_registration/templates/mscc/attendance_heatmap.html:69
 msgid "Feb"
-msgstr ""
+msgstr "شباط"
 
 #: student_registration/templates/mscc/attendance_heatmap.html:69
 #| msgid "March"
@@ -8958,7 +8958,7 @@ msgstr "كلا"
 
 #: student_registration/templates/mscc/attendance_heatmap.html:71
 msgid "Dec"
-msgstr ""
+msgstr "كانون الأول"
 
 #: student_registration/templates/mscc/attendance_report.html:6
 #: student_registration/templates/mscc/dashboard.html:80
@@ -8980,11 +8980,11 @@ msgstr "تصدير الحضور والرؤى"
 msgid ""
 "Generate and download attendance reports for your center or partner "
 "organization."
-msgstr ""
+msgstr "إنشاء وتنزيل تقارير الحضور لمركزك أو منظمتك الشريكة."
 
 #: student_registration/templates/mscc/attendance_report.html:23
 msgid "Report Filters"
-msgstr ""
+msgstr "فلاتر التقرير"
 
 #: student_registration/templates/mscc/attendance_report.html:28
 #| msgid "Monthly"
@@ -9013,7 +9013,7 @@ msgstr "بيانات الحضور الخام"
 
 #: student_registration/templates/mscc/attendance_report.html:127
 msgid "Detailed day-by-day attendance logs for all selected beneficiaries."
-msgstr ""
+msgstr "سجلات حضور يومية مفصلة لجميع المستفيدين المحددين."
 
 #: student_registration/templates/mscc/attendance_report.html:129
 #| msgid "Export data"
@@ -9023,7 +9023,7 @@ msgstr "تصدير البيانات الخام"
 #: student_registration/templates/mscc/attendance_report.html:132
 #: student_registration/templates/mscc/attendance_report.html:149
 msgid "Generating file..."
-msgstr ""
+msgstr "جارٍ إنشاء الملف..."
 
 #: student_registration/templates/mscc/attendance_report.html:142
 #| msgid "Total attended"
@@ -9034,7 +9034,7 @@ msgstr "إجمالي الحضور"
 msgid ""
 "Aggregated attendance totals, percentages, and absence counts per "
 "beneficiary."
-msgstr ""
+msgstr "إجماليات الحضور المجمعة والنسب المئوية وعدد الغيابات لكل مستفيد."
 
 #: student_registration/templates/mscc/attendance_report.html:146
 #| msgid "Export data"
@@ -9043,13 +9043,13 @@ msgstr "تصدير الإجماليات"
 
 #: student_registration/templates/mscc/attendance_report.html:162
 msgid "Looking for visual analytics?"
-msgstr ""
+msgstr "هل تبحث عن تحليلات مرئية؟"
 
 #: student_registration/templates/mscc/attendance_report.html:163
 msgid ""
 "Access the interactive Power BI dashboard for real-time monitoring and "
 "visual trends."
-msgstr ""
+msgstr "ادخل إلى لوحة Power BI التفاعلية للمتابعة الفورية والاتجاهات المرئية."
 
 #: student_registration/templates/mscc/attendance_report.html:165
 #| msgid "Attendance Dashboard"
@@ -9088,13 +9088,13 @@ msgstr "تفاصيل الحضور"
 
 #: student_registration/templates/mscc/child_attendance_tab.html:104
 msgid "Select a month to view detailed records"
-msgstr ""
+msgstr "اختر شهراً لعرض السجلات التفصيلية"
 
 #: student_registration/templates/mscc/child_attendance_tab.html:105
 msgid ""
 "Click on a month from the sidebar to load the specific attendance logs for "
 "that period."
-msgstr ""
+msgstr "انقر على شهر من الشريط الجانبي لتحميل سجلات الحضور الخاصة بتلك الفترة."
 
 #: student_registration/templates/mscc/child_education_details.html:11
 #| msgid "Current situation"
@@ -9114,11 +9114,11 @@ msgstr "المستوى التعليمي"
 
 #: student_registration/templates/mscc/child_education_details.html:46
 msgid "Program & Round"
-msgstr ""
+msgstr "البرنامج والجولة"
 
 #: student_registration/templates/mscc/child_education_details.html:59
 msgid "No education data recorded for this round."
-msgstr ""
+msgstr "لا توجد بيانات تعليمية مسجلة لهذه الجولة."
 
 #: student_registration/templates/mscc/child_education_details.html:70
 #| msgid "Education status"
@@ -9127,15 +9127,15 @@ msgstr "السجل التعليمي"
 
 #: student_registration/templates/mscc/child_education_details.html:91
 msgid "No previous history found."
-msgstr ""
+msgstr "لم يتم العثور على سجل سابق."
 
 #: student_registration/templates/mscc/child_info_tab.html:11
 msgid "Core Identity"
-msgstr ""
+msgstr "الهوية الأساسية"
 
 #: student_registration/templates/mscc/child_info_tab.html:24
 msgid "Full Name & Family"
-msgstr ""
+msgstr "الاسم الكامل والعائلة"
 
 #: student_registration/templates/mscc/child_info_tab.html:41
 #| msgid "FC Type"
@@ -9144,7 +9144,7 @@ msgstr "نوع وثيقة الهوية"
 
 #: student_registration/templates/mscc/child_info_tab.html:73
 msgid "Household & Care"
-msgstr ""
+msgstr "الأسرة والرعاية"
 
 #: student_registration/templates/mscc/child_info_tab.html:78
 #| msgid "Main Caregiver"
@@ -9158,15 +9158,15 @@ msgstr "تعليم الوالدين"
 
 #: student_registration/templates/mscc/child_info_tab.html:93
 msgid "Primary Phone"
-msgstr ""
+msgstr "الهاتف الأساسي"
 
 #: student_registration/templates/mscc/child_info_tab.html:102
 msgid "Living Conditions"
-msgstr ""
+msgstr "ظروف السكن"
 
 #: student_registration/templates/mscc/child_info_tab.html:119
 msgid "Social & Economic"
-msgstr ""
+msgstr "اجتماعي واقتصادي"
 
 #: student_registration/templates/mscc/child_info_tab.html:124
 #| msgid "Child parents"
@@ -9180,7 +9180,7 @@ msgstr "منخرط في العمل"
 
 #: student_registration/templates/mscc/child_info_tab.html:129
 msgid "Hours/Week"
-msgstr ""
+msgstr "ساعات/أسبوع"
 
 #: student_registration/templates/mscc/child_info_tab.html:130
 #| msgid "Incomplete"
@@ -9189,7 +9189,7 @@ msgstr "الدخل/الأسبوع"
 
 #: student_registration/templates/mscc/child_info_tab.html:133
 msgid "Not engaged in work"
-msgstr ""
+msgstr "غير منخرط في العمل"
 
 #: student_registration/templates/mscc/child_info_tab.html:137
 #| msgid "Activities Reported"
@@ -9198,7 +9198,7 @@ msgstr "دعم نقدي نشط"
 
 #: student_registration/templates/mscc/child_info_tab.html:142
 msgid "No support programs recorded"
-msgstr ""
+msgstr "لا توجد برامج دعم مسجلة"
 
 #: student_registration/templates/mscc/child_info_tab.html:147
 #: student_registration/templates/mscc/dashboard.html:178
@@ -9233,7 +9233,7 @@ msgstr "علامات الاختبار البعدي"
 
 #: student_registration/templates/mscc/child_services_tab.html:59
 msgid "Improvement"
-msgstr ""
+msgstr "التحسن"
 
 #: student_registration/templates/mscc/child_services_tab.html:67
 #: student_registration/templates/mscc/child_services_tab.html:75
@@ -9243,27 +9243,27 @@ msgstr "علامات المدرسة"
 
 #: student_registration/templates/mscc/child_services_tab.html:301
 msgid "Materials"
-msgstr ""
+msgstr "المواد"
 
 #: student_registration/templates/mscc/dashboard.html:41
 msgid "Monitor NFE activities and manage registrations efficiently."
-msgstr ""
+msgstr "متابعة أنشطة التعليم غير النظامي وإدارة التسجيلات بكفاءة."
 
 #: student_registration/templates/mscc/dashboard.html:59
 msgid "Enroll a new beneficiary in the NFE program."
-msgstr ""
+msgstr "تسجيل مستفيد جديد في برنامج التعليم غير النظامي."
 
 #: student_registration/templates/mscc/dashboard.html:70
 msgid "Search and manage existing records."
-msgstr ""
+msgstr "البحث في السجلات الحالية وإدارتها."
 
 #: student_registration/templates/mscc/dashboard.html:81
 msgid "Monitor daily and monthly attendance logs."
-msgstr ""
+msgstr "متابعة سجلات الحضور اليومية والشهرية."
 
 #: student_registration/templates/mscc/dashboard.html:92
 msgid "Manage NFE centers and staff."
-msgstr ""
+msgstr "إدارة مراكز التعليم غير النظامي والموظفين."
 
 #: student_registration/templates/mscc/dashboard.html:103
 #| msgid "Other nationality"
@@ -9287,7 +9287,7 @@ msgstr "دورات البرنامج"
 
 #: student_registration/templates/mscc/dashboard.html:160
 msgid "Gender age group distribution"
-msgstr ""
+msgstr "توزيع الفئات العمرية حسب الجنس"
 
 #: student_registration/templates/mscc/dashboard.html:169
 #| msgid "Nationality"
@@ -9323,13 +9323,13 @@ msgstr "الأطفال المنتقلون بين الدورات"
 msgid ""
 "Data is updated in real-time. Use the filters to drill down into specific "
 "regions or partners."
-msgstr ""
+msgstr "يتم تحديث البيانات فورياً. استخدم الفلاتر للتعمق في مناطق أو شركاء محددين."
 
 #: student_registration/templates/mscc/dashboard.html:248
 #: student_registration/templates/mscc/teacher_dashboard.html:157
 #: student_registration/templates/mscc/wellbeing_dashboard.html:305
 msgid "Dashboard Filters"
-msgstr ""
+msgstr "فلاتر لوحة المعلومات"
 
 #: student_registration/templates/mscc/dashboard.html:253
 #: student_registration/templates/mscc/teacher_dashboard.html:162
@@ -9363,7 +9363,7 @@ msgstr "الدورات"
 
 #: student_registration/templates/mscc/dashboard.html:278
 msgid "Select Rounds"
-msgstr ""
+msgstr "اختر الجولات"
 
 #: student_registration/templates/mscc/dashboard_d3.html:43
 #| msgid "ALP Registrations"
@@ -9379,17 +9379,17 @@ msgstr "إضافة طفل جديد"
 msgid ""
 "You don't have a partner assigned to your profile. Please contact the "
 "administrator."
-msgstr ""
+msgstr "لا يوجد شريك مخصص لملفك الشخصي. يرجى التواصل مع المسؤول."
 
 #: student_registration/templates/mscc/list.html:103
 msgid "Start"
-msgstr ""
+msgstr "بدء"
 
 #: student_registration/templates/mscc/list.html:123
 msgid ""
 "Export the filtered beneficiary list. Large datasets will be processed in "
 "the background and you will be notified upon completion."
-msgstr ""
+msgstr "تصدير قائمة المستفيدين المفلترة. ستتم معالجة مجموعات البيانات الكبيرة في الخلفية وسيتم إشعارك عند اكتمالها."
 
 #: student_registration/templates/mscc/list.html:168
 #| msgid "Confirmed"
@@ -9413,7 +9413,7 @@ msgstr "القائمة"
 
 #: student_registration/templates/mscc/main_form.html:30
 msgid "Edit Child Record"
-msgstr ""
+msgstr "تعديل سجل الطفل"
 
 #: student_registration/templates/mscc/main_form.html:32
 #| msgid "Registered in Level"
@@ -9427,7 +9427,7 @@ msgstr "فشل التسجيل"
 
 #: student_registration/templates/mscc/main_form.html:50
 msgid "Please correct the following errors across the registration steps:"
-msgstr ""
+msgstr "يرجى تصحيح الأخطاء التالية عبر خطوات التسجيل:"
 
 #: student_registration/templates/mscc/main_form.html:83
 #| msgid "Math"
@@ -9436,15 +9436,15 @@ msgstr "مطابقات محتملة"
 
 #: student_registration/templates/mscc/main_form.html:88
 msgid "Searching..."
-msgstr ""
+msgstr "جارٍ البحث..."
 
 #: student_registration/templates/mscc/main_form.html:93
 msgid "Start typing child's name and DOB to see potential duplicate records."
-msgstr ""
+msgstr "ابدأ بكتابة اسم الطفل وتاريخ الميلاد لرؤية السجلات المكررة المحتملة."
 
 #: student_registration/templates/mscc/main_form.html:113
 msgid "Identity"
-msgstr ""
+msgstr "الهوية"
 
 #: student_registration/templates/mscc/main_form.html:117
 #| msgid "Caregiver"
@@ -9453,7 +9453,7 @@ msgstr "مقدمو الرعاية"
 
 #: student_registration/templates/mscc/main_form.html:121
 msgid "Review"
-msgstr ""
+msgstr "مراجعة"
 
 #: student_registration/templates/mscc/main_form.html:131
 #| msgid "Bank Accounts Information"
@@ -9462,7 +9462,7 @@ msgstr "1. معلومات الهوية الأساسية"
 
 #: student_registration/templates/mscc/main_form.html:158
 msgid "2. Status & Background"
-msgstr ""
+msgstr "٢. الحالة والخلفية"
 
 #: student_registration/templates/mscc/main_form.html:173
 #| msgid "Other Caregiver Relationship"
@@ -9476,7 +9476,7 @@ msgstr "4. مستندات التعريف"
 
 #: student_registration/templates/mscc/main_form.html:252
 msgid "5. Labour & Vulnerability"
-msgstr ""
+msgstr "٥. العمل والهشاشة"
 
 #: student_registration/templates/mscc/main_form.html:271
 #| msgid "Final Grade"
@@ -9495,7 +9495,7 @@ msgstr "الاسم الكامل"
 
 #: student_registration/templates/mscc/main_form.html:281
 msgid "DOB"
-msgstr ""
+msgstr "تاريخ الميلاد"
 
 #: student_registration/templates/mscc/main_form.html:298
 #| msgid "Parent/Caregiver Information"
@@ -9504,7 +9504,7 @@ msgstr "معلومات مقدم الرعاية"
 
 #: student_registration/templates/mscc/main_form.html:300
 msgid "Contact Method"
-msgstr ""
+msgstr "طريقة التواصل"
 
 #: student_registration/templates/mscc/main_form.html:304
 #| msgid "Birth Document"
@@ -9520,11 +9520,11 @@ msgstr "رقم الهوية"
 msgid ""
 "By completing this registration, you confirm that all entered details are "
 "verified against physical documentation."
-msgstr ""
+msgstr "بإكمال هذا التسجيل، تؤكد أن جميع التفاصيل المدخلة تم التحقق منها مقابل الوثائق الورقية."
 
 #: student_registration/templates/mscc/main_form.html:339
 msgid "Next Step"
-msgstr ""
+msgstr "الخطوة التالية"
 
 #: student_registration/templates/mscc/main_form.html:366
 #| msgid "Not required"
@@ -9555,7 +9555,7 @@ msgstr "التسجيل في دورة جديدة"
 
 #: student_registration/templates/mscc/new_round.html:25
 msgid "Enroll the beneficiary into a new educational cycle."
-msgstr ""
+msgstr "تسجيل المستفيد في دورة تعليمية جديدة."
 
 #: student_registration/templates/mscc/new_round.html:38
 #| msgid "Enrollment"
@@ -9566,7 +9566,7 @@ msgstr "تأكيد التسجيل"
 msgid ""
 "To add this child to a new round, please confirm the action below. This will "
 "create a new registration record for the current active cycle."
-msgstr ""
+msgstr "لإضافة هذا الطفل إلى جولة جديدة، يرجى تأكيد الإجراء أدناه. سيؤدي ذلك إلى إنشاء سجل تسجيل جديد للدورة النشطة الحالية."
 
 #: student_registration/templates/mscc/new_round.html:48
 #: student_registration/templates/mscc/profile.html:123
@@ -9588,7 +9588,7 @@ msgstr "ملف المستفيد"
 
 #: student_registration/templates/mscc/profile.html:25
 msgid "Beneficiary"
-msgstr ""
+msgstr "المستفيد"
 
 #: student_registration/templates/mscc/profile.html:53
 #| msgid "Current Lesson"
@@ -9617,7 +9617,7 @@ msgstr "الحضور"
 
 #: student_registration/templates/mscc/referral_form.html:9
 msgid "Beneficiary Referral"
-msgstr ""
+msgstr "إحالة المستفيد"
 
 #: student_registration/templates/mscc/referral_form.html:28
 #| msgid "Referral to ALP"
@@ -9631,27 +9631,27 @@ msgstr "إعدادات الإحالة"
 
 #: student_registration/templates/mscc/referral_form.html:48
 msgid "Define the next steps for the beneficiary's education journey."
-msgstr ""
+msgstr "حدد الخطوات التالية في المسار التعليمي للمستفيد."
 
 #: student_registration/templates/mscc/referral_form.html:56
 msgid ""
 "Referral decisions should be based on assessment scores, attendance "
 "patterns, and protection considerations identified during the round."
-msgstr ""
+msgstr "يجب أن تستند قرارات الإحالة إلى درجات التقييم وأنماط الحضور واعتبارات الحماية المحددة خلال الجولة."
 
 #: student_registration/templates/mscc/referral_form.html:64
 #: student_registration/templates/mscc/service_education_grading_form.html:62
 #: student_registration/templates/mscc/service_education_service_form.html:59
 msgid "Return to Beneficiary List"
-msgstr ""
+msgstr "العودة إلى قائمة المستفيدين"
 
 #: student_registration/templates/mscc/referral_form.html:67
 msgid "Validated by NFE sector standards."
-msgstr ""
+msgstr "تم التحقق وفق معايير قطاع التعليم غير النظامي."
 
 #: student_registration/templates/mscc/service_diagnostic_assessment_form.html:24
 msgid "Record educational evaluation results for the beneficiary."
-msgstr ""
+msgstr "تسجيل نتائج التقييم التعليمي للمستفيد."
 
 #: student_registration/templates/mscc/service_diagnostic_assessment_form.html:32
 #| msgid "Assessment data"
@@ -9660,7 +9660,7 @@ msgstr "نموذج التقييم"
 
 #: student_registration/templates/mscc/service_digital_form.html:61
 msgid "Digital"
-msgstr ""
+msgstr "رقمي"
 
 #: student_registration/templates/mscc/service_education_grading_form.html:9
 #| msgid "Education year"
@@ -9669,7 +9669,7 @@ msgstr "علامات التعليم"
 
 #: student_registration/templates/mscc/service_education_grading_form.html:23
 msgid "Performance Grading"
-msgstr ""
+msgstr "تقييم الأداء"
 
 #: student_registration/templates/mscc/service_education_grading_form.html:43
 #| msgid "Post-Assessment"
@@ -9678,17 +9678,17 @@ msgstr "تقييم العلامات"
 
 #: student_registration/templates/mscc/service_education_grading_form.html:44
 msgid "Record evaluation results for the selected program level."
-msgstr ""
+msgstr "تسجيل نتائج التقييم لمستوى البرنامج المحدد."
 
 #: student_registration/templates/mscc/service_education_grading_form.html:53
 msgid ""
 "Post-assessment grading is final for the round. Ensure all barrier "
 "information and attendance level details are accurately reflected."
-msgstr ""
+msgstr "تقييم ما بعد الاختبار نهائي لهذه الجولة. تأكد من عكس جميع معلومات العوائق وتفاصيل مستوى الحضور بدقة."
 
 #: student_registration/templates/mscc/service_education_grading_form.html:65
 msgid "Grades are validated against program thresholds."
-msgstr ""
+msgstr "يتم التحقق من العلامات وفق عتبات البرنامج."
 
 #: student_registration/templates/mscc/service_education_service_form.html:23
 #| msgid "Last Education result"
@@ -9702,22 +9702,22 @@ msgstr "تفاصيل التعليم"
 
 #: student_registration/templates/mscc/service_education_service_form.html:43
 msgid "Provide current enrollment and program status for the round."
-msgstr ""
+msgstr "تقديم حالة التسجيل والبرنامج الحالية للجولة."
 
 #: student_registration/templates/mscc/service_education_service_form.html:51
 msgid ""
 "The education situation determines which support packages and services are "
 "available for this beneficiary. Ensure all dates and programs match official "
 "records."
-msgstr ""
+msgstr "تحدد الحالة التعليمية حزم الدعم والخدمات المتاحة لهذا المستفيد. تأكد من أن جميع التواريخ والبرامج تطابق السجلات الرسمية."
 
 #: student_registration/templates/mscc/service_education_service_form.html:62
 msgid "Data is encrypted and saved securely."
-msgstr ""
+msgstr "يتم تشفير البيانات وحفظها بأمان."
 
 #: student_registration/templates/mscc/service_lego_form.html:60
 msgid "LEGO"
-msgstr ""
+msgstr "ليغو"
 
 #: student_registration/templates/mscc/service_youth_referral_form.html:60
 #| msgid "Referral"
@@ -9726,7 +9726,7 @@ msgstr "إحالة الشباب"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:53
 msgid "Overview of teacher demographics and training"
-msgstr ""
+msgstr "نظرة عامة على الخصائص الديموغرافية للمعلمين والتدريب"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:67
 #| msgid "Total absences"
@@ -9735,11 +9735,11 @@ msgstr "إجمالي المعلّمين"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:75
 msgid "Demographics & Overview"
-msgstr ""
+msgstr "الخصائص الديموغرافية ونظرة عامة"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:80
 msgid "Gender Breakdown"
-msgstr ""
+msgstr "التوزيع حسب الجنس"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:96
 #| msgid "Current academic year"
@@ -9748,7 +9748,7 @@ msgstr "الدورة/السنة الدراسية"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:104
 msgid "Assignments & Subjects"
-msgstr ""
+msgstr "التكليفات والمواد"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:117
 #| msgid "Subjects"
@@ -9757,7 +9757,7 @@ msgstr "المواد المقدمة"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:125
 msgid "Professional Development (Training)"
-msgstr ""
+msgstr "التطوير المهني (التدريب)"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:130
 #| msgid "Total attended"
@@ -9766,7 +9766,7 @@ msgstr "التدريبات التي تم حضورها"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:138
 msgid "Training Frequency (Sessions)"
-msgstr ""
+msgstr "وتيرة التدريب (الجلسات)"
 
 #: student_registration/templates/mscc/teacher_dashboard.html:146
 #| msgid "Grading Incomplete"
@@ -9775,7 +9775,7 @@ msgstr "سنة إكمال التدريب"
 
 #: student_registration/templates/mscc/teacher_form.html:28
 msgid "Edit Teacher Record"
-msgstr ""
+msgstr "تعديل سجل المعلم"
 
 #: student_registration/templates/mscc/teacher_form.html:28
 #| msgid "Register by Barcode"
@@ -9784,7 +9784,7 @@ msgstr "تسجيل معلّم جديد"
 
 #: student_registration/templates/mscc/teacher_form.html:40
 msgid "Teacher Training Record"
-msgstr ""
+msgstr "سجل تدريب المعلم"
 
 #: student_registration/templates/mscc/teacher_form.html:48
 #| msgid "main work"
@@ -9800,21 +9800,21 @@ msgstr "الجلسات التي تم حضورها"
 msgid ""
 "Export the filtered teacher list. The file will be generated and made "
 "available for download."
-msgstr ""
+msgstr "تصدير قائمة المعلمين المفلترة. سيتم إنشاء الملف وإتاحته للتنزيل."
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:61
 msgid "Learning Outcome Analysis"
-msgstr ""
+msgstr "تحليل نتائج التعلم"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:62
 msgid ""
 "Holistic overview of child welfare, socio-economic factors, and educational "
 "outcomes."
-msgstr ""
+msgstr "نظرة شاملة على رفاه الطفل والعوامل الاجتماعية والاقتصادية والنتائج التعليمية."
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:69
 msgid "Refresh"
-msgstr ""
+msgstr "تحديث"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:79
 #| msgid "Attendance date"
@@ -9828,19 +9828,19 @@ msgstr "معدل عمالة الأطفال"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:99
 msgid "Transition NFE to FE"
-msgstr ""
+msgstr "الانتقال من التعليم غير النظامي إلى التعليم النظامي"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:109
 msgid "Avg NFE Grade Impr."
-msgstr ""
+msgstr "متوسط تحسن علامات التعليم غير النظامي"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:119
 msgid "Avg Drop Out Rate"
-msgstr ""
+msgstr "متوسط معدل التسرب"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:131
 msgid "Socio-Economic Review"
-msgstr ""
+msgstr "مراجعة اجتماعية واقتصادية"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:136
 #| msgid "Participation"
@@ -9849,11 +9849,11 @@ msgstr "مشاركة الأطفال في العمل"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:144
 msgid "Labor Type & Income Relation"
-msgstr ""
+msgstr "العلاقة بين نوع العمل والدخل"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:152
 msgid "Cash Support Programs Enrollment"
-msgstr ""
+msgstr "التسجيل في برامج الدعم النقدي"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:160
 #| msgid "Education status"
@@ -9867,15 +9867,15 @@ msgstr "الوضع التعليمي عند التسجيل"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:173
 msgid "Average Grade Improvement by Program and Subject"
-msgstr ""
+msgstr "متوسط تحسن العلامات حسب البرنامج والمادة"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:181
 msgid "Transition between NFE Platforms"
-msgstr ""
+msgstr "الانتقال بين منصات التعليم غير النظامي"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:189
 msgid "Drop Out Rate by Program"
-msgstr ""
+msgstr "معدل التسرب حسب البرنامج"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:197
 #| msgid "Enrolled in formal education"
@@ -9903,27 +9903,27 @@ msgstr "إجراء"
 #: student_registration/templates/mscc/wellbeing_dashboard.html:215
 #: student_registration/templates/mscc/wellbeing_dashboard.html:291
 msgid "Loading data..."
-msgstr ""
+msgstr "جارٍ تحميل البيانات..."
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:227
 msgid "Impact & Correlation Analysis"
-msgstr ""
+msgstr "تحليل الأثر والارتباط"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:232
 msgid "Impact of Attendance on Grade Improvement"
-msgstr ""
+msgstr "أثر الحضور على تحسن العلامات"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:240
 msgid "Impact of Child Labor on Attendance"
-msgstr ""
+msgstr "أثر عمالة الأطفال على الحضور"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:248
 msgid "Psychological Distress vs Attendance Rate"
-msgstr ""
+msgstr "الضيق النفسي مقابل معدل الحضور"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:256
 msgid "Cash Support vs Child Labor Rate"
-msgstr ""
+msgstr "الدعم النقدي مقابل معدل عمالة الأطفال"
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:273
 #| msgid "Child parents"
@@ -9974,12 +9974,12 @@ msgstr "عدد الرسائل غير المقروءة"
 #: student_registration/templates/schools/profile.html:118
 #: student_registration/templates/schools/profile.html:150
 msgid "double click to mark this notification as unread"
-msgstr ""
+msgstr "انقر نقراً مزدوجاً لوضع علامة على هذا الإشعار كغير مقروء"
 
 #: student_registration/templates/schools/profile.html:122
 #: student_registration/templates/schools/profile.html:154
 msgid "double click to mark this notification as read"
-msgstr ""
+msgstr "انقر نقراً مزدوجاً لوضع علامة على هذا الإشعار كمقروء"
 
 #: student_registration/templates/schools/profile.html:138
 msgid "Helpdesk Notifications"
@@ -10022,11 +10022,11 @@ msgstr "ملف المستخدم"
 
 #: student_registration/templates/users/profile.html:19
 msgid "User Account"
-msgstr ""
+msgstr "حساب المستخدم"
 
 #: student_registration/templates/users/profile.html:38
 msgid "Joined"
-msgstr ""
+msgstr "تاريخ الانضمام"
 
 #: student_registration/templates/users/profile.html:77
 #| msgid "Lesson details"
@@ -10081,11 +10081,11 @@ msgstr "تفاصيل المستخدم"
 
 #: student_registration/templates/users/user_detail.html:39
 msgid "Edit My Info"
-msgstr ""
+msgstr "تعديل معلوماتي"
 
 #: student_registration/templates/users/user_detail.html:42
 msgid "E-Mail Settings"
-msgstr ""
+msgstr "إعدادات البريد الإلكتروني"
 
 #: student_registration/templates/users/user_detail.html:58
 #| msgid "General Information"
@@ -10099,11 +10099,11 @@ msgstr "عنوان البريد الإلكتروني"
 
 #: student_registration/templates/users/user_detail.html:75
 msgid "Account Metadata"
-msgstr ""
+msgstr "بيانات الحساب الوصفية"
 
 #: student_registration/templates/users/user_detail.html:79
 msgid "Member Since"
-msgstr ""
+msgstr "عضو منذ"
 
 #: student_registration/templates/users/user_detail.html:83
 #| msgid "Last comment"
@@ -10113,7 +10113,7 @@ msgstr "آخر تسجيل دخول"
 #: student_registration/templates/users/user_form.html:7
 #: student_registration/templates/users/user_form.html:8
 msgid "Update User"
-msgstr ""
+msgstr "تحديث المستخدم"
 
 #: student_registration/templates/users/user_form.html:16
 #| msgid "General Information"
@@ -10122,11 +10122,11 @@ msgstr "تحديث معلومات الملف الشخصي"
 
 #: student_registration/templates/users/user_list.html:6
 msgid "User Management"
-msgstr ""
+msgstr "إدارة المستخدمين"
 
 #: student_registration/templates/users/user_list.html:7
 msgid "System Users"
-msgstr ""
+msgstr "مستخدمو النظام"
 
 #: student_registration/templates/users/user_list.html:13
 #| msgid "November"
@@ -10135,7 +10135,7 @@ msgstr "الأعضاء"
 
 #: student_registration/templates/users/user_list.html:44
 msgid "No users found."
-msgstr ""
+msgstr "لم يتم العثور على مستخدمين."
 
 #: student_registration/users/admin.py:103
 msgid "Personal info"
@@ -11712,119 +11712,119 @@ msgstr "المستخدم"
 
 #: student_registration/templates/base.html:211
 msgid "&copy; 2026 MEHE BMA - Beneficiary Monitoring & Assessment"
-msgstr ""
+msgstr "&copy; 2026 MEHE BMA - متابعة وتقييم المستفيدين"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2625
 #: student_registration/templates/mscc/child_services_tab_org.html:2733
 msgid "= 6 and instance.child.age"
-msgstr ""
+msgstr "= 6 و instance.child.age"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3349
 msgid "= 7 and instance.child.age"
-msgstr ""
+msgstr "= 7 و instance.child.age"
 
 #: student_registration/templates/dashboard/chart_builder.html:125
 msgid "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, {\"label\": \"C\", \"value\": 45} ]"
-msgstr ""
+msgstr "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, {\"label\": \"C\", \"value\": 45} ]"
 
 #: student_registration/templates/mscc/service_recreational_form.html:40
 #: student_registration/templates/mscc/service_recreational_form.html:58
 msgid "Activities"
-msgstr ""
+msgstr "الأنشطة"
 
 #: student_registration/templates/clm/bridging_list.html:46
 msgid "Add New Beneficiary"
-msgstr ""
+msgstr "إضافة مستفيد جديد"
 
 #: student_registration/templates/schools/club_list.html:50
 msgid "Add New Club"
-msgstr ""
+msgstr "إضافة نادٍ جديد"
 
 #: student_registration/templates/schools/community_initiative_list.html:50
 msgid "Add New Community Initiative"
-msgstr ""
+msgstr "إضافة مبادرة مجتمعية جديدة"
 
 #: student_registration/templates/schools/health_visit_list.html:49
 msgid "Add New Health Visit"
-msgstr ""
+msgstr "إضافة زيارة صحية جديدة"
 
 #: student_registration/templates/schools/meeting_list.html:50
 msgid "Add New Meeting"
-msgstr ""
+msgstr "إضافة اجتماع جديد"
 
 #: student_registration/templates/schools/school_list.html:50
 msgid "Add New School"
-msgstr ""
+msgstr "إضافة مدرسة جديدة"
 
 #: student_registration/templates/students/teacher_list.html:49
 msgid "Add new Teacher"
-msgstr ""
+msgstr "إضافة معلم جديد"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3500
 msgid "Additional parenting or psychosocial support"
-msgstr ""
+msgstr "دعم إضافي في الوالدية أو الدعم النفسي الاجتماعي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3518
 msgid "Additional support for taking care or better dealing with the children"
-msgstr ""
+msgstr "دعم إضافي للعناية بالأطفال أو التعامل معهم بشكل أفضل"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3987
 msgid "Adolescent benefit from social innovation/entrepreneurship course"
-msgstr ""
+msgstr "استفادة اليافع من دورة الابتكار الاجتماعي/ريادة الأعمال"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3995
 msgid "Adolescent complete the YFS course"
-msgstr ""
+msgstr "أكمل اليافع دورة YFS"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3978
 msgid "Adolescent participate in any volunteering opportunity during the course of the program"
-msgstr ""
+msgstr "شارك اليافع في أي فرصة تطوع خلال مدة البرنامج"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:4013
 msgid "Adolescent participate in community based initiatives"
-msgstr ""
+msgstr "شارك اليافع في مبادرات مجتمعية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3962
 msgid "Adolescent receive a passing grade for the tests"
-msgstr ""
+msgstr "حصل اليافع على علامة نجاح في الاختبارات"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3953
 msgid "Adolescent undertake any Post Diagnostic tests"
-msgstr ""
+msgstr "خضع اليافع لأي اختبارات تشخيصية بعدية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2874
 #: student_registration/templates/mscc/service_youth_kit_form.html:28
 #: student_registration/templates/mscc/service_youth_kit_form.html:41
 msgid "Adolescents Kit"
-msgstr ""
+msgstr "حقيبة اليافعين"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2351
 msgid "Akelius"
-msgstr ""
+msgstr "أكيليوس"
 
 #: student_registration/templates/mscc/child_profile_preview.html:156
 msgid "Any disability or special need?"
-msgstr ""
+msgstr "هل توجد أي إعاقة أو حاجة خاصة؟"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1676
 #: student_registration/templates/mscc/child_services_tab_org.html:1742
 #: student_registration/templates/mscc/child_services_tab_org.html:1808
 msgid "Arabic Assessment - Level"
-msgstr ""
+msgstr "تقييم اللغة العربية - المستوى"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1394
 #: student_registration/templates/mscc/child_services_tab_org.html:1451
 #: student_registration/templates/mscc/child_services_tab_org.html:1508
 #: student_registration/templates/mscc/child_services_tab_org.html:1570
 msgid "Arabic Development"
-msgstr ""
+msgstr "تطوير اللغة العربية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:484
 #: student_registration/templates/mscc/child_services_tab_org.html:530
 #: student_registration/templates/mscc/child_services_tab_org.html:919
 #: student_registration/templates/mscc/child_services_tab_org.html:964
 msgid "Arabic Development / 20"
-msgstr ""
+msgstr "تطوير اللغة العربية / 20"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1009
 #: student_registration/templates/mscc/child_services_tab_org.html:1050
@@ -11835,47 +11835,47 @@ msgstr ""
 #: student_registration/templates/mscc/child_services_tab_org.html:1329
 #: student_registration/templates/mscc/child_services_tab_org.html:2236
 msgid "Arabic Language Development"
-msgstr ""
+msgstr "تطوير اللغة العربية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1941
 #: student_registration/templates/mscc/child_services_tab_org.html:1973
 #: student_registration/templates/mscc/child_services_tab_org.html:2109
 #: student_registration/templates/mscc/child_services_tab_org.html:2139
 msgid "Arabic Language Development / 12"
-msgstr ""
+msgstr "تطوير اللغة العربية / 12"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:280
 #: student_registration/templates/mscc/child_services_tab_org.html:712
 msgid "Arabic Language Development / 46"
-msgstr ""
+msgstr "تطوير اللغة العربية / 46"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:312
 #: student_registration/templates/mscc/child_services_tab_org.html:742
 msgid "Arabic Language Development / 56"
-msgstr ""
+msgstr "تطوير اللغة العربية / 56"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:816
 msgid "Arabic Language Development / 66"
-msgstr ""
+msgstr "تطوير اللغة العربية / 66"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:175
 #: student_registration/templates/mscc/child_services_tab_org.html:613
 msgid "Arabic Language Development / 68"
-msgstr ""
+msgstr "تطوير اللغة العربية / 68"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:245
 #: student_registration/templates/mscc/child_services_tab_org.html:679
 msgid "Arabic Language Development / 69"
-msgstr ""
+msgstr "تطوير اللغة العربية / 69"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:210
 #: student_registration/templates/mscc/child_services_tab_org.html:646
 msgid "Arabic Language Development / 70"
-msgstr ""
+msgstr "تطوير اللغة العربية / 70"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:867
 msgid "Arabic Language Development / 74"
-msgstr ""
+msgstr "تطوير اللغة العربية / 74"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1159
 #: student_registration/templates/mscc/child_services_tab_org.html:1197
@@ -11883,7 +11883,7 @@ msgstr ""
 #: student_registration/templates/mscc/child_services_tab_org.html:1318
 #: student_registration/templates/mscc/child_services_tab_org.html:1383
 msgid "Artistic Development"
-msgstr ""
+msgstr "التطور الفني"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:301
 #: student_registration/templates/mscc/child_services_tab_org.html:333
@@ -11892,17 +11892,17 @@ msgstr ""
 #: student_registration/templates/mscc/child_services_tab_org.html:763
 #: student_registration/templates/mscc/child_services_tab_org.html:807
 msgid "Artistic Development / 10"
-msgstr ""
+msgstr "التطور الفني / 10"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:858
 msgid "Artistic Development / 14"
-msgstr ""
+msgstr "التطور الفني / 14"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:425
 #: student_registration/templates/mscc/child_services_tab_org.html:472
 #: student_registration/templates/mscc/child_services_tab_org.html:909
 msgid "Artistic Development / 16"
-msgstr ""
+msgstr "التطور الفني / 16"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2508
 #: student_registration/templates/mscc/child_services_tab_org.html:2900
@@ -11915,15 +11915,15 @@ msgstr "التقييم"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2568
 msgid "At which age?"
-msgstr ""
+msgstr "في أي عمر؟"
 
 #: student_registration/templates/students/teacher_form.html:68
 msgid "Attachments"
-msgstr ""
+msgstr "المرفقات"
 
 #: student_registration/templates/mscc/dashboard_youth.html:156
 msgid "Attendance trends"
-msgstr ""
+msgstr "اتجاهات الحضور"
 
 #: student_registration/templates/clm/bridging_followup.html:86
 #: student_registration/templates/clm/bridging_form.html:106
@@ -11937,286 +11937,286 @@ msgstr ""
 #: student_registration/templates/mscc/service_follow_up_form.html:78
 #: ... and 20 more locations
 msgid "Back to list"
-msgstr ""
+msgstr "العودة إلى القائمة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3732
 msgid "Badge"
-msgstr ""
+msgstr "شارة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2894
 msgid "Basic"
-msgstr ""
+msgstr "أساسي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:505
 #: student_registration/templates/mscc/child_services_tab_org.html:940
 msgid "Biology / 20"
-msgstr ""
+msgstr "الأحياء / 20"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3448
 msgid "Birth registration"
-msgstr ""
+msgstr "تسجيل الولادة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3668
 msgid "Caregiver attend parent meeting/engagment sessions"
-msgstr ""
+msgstr "حضر مقدم الرعاية اجتماعات/جلسات مشاركة الأهالي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2702
 msgid "Caregiver attended ECD group counselling"
-msgstr ""
+msgstr "حضر مقدم الرعاية جلسات الإرشاد الجماعي لتنمية الطفولة المبكرة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2692
 msgid "Caregiver receive one on one counselling"
-msgstr ""
+msgstr "تلقى مقدم الرعاية إرشاداً فردياً"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3492
 msgid "Caregivers distress"
-msgstr ""
+msgstr "ضيق مقدمي الرعاية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3581
 #: student_registration/templates/mscc/service_follow_up_form.html:28
 #: student_registration/templates/mscc/service_follow_up_form.html:41
 msgid "Caregivers Package"
-msgstr ""
+msgstr "حزمة مقدمي الرعاية"
 
 #: student_registration/templates/mscc/child_profile_preview.html:325
 msgid "Caretaker's Full Name"
-msgstr ""
+msgstr "الاسم الكامل لمقدم الرعاية"
 
 #: student_registration/templates/mscc/child_profile_preview.html:332
 msgid "Caretaker's Mother Full Name"
-msgstr ""
+msgstr "الاسم الكامل لوالدة مقدم الرعاية"
 
 #: student_registration/templates/mscc/child_profile_preview.html:186
 msgid "Cash support programmes that the child is already benefitting from"
-msgstr ""
+msgstr "برامج الدعم النقدي التي يستفيد منها الطفل حالياً"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2402
 #: student_registration/templates/mscc/child_services_tab_org.html:2454
 msgid "Change in attitude towards learning"
-msgstr ""
+msgstr "تغير في الموقف تجاه التعلم"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2392
 #: student_registration/templates/mscc/child_services_tab_org.html:2444
 msgid "Change in motivation & output about Literacy"
-msgstr ""
+msgstr "تغير في الدافعية والنتائج المتعلقة بالقرائية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2397
 #: student_registration/templates/mscc/child_services_tab_org.html:2449
 msgid "Change in motivation & output about Math"
-msgstr ""
+msgstr "تغير في الدافعية والنتائج المتعلقة بالرياضيات"
 
 #: student_registration/templates/account/verified_email_required.html:22
 msgid "change your e-mail address"
-msgstr ""
+msgstr "تغيير عنوان بريدك الإلكتروني"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:512
 #: student_registration/templates/mscc/child_services_tab_org.html:947
 msgid "Chemistry / 20"
-msgstr ""
+msgstr "الكيمياء / 20"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:4132
 msgid "Child Attended Community Events?"
-msgstr ""
+msgstr "هل حضر الطفل فعاليات مجتمعية؟"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:4123
 msgid "Child Attended Qudwa initiatives?"
-msgstr ""
+msgstr "هل حضر الطفل مبادرات قدوة؟"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:4114
 msgid "Child Attended Sports for Development Programmes?"
-msgstr ""
+msgstr "هل حضر الطفل برامج الرياضة من أجل التنمية؟"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2387
 #: student_registration/templates/mscc/child_services_tab_org.html:2439
 msgid "Child equipped at home"
-msgstr ""
+msgstr "الطفل مجهز في المنزل"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2576
 #: student_registration/templates/mscc/child_services_tab_org.html:2723
 msgid "Child immunization record screened"
-msgstr ""
+msgstr "تم فحص سجل تطعيم الطفل"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3526
 msgid "Child know where to seek help in case he is exposed to violence, abuse, or exploitation"
-msgstr ""
+msgstr "يعرف الطفل أين يطلب المساعدة في حال تعرضه للعنف أو الإساءة أو الاستغلال"
 
 #: student_registration/templates/mscc/programme_details.html:105
 msgid "Child MUAC"
-msgstr ""
+msgstr "قياس محيط منتصف الذراع للطفل"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2651
 msgid "Child practicing physical activity at least twice a week"
-msgstr ""
+msgstr "يمارس الطفل نشاطاً بدنياً مرتين على الأقل أسبوعياً"
 
 #: student_registration/templates/mscc/form.html:44
 msgid "Child Profile"
-msgstr ""
+msgstr "ملف الطفل"
 
 #: student_registration/templates/mscc/service_pss_form.html:60
 #: student_registration/templates/mscc/service_youth_kit_form.html:60
 msgid "Child Protection and Psychosocial Support"
-msgstr ""
+msgstr "حماية الطفل والدعم النفسي الاجتماعي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3858
 msgid "Child receive all needed materials and resources (Stationery, Books, Learning bundle)"
-msgstr ""
+msgstr "حصل الطفل على جميع المواد والموارد اللازمة (قرطاسية، كتب، حزمة تعليمية)"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2822
 msgid "Child Referred for any observed developmental delays"
-msgstr ""
+msgstr "تمت إحالة الطفل بسبب أي تأخر نمائي ملحوظ"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2768
 msgid "Child Referred for development delays"
-msgstr ""
+msgstr "تمت إحالة الطفل بسبب تأخر نمائي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2781
 msgid "Child Referred for malnutrition treatment center"
-msgstr ""
+msgstr "تمت إحالة الطفل إلى مركز علاج سوء التغذية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3865
 msgid "Child referred to a service"
-msgstr ""
+msgstr "تمت إحالة الطفل إلى خدمة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3850
 msgid "Child referred to formal education (CBECE Grade 1)"
-msgstr ""
+msgstr "تمت إحالة الطفل إلى التعليم النظامي (CBECE الصف الأول)"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2713
 msgid "Child screened for malnutrition using MUAC tapes"
-msgstr ""
+msgstr "تم فحص الطفل للكشف عن سوء التغذية باستخدام أشرطة MUAC"
 
 #: student_registration/templates/mscc/child_profile_preview.html:313
 #: student_registration/templates/mscc/child_profile_preview.html:338
 #: student_registration/templates/mscc/child_profile_preview.html:350
 msgid "Child's primary caretaker"
-msgstr ""
+msgstr "مقدم الرعاية الأساسي للطفل"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3509
 msgid "Children in the HH experiencing any signs of distress or negative mental health symptoms"
-msgstr ""
+msgstr "الأطفال في الأسرة الذين تظهر عليهم أي علامات ضيق أو أعراض صحة نفسية سلبية"
 
 #: student_registration/templates/mscc/dashboard_d3.html:214
 msgid "Children moved between rounds"
-msgstr ""
+msgstr "الأطفال المنتقلون بين الجولات"
 
 #: student_registration/templates/mscc/dashboard_d3.html:172
 #: student_registration/templates/mscc/dashboard_youth.html:132
 msgid "Children per Disability Type"
-msgstr ""
+msgstr "الأطفال حسب نوع الإعاقة"
 
 #: student_registration/templates/mscc/dashboard_d3.html:154
 #: student_registration/templates/mscc/dashboard_youth.html:114
 msgid "Children per Family Status"
-msgstr ""
+msgstr "الأطفال حسب الوضع العائلي"
 
 #: student_registration/templates/mscc/dashboard_d3.html:129
 #: student_registration/templates/mscc/dashboard_youth.html:89
 msgid "Children per Gender"
-msgstr ""
+msgstr "الأطفال حسب الجنس"
 
 #: student_registration/templates/mscc/dashboard_d3.html:122
 #: student_registration/templates/mscc/dashboard_youth.html:82
 msgid "Children per Nationality"
-msgstr ""
+msgstr "الأطفال حسب الجنسية"
 
 #: student_registration/templates/mscc/dashboard_d3.html:197
 msgid "Children per Round"
-msgstr ""
+msgstr "الأطفال حسب الجولة"
 
 #: student_registration/templates/mscc/dashboard_d3.html:147
 #: student_registration/templates/mscc/dashboard_youth.html:107
 msgid "Children per Source of Identification"
-msgstr ""
+msgstr "الأطفال حسب مصدر التعرف"
 
 #: student_registration/templates/mscc/attendance.html:161
 msgid "Children Registered:"
-msgstr ""
+msgstr "الأطفال المسجلون:"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2644
 msgid "Children respond to and understand stressful and traumatic events"
-msgstr ""
+msgstr "استجابة الأطفال للأحداث المجهدة والصادمة وفهمهم لها"
 
 #: student_registration/templates/mscc/dashboard_d3.html:179
 #: student_registration/templates/mscc/dashboard_youth.html:139
 msgid "Children Vulnerability"
-msgstr ""
+msgstr "هشاشة الأطفال"
 
 #: student_registration/templates/mscc/child_profile_preview.html:520
 msgid "Child’s educational level when registering for the round"
-msgstr ""
+msgstr "المستوى التعليمي للطفل عند التسجيل في الجولة"
 
 #: student_registration/templates/mscc/child_profile_preview.html:555
 msgid "Class section"
-msgstr ""
+msgstr "شعبة الصف"
 
 #: student_registration/templates/schools/club_form.html:27
 #: student_registration/templates/schools/club_form.html:50
 msgid "Club"
-msgstr ""
+msgstr "النادي"
 
 #: student_registration/templates/schools/club_form.html:47
 #: student_registration/templates/schools/club_list.html:43
 msgid "Club List"
-msgstr ""
+msgstr "قائمة النوادي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1217
 #: student_registration/templates/mscc/child_services_tab_org.html:1282
 #: student_registration/templates/mscc/child_services_tab_org.html:1347
 msgid "Cognitive Development - Mathematics"
-msgstr ""
+msgstr "التطور المعرفي - الرياضيات"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:351
 #: student_registration/templates/mscc/child_services_tab_org.html:779
 msgid "Cognitive Development - Mathematics / 24"
-msgstr ""
+msgstr "التطور المعرفي - الرياضيات / 24"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:397
 #: student_registration/templates/mscc/child_services_tab_org.html:830
 msgid "Cognitive Development - Mathematics / 48"
-msgstr ""
+msgstr "التطور المعرفي - الرياضيات / 48"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:444
 #: student_registration/templates/mscc/child_services_tab_org.html:881
 msgid "Cognitive Development - Mathematics / 50"
-msgstr ""
+msgstr "التطور المعرفي - الرياضيات / 50"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1226
 #: student_registration/templates/mscc/child_services_tab_org.html:1291
 #: student_registration/templates/mscc/child_services_tab_org.html:1356
 msgid "Cognitive Development - Science"
-msgstr ""
+msgstr "التطور المعرفي - العلوم"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:358
 #: student_registration/templates/mscc/child_services_tab_org.html:786
 msgid "Cognitive Development - Science / 18"
-msgstr ""
+msgstr "التطور المعرفي - العلوم / 18"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:888
 msgid "Cognitive Development - Science / 34"
-msgstr ""
+msgstr "التطور المعرفي - العلوم / 34"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:837
 msgid "Cognitive Development - Science / 36"
-msgstr ""
+msgstr "التطور المعرفي - العلوم / 36"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:404
 #: student_registration/templates/mscc/child_services_tab_org.html:451
 msgid "Cognitive Development - Science / 38"
-msgstr ""
+msgstr "التطور المعرفي - العلوم / 38"
 
 #: student_registration/templates/schools/community_initiative_form.html:27
 #: student_registration/templates/schools/community_initiative_form.html:50
 msgid "Community Initiative"
-msgstr ""
+msgstr "مبادرة مجتمعية"
 
 #: student_registration/templates/schools/community_initiative_form.html:47
 #: student_registration/templates/schools/community_initiative_list.html:43
 msgid "Community Initiative List"
-msgstr ""
+msgstr "قائمة المبادرات المجتمعية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3005
 msgid "Completed the YFS course?"
-msgstr ""
+msgstr "هل أتم دورة YFS؟"
 
 #: student_registration/templates/admin/export_history_dashboard.html:11
 #: student_registration/templates/admin/export_history_dashboard.html:22
@@ -12224,41 +12224,41 @@ msgstr ""
 #: student_registration/templates/admin/user_activity_dashboard.html:11
 #: student_registration/templates/admin/user_activity_dashboard.html:22
 msgid "Count"
-msgstr ""
+msgstr "العدد"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3290
 msgid "Course made me feel"
-msgstr ""
+msgstr "جعلتني الدورة أشعر"
 
 #: student_registration/templates/403_csrf.html:11
 msgid "CSRF verification failed. Request aborted."
-msgstr ""
+msgstr "فشل التحقق من CSRF. تم إلغاء الطلب."
 
 #: student_registration/templates/dashboard/advanced_exporter.html:88
 #: student_registration/templates/location/center_list.html:104
 #: student_registration/templates/mscc/list.html:133
 #: student_registration/templates/mscc/teacher_list.html:100
 msgid "CSV"
-msgstr ""
+msgstr "CSV"
 
 #: student_registration/templates/schools/school_create_form.html:78
 #: student_registration/templates/schools/school_edit_form.html:78
 msgid "Current Academic Year"
-msgstr ""
+msgstr "السنة الدراسية الحالية"
 
 #: student_registration/templates/mscc/attendance.html:27
 #: student_registration/templates/mscc/attendance.html:68
 msgid "Daily Attendance"
-msgstr ""
+msgstr "الحضور اليومي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2619
 msgid "Delays identified in the development milestones"
-msgstr ""
+msgstr "تأخر محدد في معالم النمو"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2335
 #: student_registration/templates/mscc/service_digital_form.html:28
 msgid "Digital Component"
-msgstr ""
+msgstr "المكوّن الرقمي"
 
 #: student_registration/templates/clm/bridging_attendance_report.html:32
 #: student_registration/templates/clm/bridging_followup.html:41
@@ -12272,11 +12272,11 @@ msgstr ""
 #: student_registration/templates/schools/meeting_form.html:58
 #: ... and 5 more locations
 msgid "Dirasa"
-msgstr ""
+msgstr "دراسة"
 
 #: student_registration/templates/clm/bridging_attendance_report.html:19
 msgid "Dirasa Daily Attendance"
-msgstr ""
+msgstr "الحضور اليومي - دراسة"
 
 #: student_registration/templates/clm/bridging_followup.html:45
 #: student_registration/templates/clm/bridging_form.html:40
@@ -12284,133 +12284,133 @@ msgstr ""
 #: student_registration/templates/clm/bridging_post_assessment.html:40
 #: student_registration/templates/clm/bridging_service.html:40
 msgid "Dirasa List"
-msgstr ""
+msgstr "قائمة دراسة"
 
 #: student_registration/templates/clm/bridging.html:38
 #: student_registration/templates/clm/index.html:37
 msgid "Dirasa Registration"
-msgstr ""
+msgstr "تسجيل دراسة"
 
 #: student_registration/templates/mscc/child_profile_preview.html:528
 msgid "Dropout date from school"
-msgstr ""
+msgstr "تاريخ التسرب من المدرسة"
 
 #: student_registration/templates/mscc/child_profile_preview.html:536
 msgid "Dropout Programme"
-msgstr ""
+msgstr "برنامج التسرب"
 
 #: student_registration/templates/mscc/child_profile_preview.html:548
 msgid "Education programme"
-msgstr ""
+msgstr "البرنامج التعليمي"
 
 #: student_registration/templates/mscc/programme_details.html:60
 msgid "Education Status"
-msgstr ""
+msgstr "الحالة التعليمية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2006
 #: student_registration/templates/mscc/child_services_tab_org.html:2032
 #: student_registration/templates/mscc/child_services_tab_org.html:2171
 #: student_registration/templates/mscc/child_services_tab_org.html:2197
 msgid "English Development / 100"
-msgstr ""
+msgstr "تطوير اللغة الإنجليزية / 100"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1029
 #: student_registration/templates/mscc/child_services_tab_org.html:1070
 #: student_registration/templates/mscc/child_services_tab_org.html:1111
 msgid "English Language Development"
-msgstr ""
+msgstr "تطوير اللغة الإنجليزية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:191
 #: student_registration/templates/mscc/child_services_tab_org.html:629
 msgid "English Language Development / 43"
-msgstr ""
+msgstr "تطوير اللغة الإنجليزية / 43"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:261
 #: student_registration/templates/mscc/child_services_tab_org.html:695
 msgid "English Language Development / 64"
-msgstr ""
+msgstr "تطوير اللغة الإنجليزية / 64"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:226
 #: student_registration/templates/mscc/child_services_tab_org.html:662
 msgid "English Language Development / 65"
-msgstr ""
+msgstr "تطوير اللغة الإنجليزية / 65"
 
 #: student_registration/templates/schools/school_create_form.html:73
 #: student_registration/templates/schools/school_edit_form.html:73
 msgid "Enrollment Information"
-msgstr ""
+msgstr "معلومات التسجيل"
 
 #: student_registration/templates/dashboard/advanced_exporter.html:92
 msgid "Excel (.xlsx)"
-msgstr ""
+msgstr "Excel (.xlsx)"
 
 #: student_registration/templates/location/center_list.html:111
 #: student_registration/templates/mscc/list.html:140
 #: student_registration/templates/mscc/teacher_list.html:107
 msgid "Excel (XLSX)"
-msgstr ""
+msgstr "Excel (XLSX)"
 
 #: student_registration/templates/clm/bridging_attendance_report.html:137
 msgid "Export Consecutive Absence"
-msgstr ""
+msgstr "تصدير الغياب المتتالي"
 
 #: student_registration/templates/admin/export_history_dashboard.html:7
 msgid "Export History Dashboard"
-msgstr ""
+msgstr "لوحة سجل التصدير"
 
 #: student_registration/templates/clm/bridging_attendance_report.html:102
 msgid "Export Raw Attendance"
-msgstr ""
+msgstr "تصدير الحضور الخام"
 
 #: student_registration/templates/clm/bridging_attendance_report.html:131
 msgid "Export Total Attendances"
-msgstr ""
+msgstr "تصدير إجمالي الحضور"
 
 #: student_registration/templates/admin/export_history_dashboard.html:20
 msgid "Exports by Partner"
-msgstr ""
+msgstr "عمليات التصدير حسب الشريك"
 
 #: student_registration/templates/admin/export_history_dashboard.html:9
 msgid "Exports by Type"
-msgstr ""
+msgstr "عمليات التصدير حسب النوع"
 
 #: student_registration/templates/mscc/child_info_tab.html:89
 msgid "F:"
-msgstr ""
+msgstr "أنثى:"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3533
 msgid "Facilitator identify any child protection concern or the caregiver expressed any of the below signs on their children"
-msgstr ""
+msgstr "حدد الميسر أي مخاوف تتعلق بحماية الطفل أو عبّر مقدم الرعاية عن أي من العلامات التالية لدى أطفاله"
 
 #: student_registration/templates/mscc/child_profile_preview.html:270
 msgid "Father’s educational level"
-msgstr ""
+msgstr "المستوى التعليمي للأب"
 
 #: student_registration/templates/admin/export_history_dashboard.html:34
 msgid "Field / Filter Used"
-msgstr ""
+msgstr "الحقل / الفلتر المستخدم"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2013
 #: student_registration/templates/mscc/child_services_tab_org.html:2039
 #: student_registration/templates/mscc/child_services_tab_org.html:2178
 #: student_registration/templates/mscc/child_services_tab_org.html:2204
 msgid "Financial Literacy Development / 100"
-msgstr ""
+msgstr "تطوير الثقافة المالية / 100"
 
 #: student_registration/templates/clm/bridging_followup.html:28
 msgid "Follow-up & Parents Meeting and Health Exam"
-msgstr ""
+msgstr "المتابعة واجتماع الأهالي والفحص الصحي"
 
 #: student_registration/templates/403_csrf.html:9
 msgid "Forbidden (403)"
-msgstr ""
+msgstr "ممنوع (403)"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:491
 #: student_registration/templates/mscc/child_services_tab_org.html:537
 #: student_registration/templates/mscc/child_services_tab_org.html:926
 #: student_registration/templates/mscc/child_services_tab_org.html:971
 msgid "Foreign Language / 20"
-msgstr ""
+msgstr "اللغة الأجنبية / 20"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1273
 #: student_registration/templates/mscc/child_services_tab_org.html:1338
@@ -12418,195 +12418,195 @@ msgstr ""
 #: student_registration/templates/mscc/child_services_tab_org.html:2116
 #: student_registration/templates/mscc/child_services_tab_org.html:2245
 msgid "Foreign Language Development"
-msgstr ""
+msgstr "تطوير اللغة الأجنبية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1980
 #: student_registration/templates/mscc/child_services_tab_org.html:2146
 msgid "Foreign Language Development / 12"
-msgstr ""
+msgstr "تطوير اللغة الأجنبية / 12"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:823
 msgid "Foreign Language Development / 66"
-msgstr ""
+msgstr "تطوير اللغة الأجنبية / 66"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:874
 msgid "Foreign Language Development / 74"
-msgstr ""
+msgstr "تطوير اللغة الأجنبية / 74"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3710
 msgid "FPSS sessions"
-msgstr ""
+msgstr "جلسات FPSS"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1684
 #: student_registration/templates/mscc/child_services_tab_org.html:1750
 #: student_registration/templates/mscc/child_services_tab_org.html:1816
 msgid "French Assessment - Level"
-msgstr ""
+msgstr "تقييم اللغة الفرنسية - المستوى"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1019
 #: student_registration/templates/mscc/child_services_tab_org.html:1060
 #: student_registration/templates/mscc/child_services_tab_org.html:1101
 msgid "French Language Development"
-msgstr ""
+msgstr "تطوير اللغة الفرنسية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:183
 #: student_registration/templates/mscc/child_services_tab_org.html:621
 msgid "French Language Development / 43"
-msgstr ""
+msgstr "تطوير اللغة الفرنسية / 43"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:253
 #: student_registration/templates/mscc/child_services_tab_org.html:687
 msgid "French Language Development / 59"
-msgstr ""
+msgstr "تطوير اللغة الفرنسية / 59"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:218
 #: student_registration/templates/mscc/child_services_tab_org.html:654
 msgid "French Language Development / 65"
-msgstr ""
+msgstr "تطوير اللغة الفرنسية / 65"
 
 #: student_registration/templates/admin/base_site.html:13
 msgid "Frontend Home"
-msgstr ""
+msgstr "الواجهة الرئيسية"
 
 #: student_registration/templates/mscc/child_profile_preview.html:235
 msgid "General info."
-msgstr ""
+msgstr "معلومات عامة"
 
 #: student_registration/templates/mscc/child_profile_preview.html:401
 msgid "Governorate / District"
-msgstr ""
+msgstr "المحافظة / القضاء"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2494
 msgid "Health & Nutrition"
-msgstr ""
+msgstr "الصحة والتغذية"
 
 #: student_registration/templates/schools/health_visit_form.html:41
 #: student_registration/templates/schools/health_visit_form.html:64
 msgid "Health Visit"
-msgstr ""
+msgstr "زيارة صحية"
 
 #: student_registration/templates/schools/health_visit_form.html:61
 #: student_registration/templates/schools/health_visit_list.html:42
 msgid "Health Visit List"
-msgstr ""
+msgstr "قائمة الزيارات الصحية"
 
 #: student_registration/templates/mscc/child_profile_preview.html:252
 msgid "Household"
-msgstr ""
+msgstr "الأسرة"
 
 #: student_registration/templates/mscc/child_profile_preview.html:285
 #: student_registration/templates/mscc/child_profile_preview.html:299
 msgid "Household's/Relatives Primary phone number"
-msgstr ""
+msgstr "رقم الهاتف الأساسي للأسرة/الأقارب"
 
 #: student_registration/templates/mscc/child_profile_preview.html:77
 msgid "ID type - Number"
-msgstr ""
+msgstr "نوع الهوية - الرقم"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2658
 msgid "In case of a child marriage to ask if the child is accessing in reproductive health services?"
-msgstr ""
+msgstr "في حال زواج الأطفال، يُسأل عما إذا كان الطفل يحصل على خدمات الصحة الإنجابية؟"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3754
 #: student_registration/templates/mscc/service_inclusion_form.html:28
 #: student_registration/templates/mscc/service_inclusion_form.html:41
 #: student_registration/templates/mscc/service_inclusion_form.html:60
 msgid "Inclusion"
-msgstr ""
+msgstr "الدمج"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2551
 msgid "Is it exclusively breastfeeding for infants between 0-6 months?"
-msgstr ""
+msgstr "هل الرضاعة طبيعية حصرية للرضع بين 0 و6 أشهر؟"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2421
 msgid "Is the child using lp?"
-msgstr ""
+msgstr "هل يستخدم الطفل منصة Learning Passport؟"
 
 #: student_registration/templates/account/email_confirm.html:29
 msgid "issue a new e-mail confirmation request"
-msgstr ""
+msgstr "إصدار طلب تأكيد بريد إلكتروني جديد"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2020
 #: student_registration/templates/mscc/child_services_tab_org.html:2046
 #: student_registration/templates/mscc/child_services_tab_org.html:2185
 #: student_registration/templates/mscc/child_services_tab_org.html:2211
 msgid "IT Development / 100"
-msgstr ""
+msgstr "تطوير تكنولوجيا المعلومات / 100"
 
 #: student_registration/templates/mscc/programme_details.html:15
 msgid "Language"
-msgstr ""
+msgstr "اللغة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1208
 msgid "Language Development"
-msgstr ""
+msgstr "تطوير اللغة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:344
 #: student_registration/templates/mscc/child_services_tab_org.html:772
 msgid "Language Development / 48"
-msgstr ""
+msgstr "تطوير اللغة / 48"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:390
 msgid "Language Development / 66"
-msgstr ""
+msgstr "تطوير اللغة / 66"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:437
 msgid "Language Development / 74"
-msgstr ""
+msgstr "تطوير اللغة / 74"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2357
 msgid "Learning Passport"
-msgstr ""
+msgstr "منصة Learning Passport"
 
 #: student_registration/templates/mscc/programme_details.html:114
 msgid "Learning Result"
-msgstr ""
+msgstr "نتيجة التعلم"
 
 #: student_registration/templates/location/center_info_tab.html:131
 msgid "Lebanese:"
-msgstr ""
+msgstr "لبناني:"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2263
 msgid "Life skills Development"
-msgstr ""
+msgstr "تطوير المهارات الحياتية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1962
 #: student_registration/templates/mscc/child_services_tab_org.html:1994
 #: student_registration/templates/mscc/child_services_tab_org.html:2130
 #: student_registration/templates/mscc/child_services_tab_org.html:2160
 msgid "Life skills Development / 12"
-msgstr ""
+msgstr "تطوير المهارات الحياتية / 12"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2978
 msgid "Life skills package"
-msgstr ""
+msgstr "حزمة المهارات الحياتية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3456
 msgid "Living arrangement"
-msgstr ""
+msgstr "ترتيب السكن"
 
 #: student_registration/templates/mscc/attendance.html:148
 msgid "Load"
-msgstr ""
+msgstr "تحميل"
 
 #: student_registration/templates/500.html:11
 msgid "Looks like something went wrong!"
-msgstr ""
+msgstr "يبدو أن هناك خطأ ما!"
 
 #: student_registration/templates/mscc/child_info_tab.html:90
 msgid "M:"
-msgstr ""
+msgstr "ذكر:"
 
 #: student_registration/templates/mscc/child_services_tab.html:147
 #: student_registration/templates/mscc/child_services_tab_org.html:586
 #: student_registration/templates/mscc/child_services_tab_org.html:2082
 msgid "Main barriers affecting attendance/participation, performance, or causing drop-out"
-msgstr ""
+msgstr "العوائق الرئيسية التي تؤثر على الحضور/المشاركة أو الأداء أو تسبب التسرب"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1955
 #: student_registration/templates/mscc/child_services_tab_org.html:2123
 msgid "Mathematics / 15"
-msgstr ""
+msgstr "الرياضيات / 15"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:287
 #: student_registration/templates/mscc/child_services_tab_org.html:498
@@ -12615,307 +12615,307 @@ msgstr ""
 #: student_registration/templates/mscc/child_services_tab_org.html:933
 #: student_registration/templates/mscc/child_services_tab_org.html:978
 msgid "Mathematics / 20"
-msgstr ""
+msgstr "الرياضيات / 20"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1987
 #: student_registration/templates/mscc/child_services_tab_org.html:2153
 msgid "Mathematics / 21"
-msgstr ""
+msgstr "الرياضيات / 21"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:199
 #: student_registration/templates/mscc/child_services_tab_org.html:637
 msgid "Mathematics / 22"
-msgstr ""
+msgstr "الرياضيات / 22"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:234
 #: student_registration/templates/mscc/child_services_tab_org.html:269
 #: student_registration/templates/mscc/child_services_tab_org.html:670
 #: student_registration/templates/mscc/child_services_tab_org.html:703
 msgid "Mathematics / 32"
-msgstr ""
+msgstr "الرياضيات / 32"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:319
 #: student_registration/templates/mscc/child_services_tab_org.html:749
 msgid "Mathematics / 36"
-msgstr ""
+msgstr "الرياضيات / 36"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1692
 #: student_registration/templates/mscc/child_services_tab_org.html:1758
 #: student_registration/templates/mscc/child_services_tab_org.html:1824
 msgid "Mathematics Assessment - Level"
-msgstr ""
+msgstr "تقييم الرياضيات - المستوى"
 
 #: student_registration/templates/schools/meeting_form.html:45
 #: student_registration/templates/schools/meeting_form.html:68
 msgid "Meeting"
-msgstr ""
+msgstr "اجتماع"
 
 #: student_registration/templates/schools/meeting_form.html:65
 #: student_registration/templates/schools/meeting_list.html:43
 msgid "Meeting List"
-msgstr ""
+msgstr "قائمة الاجتماعات"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3677
 msgid "Meeting Type"
-msgstr ""
+msgstr "نوع الاجتماع"
 
 #: student_registration/templates/admin/user_activity_dashboard.html:11
 msgid "Method"
-msgstr ""
+msgstr "الطريقة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1642
 msgid "Mid Grading"
-msgstr ""
+msgstr "تقييم منتصف المدة"
 
 #: student_registration/templates/clm/bridging_mid_assessment.html:28
 #: student_registration/templates/clm/bridging_mid_assessment.html:43
 msgid "Mid-Test"
-msgstr ""
+msgstr "اختبار منتصف المدة"
 
 #: student_registration/templates/admin/export_history_dashboard.html:32
 msgid "Most Frequently Exported Fields (Filters)"
-msgstr ""
+msgstr "الحقول الأكثر تصديراً (الفلاتر)"
 
 #: student_registration/templates/mscc/child_profile_preview.html:278
 msgid "Mother’s educational level"
-msgstr ""
+msgstr "المستوى التعليمي للأم"
 
 #: student_registration/templates/mscc/attendance_children.html:109
 #: student_registration/templates/schools/school_create_form.html:48
 #: student_registration/templates/schools/school_edit_form.html:48
 msgid "New"
-msgstr ""
+msgstr "جديد"
 
 #: student_registration/templates/mscc/form.html:284
 msgid "Next btn"
-msgstr ""
+msgstr "زر التالي"
 
 #: student_registration/templates/mscc/form.html:285
 msgid "Next Page"
-msgstr ""
+msgstr "الصفحة التالية"
 
 #: student_registration/templates/admin/export_history_dashboard.html:16
 #: student_registration/templates/admin/export_history_dashboard.html:27
 #: student_registration/templates/admin/user_activity_dashboard.html:16
 #: student_registration/templates/admin/user_activity_dashboard.html:27
 msgid "No data"
-msgstr ""
+msgstr "لا توجد بيانات"
 
 #: student_registration/templates/admin/export_history_dashboard.html:39
 msgid "No filter data available"
-msgstr ""
+msgstr "لا توجد بيانات فلاتر متاحة"
 
 #: student_registration/templates/mscc/child_services_tab.html:209
 msgid "No improvement data available."
-msgstr ""
+msgstr "لا توجد بيانات تحسن متاحة."
 
 #: student_registration/templates/mscc/child_services_tab.html:115
 msgid "No pre-grading data available for this programme."
-msgstr ""
+msgstr "لا توجد بيانات تقييم قبلي متاحة لهذا البرنامج."
 
 #: student_registration/templates/mscc/child_services_tab.html:239
 #: student_registration/templates/mscc/child_services_tab.html:270
 msgid "No school grading data available."
-msgstr ""
+msgstr "لا توجد بيانات تقييم مدرسية متاحة."
 
 #: student_registration/templates/location/center_info_tab.html:134
 msgid "Non-Lebanese:"
-msgstr ""
+msgstr "غير لبناني:"
 
 #: student_registration/templates/account/verified_email_required.html:22
 msgid "Note:"
-msgstr ""
+msgstr "ملاحظة:"
 
 #: student_registration/templates/base.html:317
 #: student_registration/templates/base.html:348
 msgid "OK"
-msgstr ""
+msgstr "حسناً"
 
 #: student_registration/templates/500.html:9
 msgid "Ooops!!! 500"
-msgstr ""
+msgstr "عذراً!!! 500"
 
 #: student_registration/templates/mscc/child_profile_preview.html:374
 msgid "P-Code where the child lives in Internal Settlement/Camp"
-msgstr ""
+msgstr "رمز P-Code للمكان الذي يعيش فيه الطفل داخل التجمع/المخيم"
 
 #: student_registration/templates/mscc/child_profile_preview.html:203
 msgid "Packages received/to be provided to child"
-msgstr ""
+msgstr "الحزم التي استلمها/سيتم توفيرها للطفل"
 
 #: student_registration/templates/404.html:9
 msgid "Page Not found"
-msgstr ""
+msgstr "الصفحة غير موجودة"
 
 #: student_registration/templates/clm/bridging_form.html:78
 #: student_registration/templates/mscc/form.html:88
 msgid "Parent/Caregiver Information"
-msgstr ""
+msgstr "معلومات الوالد/مقدم الرعاية"
 
 #: student_registration/templates/mscc/service_follow_up_form.html:65
 msgid "Parents Meeting, Engagement and Support"
-msgstr ""
+msgstr "اجتماع الأهالي والمشاركة والدعم"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3026
 msgid "Participate in community based initiatives"
-msgstr ""
+msgstr "المشاركة في مبادرات مجتمعية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3352
 msgid "Participating in CBPSS LEGO sessions"
-msgstr ""
+msgstr "المشاركة في جلسات CBPSS LEGO"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3362
 msgid "Participating in Education sessions supported by LEGO activities"
-msgstr ""
+msgstr "المشاركة في جلسات تعليمية مدعومة بأنشطة LEGO"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3370
 msgid "Participating in LEGO free-play sessions"
-msgstr ""
+msgstr "المشاركة في جلسات اللعب الحر باستخدام LEGO"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:4054
 msgid "Partner refer youth who are above 18 to the innovation hubs GIL"
-msgstr ""
+msgstr "يقوم الشريك بإحالة الشباب فوق 18 عاماً إلى مراكز الابتكار GIL"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:4047
 msgid "Partner refer youth who are above 18 to the TVET centers"
-msgstr ""
+msgstr "يقوم الشريك بإحالة الشباب فوق 18 عاماً إلى مراكز التعليم والتدريب المهني والتقني"
 
 #: student_registration/templates/mscc/child_profile_preview.html:123
 msgid "Partner Unique Number"
-msgstr ""
+msgstr "الرقم الفريد للشريك"
 
 #: student_registration/templates/admin/user_activity_dashboard.html:22
 msgid "Path"
-msgstr ""
+msgstr "المسار"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:519
 #: student_registration/templates/mscc/child_services_tab_org.html:954
 msgid "Physics / 20"
-msgstr ""
+msgstr "الفيزياء / 20"
 
 #: student_registration/templates/dashboard/pivot_dashboard.html:16
 msgid "Pivot Dashboard"
-msgstr ""
+msgstr "لوحة Pivot"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2962
 msgid "Post Diagnostic tests"
-msgstr ""
+msgstr "اختبارات تشخيصية بعدية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1914
 msgid "Post Scoring"
-msgstr ""
+msgstr "التقييم البعدي"
 
 #: student_registration/templates/clm/bridging_post_assessment.html:28
 #: student_registration/templates/clm/bridging_post_assessment.html:43
 msgid "Post-Test"
-msgstr ""
+msgstr "اختبار بعدي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3169
 msgid "Practiced YLI civic engagement"
-msgstr ""
+msgstr "مارس المشاركة المدنية ضمن YLI"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1909
 msgid "Pre Scoring"
-msgstr ""
+msgstr "التقييم القبلي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2942
 msgid "Pre-tests administered to assess adolescents' level"
-msgstr ""
+msgstr "اختبارات قبلية أُجريت لتقييم مستوى اليافعين"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2795
 msgid "Pregnant lactating women/child referred for ANC and PNC follow up and to receive MMS (multivitamins) to PHC"
-msgstr ""
+msgstr "تمت إحالة الحامل/المرضع أو الطفل إلى مركز الرعاية الصحية الأولية لمتابعة الرعاية قبل الولادة وبعدها والحصول على المكملات متعددة المغذيات"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2808
 msgid "Pregnant lactating women/child with challenges on breastfeeding referred to IYCF specialists"
-msgstr ""
+msgstr "تمت إحالة الحامل/المرضع أو الطفل ممن يواجهون تحديات في الرضاعة الطبيعية إلى اختصاصيي تغذية الرضع وصغار الأطفال"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2926
 msgid "Previous community based initiative"
-msgstr ""
+msgstr "مبادرة مجتمعية سابقة"
 
 #: student_registration/templates/mscc/form.html:295
 msgid "Previous data"
-msgstr ""
+msgstr "بيانات سابقة"
 
 #: student_registration/templates/mscc/programme_details.html:87
 msgid "Programme Site"
-msgstr ""
+msgstr "موقع البرنامج"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1244
 #: student_registration/templates/mscc/child_services_tab_org.html:1309
 #: student_registration/templates/mscc/child_services_tab_org.html:1374
 msgid "Psychomotor Development"
-msgstr ""
+msgstr "التطور الحركي النفسي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:372
 #: student_registration/templates/mscc/child_services_tab_org.html:800
 msgid "Psychomotor Development / 20"
-msgstr ""
+msgstr "التطور الحركي النفسي / 20"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:418
 #: student_registration/templates/mscc/child_services_tab_org.html:851
 msgid "Psychomotor Development / 40"
-msgstr ""
+msgstr "التطور الحركي النفسي / 40"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:465
 #: student_registration/templates/mscc/child_services_tab_org.html:902
 msgid "Psychomotor Development / 42"
-msgstr ""
+msgstr "التطور الحركي النفسي / 42"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3428
 msgid "Psychosocial Support"
-msgstr ""
+msgstr "الدعم النفسي الاجتماعي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2934
 msgid "Reason for the adolescent enrollment in the programme"
-msgstr ""
+msgstr "سبب تسجيل اليافع في البرنامج"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3472
 msgid "Reasons being out of school"
-msgstr ""
+msgstr "أسباب عدم الالتحاق بالمدرسة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2970
 msgid "Receive a passing grade for the tests?"
-msgstr ""
+msgstr "هل حصل على علامة نجاح في الاختبارات؟"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3017
 #: student_registration/templates/mscc/child_services_tab_org.html:4005
 msgid "Recommended future path for the adolescent"
-msgstr ""
+msgstr "المسار المستقبلي الموصى به لليافع"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3875
 msgid "Recommended learning path/outcome"
-msgstr ""
+msgstr "مسار/نتيجة التعلم الموصى بها"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:4086
 msgid "Recreational"
-msgstr ""
+msgstr "ترفيهي"
 
 #: student_registration/templates/mscc/service_recreational_form.html:27
 msgid "Recreational Activities"
-msgstr ""
+msgstr "أنشطة ترفيهية"
 
 #: student_registration/templates/mscc/programme_details.html:33
 msgid "Registered in School"
-msgstr ""
+msgstr "مسجل في المدرسة"
 
 #: student_registration/templates/admin/user_activity_dashboard.html:9
 msgid "Requests by Method"
-msgstr ""
+msgstr "الطلبات حسب الطريقة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3631
 msgid "Result of follow-up"
-msgstr ""
+msgstr "نتيجة المتابعة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:107
 msgid "RS Grade 9 - Grading"
-msgstr ""
+msgstr "تقييم RS الصف التاسع"
 
 #: student_registration/templates/schools/school_create_form.html:68
 #: student_registration/templates/schools/school_edit_form.html:68
 msgid "School Information"
-msgstr ""
+msgstr "معلومات المدرسة"
 
 #: student_registration/templates/clm/bridging.html:64
 #: student_registration/templates/clm/index.html:63
@@ -12929,48 +12929,48 @@ msgstr "المدارس"
 #: student_registration/templates/mscc/child_services_tab_org.html:551
 #: student_registration/templates/mscc/child_services_tab_org.html:985
 msgid "Science / 20"
-msgstr ""
+msgstr "العلوم / 20"
 
 #: student_registration/templates/mscc/service_youth_scoring_form.html:27
 msgid "Scoring"
-msgstr ""
+msgstr "التقييم"
 
 #: student_registration/templates/mscc/dashboard_youth.html:41
 msgid "Select one or more center"
-msgstr ""
+msgstr "اختر مركزاً واحداً أو أكثر"
 
 #: student_registration/templates/mscc/dashboard_youth.html:53
 msgid "Select one or more governorate"
-msgstr ""
+msgstr "اختر محافظة واحدة أو أكثر"
 
 #: student_registration/templates/mscc/dashboard_youth.html:66
 msgid "Select one or more partner"
-msgstr ""
+msgstr "اختر شريكاً واحداً أو أكثر"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2513
 msgid "Session"
-msgstr ""
+msgstr "جلسة"
 
 #: student_registration/templates/mscc/service_health_nutrition_form.html:65
 msgid "Sessions"
-msgstr ""
+msgstr "جلسات"
 
 #: student_registration/templates/mscc/programme_details.html:42
 msgid "Shift"
-msgstr ""
+msgstr "الدوام"
 
 #: student_registration/templates/account/signup.html:13
 msgid "sign in"
-msgstr ""
+msgstr "تسجيل الدخول"
 
 #: student_registration/templates/mscc/child_profile_preview.html:500
 msgid "Situation"
-msgstr ""
+msgstr "الحالة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2997
 #: student_registration/templates/mscc/child_services_tab_org.html:3240
 msgid "Social innovation/entrepreneurship course"
-msgstr ""
+msgstr "دورة الابتكار الاجتماعي/ريادة الأعمال"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1150
 #: student_registration/templates/mscc/child_services_tab_org.html:1188
@@ -12978,63 +12978,63 @@ msgstr ""
 #: student_registration/templates/mscc/child_services_tab_org.html:1300
 #: student_registration/templates/mscc/child_services_tab_org.html:1365
 msgid "Social-Emotional Development"
-msgstr ""
+msgstr "التطور الاجتماعي والعاطفي"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:365
 #: student_registration/templates/mscc/child_services_tab_org.html:793
 msgid "Social-Emotional Development / 14"
-msgstr ""
+msgstr "التطور الاجتماعي والعاطفي / 14"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:294
 #: student_registration/templates/mscc/child_services_tab_org.html:326
 #: student_registration/templates/mscc/child_services_tab_org.html:726
 #: student_registration/templates/mscc/child_services_tab_org.html:756
 msgid "Social-Emotional Development / 24"
-msgstr ""
+msgstr "التطور الاجتماعي والعاطفي / 24"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:844
 msgid "Social-Emotional Development / 34"
-msgstr ""
+msgstr "التطور الاجتماعي والعاطفي / 34"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:411
 #: student_registration/templates/mscc/child_services_tab_org.html:458
 #: student_registration/templates/mscc/child_services_tab_org.html:895
 msgid "Social-Emotional Development / 40"
-msgstr ""
+msgstr "التطور الاجتماعي والعاطفي / 40"
 
 #: student_registration/templates/mscc/child_profile_preview.html:257
 msgid "Social/Economic"
-msgstr ""
+msgstr "اجتماعي/اقتصادي"
 
 #: student_registration/templates/attendances/attendance_students.html:10
 msgid "Students Attendance"
-msgstr ""
+msgstr "حضور الطلاب"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1628
 msgid "TARL - Grading"
-msgstr ""
+msgstr "تقييم TARL"
 
 #: student_registration/templates/students/teacher_form.html:28
 msgid "Teacher"
-msgstr ""
+msgstr "المعلم"
 
 #: student_registration/templates/students/teacher_form.html:63
 msgid "Teacher General Information"
-msgstr ""
+msgstr "معلومات عامة عن المعلم"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1668
 #: student_registration/templates/mscc/child_services_tab_org.html:1734
 #: student_registration/templates/mscc/child_services_tab_org.html:1800
 msgid "Test Taken?"
-msgstr ""
+msgstr "هل تم إجراء الاختبار؟"
 
 #: student_registration/templates/404.html:11
 msgid "This is not the page you were looking for."
-msgstr ""
+msgstr "هذه ليست الصفحة التي كنت تبحث عنها."
 
 #: student_registration/templates/clm/execs.html:8
 msgid "Title"
-msgstr ""
+msgstr "العنوان"
 
 #: student_registration/templates/clm/list.html:63
 #: student_registration/templates/django_tables2/clm_action_column.html:8
@@ -13043,340 +13043,340 @@ msgstr ""
 #: student_registration/templates/django_tables2/school/meeting_action_column.html:8
 #: student_registration/templates/django_tables2/students/teacher_action_column.html:9
 msgid "Toggle Dropdown"
-msgstr ""
+msgstr "تبديل القائمة المنسدلة"
 
 #: student_registration/templates/admin/user_activity_dashboard.html:20
 msgid "Top Paths"
-msgstr ""
+msgstr "أهم المسارات"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3061
 msgid "Trained on Mental health"
-msgstr ""
+msgstr "تدرّب على الصحة النفسية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3255
 msgid "Trainer encouraged discussions"
-msgstr ""
+msgstr "شجّع المدرب النقاشات"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3262
 msgid "Trainer provided feedback"
-msgstr ""
+msgstr "قدّم المدرب ملاحظات"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3248
 msgid "Trainer showed knowledge"
-msgstr ""
+msgstr "أظهر المدرب معرفة"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3269
 msgid "Trainer was patient and helped"
-msgstr ""
+msgstr "كان المدرب صبوراً ومساعداً"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3283
 msgid "Training part difficult"
-msgstr ""
+msgstr "الجزء الصعب من التدريب"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3276
 msgid "Training part most useful"
-msgstr ""
+msgstr "الجزء الأكثر فائدة من التدريب"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3622
 msgid "Type and number of follow-up done"
-msgstr ""
+msgstr "نوع وعدد المتابعات المنفذة"
 
 #: student_registration/templates/mscc/child_profile_preview.html:431
 msgid "Type of Labor"
-msgstr ""
+msgstr "نوع العمل"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:597
 #: student_registration/templates/mscc/child_services_tab_org.html:2093
 msgid "Undertake the Post tests ?"
-msgstr ""
+msgstr "هل يخضع للاختبارات البعدية؟"
 
 #: student_registration/templates/mscc/child_services_tab.html:160
 msgid "Undertake the Post tests?"
-msgstr ""
+msgstr "هل يخضع للاختبارات البعدية؟"
 
 #: student_registration/templates/admin/user_activity_dashboard.html:7
 msgid "User Activity Dashboard"
-msgstr ""
+msgstr "لوحة نشاط المستخدم"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2583
 msgid "Vaccine missing"
-msgstr ""
+msgstr "اللقاح مفقود"
 
 #: student_registration/templates/base.html:212
 msgid "Version 1.0"
-msgstr ""
+msgstr "الإصدار 1.0"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3733
 msgid "View All"
-msgstr ""
+msgstr "عرض الكل"
 
 #: student_registration/templates/mscc/dashboard_d3.html:186
 #: student_registration/templates/mscc/dashboard_youth.html:146
 msgid "Volunteering"
-msgstr ""
+msgstr "التطوع"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2918
 msgid "volunteering experience"
-msgstr ""
+msgstr "خبرة تطوعية"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2986
 msgid "Volunteering opportunity"
-msgstr ""
+msgstr "فرصة تطوع"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3464
 msgid "Vulnerabilites of the child"
-msgstr ""
+msgstr "هشاشة الطفل"
 
 #: student_registration/templates/500.html:13
 msgid "We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing."
-msgstr ""
+msgstr "نقوم بتتبع هذه الأخطاء تلقائياً، ولكن إذا استمرت المشكلة فلا تتردد في التواصل معنا. في هذه الأثناء، حاول تحديث الصفحة."
 
 #: student_registration/templates/schools/school_create_form.html:83
 #: student_registration/templates/schools/school_edit_form.html:83
 msgid "WFP"
-msgstr ""
+msgstr "برنامج الأغذية العالمي"
 
 #: student_registration/templates/mscc/programme_details.html:96
 msgid "Where was the child referred?"
-msgstr ""
+msgstr "إلى أين تمت إحالة الطفل؟"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1700
 #: student_registration/templates/mscc/child_services_tab_org.html:1766
 #: student_registration/templates/mscc/child_services_tab_org.html:1832
 msgid "Word Problem Q1"
-msgstr ""
+msgstr "مسألة كلامية س1"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1707
 #: student_registration/templates/mscc/child_services_tab_org.html:1773
 #: student_registration/templates/mscc/child_services_tab_org.html:1839
 msgid "Word Problem Q2"
-msgstr ""
+msgstr "مسألة كلامية س2"
 
 #: student_registration/templates/mscc/form.html:93
 msgid "Work Status"
-msgstr ""
+msgstr "حالة العمل"
 
 #: student_registration/templates/mscc/child_profile_preview.html:439
 msgid "Working hours during a week? (in hours)"
-msgstr ""
+msgstr "ساعات العمل خلال الأسبوع؟ (بالساعات)"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1892
 msgid "YFS Level 1 - Scoring"
-msgstr ""
+msgstr "تقييم YFS المستوى 1"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:1894
 msgid "YFS Level 2 - Scoring"
-msgstr ""
+msgstr "تقييم YFS المستوى 2"
 
 #: student_registration/templates/account/verified_email_required.html:22
 msgid "you can still"
-msgstr ""
+msgstr "لا يزال بإمكانك"
 
 #: student_registration/templates/mscc/attendance.html:61
 msgid "You don't have a center assigned to your profile please contact the administrator"
-msgstr ""
+msgstr "لا يوجد مركز مخصص لملفك الشخصي، يرجى التواصل مع المسؤول"
 
 #: student_registration/templates/students/save.html:12
 msgid "Your profile was not saved."
-msgstr ""
+msgstr "لم يتم حفظ ملفك الشخصي."
 
 #: student_registration/templates/students/save.html:8
 msgid "Your profile was saved."
-msgstr ""
+msgstr "تم حفظ ملفك الشخصي."
 
 #: student_registration/templates/mscc/service_youth_assessment_form.html:28
 #: student_registration/templates/mscc/service_youth_assessment_form.html:41
 #: student_registration/templates/mscc/service_youth_assessment_form.html:60
 #: student_registration/templates/mscc/service_youth_referral_form.html:28
 msgid "Youth Assessment"
-msgstr ""
+msgstr "تقييم الشباب"
 
 #: student_registration/templates/mscc/service_youth_gil_form.html:28
 #: student_registration/templates/mscc/service_youth_gil_form.html:41
 msgid "Youth GIL"
-msgstr ""
+msgstr "شباب GIL"
 
 #: student_registration/templates/mscc/service_youth_maharati_form.html:27
 #: student_registration/templates/mscc/service_youth_maharati_form.html:40
 msgid "Youth Maharati"
-msgstr ""
+msgstr "شباب مهاراتي"
 
 #: student_registration/templates/pages/home.html:35
 msgid "Core Package"
-msgstr ""
+msgstr "الحزمة الأساسية"
 
 #: student_registration/templates/mscc/form.html:30
 msgid "Edit Child Info."
-msgstr ""
+msgstr "تعديل معلومات الطفل"
 
 #: student_registration/templates/pages/home.html:60
 msgid "Walk-in"
-msgstr ""
+msgstr "حضور مباشر"
 
 #: student_registration/templates/pages/home.html:13
 msgid "Welcome"
-msgstr ""
+msgstr "مرحباً"
 
 
 #: student_registration/templates/mscc/child_education_details.html:47
 msgid "(Round:"
-msgstr ""
+msgstr "(الجولة:"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:109
 #: student_registration/templates/mscc/child_services_tab_org.html:1896
 msgid "- Grading"
-msgstr ""
+msgstr "- التقييم"
 
 #: student_registration/templates/clm/index.html:38
 msgid "- Kayany"
-msgstr ""
+msgstr "- كياني"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2695
 #: student_registration/templates/mscc/child_services_tab_org.html:2705
 msgid "- Next session date:"
-msgstr ""
+msgstr "- تاريخ الجلسة التالية:"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2813
 #: student_registration/templates/mscc/child_services_tab_org.html:2827
 msgid "- Organization:"
-msgstr ""
+msgstr "- المنظمة:"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2800
 msgid "- PHC Center:"
-msgstr ""
+msgstr "- مركز الرعاية الصحية الأولية:"
 
 #: student_registration/templates/location/center_info_tab.html:149
 msgid "Admin:"
-msgstr ""
+msgstr "المسؤول:"
 
 #: student_registration/templates/base.html:11
 msgid "BMA |"
-msgstr ""
+msgstr "BMA |"
 
 #: student_registration/templates/mscc/child_profile_preview.html:591
 msgid "Center:"
-msgstr ""
+msgstr "المركز:"
 
 #: student_registration/templates/mscc/child_profile_preview.html:140
 msgid "child"
-msgstr ""
+msgstr "طفل"
 
 #: student_registration/templates/mscc/service_follow_up_all.html:14
 msgid "Dropout reason:"
-msgstr ""
+msgstr "سبب التسرب:"
 
 #: student_registration/templates/dashboard/pivot_dashboard.html:378
 msgid "Error loading pivot data:"
-msgstr ""
+msgstr "حدث خطأ أثناء تحميل بيانات Pivot:"
 
 #: student_registration/templates/mscc/child_attendance_tab.html:167
 msgid "Failed to load attendance data."
-msgstr ""
+msgstr "فشل تحميل بيانات الحضور."
 
 #: student_registration/templates/mscc/child_profile_preview.html:48
 msgid "Father:"
-msgstr ""
+msgstr "الأب:"
 
 #: student_registration/templates/base.html:164
 msgid "Guest"
-msgstr ""
+msgstr "ضيف"
 
 #: student_registration/templates/mscc/child_info_tab.html:129
 msgid "h"
-msgstr ""
+msgstr "س"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3598
 #: student_registration/templates/mscc/child_services_tab_org.html:3603
 msgid "Last"
-msgstr ""
+msgstr "الأخير"
 
 #: student_registration/templates/mscc/child_profile_preview.html:592
 msgid "Level:"
-msgstr ""
+msgstr "المستوى:"
 
 #: student_registration/templates/mscc/child_attendance_tab.html:130
 msgid "Loading attendance..."
-msgstr ""
+msgstr "جارٍ تحميل الحضور..."
 
 #: student_registration/templates/mscc/service_education_grading_form.html:86
 msgid "Maximum possible:"
-msgstr ""
+msgstr "الحد الأقصى الممكن:"
 
 #: student_registration/templates/mscc/child_profile_preview.html:49
 msgid "Mother:"
-msgstr ""
+msgstr "الأم:"
 
 #: student_registration/templates/mscc/child_attendance_tab.html:155
 msgid "No attendance data was returned for this month."
-msgstr ""
+msgstr "لم يتم إرجاع أي بيانات حضور لهذا الشهر."
 
 #: student_registration/templates/dashboard/pivot_dashboard.html:372
 msgid "No data available for the pivot table."
-msgstr ""
+msgstr "لا توجد بيانات متاحة لجدول Pivot."
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3603
 msgid "Parents meeting"
-msgstr ""
+msgstr "اجتماع الأهالي"
 
 #: student_registration/templates/mscc/child_education_details.html:50
 msgid "Registered:"
-msgstr ""
+msgstr "مسجل:"
 
 #: student_registration/templates/mscc/child_profile_preview.html:590
 msgid "Registration Date:"
-msgstr ""
+msgstr "تاريخ التسجيل:"
 
 #: student_registration/templates/mscc/child_education_details.html:84
 msgid "Round:"
-msgstr ""
+msgstr "الجولة:"
 
 #: student_registration/templates/mscc/service_youth_scoring_form.html:58
 msgid "Scoring -"
-msgstr ""
+msgstr "التقييم -"
 
 #: student_registration/templates/mscc/child_education_details.html:49
 msgid "Section:"
-msgstr ""
+msgstr "الشعبة:"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2695
 #: student_registration/templates/mscc/child_services_tab_org.html:2705
 #: student_registration/templates/mscc/child_services_tab_org.html:2716
 #: student_registration/templates/mscc/child_services_tab_org.html:2726
 msgid "Session date:"
-msgstr ""
+msgstr "تاريخ الجلسة:"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2741
 msgid "Session Date:"
-msgstr ""
+msgstr "تاريخ الجلسة:"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2740
 msgid "Session Title:"
-msgstr ""
+msgstr "عنوان الجلسة:"
 
 #: student_registration/templates/location/center_info_tab.html:150
 msgid "Teachers:"
-msgstr ""
+msgstr "المعلمون:"
 
 #: student_registration/templates/pages/home.html:17
 msgid "to CLM"
-msgstr ""
+msgstr "إلى CLM"
 
 #: student_registration/templates/admin/export_history_dashboard.html:8
 #: student_registration/templates/admin/user_activity_dashboard.html:8
 msgid "Total records:"
-msgstr ""
+msgstr "إجمالي السجلات:"
 
 #: student_registration/templates/mscc/profile.html:34
 msgid "y)"
-msgstr ""
+msgstr "سنة)"
 
 #: student_registration/templates/mscc/child_profile_preview.html:96
 msgid "years"
-msgstr ""
+msgstr "سنوات"
 
 #: student_registration/templates/mscc/child_education_details.html:84
 msgid "| Section:"
-msgstr ""
+msgstr "| الشعبة:"
 
 #: student_registration/static/js/mscc/list.js:49
 msgid "Export started successfully. Please check the recent exports menu for the download link."
