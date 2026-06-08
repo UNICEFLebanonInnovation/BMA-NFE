@@ -576,14 +576,7 @@ class NewRoundView(LoginRequiredMixin,
         registry = self.kwargs['pk']
         if self.request.method == "POST":
             return NewRoundForm(self.request.POST, registry=registry, request=self.request)
-        else:
-            # Try to pre-fill from the latest EducationService
-            from student_registration.mscc.utils import to_array
-            latest_education = EducationService.objects.filter(registration_id=registry).order_by('-created').first()
-            if latest_education:
-                data = to_array(NewRoundForm.Meta.fields, latest_education)
-                return NewRoundForm(data, registry=registry, request=self.request)
-            return NewRoundForm(registry=registry, request=self.request)
+        return NewRoundForm(registry=registry, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['pk']

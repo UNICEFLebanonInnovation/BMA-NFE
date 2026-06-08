@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import, division
+import copy
 from datetime import date, datetime
 
 from django.utils.translation import gettext as _
