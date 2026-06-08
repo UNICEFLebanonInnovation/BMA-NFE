@@ -1,17 +1,17 @@
 {
-	"sProcessing":   "جاري التحميل...",
-	"sLengthMenu":   "أظهر مُدخلات _MENU_",
-	"sZeroRecords":  "لم يُعثر على أية سجلات",
-	"sInfo":         "إظهار _START_ إلى _END_ من أصل _TOTAL_ مُدخل",
-	"sInfoEmpty":    "يعرض 0 إلى 0 من أصل 0 سجلّ",
-	"sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
-	"sInfoPostFix":  "",
-	"sSearch":       "ابحث:",
-	"sUrl":          "",
+	"sProcessing": "جاري معالجة بيانات النظام...",
+	"sLengthMenu": "عرض _MENU_ سجلاً",
+	"sZeroRecords": "لا توجد سجلات مطابقة",
+	"sInfo": "عرض السجلات من _START_ إلى _END_ من أصل _TOTAL_",
+	"sInfoEmpty": "عرض 0 إلى 0 من أصل 0 سجل",
+	"sInfoFiltered": "(تمت التصفية من إجمالي _MAX_ سجل)",
+	"sInfoPostFix": "",
+	"sSearch": "بحث في السجلات:",
+	"sUrl": "",
 	"oPaginate": {
-		"sFirst":    "الأول",
-		"sPrevious": "السابق",
-		"sNext":     "التالي",
-		"sLast":     "الأخير"
+		"sFirst": "الأولى",
+		"sPrevious": "السابقة",
+		"sNext": "التالية",
+		"sLast": "الأخيرة"
 	}
 }
