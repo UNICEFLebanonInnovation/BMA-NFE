@@ -27,7 +27,7 @@ PACKAGE_CATEGORIES = Choices(
 )
 
 YES_NO = Choices(
-    ('', '----------'),
+    ('', _('----------')),
     ('Yes', _("Yes")),
     ('No', _("No"))
 )
@@ -218,7 +218,7 @@ class Teacher(TimeStampedModel):
         ('Private and Dirasa', _('Private and Dirasa')),
     )
     YES_NO = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
@@ -433,13 +433,13 @@ class Teacher(TimeStampedModel):
 class Registration(TimeStampedModel):
 
     YES_NO = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Yes', _("Yes")),
         ('No', _("No"))
     )
 
     HAVE_LABOUR = Choices(
-        ('', '----------'),
+        ('', _('----------')),
             ('No', _('No')),
             ('Yes - Morning', _('Yes - Morning')),
             ('Yes - Afternoon', _('Yes - Afternoon')),
@@ -450,7 +450,7 @@ class Registration(TimeStampedModel):
             ('Yes - Full Day & Night Shift', _('Yes - Full Day & Night Shift')),
     )
     LABOURS = Choices(
-            ('', '----------'),
+            ('', _('----------')),
             ('Agriculture', _('Agriculture')),
             ('Construction', _('Construction')),
             ('Manufacturing', _('Manufacturing')),
@@ -465,7 +465,7 @@ class Registration(TimeStampedModel):
             ('Money exchange', _('Money exchange')),
     )
     LABOUR_INCOME = Choices(
-            ('', '----------'),
+            ('', _('----------')),
             ('5 USD or Less', _('5 USD or Less')),
             ('5-20 USD', _('5-20 USD')),
             ('20-50 USD', _('20-50 USD')),
@@ -483,7 +483,7 @@ class Registration(TimeStampedModel):
             ('Exposed to any other work condition that are bad for his/her health and safety', _('Exposed to any other work condition that are bad for his/her health and safety')),
     )
     IDENTIFICATION_SOURCE = Choices(
-            ('', '----------'),
+            ('', _('----------')),
             ('Dirassa', _('Dirassa')),
             ('Awareness Session', _('Awareness Session')),
             ('Child\'s parents', _('Child\'s parents')),
@@ -908,7 +908,7 @@ class Packages(models.Model):
 class InclusionService(TimeStampedModel):
 
     PARENTAL_ENGAGEMENT = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Mother Only', _('Mother Only')),
         ('Father Only', _('Father Only')),
         ('Both', _('Both')),
@@ -945,19 +945,19 @@ class InclusionService(TimeStampedModel):
 
 class DigitalService(models.Model):
     ACCESS = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Class', _('Class')),
         ('Home', _('Home')),
         ('Class & Home', _('Class & Home')),
     )
     YES_NO_OCCASIONALLY = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Yes', _("Yes")),
         ('No', _("No")),
         ('Occasionally', _("Occasionally"))
     )
     NOTICING_CHANGE = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Very Likely', _('Very Likely')),
         ('Likely', _('Likely')),
         ('Neutral', _('Neutral')),
@@ -1074,7 +1074,7 @@ class DigitalService(models.Model):
 class PSSService(models.Model):
 
     LIVING_ARRANGEMENT = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Unaccompanied or Separated Child', _('Unaccompanied or Separated Child')),
         ('Living with single parent/caregiver', _('Living with single parent/caregiver')),
         ('Living with Mother/women-headed Household ', _('Living with Mother/women-headed Household')),
@@ -1083,7 +1083,7 @@ class PSSService(models.Model):
     )
 
     CHILD_VULNERABILITY = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Clear signs of neglect', _('Clear signs of neglect')),
         ('Clear signs of distress', _('Clear signs of distress')),
         ('Clear signs of physical maltreatment/damage and/or injuries',
@@ -1091,7 +1091,7 @@ class PSSService(models.Model):
     )
 
     OUT_SCHOOL_REASONS = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Fear of bullying, discrimination or violence at school or on the way to school',
          _('Fear of bullying, discrimination or violence at school or on the way to school')),
         ('The child needs to work', _('The child needs to work')),
@@ -1101,7 +1101,7 @@ class PSSService(models.Model):
         ('N/A', _('N/A')),
     )
     PROTECTION_CONCERN = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Nightmares', _('Nightmares')),
         ('Regressions', _('Regressions')),
         ('Distress', _('Distress')),
@@ -1198,7 +1198,7 @@ class PSSService(models.Model):
 class HealthNutritionService(TimeStampedModel):
 
     DEVELOPMENT_DELAYS = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Social/Emotional', _('Social/Emotional')),
         ('Language/Communication', _('Language/Communication')),
         ('Cognitive (learning thinking, problem solving)', _('Cognitive (learning thinking, problem solving)')),
@@ -1206,7 +1206,7 @@ class HealthNutritionService(TimeStampedModel):
         ('No', _('No')),
     )
     AGE_EAT_SOLID_FOOD = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('0 month', _('1 months')),
         ('1 month', _('1 months')),
         ('2 months', _('2 months')),
@@ -1234,7 +1234,7 @@ class HealthNutritionService(TimeStampedModel):
         ('24 months', _('24 months'))
     )
     MALNUTRITION_SCREENING = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('No malnutrition screening', _('No malnutrition screening')),
         ('MAM (MUAC >11.5 and <12.5 cm)', _('MAM (MUAC >11.5 and <12.5 cm)')),
         ('SAM (MUAC <11.5 cm)', _('SAM (MUAC <11.5 cm)')),
@@ -1453,7 +1453,7 @@ class HealthNutritionService(TimeStampedModel):
 class HealthNutritionReferral(TimeStampedModel):
 
     DEVELOPMENT_DELAYS = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Primary Health care center', _('Primary Health care center')),
         ('Dispensary', _('Dispensary')),
         ('Hospital', _('Hospital')),
@@ -1461,7 +1461,7 @@ class HealthNutritionReferral(TimeStampedModel):
         ('Organization', _('Organization')),
     )
     MALNUTRITION_TREATMENT_CENTER = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('MAM', _('MAM')),
         ('SAM', _('SAM')),
         ('At Risk of Malnutrition', _('At Risk of Malnutrition')),
@@ -1572,7 +1572,7 @@ class NFEToFEReferralMapping(TimeStampedModel):
 class EducationService(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Never registered in any formal school before', _('Never registered in any formal school before')),
         ('Was registered in formal school but didn\'t continue',
          _('Was registered in formal school but didn\'t continue')),
@@ -1588,7 +1588,7 @@ class EducationService(TimeStampedModel):
         ('No', _('No')),
     )
     DROPOUT_PROGRAM = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Was registered in CBECE level 1-2', _('Was registered in CBECE level 1-2')),
         ('Was registered in BLN program', _('Was registered in BLN program')),
         ('Was registered in ALP program and didn\'t continue', _('Was registered in ALP program and didn\'t continue')),
@@ -1634,7 +1634,7 @@ class EducationService(TimeStampedModel):
         ('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')),
     )
     CLASS_SECTION = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('A', _('A')),
         ('B', _('B')),
         ('C', _('C')),
@@ -1663,7 +1663,7 @@ class EducationService(TimeStampedModel):
         ('Z', _('Z')),
     )
     CATCH_UP_REGISTERED = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Yes-New Comers programme', _('Yes-New Comers programme')),
         ('Yes-Undocumented programme', _('Yes-Undocumented programme'))
     )
@@ -1731,7 +1731,7 @@ class EducationService(TimeStampedModel):
 class EducationRSService(TimeStampedModel):
 
     REGISTRATION_LEVEL = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Level one', _('Level one')),
         ('Level two', _('Level two')),
         ('Level three', _('Level three')),
@@ -1822,14 +1822,14 @@ class EducationRSService(TimeStampedModel):
 # @todo to be removed
 class EducationAssessment(TimeStampedModel):
     MODALITY = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Online Forms', _('Online Forms')),
         ('Phone call/WhatsApp', _('Phone call/WhatsApp')),
         ('Asking Parents', _('Asking Parents')),
         ('Offline (F2F)', _('Offline (F2F)'))
     )
     PARTICIPATION = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('No Absence', _('No Absence')),
         ('Absence for less than 5 days/equivlant remote learning sessions',
          _('Absence for less than 5 days/equivlant remote learning sessions')),
@@ -1843,7 +1843,7 @@ class EducationAssessment(TimeStampedModel):
          _('Absence for more than 25 days / equivlant remote learning sessions')),
     )
     BARRIERS = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Working Full-time to support family', _('Working Full-time to support family')),
         ('Availability of Electronic Device', _('Availability of Electronic Device')),
         ('Sickness', _('Sickness')),
@@ -2079,7 +2079,7 @@ class EducationProgrammeAssessment(TimeStampedModel):
 class YouthKitService(TimeStampedModel):
 
     VOLUNTEERING = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Outreach', _('Outreach')),
         ('Data entry', _('Data entry')),
         ('Admin work', _('Admin work')),
@@ -2088,14 +2088,14 @@ class YouthKitService(TimeStampedModel):
         ('Other', _('Other')),
     )
     TRAINING_MATERIAL = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Printed workbook', _('Printed workbook')),
         ('Tablets', _('Tablets')),
         ('Access to digital content (learning Passport) ', _('Access to digital content (learning Passport)')),
         ('Other', _('Other')),
     )
     FUTURE_PATH = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Transition to FE', _('Transition to FE')),
         ('Repeat the school year', _('Repeat the school year')),
         ('Refer to a UNICEF Youth Programme (skills training, CBT, GIL)',
@@ -2104,7 +2104,7 @@ class YouthKitService(TimeStampedModel):
         ('Internship or volunteering opportunity', _('Internship or volunteering opportunity')),
     )
     ATTENDANCE = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Full attendance', _('Full attendance')),
         ('Absence for less than 5 days', _('Absence for less than 5 days')),
         ('Absence for more than 5 days', _('Absence for more than 5 days')),
@@ -2254,7 +2254,7 @@ class YouthKitService(TimeStampedModel):
 class YouthService(TimeStampedModel):
 
     TYPE = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Maharati', _('Maharati')),
         ('GIL', _('GIL')),
     )
@@ -2290,7 +2290,7 @@ class FollowUpService(TimeStampedModel):
         ('Caregiver visited the center', _('Caregiver visited the center')),
     )
     FOLLOW_UP_RESULT = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Child returned to program', _('Child returned to program')),
         ('Child referred to specialized services', _('Child referred to specialized services')),
         ('Child referred to CP', _('Child referred to CP')),
@@ -2299,18 +2299,18 @@ class FollowUpService(TimeStampedModel):
         ('Dropout/No Interest', _('Dropout/No Interest')),
     )
     MEETING_TYPE = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('PSS Session', _('PSS Session')),
         ('COVID health awareness session', _('COVID health awareness session')),
     )
     SESSION_MODALITY = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Online via WhatsApp', _("Online via WhatsApp")),
         ('Phone calls', _("Phone calls")),
         ('Offline (F2F)', _("Offline (F2F)"))
     )
     CAREGIVER = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Mother Only', _('Mother Only')),
         ('Father Only', _('Father Only')),
         ('Mother & Father', _('Mother & Father')),
@@ -2410,7 +2410,7 @@ class FollowUpService(TimeStampedModel):
 class Referral(TimeStampedModel):
 
     REFERRED_SERVICE = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('No', _('No')),
         ('CP', _('CP')),
         ('Wash', _('Wash')),
@@ -2419,7 +2419,7 @@ class Referral(TimeStampedModel):
         ('Other', _('Other')),
     )
     LEARNING_PATH = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Transition to Dirasa', _('Transition to Dirasa')),
         ('Repeat same level in next  school year', _('Repeat same level in next  school year')),
         ('Progress to FE', _('Progress to FE')),
@@ -2486,7 +2486,7 @@ class Referral(TimeStampedModel):
 
 class YouthAssessment(TimeStampedModel):
     VOLUNTEERING_OPPORTUNITY = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Outreach', _('Outreach')),
         ('Data entry', _('Data entry')),
         ('Admin work', _('Admin work')),
@@ -2495,14 +2495,14 @@ class YouthAssessment(TimeStampedModel):
         ('Other', _('Other')),
     )
     TRAINING_MATERIAL = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Printed workbook', _('Printed workbook')),
         ('Tablets', _('Tablets')),
         ('Access to digital content (learning Passport)', _('Access to digital content (learning Passport)')),
         ('Other', _('Other')),
     )
     FUTURE_PATH = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Transition to FE', _('Transition to FE')),
         ('Repeat the school year', _('Repeat the school year')),
         ('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL...)', _('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL...)')),
@@ -2510,7 +2510,7 @@ class YouthAssessment(TimeStampedModel):
         ('Internship or volunteering opportunity', _('Internship or volunteering opportunity')),
     )
     ATTENDANCE = Choices(
-        ('', '----------'),
+        ('', _('----------')),
         ('Full attendance', _('Full attendance')),
         ('Absence for less than 5 days', _('Absence for less than 5 days')),
         ('Absence for more than 5 days', _('Absence for more than 5 days')),
