@@ -48,7 +48,7 @@ UNHCR_INDIVIDUAL_REGEX = re.compile(r'^((245|380|568|705|781|909|947|954|LEB|LB1
 UNHCR_RECORDED_REGEX = re.compile(r'^((245|380|568|705|781|909|947|954|LEB|LB1|LB2|LBE|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$', re.I)
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
-DAYS.insert(0, ('', '---------'))
+DAYS.insert(0, ('', _('---------')))
 only_letters_validator = RegexValidator(
     regex=r'^[A-Za-z\u0621-\u064A\u066E-\u06D3\s]+$',
     message=_('Only alphabetic characters are allowed.')
@@ -57,7 +57,7 @@ only_letters_validator = RegexValidator(
 class MainForm(forms.ModelForm):
     # YEARS = list(((str(x), x) for x in range(Child.CURRENT_YEAR - 20, Child.CURRENT_YEAR + 1)))
     YEARS = list(((str(x), x) for x in range(1990, Child.CURRENT_YEAR + 1)))
-    YEARS.insert(0, ('', '---------'))
+    YEARS.insert(0, ('', _('---------')))
 
     child_first_name = forms.CharField(
         label=_("Child\'s First Name"),
@@ -229,14 +229,14 @@ class MainForm(forms.ModelForm):
     )
     first_phone_number = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XX-XXXXXX')}),
         required=True,
         label=_('Primary phone number'),
         help_text=_('Enter a valid mobile number for the primary contact.')
     )
     first_phone_number_confirm = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XX-XXXXXX')}),
         required=True,
         label=_('Confirm primary phone number')
     )
@@ -249,13 +249,13 @@ class MainForm(forms.ModelForm):
     )
     second_phone_number = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XX-XXXXXX')}),
         required=False,
         label=_('Secondary phone number')
     )
     second_phone_number_confirm = forms.RegexField(
         regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XX-XXXXXX')}),
         required=False,
         label=_('Confirm secondary phone number')
     )
@@ -336,65 +336,65 @@ class MainForm(forms.ModelForm):
     )
     case_number = forms.RegexField(
         regex=UNHCR_CASE_REGEX,
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXX-XXCXXXXX or XXX-XX-XXXXXX')}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
         regex=UNHCR_CASE_REGEX,
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXX-XXCXXXXX or XXX-XX-XXXXXX')}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
     parent_individual_case_number = forms.RegexField(
         regex=UNHCR_INDIVIDUAL_REGEX,
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXX-XXXXXXXX')}),
         required=False,
         label=_(
             'Cargiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
         regex=UNHCR_INDIVIDUAL_REGEX,
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXX-XXXXXXXX')}),
         required=False,
         label=_(
             'Confirm Cargiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
         regex=UNHCR_INDIVIDUAL_REGEX,
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXX-XXXXXXXX')}),
         required=False,
         label=_(
             'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number_confirm = forms.RegexField(
         regex=UNHCR_INDIVIDUAL_REGEX,
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXX-XXXXXXXX')}),
         required=False,
         label=_(
             'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     recorded_number = forms.RegexField(
         regex=UNHCR_RECORDED_REGEX,
-        widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: LEB-XXCXXXXX or LB-XXX-XXXXXX')}),
         required=False,
         label=_('UNHCR Barcode number (Shifra number)')
     )
     recorded_number_confirm = forms.RegexField(
         regex=UNHCR_RECORDED_REGEX,
-        widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: LEB-XXCXXXXX or LB-XXX-XXXXXX')}),
         required=False,
         label=_('Confirm UNHCR Barcode number (Shifra number)')
     )
     national_number = forms.RegexField(
         regex=r'^\d{12}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXXXXXXXXXXX')}),
         required=False,
         label=_('Lebanese ID number of the child (Optional)')
     )
     national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXXXXXXXXXXX')}),
         required=False,
         label=_('Confirm Lebanese ID number of the child (optional)')
     )
@@ -427,13 +427,13 @@ class MainForm(forms.ModelForm):
     )
     parent_national_number = forms.RegexField(
         regex=r'^\d{12}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXXXXXXXXXXX')}),
         required=False,
         label=_('Lebanese ID number of the Cargiver')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XXXXXXXXXXXX')}),
         required=False,
         label=_('Confirm Lebanese ID number of the Cargiver')
     )
@@ -1169,7 +1169,7 @@ class TeacherForm(forms.ModelForm):
         queryset=Round.objects.filter(current_year=True),
         widget=forms.Select,
         label=_('Academic year'),
-        empty_label='-------',
+        empty_label=_('-------'),
         required=True,
         to_field_name='id',
     )
@@ -1177,7 +1177,7 @@ class TeacherForm(forms.ModelForm):
         queryset=Center.objects.all(),
         widget=forms.Select,
         label=_('Center'),
-        empty_label='-------',
+        empty_label=_('-------'),
         required=True,
         to_field_name='id',
     )
@@ -1206,7 +1206,7 @@ class TeacherForm(forms.ModelForm):
         widget=forms.Select,
         required=False,
         choices=(
-            ('', '----------'),
+            ('', _('----------')),
             ('Male', _('Male')),
             ('Female', _('Female')),
         ),
@@ -1216,7 +1216,7 @@ class TeacherForm(forms.ModelForm):
         queryset=IDType.objects.all(),
         widget=forms.Select,
         label=_('ID type'),
-        empty_label='-------',
+        empty_label=_('-------'),
         required=False,
         to_field_name='id',
     )
@@ -1225,13 +1225,13 @@ class TeacherForm(forms.ModelForm):
         queryset=Nationality.objects.all(),
         widget=forms.Select,
         label=_('Nationality'),
-        empty_label='-------',
+        empty_label=_('-------'),
         required=False,
         to_field_name='id',
     )
     primary_phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        widget=forms.TextInput(attrs={'placeholder': _('Format: XX-XXXXXX')}),
         required=True,
         label=_('Main Phone number'),
         help_text=_('Format: XX-XXXXXX (e.g. 70-123456)')
@@ -1307,7 +1307,7 @@ class TeacherForm(forms.ModelForm):
         queryset=AttachmentType.objects.all(),
         widget=forms.Select,
         label=_('Type'),
-        empty_label='-------',
+        empty_label=_('-------'),
         required=False,
         to_field_name='id',
         initial=0,
@@ -1318,7 +1318,7 @@ class TeacherForm(forms.ModelForm):
         queryset=AttachmentType.objects.all(),
         widget=forms.Select,
         label=_('Type'),
-        empty_label='-------',
+        empty_label=_('-------'),
         required=False,
         to_field_name='id',
         initial=0,
@@ -1329,7 +1329,7 @@ class TeacherForm(forms.ModelForm):
         queryset=AttachmentType.objects.all(),
         widget=forms.Select,
         label=_('Type'),
-        empty_label='-------',
+        empty_label=_('-------'),
         required=False,
         to_field_name='id',
         initial=0,
@@ -1340,7 +1340,7 @@ class TeacherForm(forms.ModelForm):
         queryset=AttachmentType.objects.all(),
         widget=forms.Select,
         label=_('Type'),
-        empty_label='-------',
+        empty_label=_('-------'),
         required=False,
         to_field_name='id',
         initial=0,
@@ -1351,7 +1351,7 @@ class TeacherForm(forms.ModelForm):
         queryset=AttachmentType.objects.all(),
         widget=forms.Select,
         label=_('Type'),
-        empty_label='-------',
+        empty_label=_('-------'),
         required=False,
         to_field_name='id',
         initial=0,
@@ -1378,7 +1378,7 @@ class TeacherForm(forms.ModelForm):
             queryset=center_queryset,
             widget=forms.Select,
             label=_('Center'),
-            empty_label='-------',
+            empty_label=_('-------'),
             required=True,
             to_field_name='id',
         )
