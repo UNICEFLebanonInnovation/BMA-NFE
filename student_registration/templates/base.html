@@ -74,6 +74,7 @@
 
                 <div class="d-flex align-items-center">
                     <!-- Documentation -->
+                    {% if request.user.is_superuser %}
                     <div class="dropdown me-3">
                         <button class="btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-label="Documentation" title="Documentation">
                             <i class="bi bi-book fs-5 text-dark"></i>
@@ -85,9 +86,6 @@
                             </div>
                             <a class="dropdown-item py-2" href="{% url 'dashboard:wiki_guide_index' %}">
                                 <i class="bi bi-house-door me-2 text-muted"></i>{% trans "Home" %}
-                            </a>
-                            <a class="dropdown-item py-2" href="{% url 'dashboard:wiki_guide' 'end_user' %}">
-                                <i class="bi bi-person-lines-fill me-2 text-success"></i>{% trans "End User Manual" %}
                             </a>
                             <div class="dropdown-divider my-1"></div>
                             <div class="px-3 py-1 text-muted" style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">{% trans "Developer Guides" %}</div>
@@ -106,6 +104,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                     <!-- Notifications -->
                     <div class="dropdown me-3 export-history-dropdown">
                         {% recent_export_history as exports %}
