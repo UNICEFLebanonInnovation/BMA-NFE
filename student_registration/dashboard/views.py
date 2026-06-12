@@ -667,6 +667,9 @@ class WikiGuidePageView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         page_name = self.kwargs.get('page_name', 'index')
 
+        if not self.request.user.is_superuser and page_name != 'end_user':
+            raise Http404('Guide page not found')
+
         if page_name not in self.VALID_PAGES:
             raise Http404('Guide page not found')
 

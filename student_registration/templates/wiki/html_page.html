@@ -249,15 +249,18 @@
         </div>
         <nav>
             <div class="ws-section">{% trans "Navigation" %}</div>
+            {% if request.user.is_superuser %}
             <a href="{% url 'dashboard:wiki_guide_index' %}"
                class="ws-link {% if page_name == 'index' %}active{% endif %}">
                 🏠 {% trans "Home" %}
             </a>
+            {% endif %}
             <a href="{% url 'dashboard:wiki_guide' 'end_user' %}"
                class="ws-link {% if page_name == 'end_user' %}active{% endif %}">
                 📖 {% trans "End User Manual" %}
             </a>
 
+            {% if request.user.is_superuser %}
             <div class="ws-section">{% trans "Developer Guides" %}</div>
             {% for pg_key, pg_label, pg_section in wiki_pages %}
                 {% if pg_section == 'Developer' %}
@@ -267,6 +270,7 @@
                 </a>
                 {% endif %}
             {% endfor %}
+            {% endif %}
         </nav>
     </aside>
 

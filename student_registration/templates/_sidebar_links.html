@@ -49,7 +49,7 @@
 </a>
 
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Documentation" %}</div>
-<a href="{% url 'dashboard:wiki_guide_index' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_guide_index' or request.resolver_match.url_name == 'wiki_guide' %}active{% endif %}">
+<a href="{% url 'dashboard:wiki_guide' 'end_user' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_guide_index' or request.resolver_match.url_name == 'wiki_guide' %}active{% endif %}">
     <i class="bi bi-book-half"></i> <span>{% trans "User Guide" %}</span>
 </a>
 <a href="{% url 'dashboard:wiki_index' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_index' or request.resolver_match.url_name == 'wiki_page' %}active{% endif %}">
