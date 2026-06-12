@@ -4085,11 +4085,8 @@ msgstr "ما هو المستوى التعليمي للأم؟"
 #: student_registration/mscc/forms.py:252
 #: student_registration/mscc/forms.py:258
 #: student_registration/mscc/forms.py:1234
-#, fuzzy
-#| msgid "Format: XX-XXXXXX (e.g. 70-123456)"
 msgid "Format: XX-XXXXXX"
 msgstr "الصيغة: XX-XXXXXX"
-msgstr "الصيغة: XX-XXXXXX (مثال: 70-123456)"
 
 #: student_registration/mscc/forms.py:235
 msgid "Enter a valid mobile number for the primary contact."
@@ -4151,7 +4148,6 @@ msgstr "نوع بطاقة تعريف ولي الأمر"
 #: student_registration/mscc/forms.py:345
 msgid "Format: XXX-XXCXXXXX or XXX-XX-XXXXXX"
 msgstr "الصيغة: XXX-XXCXXXXX أو XXX-XX-XXXXXX"
-msgstr ""
 
 #: student_registration/mscc/forms.py:341
 msgid "UNHCR Case Number"
@@ -4165,11 +4161,8 @@ msgstr "تأكيد رقم ملف المفوضية"
 #: student_registration/mscc/forms.py:358
 #: student_registration/mscc/forms.py:365
 #: student_registration/mscc/forms.py:372
-#, fuzzy
-#| msgid "Format: XX-XXXXXX (e.g. 70-123456)"
 msgid "Format: XXX-XXXXXXXX"
 msgstr "الصيغة: XXX-XXXXXXXX"
-msgstr "الصيغة: XX-XXXXXX (مثال: 70-123456)"
 
 #: student_registration/mscc/forms.py:354
 msgid ""
@@ -4204,7 +4197,6 @@ msgstr ""
 #: student_registration/mscc/forms.py:385
 msgid "Format: LEB-XXCXXXXX or LB-XXX-XXXXXX"
 msgstr "الصيغة: LEB-XXCXXXXX أو LB-XXX-XXXXXX"
-msgstr ""
 
 #: student_registration/mscc/forms.py:391
 #: student_registration/mscc/forms.py:397
@@ -4212,7 +4204,6 @@ msgstr ""
 #: student_registration/mscc/forms.py:436
 msgid "Format: XXXXXXXXXXXX"
 msgstr "الصيغة: XXXXXXXXXXXX"
-msgstr ""
 
 #: student_registration/mscc/forms.py:393
 msgid "Lebanese ID number of the child (Optional)"
@@ -6299,13 +6290,11 @@ msgstr "هل تلقى الشاب تدريباً حول الصحة النفسية
 
 #: student_registration/mscc/models.py:2250
 msgid "Youth Kit Service"
-msgstr ""
+msgstr "خدمة حقيبة الشباب"
 
 #: student_registration/mscc/models.py:2251
-#, fuzzy
-#| msgid "Resources & Services"
 msgid "Youth Kit Services"
-msgstr "الموارد والخدمات"
+msgstr "خدمات حقيبة الشباب"
 
 #: student_registration/mscc/models.py:2258
 #: student_registration/templates/mscc/child_services_tab_org.html:3105
@@ -7935,69 +7924,57 @@ msgstr "BMA |"
 
 #: student_registration/templates/base.html:90
 #: student_registration/templates/wiki/html_page.html:258
-#, fuzzy
-#| msgid "User Management"
 msgid "End User Manual"
-msgstr "إدارة المستخدمين"
+msgstr "دليل المستخدم النهائي"
 
 #: student_registration/templates/base.html:93
 #: student_registration/templates/wiki/html_page.html:261
 msgid "Developer Guides"
-msgstr ""
+msgstr "أدلة المطورين"
 
 #: student_registration/templates/base.html:94
-#, fuzzy
-#| msgid "Provided Services"
 msgid "Project Overview"
-msgstr "الخدمات المقدمة"
+msgstr "نظرة عامة على المشروع"
 
 #: student_registration/templates/base.html:95
 msgid "Setup & Installation"
-msgstr ""
+msgstr "الإعداد والتثبيت"
 
 #: student_registration/templates/base.html:96
 msgid "Architecture & Tech Stack"
-msgstr ""
+msgstr "البنية التقنية والتقنيات المستخدمة"
 
 #: student_registration/templates/base.html:97
-#, fuzzy
-#| msgid "Data Source"
 msgid "Database Schema"
-msgstr "مصدر البيانات"
+msgstr "مخطط قاعدة البيانات"
 
 #: student_registration/templates/base.html:98
 msgid "Django Apps Reference"
-msgstr ""
+msgstr "مرجع تطبيقات Django"
 
 #: student_registration/templates/base.html:99
 msgid "API & URL Reference"
-msgstr ""
+msgstr "مرجع واجهات API وعناوين URL"
 
 #: student_registration/templates/base.html:100
-#, fuzzy
-#| msgid "Permissions"
 msgid "Auth & Permissions"
-msgstr "الأذونات"
+msgstr "المصادقة والصلاحيات"
 
 #: student_registration/templates/base.html:101
-#, fuzzy
-#| msgid "Admin work"
 msgid "Admin Portal"
-msgstr "عمل إداري"
+msgstr "بوابة الإدارة"
 
 #: student_registration/templates/base.html:102
 msgid "Deployment Guide"
-msgstr ""
+msgstr "دليل النشر"
 
 #: student_registration/templates/base.html:103
 msgid "Testing Guide"
-msgstr ""
+msgstr "دليل الاختبار"
 
 #: student_registration/templates/base.html:105
-#, fuzzy
-#| msgid "View All"
 msgid "View All Docs"
-msgstr "عرض الكل"
+msgstr "عرض كل الوثائق"
 
 #: student_registration/templates/base.html:122
 msgid "Recent Exports"
@@ -8861,8 +8838,8 @@ msgid "Data (JSON)"
 msgstr "البيانات (JSON)"
 
 #: student_registration/templates/dashboard/chart_builder.html:125
-msgid "[ {\\"
-msgstr ""
+msgid "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, {\"label\": \"C\", \"value\": 45} ]"
+msgstr "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, {\"label\": \"C\", \"value\": 45} ]"
 
 #: student_registration/templates/dashboard/chart_builder.html:129
 msgid "Render Chart"
@@ -11453,7 +11430,7 @@ msgstr "الحضور"
 
 #: student_registration/templates/mscc/profile.html:132
 msgid "No more available rounds to register the child in."
-msgstr ""
+msgstr "لا توجد دورات أخرى متاحة لتسجيل الطفل فيها."
 
 #: student_registration/templates/mscc/profile.html:139
 msgid "Confirm Registration"
@@ -13678,13 +13655,6 @@ msgstr "المستخدم"
 
 #~ msgid "= 7 and instance.child.age"
 #~ msgstr "= 7 و instance.child.age"
-
-#~ msgid ""
-#~ "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, "
-#~ "{\"label\": \"C\", \"value\": 45} ]"
-#~ msgstr ""
-#~ "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, "
-#~ "{\"label\": \"C\", \"value\": 45} ]"
 
 #~ msgid "change your e-mail address"
 #~ msgstr "تغيير عنوان بريدك الإلكتروني"
