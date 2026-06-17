@@ -431,6 +431,8 @@ class Teacher(TimeStampedModel):
         verbose_name_plural=_('Teachers')
 
 class Registration(TimeStampedModel):
+    original_id = models.IntegerField(null=True, blank=True, unique=True, help_text="ID from the original BMA system")
+
 
     YES_NO = Choices(
         ('', _('----------')),

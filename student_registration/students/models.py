@@ -384,6 +384,8 @@ class AttachmentType(models.Model):
 
 
 class Teacher(Person):
+    original_id = models.IntegerField(null=True, blank=True, unique=True, help_text="ID from the original BMA system")
+
     SUBJECT_PROVIDED = (
         ('arabic', _('Arabic')),
         ('math', _('Math')),

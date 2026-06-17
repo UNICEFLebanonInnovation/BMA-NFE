@@ -33,6 +33,14 @@ from student_registration.locations.views import (
 
 from student_registration.users.views import home, login_success, LandingPage, save_fcm_token
 from student_registration.students.views import serve_file
+
+from student_registration.mscc.api_views import (
+    SyncSchoolViewSet,
+    SyncTeacherViewSet,
+    SyncRegistrationViewSet,
+    SyncAttendanceViewSet
+)
+
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 
 api = routers.SimpleRouter()
@@ -44,6 +52,12 @@ api.register(r'sections', SectionViewSet, basename='sections')
 api.register(r'teacher', TeacherViewSet, basename='teacher')
 api.register(r'attendance-heatmap-data', AttendanceHeatmapViewSet, basename='attendance-heatmap-data')
 api.register(r'locations', LocationViewSet, basename='locations')
+
+api.register(r'sync/schools', SyncSchoolViewSet, basename='sync-schools')
+api.register(r'sync/teachers', SyncTeacherViewSet, basename='sync-teachers')
+api.register(r'sync/registrations', SyncRegistrationViewSet, basename='sync-registrations')
+api.register(r'sync/attendances', SyncAttendanceViewSet, basename='sync-attendances')
+
 
 urlpatterns = [
     re_path(r'^$', home, name="home"),
