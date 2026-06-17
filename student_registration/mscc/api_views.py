@@ -4,6 +4,8 @@ from rest_framework.authentication import TokenAuthentication, BasicAuthenticati
 from student_registration.schools.models import School
 from student_registration.students.models import Teacher
 from student_registration.mscc.models import Registration
+
+from student_registration.mscc.models import EducationProgrammeAssessment, FollowUpService
 from student_registration.attendances.models import MSCCAttendanceChild
 
 from student_registration.schools.serializers import SchoolSerializer
@@ -79,6 +81,46 @@ class SyncRegistrationViewSet(viewsets.ModelViewSet):
 class SyncAttendanceViewSet(viewsets.ModelViewSet):
     queryset = MSCCAttendanceChild.objects.all()
     serializer_class = SyncAttendanceSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'original_id'
+
+
+class SyncEducationProgrammeAssessmentSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, write_only=True)
+
+    class Meta:
+        model = EducationProgrammeAssessment
+        fields = '__all__'
+
+    def create(self, validated_data):
+        if 'id' in validated_data:
+            validated_data['original_id'] = validated_data.pop('id')
+        return super().create(validated_data)
+
+class SyncFollowUpServiceSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, write_only=True)
+
+    class Meta:
+        model = FollowUpService
+        fields = '__all__'
+
+    def create(self, validated_data):
+        if 'id' in validated_data:
+            validated_data['original_id'] = validated_data.pop('id')
+        return super().create(validated_data)
+
+
+class SyncEducationProgrammeAssessmentViewSet(viewsets.ModelViewSet):
+    queryset = EducationProgrammeAssessment.objects.all()
+    serializer_class = SyncEducationProgrammeAssessmentSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'original_id'
+
+class SyncFollowUpServiceViewSet(viewsets.ModelViewSet):
+    queryset = FollowUpService.objects.all()
+    serializer_class = SyncFollowUpServiceSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'original_id'

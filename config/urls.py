@@ -41,6 +41,12 @@ from student_registration.mscc.api_views import (
     SyncAttendanceViewSet
 )
 
+
+from student_registration.mscc.api_views import (
+    SyncEducationProgrammeAssessmentViewSet,
+    SyncFollowUpServiceViewSet
+)
+
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 
 api = routers.SimpleRouter()
@@ -57,6 +63,10 @@ api.register(r'sync/schools', SyncSchoolViewSet, basename='sync-schools')
 api.register(r'sync/teachers', SyncTeacherViewSet, basename='sync-teachers')
 api.register(r'sync/registrations', SyncRegistrationViewSet, basename='sync-registrations')
 api.register(r'sync/attendances', SyncAttendanceViewSet, basename='sync-attendances')
+
+api.register(r'sync/education-assessments', SyncEducationProgrammeAssessmentViewSet, basename='sync-education-assessments')
+api.register(r'sync/followup-services', SyncFollowUpServiceViewSet, basename='sync-followup-services')
+
 
 
 urlpatterns = [

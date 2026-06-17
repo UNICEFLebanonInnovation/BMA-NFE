@@ -2055,6 +2055,8 @@ class EducationAssessment(TimeStampedModel):
 
 
 class EducationProgrammeAssessment(TimeStampedModel):
+    original_id = models.IntegerField(null=True, blank=True, unique=True, help_text="ID from the original BMA system")
+
 
     registration = models.ForeignKey(
         Registration,
@@ -2284,6 +2286,8 @@ class YouthService(TimeStampedModel):
 
 
 class FollowUpService(TimeStampedModel):
+    original_id = models.IntegerField(null=True, blank=True, unique=True, help_text="ID from the original BMA system")
+
 
     FOLLOW_UP_TYPE = Choices(
         ('', _('----------')),
