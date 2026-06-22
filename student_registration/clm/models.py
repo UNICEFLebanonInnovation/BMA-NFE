@@ -1540,8 +1540,6 @@ class CLM(TimeStampedModel):
 
 
 class Bridging(CLM):
-    original_id = models.IntegerField(null=True, blank=True, unique=True, help_text="ID from the original BMA system")
-
     YES_NO = Choices(
         ('', '----------'),
         ('yes', _("Yes")),

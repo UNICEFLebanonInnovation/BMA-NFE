@@ -26,6 +26,8 @@ class LocationType(models.Model):
 
 
 class Location(MPTTModel):
+    original_id = models.IntegerField(null=True, blank=True, unique=True, help_text="ID from the original BMA system")
+
 
     name = models.CharField(max_length=254)
     name_en = models.CharField(max_length=254, blank=True, null=True)

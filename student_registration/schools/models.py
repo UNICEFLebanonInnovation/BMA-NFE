@@ -32,8 +32,6 @@ class PublicHolidays(models.Model):
 
 
 class School(TimeStampedModel):
-    original_id = models.IntegerField(null=True, blank=True, unique=True, help_text="ID from the original BMA system")
-
     """School profile including location, contact, and capacity details."""
 
     from student_registration.locations.models import Location

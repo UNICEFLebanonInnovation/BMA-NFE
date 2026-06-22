@@ -35,7 +35,7 @@ from student_registration.users.views import home, login_success, LandingPage, s
 from student_registration.students.views import serve_file
 
 from student_registration.mscc.api_views import (
-    SyncSchoolViewSet,
+    SyncLocationViewSet,
     SyncTeacherViewSet,
     SyncRegistrationViewSet,
     SyncAttendanceViewSet
@@ -59,12 +59,12 @@ api.register(r'teacher', TeacherViewSet, basename='teacher')
 api.register(r'attendance-heatmap-data', AttendanceHeatmapViewSet, basename='attendance-heatmap-data')
 api.register(r'locations', LocationViewSet, basename='locations')
 
-api.register(r'sync/schools', SyncSchoolViewSet, basename='sync-schools')
+api.register(r'sync/locations', SyncLocationViewSet, basename='sync-locations')
 api.register(r'sync/teachers', SyncTeacherViewSet, basename='sync-teachers')
 api.register(r'sync/registrations', SyncRegistrationViewSet, basename='sync-registrations')
-api.register(r'sync/attendances', SyncAttendanceViewSet, basename='sync-attendances')
 
-api.register(r'sync/education-assessments', SyncEducationProgrammeAssessmentViewSet, basename='sync-education-assessments')
+api.register(r'sync/education-programme-assessments', SyncEducationProgrammeAssessmentViewSet, basename='sync-education-programme-assessments')
+api.register(r'sync/education-assessment-gradings', SyncEducationAssessmentViewSet, basename='sync-education-assessment-gradings')
 api.register(r'sync/followup-services', SyncFollowUpServiceViewSet, basename='sync-followup-services')
 
 
