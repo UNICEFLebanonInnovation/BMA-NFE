@@ -539,3 +539,11 @@ admin.site.register(Referral, ReferralAdmin)
 # admin.site.register(Recreational, RecreationalAdmin)
 # admin.site.register(Teacher, TeacherAdmin)
 admin.site.register(Round, RoundAdmin)
+from student_registration.mscc.models import SyncLog
+
+class SyncLogAdmin(admin.ModelAdmin):
+    list_display = ('id', 'model_name', 'original_id', 'action', 'status', 'created')
+    list_filter = ('model_name', 'action', 'status', 'created')
+    search_fields = ('original_id', 'error_message')
+
+admin.site.register(SyncLog, SyncLogAdmin)

@@ -2690,3 +2690,18 @@ class LegoService(TimeStampedModel):
         verbose_name=_("LEGO")
         verbose_name_plural=_("LEGO")
 
+class SyncLog(TimeStampedModel):
+    STATUS_CHOICES = (
+        ('success', 'Success'),
+        ('failed', 'Failed'),
+    )
+
+    model_name = models.CharField(max_length=100)
+    original_id = models.IntegerField(null=True, blank=True)
+    action = models.CharField(max_length=20) # create, update, delete
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    error_message = models.TextField(blank=True, null=True)
+    payload = JSONField(default=dict, blank=True, null=True)
+
+    class Meta:
+        ordering = ['-created']
