@@ -65,6 +65,7 @@ urlpatterns = [
     re_path(r'^students/', include('student_registration.students.urls', namespace='students')),
     re_path(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
     re_path(r'^mscc/', include('student_registration.mscc.urls', namespace='mscc')),
+    re_path(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     re_path(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     re_path(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     re_path(r'^locations/', include('student_registration.locations.urls', namespace='locations')),

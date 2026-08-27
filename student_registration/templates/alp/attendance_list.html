@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2>{% trans "ALP Attendance" %}</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>{% trans "Registration ID" %}</th>
+                <th>{% trans "Child" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Shift" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for att in attendances %}
+            <tr>
+                <td>{{ att.registration.id }}</td>
+                <td>{{ att.registration.child.full_name }}</td>
+                <td>{{ att.date }}</td>
+                <td>{{ att.status }}</td>
+                <td>{{ att.shift }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">{% trans "No attendance records found." %}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -25,6 +25,22 @@
 </a>
 {% endif %}
 
+{% if request.user|has_group:"ALP_SCHOOL" %}
+<div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "ALP Operations" %}</div>
+<a href="{% url 'alp:registration_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'registration' in request.resolver_match.url_name %}active{% endif %}">
+    <i class="bi bi-person-plus"></i> <span>{% trans "ALP Registrations" %}</span>
+</a>
+<a href="{% url 'alp:attendance_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'attendance' in request.resolver_match.url_name %}active{% endif %}">
+    <i class="bi bi-calendar-check"></i> <span>{% trans "ALP Attendance" %}</span>
+</a>
+<a href="{% url 'alp:school_profile' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'school' in request.resolver_match.url_name %}active{% endif %}">
+    <i class="bi bi-building"></i> <span>{% trans "School Profile" %}</span>
+</a>
+<a href="{% url 'alp:teacher_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'teacher' in request.resolver_match.url_name %}active{% endif %}">
+    <i class="bi bi-people"></i> <span>{% trans "ALP Teachers" %}</span>
+</a>
+{% endif %}
+
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Analytics" %}</div>
 <a href="{% url 'dashboard:pivot_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'pivot_dashboard' %}active{% endif %}">
     <i class="bi bi-graph-up"></i> <span>{% trans "Pivot Builder" %}</span>

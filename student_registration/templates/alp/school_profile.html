@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% trans "School Profile" %}</h2>
+    {% if request.user.school %}
+        <p><strong>{% trans "Name:" %}</strong> {{ request.user.school.name }}</p>
+        <p><strong>{% trans "Type:" %}</strong> {{ request.user.school.type }}</p>
+    {% else %}
+        <p>{% trans "You are not assigned to any specific school." %}</p>
+    {% endif %}
+</div>
+{% endblock %}

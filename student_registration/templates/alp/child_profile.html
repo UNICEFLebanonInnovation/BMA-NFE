@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2>{% trans "ALP Child Profile" %}</h2>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>{{ registration.child.full_name }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>{% trans "Registration ID:" %}</strong> {{ registration.id }}</p>
+                    <p><strong>{% trans "Child Name:" %}</strong> {{ registration.child.full_name }}</p>
+                    <p><strong>{% trans "School:" %}</strong> {{ registration.school.name|default:"-" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>{% trans "Round:" %}</strong> {{ registration.round.name|default:"-" }}</p>
+                    <p><strong>{% trans "Programme:" %}</strong> {{ registration.programme.name|default:"-" }}</p>
+                </div>
+            </div>
+
+            <a href="{% url 'alp:registration_edit' registration.pk %}" class="btn btn-primary mt-3">{% trans "Edit Registration" %}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

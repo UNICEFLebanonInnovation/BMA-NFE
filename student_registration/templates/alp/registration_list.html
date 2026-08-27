@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2>{% trans "ALP Registrations" %}</h2>
+    <a href="{% url 'alp:registration_add' %}" class="btn btn-primary mb-3">{% trans "Add New Registration" %}</a>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>{% trans "ID" %}</th>
+                <th>{% trans "Child" %}</th>
+                <th>{% trans "School" %}</th>
+                <th>{% trans "Round" %}</th>
+                <th>{% trans "Programme" %}</th>
+                <th>{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reg in registrations %}
+            <tr>
+                <td>{{ reg.id }}</td>
+                <td>{{ reg.child.full_name }}</td>
+                <td>{{ reg.school.name }}</td>
+                <td>{{ reg.round.name|default:"-" }}</td>
+                <td>{{ reg.programme.name|default:"-" }}</td>
+                <td>
+                    <a href="{% url 'alp:child_profile' reg.pk %}" class="btn btn-sm btn-primary">{% trans "Profile" %}</a>
+                    <a href="{% url 'alp:registration_edit' reg.pk %}" class="btn btn-sm btn-info">{% trans "Edit" %}</a>
+                    <a href="{% url 'alp:registration_delete' reg.pk %}" class="btn btn-sm btn-danger">{% trans "Delete" %}</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">{% trans "No registrations found." %}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
