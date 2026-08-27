@@ -2,9 +2,14 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, T
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
 from django.core.exceptions import PermissionDenied
-from .models import ALPRegistration, ALPTeacher
+
+from .models import ALPRegistration, ALPTeacher, ALPGrading
 from .forms import ALPRegistrationForm, ALPTeacherForm
+from .tables import ALPRegistrationTable, ALPTeacherTable
+from .filters import ALPRegistrationFilter, ALPTeacherFilter
 from .utils import user_has_alp_permission, filter_by_school
 
 class ALPUserRequiredMixin(UserPassesTestMixin):
@@ -21,10 +26,11 @@ class ALPEditPermissionMixin(object):
             raise PermissionDenied("Superusers have read-only access to ALP data.")
         return super().dispatch(request, *args, **kwargs)
 
-class RegistrationListView(LoginRequiredMixin, ALPUserRequiredMixin, ListView):
+class RegistrationListView(LoginRequiredMixin, ALPUserRequiredMixin, SingleTableMixin, FilterView):
     model = ALPRegistration
+    table_class = ALPRegistrationTable
+    filterset_class = ALPRegistrationFilter
     template_name = 'alp/registration_list.html'
-    context_object_name = 'registrations'
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -63,10 +69,11 @@ class RegistrationDeleteView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPe
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
 
-class TeacherListView(LoginRequiredMixin, ALPUserRequiredMixin, ListView):
+class TeacherListView(LoginRequiredMixin, ALPUserRequiredMixin, SingleTableMixin, FilterView):
     model = ALPTeacher
+    table_class = ALPTeacherTable
+    filterset_class = ALPTeacherFilter
     template_name = 'alp/teacher_list.html'
-    context_object_name = 'teachers'
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -108,6 +115,29 @@ class ChildProfileView(LoginRequiredMixin, ALPUserRequiredMixin, DetailView):
     model = ALPRegistration
     template_name = 'alp/child_profile.html'
     context_object_name = 'registration'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return filter_by_school(qs, self.request.user)
+
+from django.views.generic import CreateView, UpdateView
+from .forms import ALPGradingForm
+
+class GradingAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, CreateView):
+    model = ALPGrading
+    form_class = ALPGradingForm
+    template_name = 'alp/grading_form.html'
+    success_url = reverse_lazy('alp:registration_list')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+class GradingEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, UpdateView):
+    model = ALPGrading
+    form_class = ALPGradingForm
+    template_name = 'alp/grading_form.html'
+    success_url = reverse_lazy('alp:registration_list')
 
     def get_queryset(self):
         qs = super().get_queryset()

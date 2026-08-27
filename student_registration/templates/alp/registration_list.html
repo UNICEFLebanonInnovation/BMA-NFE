@@ -1,40 +1,78 @@
-{% extends "base.html" %}
-{% load i18n %}
+{% extends "mscc/base.html" %}
+{% load util_tags %}
+{% load custom_tags %}
+{% load static i18n %}
+{% load render_table from django_tables2 %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+
+{% block project_title %}List{% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-4">
-    <h2>{% trans "ALP Registrations" %}</h2>
-    <a href="{% url 'alp:registration_add' %}" class="btn btn-primary mb-3">{% trans "Add New Registration" %}</a>
+<div class="container-fluid">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                    <li class="breadcrumb-item active">{% trans "ALP Beneficiary List" %}</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold mt-2">
+                {{ request.user.username }}
+                {% if request.user|has_group:"ALP_SCHOOL" %}
+                <span class="text-muted fs-5 fw-normal">| {{ request.user.school.name }}</span>
+                {% endif %}
+            </h3>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <button class="btn btn-sm btn-outline-primary me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+                <i class="bi bi-funnel me-2"></i> {% trans "Search" %}
+            </button>
+            {% if not request.user.is_superuser %}
+            <a href="{% url 'alp:registration_add' %}" class="btn btn-sm btn-primary fw-bold">
+                <i class="bi bi-plus-lg me-2"></i> {% trans "Add New Child" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
 
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>{% trans "ID" %}</th>
-                <th>{% trans "Child" %}</th>
-                <th>{% trans "School" %}</th>
-                <th>{% trans "Round" %}</th>
-                <th>{% trans "Programme" %}</th>
-                <th>{% trans "Actions" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for reg in registrations %}
-            <tr>
-                <td>{{ reg.id }}</td>
-                <td>{{ reg.child.full_name }}</td>
-                <td>{{ reg.school.name }}</td>
-                <td>{{ reg.round.name|default:"-" }}</td>
-                <td>{{ reg.programme.name|default:"-" }}</td>
-                <td>
-                    <a href="{% url 'alp:child_profile' reg.pk %}" class="btn btn-sm btn-primary">{% trans "Profile" %}</a>
-                    <a href="{% url 'alp:registration_edit' reg.pk %}" class="btn btn-sm btn-info">{% trans "Edit" %}</a>
-                    <a href="{% url 'alp:registration_delete' reg.pk %}" class="btn btn-sm btn-danger">{% trans "Delete" %}</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="6">{% trans "No registrations found." %}</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% if request.user|has_group:"ALP_SCHOOL" and not request.user.school %}
+    <div class="alert alert-danger mb-4">
+        <i class="bi bi-exclamation-octagon-fill me-2"></i> {% trans "You don't have a school assigned to your profile. Please contact the administrator." %}
+    </div>
+    {% endif %}
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            {% csrf_token %}
+            {% render_table table 'django_tables2/bootstrap5.html' %}
+        </div>
+    </div>
 </div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="filterOffcanvas" style="width: 400px;">
+    <div class="offcanvas-header border-bottom bg-light">
+        <h5 class="offcanvas-title fw-bold"><i class="bi bi-funnel me-2"></i> {% trans "Search" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="" method="get" id="filter-form">
+            {% crispy filter.form %}
+            <div class="d-grid gap-2 mt-4 pt-4 border-top">
+                <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                    <i class="bi bi-search me-2"></i> {% trans "Apply Filters" %}
+                </button>
+                <a href="{% url request.resolver_match.view_name %}" class="btn btn-light border fw-bold text-muted">
+                    <i class="bi bi-x-circle me-2"></i> {% trans "Clear All" %}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/alp/list.js' %}"></script>
 {% endblock %}

@@ -19,7 +19,15 @@ urlpatterns = [
     re_path(r'^teachers/delete/(?P<pk>[\w.@+-]+)/$', view=views.TeacherDeleteView.as_view(), name='teacher_delete'),
 
     re_path(r'^attendance/$', view=attendance_views.AttendanceListView.as_view(), name='attendance_list'),
+    re_path(r'^attendance/add/$', view=attendance_views.AttendanceAddView.as_view(), name='attendance_add'),
+    re_path(r'^attendance/edit/(?P<pk>[\w.@+-]+)/$', view=attendance_views.AttendanceEditView.as_view(), name='attendance_edit'),
+
     re_path(r'^teacher-attendance/$', view=attendance_views.TeacherAttendanceListView.as_view(), name='teacher_attendance_list'),
+    re_path(r'^teacher-attendance/add/$', view=attendance_views.TeacherAttendanceAddView.as_view(), name='teacher_attendance_add'),
+    re_path(r'^teacher-attendance/edit/(?P<pk>[\w.@+-]+)/$', view=attendance_views.TeacherAttendanceEditView.as_view(), name='teacher_attendance_edit'),
+
+    re_path(r'^grading/add/$', view=views.GradingAddView.as_view(), name='grading_add'),
+    re_path(r'^grading/edit/(?P<pk>[\w.@+-]+)/$', view=views.GradingEditView.as_view(), name='grading_edit'),
 
     re_path(r'^school-profile/$', view=views.SchoolProfileView.as_view(), name='school_profile'),
 ]
