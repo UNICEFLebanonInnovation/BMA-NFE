@@ -27,6 +27,9 @@
 
 {% if request.user|has_group:"ALP_SCHOOL" %}
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "ALP Operations" %}</div>
+<a href="{% url 'alp:dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
+    <i class="bi bi-speedometer2"></i> <span>{% trans "ALP Dashboard" %}</span>
+</a>
 <a href="{% url 'alp:registration_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'registration' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-person-plus"></i> <span>{% trans "ALP Registrations" %}</span>
 </a>

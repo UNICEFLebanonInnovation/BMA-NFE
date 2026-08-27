@@ -1,0 +1,316 @@
+{% extends "mscc/base.html" %}
+{% load util_tags %}
+{% load custom_tags %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+{% load simple_tags %}
+
+{% block project_title %}{% trans "Dashboard" %}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+<style>
+    .quick-action-card:hover {
+        transform: translateY(-5px);
+        background-color: var(--bs-light);
+    }
+    .quick-action-card .icon-shape {
+        transition: transform 0.3s ease;
+    }
+    .quick-action-card:hover .icon-shape {
+        transform: scale(1.1);
+    }
+    .chart-container {
+        min-height: 300px;
+    }
+    .metric-card {
+        transition: all 0.3s ease;
+    }
+    .metric-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Welcome Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">{% trans "Welcome back," %} {{ request.user.first_name|default:request.user.username }}</h3>
+            <p class="text-muted">{% trans "Monitor NFE activities and manage registrations efficiently." %}</p>
+        </div>
+        <div class="text-end">
+            <span class="badge bg-light text-dark border py-2 px-3">
+                <i class="bi bi-calendar3 me-2 text-primary"></i> {% now "F d, Y" %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Action Tiles -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <a href="{% url 'alp:registration_add' %}" class="card border-0 shadow-sm h-100 text-decoration-none text-center p-3 quick-action-card transition-base">
+                <div class="card-body">
+                    <div class="icon-shape bg-primary-subtle text-primary rounded-circle mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-person-plus-fill fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{% trans "New Registration" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Enroll a new beneficiary in the NFE program." %}</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'alp:registration_list' %}" class="card border-0 shadow-sm h-100 text-decoration-none text-center p-3 quick-action-card transition-base">
+                <div class="card-body">
+                    <div class="icon-shape bg-success-subtle text-success rounded-circle mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-search fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{% trans "Beneficiary List" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Search and manage existing records." %}</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'alp:attendance_list' %}" class="card border-0 shadow-sm h-100 text-decoration-none text-center p-3 quick-action-card transition-base">
+                <div class="card-body">
+                    <div class="icon-shape bg-warning-subtle text-warning rounded-circle mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-bar-chart-fill fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{% trans "Attendance Reports" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Monitor daily and monthly attendance logs." %}</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'alp:school_profile' %}" class="card border-0 shadow-sm h-100 text-decoration-none text-center p-3 quick-action-card transition-base">
+                <div class="card-body">
+                    <div class="icon-shape bg-info-subtle text-info rounded-circle mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-geo-alt-fill fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{% trans "Schools" %}</h5>
+                    <p class="text-muted small mb-0">{% trans "Manage NFE schools and staff." %}</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-graph-up me-2 text-primary"></i> {% trans "Operational Insights" %}</h5>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#dashboardFilters">
+                            <i class="bi bi-filter me-1"></i> {% trans "Filters" %}
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body bg-light-subtle">
+                    <!-- KPI Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm metric-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">{% trans "Total Registrations" %}</div>
+                                    <div class="h2 fw-bold text-primary mb-0">{{ total }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm metric-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">{% trans "Active Schools" %}</div>
+                                    <div class="h2 fw-bold text-success mb-0">{{ schools.count }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm metric-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">{% trans "Partners" %}</div>
+                                    <div class="h2 fw-bold text-info mb-0">{{ partners.count }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm metric-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">{% trans "Program Rounds" %}</div>
+                                    <div class="h2 fw-bold text-warning mb-0">{{ rounds.count }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="row g-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Gender Distribution" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Distribution of registered children by gender based on active registrations."></i></h6>
+            </div>
+            <div class="card-body chart-container" id="children_per_gender"></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Gender age group distribution" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Distribution of registered children by gender and age group."></i></h6>
+            </div>
+            <div class="card-body chart-container" id="children_gender_age"></div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Nationality Breakdown" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Breakdown of registered children by their nationality."></i></h6>
+            </div>
+            <div class="card-body chart-container" id="children_per_nationality"></div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Source of Identification" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="How the children were identified or referred to the programme."></i></h6>
+            </div>
+            <div class="card-body chart-container" id="children_per_source"></div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="mb-0 fw-bold">{% trans "Registrations per Round" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Total number of child registrations categorized by academic round."></i></h6>
+            </div>
+            <div class="card-body chart-container" id="children_per_round"></div>
+        </div>
+    </div>
+
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-white border-0 py-3">
+                                    <h6 class="mb-0 fw-bold">{% trans "Family Status" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Overview of the family living arrangements of the registered children."></i></h6>
+                                </div>
+                                <div class="card-body chart-container" id="children_per_status"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-white border-0 py-3">
+                                    <h6 class="mb-0 fw-bold">{% trans "Disability Type" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Count of children classified by reported disability types."></i></h6>
+                                </div>
+                                <div class="card-body chart-container" id="children_per_disability"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-white border-0 py-3">
+                                    <h6 class="mb-0 fw-bold">{% trans "Cash Support" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Number of children or families receiving cash support assistance."></i></h6>
+                                </div>
+                                <div class="card-body chart-container" id="children_cash_support"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-white border-0 py-3">
+                                    <h6 class="mb-0 fw-bold">{% trans "Referred to Formal Education" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Count of children who have been successfully referred to formal education systems."></i></h6>
+                                </div>
+                                <div class="card-body chart-container" id="children_referred_formal_education"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-white border-0 py-3">
+                                    <h6 class="mb-0 fw-bold">{% trans "Children Moved Between Rounds" %} <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Tracking of children who have progressed or moved between different academic rounds."></i></h6>
+                                </div>
+                                <div class="card-body chart-container" id="children_moved_rounds"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light-subtle py-2">
+                    <small class="text-muted"><i class="bi bi-info-circle me-1"></i> {% trans "Data is updated in real-time. Use the filters to drill down into specific regions or partners." %}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Filters Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="dashboardFilters" aria-labelledby="dashboardFiltersLabel" style="width: 400px;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-bold" id="dashboardFiltersLabel">{% trans "Dashboard Filters" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mb-4">
+            <label class="form-label fw-bold">{% trans "Governorates" %}</label>
+            <select id="governorate_filter" class="selectpicker form-control" multiple data-live-search="true" data-actions-box="true" title="{% trans 'Select Governorates' %}">
+                {% for item in governorates %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold">{% trans "Partners" %}</label>
+            <select id="partner_filter" class="selectpicker form-control" multiple data-live-search="true" data-actions-box="true" title="{% trans 'Select Partners' %}">
+                {% for item in partners %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold">{% trans "Schools" %}</label>
+            <select id="school_filter" class="selectpicker form-control" multiple data-live-search="true" data-actions-box="true" title="{% trans 'Select Schools' %}">
+                {% for item in schools %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold">{% trans "Rounds" %}</label>
+            <select id="round_filter" class="selectpicker form-control" multiple data-live-search="true" data-actions-box="true" title="{% trans 'Select Rounds' %}">
+                {% for item in rounds %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="d-grid gap-2">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="offcanvas">{% trans "Apply Filters" %}</button>
+            <button type="button" class="btn btn-outline-secondary" id="resetFilters">{% trans "Reset" %}</button>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+
+<script>
+window.msccDashboardConfig = {
+    urls: {
+        data: "{% url 'alp:dashboard_data' %}"
+    }
+};
+
+$(function() {
+    $('.selectpicker').selectpicker();
+
+    $('#resetFilters').on('click', function() {
+        $('.selectpicker').selectpicker('deselectAll');
+        $('.selectpicker').selectpicker('refresh');
+        // Trigger change to refresh data
+        $('#governorate_filter').trigger('change');
+    });
+});
+</script>
+<script src="{% static 'js/mscc/alp_dashboard_d3.js' %}?v=2021"></script>
+{% endblock %}

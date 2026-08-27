@@ -163,3 +163,72 @@ class GradingEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissio
     def get_queryset(self):
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
+
+from django.views.generic import TemplateView, View
+from django.http import JsonResponse
+from django.db.models import Count
+
+class ALPDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
+    template_name = 'alp/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.schools.models import School
+        from .models import ALPRound, ALPProgram, ALPRegistration
+
+        user = self.request.user
+        instances = filter_by_school(ALPRegistration.objects.filter(deleted=False), user)
+
+        schools = School.objects.all()
+        rounds = ALPRound.objects.all()
+        programmes = ALPProgram.objects.all()
+
+        if not user.is_superuser:
+            schools = schools.filter(id=user.school_id)
+
+        return {
+            'total': instances.count(),
+            'schools': schools,
+            'rounds': rounds,
+            'programmes': programmes,
+        }
+
+class ALPDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
+    def get(self, request):
+        from .models import ALPRegistration
+        user = request.user
+
+        qs = filter_by_school(ALPRegistration.objects.filter(deleted=False), user)
+
+        schools = request.GET.getlist('schools')
+        if schools:
+            qs = qs.filter(school_id__in=schools)
+
+        rounds = request.GET.getlist('rounds')
+        if rounds:
+            qs = qs.filter(round_id__in=rounds)
+
+        programmes = request.GET.getlist('programmes')
+        if programmes:
+            qs = qs.filter(programme_id__in=programmes)
+
+        def aggregate(queryset, field):
+            results = queryset.values(field).annotate(total=Count('id')).order_by(field)
+            data = []
+            for row in results:
+                name = row.get(field) or 'N/A'
+                data.append({'name': name, 'y': row['total']})
+            return data
+
+        nationality_data = aggregate(qs, 'child__nationality__name_en')
+        gender_data = aggregate(qs, 'child__gender')
+        round_data = aggregate(qs, 'round__name')
+        programme_data = aggregate(qs, 'programme__name')
+
+        response_data = {
+            'nationality': nationality_data,
+            'gender': gender_data,
+            'round': round_data,
+            'programme': programme_data,
+        }
+
+        return JsonResponse(response_data)
