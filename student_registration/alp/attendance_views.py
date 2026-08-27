@@ -34,12 +34,14 @@ from django.views.generic import CreateView, UpdateView
 from django.urls import reverse_lazy
 from django import forms
 
-class ALPAttendanceForm(forms.ModelForm):
+from .mixins import ALPSchoolFilterMixin
+
+class ALPAttendanceForm(ALPSchoolFilterMixin, forms.ModelForm):
     class Meta:
         model = ALPAttendance
         fields = ['registration', 'date', 'status', 'shift']
 
-class TeacherAttendanceForm(forms.ModelForm):
+class TeacherAttendanceForm(ALPSchoolFilterMixin, forms.ModelForm):
     class Meta:
         model = ALPTeacherAttendance
         fields = ['teacher', 'date', 'status']
@@ -49,6 +51,11 @@ class AttendanceAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermiss
     form_class = ALPAttendanceForm
     template_name = 'alp/attendance_form.html'
     success_url = reverse_lazy('alp:attendance_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -60,6 +67,11 @@ class AttendanceEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermis
     template_name = 'alp/attendance_form.html'
     success_url = reverse_lazy('alp:attendance_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def get_queryset(self):
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
@@ -70,6 +82,11 @@ class TeacherAttendanceAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEdit
     template_name = 'alp/attendance_form.html'
     success_url = reverse_lazy('alp:teacher_attendance_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
@@ -79,6 +96,11 @@ class TeacherAttendanceEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEdi
     form_class = TeacherAttendanceForm
     template_name = 'alp/attendance_form.html'
     success_url = reverse_lazy('alp:teacher_attendance_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
     def get_queryset(self):
         qs = super().get_queryset()

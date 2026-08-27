@@ -27,14 +27,27 @@
 
 {% if request.user|has_group:"ALP_SCHOOL" %}
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "ALP Operations" %}</div>
-<a href="{% url 'alp:dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
-    <i class="bi bi-speedometer2"></i> <span>{% trans "ALP Dashboard" %}</span>
+<a href="{% url 'alp:dashboard_registration' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'dashboard_registration' %}active{% endif %}">
+    <i class="bi bi-speedometer2"></i> <span>{% trans "Registration Dashboard" %}</span>
 </a>
-<a href="{% url 'alp:registration_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'registration' in request.resolver_match.url_name %}active{% endif %}">
+<a href="{% url 'alp:dashboard_teacher' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'dashboard_teacher' %}active{% endif %}">
+    <i class="bi bi-person-video3"></i> <span>{% trans "Teacher Dashboard" %}</span>
+</a>
+<a href="{% url 'alp:dashboard_attendance' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'dashboard_attendance' %}active{% endif %}">
+    <i class="bi bi-calendar-check"></i> <span>{% trans "Attendance Dashboard" %}</span>
+</a>
+<a href="{% url 'alp:dashboard_school' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'dashboard_school' %}active{% endif %}">
+    <i class="bi bi-building"></i> <span>{% trans "School Dashboard" %}</span>
+</a>
+<div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "ALP Lists" %}</div>
+<a href="{% url 'alp:registration_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'registration' in request.resolver_match.url_name and 'dashboard' not in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-person-plus"></i> <span>{% trans "ALP Registrations" %}</span>
 </a>
 <a href="{% url 'alp:attendance_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'attendance' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-calendar-check"></i> <span>{% trans "ALP Attendance" %}</span>
+</a>
+<a href="{% url 'alp:teacher_attendance_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'teacher_attendance' in request.resolver_match.url_name %}active{% endif %}">
+    <i class="bi bi-calendar-check-fill"></i> <span>{% trans "ALP Teacher Attendance" %}</span>
 </a>
 <a href="{% url 'alp:school_profile' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'school' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-building"></i> <span>{% trans "School Profile" %}</span>

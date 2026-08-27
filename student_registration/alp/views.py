@@ -150,6 +150,11 @@ class GradingAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermission
     template_name = 'alp/grading_form.html'
     success_url = reverse_lazy('alp:registration_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
@@ -160,6 +165,11 @@ class GradingEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissio
     template_name = 'alp/grading_form.html'
     success_url = reverse_lazy('alp:registration_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def get_queryset(self):
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
@@ -168,8 +178,8 @@ from django.views.generic import TemplateView, View
 from django.http import JsonResponse
 from django.db.models import Count
 
-class ALPDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
-    template_name = 'alp/dashboard.html'
+class ALPRegistrationDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
+    template_name = 'alp/dashboard_registration.html'
 
     def get_context_data(self, **kwargs):
         from student_registration.schools.models import School
@@ -232,3 +242,61 @@ class ALPDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
         }
 
         return JsonResponse(response_data)
+
+class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
+    template_name = 'alp/dashboard_teacher.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.schools.models import School
+        from .models import ALPTeacher
+
+        user = self.request.user
+        instances = filter_by_school(ALPTeacher.objects.all(), user)
+
+        schools = School.objects.all()
+
+        if not user.is_superuser:
+            schools = schools.filter(id=user.school_id)
+
+        return {
+            'total': instances.count(),
+            'schools': schools,
+        }
+
+class ALPAttendanceDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
+    template_name = 'alp/dashboard_attendance.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.schools.models import School
+        from .models import ALPAttendance
+
+        user = self.request.user
+        instances = filter_by_school(ALPAttendance.objects.all(), user)
+
+        schools = School.objects.all()
+
+        if not user.is_superuser:
+            schools = schools.filter(id=user.school_id)
+
+        return {
+            'total': instances.count(),
+            'schools': schools,
+        }
+
+class ALPSchoolDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
+    template_name = 'alp/dashboard_school.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.schools.models import School
+
+        user = self.request.user
+
+        schools = School.objects.all()
+
+        if not user.is_superuser:
+            schools = schools.filter(id=user.school_id)
+
+        return {
+            'total': schools.count(),
+            'schools': schools,
+        }

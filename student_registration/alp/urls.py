@@ -30,7 +30,12 @@ re_path(r'^grading/add/$', view=views.GradingAddView.as_view(), name='grading_ad
 re_path(r'^grading/edit/(?P<pk>[\w.@+-]+)/$', view=views.GradingEditView.as_view(), name='grading_edit'),
 
 re_path(r'^school-profile/$', view=views.SchoolProfileView.as_view(), name='school_profile'),
-]
 
-re_path(r'^dashboard/$', view=views.ALPDashboardView.as_view(), name='dashboard'),
-re_path(r'^alp_dashboard_data/$', view=views.ALPDashboardDataView.as_view(), name='alp_dashboard_data'),
+
+    re_path(r'^dashboard/registration/$', view=views.ALPRegistrationDashboardView.as_view(), name='dashboard_registration'),
+    re_path(r'^dashboard/teacher/$', view=views.ALPTeacherDashboardView.as_view(), name='dashboard_teacher'),
+    re_path(r'^dashboard/attendance/$', view=views.ALPAttendanceDashboardView.as_view(), name='dashboard_attendance'),
+    re_path(r'^dashboard/school/$', view=views.ALPSchoolDashboardView.as_view(), name='dashboard_school'),
+
+    re_path(r'^alp_dashboard_data/$', view=views.ALPDashboardDataView.as_view(), name='alp_dashboard_data'),
+]

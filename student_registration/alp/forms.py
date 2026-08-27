@@ -113,7 +113,7 @@ class ALPGradingForm(forms.ModelForm):
 
 from .models import ALPGradingDefinition
 
-class ALPGradingDynamicForm(forms.ModelForm):
+class ALPGradingDynamicForm(ALPSchoolFilterMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
