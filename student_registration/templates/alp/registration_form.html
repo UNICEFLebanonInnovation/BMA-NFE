@@ -1,19 +1,71 @@
 {% extends "mscc/base.html" %}
-{% load util_tags %}
-{% load custom_tags %}
-{% load static i18n %}
+{% load i18n %}
 {% load crispy_forms_tags %}
-{% load django_bootstrap5 %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>{% if object %}{% trans "Edit Registration" %}{% else %}{% trans "New Registration" %}{% endif %}</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
-        <a href="{% url 'alp:registration_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
-    </form>
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'alp:registration_list' %}">{% trans "List" %}</a></li>
+                    <li class="breadcrumb-item active">{{ request.user.school.name }}</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold mt-2">
+                {% if form.instance.id %}
+                    {% trans "Edit Child Record" %}
+                {% else %}
+                    {% trans "Register New Child" %}
+                {% endif %}
+            </h3>
+        </div>
+    </div>
+
+    {% if form and form.errors %}
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <div class="d-flex">
+            <i class="bi bi-exclamation-octagon-fill fs-4 me-3"></i>
+            <div>
+                <h5 class="alert-heading fw-bold">{% trans "Registration Failed" %}</h5>
+                <p class="mb-2">{% trans "Please correct the following errors across the registration steps:" %}</p>
+                <ul class="mb-0 small">
+                    {% for field, errors in form.errors.items %}
+                        {% if field != '__all__' %}
+                            <li><strong>{{ form.fields|get_item:field|get_label }}:</strong> {{ errors|striptags }}</li>
+                        {% else %}
+                            <li>{{ errors|striptags }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                {% crispy form %}
+
+                <div class="mt-4 p-4 bg-primary bg-opacity-10 rounded border border-primary border-opacity-25">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-shield-check fs-4 text-primary me-3"></i>
+                        <p class="small text-dark mb-0">{% trans "By completing this registration, you confirm that all entered details are verified against physical documentation." %}</p>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <a href="{% url 'alp:registration_list' %}" class="btn btn-light border me-3">{% trans "Cancel" %}</a>
+                        <button type="submit" name="save" class="btn btn-primary px-5 fw-bold" id="submit-id-save">
+                            <i class="bi bi-check-circle me-2"></i> {% trans "Complete Registration" %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
