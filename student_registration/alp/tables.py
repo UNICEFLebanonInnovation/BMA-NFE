@@ -50,3 +50,43 @@ class ALPTeacherTable(tables.Table):
         template_name = 'django_tables2/bootstrap5.html'
         attrs = {'class': 'table table-hover table-striped align-middle'}
         fields = ('first_name', 'last_name', 'phone_number', 'sex', 'school', 'actions')
+
+from .models import ALPAttendance, ALPTeacherAttendance
+
+class ALPAttendanceTable(tables.Table):
+    actions = tables.TemplateColumn(
+        template_code='''
+            <div class="btn-group btn-group-sm" role="group">
+                <a href="{% url 'alp:attendance_edit' record.pk %}" class="btn btn-outline-secondary" title="{% trans 'Edit' %}">
+                    <i class="bi bi-pencil"></i>
+                </a>
+            </div>
+        ''',
+        verbose_name=_('Actions'),
+        orderable=False,
+    )
+
+    class Meta:
+        model = ALPAttendance
+        template_name = 'django_tables2/bootstrap5.html'
+        attrs = {'class': 'table table-hover table-striped align-middle'}
+        fields = ('registration', 'date', 'status', 'shift', 'actions')
+
+class ALPTeacherAttendanceTable(tables.Table):
+    actions = tables.TemplateColumn(
+        template_code='''
+            <div class="btn-group btn-group-sm" role="group">
+                <a href="{% url 'alp:teacher_attendance_edit' record.pk %}" class="btn btn-outline-secondary" title="{% trans 'Edit' %}">
+                    <i class="bi bi-pencil"></i>
+                </a>
+            </div>
+        ''',
+        verbose_name=_('Actions'),
+        orderable=False,
+    )
+
+    class Meta:
+        model = ALPTeacherAttendance
+        template_name = 'django_tables2/bootstrap5.html'
+        attrs = {'class': 'table table-hover table-striped align-middle'}
+        fields = ('teacher', 'date', 'status', 'actions')

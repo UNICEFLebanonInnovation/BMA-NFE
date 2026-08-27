@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
+from django_tables2.export.views import ExportMixin
 from django.core.exceptions import PermissionDenied
 
 from .models import ALPRegistration, ALPTeacher, ALPGrading
@@ -26,7 +27,7 @@ class ALPEditPermissionMixin(object):
             raise PermissionDenied("Superusers have read-only access to ALP data.")
         return super().dispatch(request, *args, **kwargs)
 
-class RegistrationListView(LoginRequiredMixin, ALPUserRequiredMixin, SingleTableMixin, FilterView):
+class RegistrationListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin, SingleTableMixin, FilterView):
     model = ALPRegistration
     table_class = ALPRegistrationTable
     filterset_class = ALPRegistrationFilter
@@ -42,6 +43,11 @@ class RegistrationAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermi
     template_name = 'alp/registration_form.html'
     success_url = reverse_lazy('alp:registration_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
@@ -51,6 +57,11 @@ class RegistrationEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPerm
     form_class = ALPRegistrationForm
     template_name = 'alp/registration_form.html'
     success_url = reverse_lazy('alp:registration_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -69,7 +80,7 @@ class RegistrationDeleteView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPe
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
 
-class TeacherListView(LoginRequiredMixin, ALPUserRequiredMixin, SingleTableMixin, FilterView):
+class TeacherListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin, SingleTableMixin, FilterView):
     model = ALPTeacher
     table_class = ALPTeacherTable
     filterset_class = ALPTeacherFilter
@@ -85,6 +96,11 @@ class TeacherAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermission
     template_name = 'alp/teacher_form.html'
     success_url = reverse_lazy('alp:teacher_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
@@ -94,6 +110,11 @@ class TeacherEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissio
     form_class = ALPTeacherForm
     template_name = 'alp/teacher_form.html'
     success_url = reverse_lazy('alp:teacher_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -121,11 +142,11 @@ class ChildProfileView(LoginRequiredMixin, ALPUserRequiredMixin, DetailView):
         return filter_by_school(qs, self.request.user)
 
 from django.views.generic import CreateView, UpdateView
-from .forms import ALPGradingForm
+from .forms import ALPGradingDynamicForm
 
 class GradingAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, CreateView):
     model = ALPGrading
-    form_class = ALPGradingForm
+    form_class = ALPGradingDynamicForm
     template_name = 'alp/grading_form.html'
     success_url = reverse_lazy('alp:registration_list')
 
@@ -135,7 +156,7 @@ class GradingAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermission
 
 class GradingEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, UpdateView):
     model = ALPGrading
-    form_class = ALPGradingForm
+    form_class = ALPGradingDynamicForm
     template_name = 'alp/grading_form.html'
     success_url = reverse_lazy('alp:registration_list')
 

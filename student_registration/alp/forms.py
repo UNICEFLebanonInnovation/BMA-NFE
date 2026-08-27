@@ -3,8 +3,9 @@ from django.utils.translation import gettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, Submit
 from .models import ALPRegistration, ALPTeacher, ALPGrading
+from .mixins import ALPSchoolFilterMixin
 
-class ALPRegistrationForm(forms.ModelForm):
+class ALPRegistrationForm(ALPSchoolFilterMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -78,7 +79,7 @@ class ALPRegistrationForm(forms.ModelForm):
             'source_of_identification_specify': forms.Textarea(attrs={'rows': 2}),
         }
 
-class ALPTeacherForm(forms.ModelForm):
+class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -109,3 +110,59 @@ class ALPGradingForm(forms.ModelForm):
     class Meta:
         model = ALPGrading
         fields = ['registration', 'grading_data']
+
+from .models import ALPGradingDefinition
+
+class ALPGradingDynamicForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+        # Load grading definitions
+        self.grading_definitions = ALPGradingDefinition.objects.all()
+
+        # Create dynamic fields based on definitions
+        grading_data = {}
+        if self.instance and self.instance.pk and self.instance.grading_data:
+            grading_data = self.instance.grading_data
+
+        layout_fields = [Div('registration', css_class='form-group col-md-12 mb-3')]
+
+        for definition in self.grading_definitions:
+            field_name = f"grade_{definition.id}"
+
+            self.fields[field_name] = forms.IntegerField(
+                label=definition.material,
+                min_value=definition.min_grade,
+                max_value=definition.max_grade,
+                required=False,
+                initial=grading_data.get(str(definition.id))
+            )
+
+            layout_fields.append(
+                Div(field_name, css_class='form-group col-md-6 mb-3')
+            )
+
+        self.helper.layout = Layout(
+            Div(*layout_fields, css_class='row')
+        )
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        grading_data = {}
+        for definition in self.grading_definitions:
+            field_name = f"grade_{definition.id}"
+            val = self.cleaned_data.get(field_name)
+            if val is not None:
+                grading_data[str(definition.id)] = val
+
+        instance.grading_data = grading_data
+        if commit:
+            instance.save()
+        return instance
+
+    class Meta:
+        model = ALPGrading
+        fields = ['registration']

@@ -1,24 +1,30 @@
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
+from django_tables2.export.views import ExportMixin
 
 from .models import ALPAttendance, ALPTeacherAttendance
-from .views import ALPUserRequiredMixin
-
+from .views import ALPUserRequiredMixin, ALPEditPermissionMixin
+from .tables import ALPAttendanceTable, ALPTeacherAttendanceTable
+from .filters import ALPAttendanceFilter, ALPTeacherAttendanceFilter
 from .utils import filter_by_school
 
-class AttendanceListView(LoginRequiredMixin, ALPUserRequiredMixin, ListView):
+class AttendanceListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin, SingleTableMixin, FilterView):
     model = ALPAttendance
+    table_class = ALPAttendanceTable
+    filterset_class = ALPAttendanceFilter
     template_name = 'alp/attendance_list.html'
-    context_object_name = 'attendances'
 
     def get_queryset(self):
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
 
-class TeacherAttendanceListView(LoginRequiredMixin, ALPUserRequiredMixin, ListView):
+class TeacherAttendanceListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin, SingleTableMixin, FilterView):
     model = ALPTeacherAttendance
+    table_class = ALPTeacherAttendanceTable
+    filterset_class = ALPTeacherAttendanceFilter
     template_name = 'alp/teacher_attendance_list.html'
-    context_object_name = 'attendances'
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -38,7 +44,7 @@ class TeacherAttendanceForm(forms.ModelForm):
         model = ALPTeacherAttendance
         fields = ['teacher', 'date', 'status']
 
-class AttendanceAddView(LoginRequiredMixin, ALPUserRequiredMixin, CreateView):
+class AttendanceAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, CreateView):
     model = ALPAttendance
     form_class = ALPAttendanceForm
     template_name = 'alp/attendance_form.html'
@@ -48,7 +54,7 @@ class AttendanceAddView(LoginRequiredMixin, ALPUserRequiredMixin, CreateView):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
-class AttendanceEditView(LoginRequiredMixin, ALPUserRequiredMixin, UpdateView):
+class AttendanceEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, UpdateView):
     model = ALPAttendance
     form_class = ALPAttendanceForm
     template_name = 'alp/attendance_form.html'
@@ -58,7 +64,7 @@ class AttendanceEditView(LoginRequiredMixin, ALPUserRequiredMixin, UpdateView):
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
 
-class TeacherAttendanceAddView(LoginRequiredMixin, ALPUserRequiredMixin, CreateView):
+class TeacherAttendanceAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, CreateView):
     model = ALPTeacherAttendance
     form_class = TeacherAttendanceForm
     template_name = 'alp/attendance_form.html'
@@ -68,7 +74,7 @@ class TeacherAttendanceAddView(LoginRequiredMixin, ALPUserRequiredMixin, CreateV
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
-class TeacherAttendanceEditView(LoginRequiredMixin, ALPUserRequiredMixin, UpdateView):
+class TeacherAttendanceEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, UpdateView):
     model = ALPTeacherAttendance
     form_class = TeacherAttendanceForm
     template_name = 'alp/attendance_form.html'

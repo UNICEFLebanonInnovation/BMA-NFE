@@ -43,3 +43,35 @@ class ALPTeacherFilter(FilterSet):
         self.form.helper.form_tag = False
         self.form.helper.disable_csrf = True
         self.form.helper.layout = Layout(*self.form.fields.keys())
+
+from .models import ALPAttendance, ALPTeacherAttendance
+
+class ALPAttendanceFilter(FilterSet):
+    date = CharFilter(lookup_expr='icontains', label=_('Date'))
+
+    class Meta:
+        model = ALPAttendance
+        fields = ['registration', 'date', 'status']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.helper = FormHelper()
+        self.form.helper.form_method = 'get'
+        self.form.helper.form_tag = False
+        self.form.helper.disable_csrf = True
+        self.form.helper.layout = Layout(*self.form.fields.keys())
+
+class ALPTeacherAttendanceFilter(FilterSet):
+    date = CharFilter(lookup_expr='icontains', label=_('Date'))
+
+    class Meta:
+        model = ALPTeacherAttendance
+        fields = ['teacher', 'date', 'status']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.helper = FormHelper()
+        self.form.helper.form_method = 'get'
+        self.form.helper.form_tag = False
+        self.form.helper.disable_csrf = True
+        self.form.helper.layout = Layout(*self.form.fields.keys())
