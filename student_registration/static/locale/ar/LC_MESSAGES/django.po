@@ -3842,6 +3842,14 @@ msgstr "الوضع الدراسي للطفل عند التسجيل في الدو
 msgid "Program Enrollment Details"
 msgstr "تفاصيل التسجيل في البرنامج"
 
+#: student_registration/mscc/education_form.py
+msgid "Number enrolled"
+msgstr "عدد المسجلين"
+
+#: student_registration/mscc/education_form.py
+msgid "Children enrolled in the selected round, program, and class section."
+msgstr "الأطفال المسجلون في الدورة والبرنامج والشعبة المحددة."
+
 #: student_registration/mscc/education_form.py:604
 #: student_registration/mscc/education_form.py:896
 msgid "Save Education Data"

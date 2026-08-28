@@ -441,6 +441,12 @@ class EducationAssessmentForm(forms.ModelForm):
 
 
 class EducationServiceForm(forms.ModelForm):
+    number_enrolled = forms.IntegerField(
+        label=_("Number enrolled"),
+        required=False,
+        disabled=True,
+        help_text=_("Children enrolled in the selected round, program, and class section."),
+    )
     education_status = forms.ChoiceField(
         label=_("Child\'s educational level when registering for the round"),
         widget=forms.Select, required=True,
@@ -493,6 +499,7 @@ class EducationServiceForm(forms.ModelForm):
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
         self.fields['registration_date'].widget.attrs['max'] = date.today().strftime('%Y-%m-%d')
+        self.fields['number_enrolled'].initial = self._number_enrolled(instance)
 
         if self.registry:
             self.fields['registration_id'].initial = self.registry
@@ -596,6 +603,10 @@ class EducationServiceForm(forms.ModelForm):
                         Div('registration_date', css_class='col-md-6'),
                         css_class='row mb-3' + display_edu_section
                     ),
+                    Div(
+                        Div('number_enrolled', css_class='col-md-6'),
+                        css_class='row mb-3' + display_edu_section
+                    ),
                     css_class='mt-4'
                 ),
                 css_id='step-1'
@@ -610,6 +621,33 @@ class EducationServiceForm(forms.ModelForm):
                 css_class='d-flex justify-content-end border-top pt-4 mt-4'
             ),
         )
+
+    def _number_enrolled(self, instance):
+        """Count active children in the form's selected program class."""
+        def selected_value(field_name):
+            if self.is_bound:
+                return self.data.get(self.add_prefix(field_name))
+            return getattr(instance, field_name, None) if instance else None
+
+        round_value = selected_value('round')
+        program = selected_value('education_program')
+        class_section = selected_value('class_section')
+        if not all((round_value, program, class_section)):
+            return 0
+
+        enrollments = EducationService.objects.filter(
+            round_id=round_value,
+            education_program=program,
+            class_section=class_section,
+            registration__deleted=False,
+        )
+        center_id = getattr(getattr(self.request, 'user', None), 'center_id', None)
+        partner_id = getattr(getattr(self.request, 'user', None), 'partner_id', None)
+        if center_id:
+            enrollments = enrollments.filter(registration__center_id=center_id)
+        if partner_id:
+            enrollments = enrollments.filter(registration__partner_id=partner_id)
+        return enrollments.count()
 
     def save(self, request=None, instance=None, registry=None):
         validated_data = request.POST
@@ -737,6 +775,12 @@ class EducationServiceForm(forms.ModelForm):
 
 
 class NewRoundForm(forms.ModelForm):
+    number_enrolled = forms.IntegerField(
+        label=_("Number enrolled"),
+        required=False,
+        disabled=True,
+        help_text=_("Children enrolled in the selected round, program, and class section."),
+    )
     education_status = forms.ChoiceField(
         label=_("Child\'s educational level when registering for the round"),
         widget=forms.Select, required=True,
@@ -789,6 +833,7 @@ class NewRoundForm(forms.ModelForm):
 
         super(NewRoundForm, self).__init__(*args, **kwargs)
         self.fields['registration_date'].widget.attrs['max'] = date.today().strftime('%Y-%m-%d')
+        self.fields['number_enrolled'].initial = self._number_enrolled(instance)
 
         if self.registry:
             self.fields['registration_id'].initial = self.registry
@@ -888,6 +933,10 @@ class NewRoundForm(forms.ModelForm):
                         Div('registration_date', css_class='col-md-6'),
                         css_class='row mb-3' + display_edu_section
                     ),
+                    Div(
+                        Div('number_enrolled', css_class='col-md-6'),
+                        css_class='row mb-3' + display_edu_section
+                    ),
                     css_class='mt-4'
                 ),
                 css_id='step-1'
@@ -902,6 +951,33 @@ class NewRoundForm(forms.ModelForm):
                 css_class='d-flex justify-content-end border-top pt-4 mt-4'
             ),
         )
+
+    def _number_enrolled(self, instance):
+        """Count active children in the form's selected program class."""
+        def selected_value(field_name):
+            if self.is_bound:
+                return self.data.get(self.add_prefix(field_name))
+            return getattr(instance, field_name, None) if instance else None
+
+        round_value = selected_value('round')
+        program = selected_value('education_program')
+        class_section = selected_value('class_section')
+        if not all((round_value, program, class_section)):
+            return 0
+
+        enrollments = EducationService.objects.filter(
+            round_id=round_value,
+            education_program=program,
+            class_section=class_section,
+            registration__deleted=False,
+        )
+        center_id = getattr(getattr(self.request, 'user', None), 'center_id', None)
+        partner_id = getattr(getattr(self.request, 'user', None), 'partner_id', None)
+        if center_id:
+            enrollments = enrollments.filter(registration__center_id=center_id)
+        if partner_id:
+            enrollments = enrollments.filter(registration__partner_id=partner_id)
+        return enrollments.count()
 
     def save(self, request=None, instance=None, registry=None):
 
