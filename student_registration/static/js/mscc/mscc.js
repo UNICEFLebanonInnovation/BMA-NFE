@@ -479,7 +479,7 @@ function reorganizeForm()
         $('div#div_id_child_siblings_have_disability').removeClass('d-none').show();
     }
     else{
-//        $('div#div_id_child_siblings_have_disability').addClass('d-none').hide();
+        $('div#div_id_child_siblings_have_disability').addClass('d-none').hide();
         $('#id_child_siblings_have_disability').val('');
     }
 
