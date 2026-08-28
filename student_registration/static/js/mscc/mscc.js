@@ -546,11 +546,11 @@ function reorganizeForm()
     //  Labour
     var have_labour = $('select#id_have_labour').val();
     if(have_labour == '' || have_labour == 'No'){
-//        $('div#div_id_labour_type').addClass('d-none').hide();
-//        $('#labour_details_1').addClass('d-none').hide();
-//        $('#labour_details_2').addClass('d-none').hide();
-//        $('#labour_details_2_alt').addClass('d-none').hide();
-//        $('#labour_details_3').addClass('d-none').hide();
+        $('div#div_id_labour_type').addClass('d-none').hide();
+        $('#labour_details_1').addClass('d-none').hide();
+        $('#labour_details_2').addClass('d-none').hide();
+        $('#labour_details_2_alt').addClass('d-none').hide();
+        $('#labour_details_3').addClass('d-none').hide();
         $('#id_labour_type').val('');
         $('#id_labour_type_specify').val('');
         $('#id_labour_hours').val('');
