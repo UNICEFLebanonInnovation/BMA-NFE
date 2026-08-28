@@ -4065,8 +4065,8 @@ msgid "Partner unique child number"
 msgstr "رقم الطفل الفريد لدى الشريك"
 
 #: student_registration/mscc/forms.py:195
-msgid "Source of referral of the child to NFR Sector"
-msgstr "مصدر احالة الطفل  إلى برنامج RS"
+msgid "Source of referral of the child to NFR Sector (NFE*)"
+msgstr "مصدر احالة الطفل  إلى برنامج RS (NFE*)"
 
 #: student_registration/mscc/forms.py:203
 msgid "e.g. Community outreach team"

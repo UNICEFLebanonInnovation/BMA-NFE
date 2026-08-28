@@ -192,7 +192,7 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     source_of_identification = forms.ChoiceField(
-        label=_("Source of referral of the child to NFR Sector"),
+        label=_("Source of referral of the child to NFR Sector (NFE*)"),
         widget=forms.Select,
         required=True,
         choices=Registration.IDENTIFICATION_SOURCE,
