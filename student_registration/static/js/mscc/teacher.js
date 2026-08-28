@@ -48,7 +48,7 @@ function organize_form() {
     }
 
     teacher_assignment = $('#id_teacher_assignment').val();
-    if (teacher_assignment == 'Private and Dirasa') {
+    if (teacher_assignment == 'Private and Makani') {
         $('#div_id_teaching_hours_private_school').removeClass('d-none');
         $('#span_teaching_hours_private_school').removeClass('d-none');
 

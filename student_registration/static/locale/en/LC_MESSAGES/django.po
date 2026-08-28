@@ -4443,12 +4443,18 @@ msgstr ""
 msgid "Computer"
 msgstr ""
 
-#: student_registration/mscc/models.py:217
+#: student_registration/mscc/models.py:218
+msgid "Makani only"
+msgstr ""
+
+#: student_registration/mscc/models.py:219
+msgid "Private and Makani"
+msgstr ""
+
 #: student_registration/students/models.py:426
 msgid "Dirasa only"
 msgstr ""
 
-#: student_registration/mscc/models.py:218
 #: student_registration/students/models.py:427
 msgid "Private and Dirasa"
 msgstr ""
@@ -11229,4 +11235,3 @@ msgstr ""
 #: student_registration/templates/django_tables2/bootstrap5.html:14
 msgid "Is closed"
 msgstr ""
-

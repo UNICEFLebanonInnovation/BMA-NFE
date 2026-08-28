@@ -214,8 +214,8 @@ class Teacher(TimeStampedModel):
         ('Level six', _('Level six')),  
     )
     TEACHER_ASSIGNMENT = Choices(
-        ('Dirasa only', _('Dirasa only')),
-        ('Private and Dirasa', _('Private and Dirasa')),
+        ('Makani only', _('Makani only')),
+        ('Private and Makani', _('Private and Makani')),
     )
     YES_NO = Choices(
         ('', _('----------')),
@@ -2684,4 +2684,3 @@ class LegoService(TimeStampedModel):
         ordering = ['id']
         verbose_name=_("LEGO")
         verbose_name_plural=_("LEGO")
-

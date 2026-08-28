@@ -1527,7 +1527,7 @@ class TeacherForm(forms.ModelForm):
         teaching_hours_private_school = cleaned_data.get('teaching_hours_private_school')
         teaching_hours_mscc = cleaned_data.get('teaching_hours_mscc')
 
-        if teacher_assignment == 'Private and Dirasa':
+        if teacher_assignment == 'Private and Makani':
             if not teaching_hours_private_school:
                 self.add_error('teaching_hours_private_school', _('This field is required'))
             if not teaching_hours_mscc:
