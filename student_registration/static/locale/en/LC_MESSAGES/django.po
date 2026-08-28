@@ -3701,6 +3701,14 @@ msgstr ""
 msgid "Program Enrollment Details"
 msgstr ""
 
+#: student_registration/mscc/education_form.py
+msgid "Number enrolled"
+msgstr ""
+
+#: student_registration/mscc/education_form.py
+msgid "Children enrolled in the selected round, program, and class section."
+msgstr ""
+
 #: student_registration/mscc/education_form.py:603
 msgid "Save Education Data"
 msgstr ""
