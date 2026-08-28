@@ -1583,8 +1583,10 @@ class EducationService(TimeStampedModel):
         ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')),
         ('Was Registered in Formal Education but not attending',
          _('Was Registered in Formal Education but not attending')),
-        ('Currently registered in Formal Education school', _('Currently registered in Formal Education school')),
-        ('Currently registered in Formal Education school but not attending', _('Currently registered in Formal Education school but not attending')),
+        ('Currently registered in Formal Education school',
+         _('Currently registered in Formal Education school')),
+        ('Currently registered in Formal Education school but not attending',
+         _('Currently registered in Formal Education school but not attending')),
         ('No', _('No')),
     )
     DROPOUT_PROGRAM = Choices(
