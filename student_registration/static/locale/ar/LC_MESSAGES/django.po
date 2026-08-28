@@ -4326,6 +4326,11 @@ msgstr "التقدم إلى التعليم الرسمي"
 msgid "Referred to YBLN"
 msgstr "الأحالة إالى برنامج المراهقين (YBLN)"
 
+#: student_registration/mscc/forms.py
+#: student_registration/mscc/models.py
+msgid "Left to Syria"
+msgstr "غادر إلى سوريا"
+
 #: student_registration/mscc/forms.py:995
 #: student_registration/mscc/models.py:2431
 msgid "Progress to  Higher Level  in next school year"
