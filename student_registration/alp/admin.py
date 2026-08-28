@@ -39,5 +39,5 @@ class ALPTeacherAttendanceAdmin(ImportExportModelAdmin):
 
 @admin.register(ALPAttendance)
 class ALPAttendanceAdmin(ImportExportModelAdmin):
-    list_display = ('registration', 'date', 'status', 'shift')
-    search_fields = ('registration__child__first_name', 'registration__child__last_name')
+    list_display = ('school', 'attendance_date', 'programme', 'round')
+    search_fields = ('school__name',)
