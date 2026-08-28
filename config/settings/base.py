@@ -418,6 +418,7 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"app": "mscc"},
+        {"app": "alp"},
         # {"app": "clm"},
         {"app": "users"},
         {"app": "schools"},
@@ -426,6 +427,7 @@ JAZZMIN_SETTINGS = {
     ],
     "order_with_respect_to": [
         "mscc",
+        "alp",
         # "clm",
         "attendances",
         "child",

@@ -45,6 +45,7 @@ class ALPTeacher(TimeStampedModel):
     last_name = models.CharField(max_length=64, db_index=True, blank=True, null=True, verbose_name=_('Last name'))
     phone_number = models.CharField(max_length=20, db_index=True, blank=True, null=True, verbose_name=_('Phone Number'))
     sex = models.CharField(max_length=6, choices=GENDER, blank=True, null=True, verbose_name=_('Sex'))
+    unicef_id = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('UNIQUE ID'))
     school = models.ForeignKey(School, blank=False, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('School'))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, null=True, related_name='+', on_delete=models.SET_NULL)
 

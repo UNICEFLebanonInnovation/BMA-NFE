@@ -12,6 +12,7 @@ re_path(r'^registrations/add/$', view=views.RegistrationAddView.as_view(), name=
 re_path(r'^registrations/edit/(?P<pk>[\w.@+-]+)/$', view=views.RegistrationEditView.as_view(), name='registration_edit'),
 re_path(r'^registrations/delete/(?P<pk>[\w.@+-]+)/$', view=views.RegistrationDeleteView.as_view(), name='registration_delete'),
 re_path(r'^child-profile/(?P<pk>[\w.@+-]+)/$', view=views.ChildProfileView.as_view(), name='child_profile'),
+re_path(r'^child-duplication-check/$', view=views.child_duplication_check, name='child_duplication_check'),
 
 re_path(r'^teachers/$', view=views.TeacherListView.as_view(), name='teacher_list'),
 re_path(r'^teachers/add/$', view=views.TeacherAddView.as_view(), name='teacher_add'),

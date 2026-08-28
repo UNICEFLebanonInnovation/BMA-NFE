@@ -50,7 +50,22 @@ class RegistrationAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermi
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        teacher = form.instance
+        if not teacher.unicef_id:
+            from student_registration.students.utils import generate_one_unique_id
+            teacher.unicef_id = generate_one_unique_id(
+                f"T-{teacher.pk}",
+                teacher.first_name,
+                teacher.father_name,
+                teacher.last_name,
+                "", # No mother name collected for teachers
+                "1980-01-01", # Default fallback if no dob is collected
+                "LEB", # Default fallback
+                teacher.sex
+            )
+            teacher.save()
+        return response
 
 class RegistrationEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, UpdateView):
     model = ALPRegistration
@@ -69,7 +84,22 @@ class RegistrationEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPerm
 
     def form_valid(self, form):
         form.instance.modified_by = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        teacher = form.instance
+        if not teacher.unicef_id:
+            from student_registration.students.utils import generate_one_unique_id
+            teacher.unicef_id = generate_one_unique_id(
+                f"T-{teacher.pk}",
+                teacher.first_name,
+                teacher.father_name,
+                teacher.last_name,
+                "", # No mother name collected for teachers
+                "1980-01-01", # Default fallback if no dob is collected
+                "LEB", # Default fallback
+                teacher.sex
+            )
+            teacher.save()
+        return response
 
 class RegistrationDeleteView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, DeleteView):
     model = ALPRegistration
@@ -300,3 +330,73 @@ class ALPSchoolDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
             'total': schools.count(),
             'schools': schools,
         }
+
+
+from django.http import JsonResponse
+import json
+from student_registration.students.models import Nationality
+
+def child_duplication_check(request):
+    body_unicode = request.body.decode('utf-8')
+    if body_unicode:
+        body = json.loads(body_unicode)
+
+        birthday_year = body.get('birthday_year')
+        birthday_month = body.get('birthday_month')
+        birthday_day = body.get('birthday_day')
+        first_name = body.get('first_name')
+        father_name = body.get('father_name')
+        last_name = body.get('last_name')
+        mother_fullname = body.get('mother_fullname')
+        sex = body.get('sex')
+        nationality_id = body.get('nationality')
+        registration_id = body.get('registration_id')
+
+        try:
+            nationality = Nationality.objects.get(id=nationality_id).name_en
+        except Nationality.DoesNotExist:
+            nationality = ''
+
+        birthdate = '{0}-{1}-{2}'.format(birthday_year, birthday_month, birthday_day)
+        from student_registration.students.utils import generate_one_unique_id
+        unicef_id = generate_one_unique_id(
+            '0',
+            first_name,
+            father_name,
+            last_name,
+            mother_fullname,
+            birthdate,
+            nationality,
+            sex
+        )
+
+        if unicef_id:
+            qs = ALPRegistration.objects.filter(
+                child__unicef_id=unicef_id,
+                deleted=False
+            )
+            if registration_id:
+                try:
+                    current_reg = ALPRegistration.objects.get(pk=registration_id)
+                    qs = qs.exclude(child_id=current_reg.child_id)
+                except ALPRegistration.DoesNotExist:
+                    qs = qs.exclude(pk=registration_id)
+            qs = qs.values(
+                'id',
+                'school__name',
+                'child__first_name',
+                'child__father_name',
+                'child__last_name',
+                'child__mother_fullname',
+                'child__birthday_day',
+                'child__birthday_month',
+                'child__birthday_year',
+                'child__gender',
+                'child__nationality__name'
+            )
+            results = list(qs)
+            for row in results:
+                row['center__name'] = row.pop('school__name')
+            return JsonResponse({'result': results})
+
+    return JsonResponse({'result': []})
