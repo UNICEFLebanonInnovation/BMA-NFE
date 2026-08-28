@@ -991,6 +991,7 @@ class ReferralForm(forms.ModelForm):
         choices.append(('Referred to TVET', _('Referred to TVET')))
         choices.append(('Progress to FE', _('Progress to FE')))
         choices.append(('Drop out', _('Drop out')))
+        choices.append(('Left to Syria', _('Left to Syria')))
         choices.append(('Referred to YBLN', _('Referred to YBLN')))
         choices.append(('Progress to  Higher Level  in next school year', _('Progress to  Higher Level  in next school year')))
 

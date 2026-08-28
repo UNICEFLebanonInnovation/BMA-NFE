@@ -2426,6 +2426,7 @@ class Referral(TimeStampedModel):
         ('Referred to Specialized Education', _('Referred to Specialized Education')),
         ('Referred to TVET', _('Referred to TVET')),
         ('Drop out', _('Drop out')),
+        ('Left to Syria', _('Left to Syria')),
         ('Referred to YBLN', _('Referred to YBLN')),
         ('Referred to CBECE Higher Level in next school year', _('Referred to CBECE Higher Level in next school year')),
         ('Progress to  Higher Level  in next school year', _('Progress to  Higher Level  in next school year')),
