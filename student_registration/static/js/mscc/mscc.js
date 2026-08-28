@@ -209,10 +209,21 @@ $(document).ready(function() {
             var father_name = $('#id_child_father_name').val();
             var last_name = $('#id_child_last_name').val();
             $('#id_caregiver_first_name').val(father_name);
+            $('#id_caregiver_middle_name').val('');
             $('#id_caregiver_last_name').val(last_name);
+        }
+        else if(main_caregiver == 'Mother'){
+            var mother_name_parts = ($('#id_child_mother_fullname').val() || '').trim().split(/\s+/);
+            var mother_first_name = mother_name_parts.shift() || '';
+            var mother_last_name = mother_name_parts.length ? mother_name_parts.pop() : '';
+
+            $('#id_caregiver_first_name').val(mother_first_name);
+            $('#id_caregiver_middle_name').val(mother_name_parts.join(' '));
+            $('#id_caregiver_last_name').val(mother_last_name);
         }
         else {
             $('#id_caregiver_first_name').val('');
+            $('#id_caregiver_middle_name').val('');
             $('#id_caregiver_last_name').val('');
         }
     });
