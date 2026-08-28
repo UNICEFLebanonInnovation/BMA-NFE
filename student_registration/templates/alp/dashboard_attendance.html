@@ -1,0 +1,21 @@
+{% extends "mscc/base.html" %}
+{% load util_tags %}
+{% load custom_tags %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+
+{% block project_title %}{% trans "Attendance Dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h3 class="fw-bold mb-4">{% trans "Attendance Dashboard" %}</h3>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card bg-success text-white text-center p-4">
+                <h5 class="fw-bold">{% trans "Total Attendance Records" %}</h5>
+                <h2 class="mb-0">{{ total }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
