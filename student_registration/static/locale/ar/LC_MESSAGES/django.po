@@ -4698,12 +4698,18 @@ msgstr "التربية المدنية"
 msgid "Computer"
 msgstr "الحاسوب"
 
-#: student_registration/mscc/models.py:217
+#: student_registration/mscc/models.py:218
+msgid "Makani only"
+msgstr "مكاني فقط"
+
+#: student_registration/mscc/models.py:219
+msgid "Private and Makani"
+msgstr "خاص ومكاني"
+
 #: student_registration/students/models.py:426
 msgid "Dirasa only"
 msgstr "دراسة فقط"
 
-#: student_registration/mscc/models.py:218
 #: student_registration/students/models.py:427
 msgid "Private and Dirasa"
 msgstr "على نفقته الخاصة / بواسطة الأهل"
