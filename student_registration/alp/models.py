@@ -8,6 +8,7 @@ from model_utils.models import TimeStampedModel
 from django.db.models import JSONField
 from django.contrib.postgres.fields import ArrayField
 
+from student_registration.students.models import AttachmentType, IDType, Nationality, Training
 from student_registration.schools.models import School
 from student_registration.child.models import Child
 
@@ -39,14 +40,190 @@ class ALPTeacher(TimeStampedModel):
         ('Male', _('Male')),
         ('Female', _('Female')),
     )
+    SUBJECT_PROVIDED = (
+        ('arabic', _('Arabic')),
+        ('math', _('Math')),
+        ('english', _('English')),
+        ('french', _('French')),
+        ('PSS / Counsellor', _('PSS / Counsellor')),
+        ('Physical Education', _('Physical Education')),
+        ('Art', _('Art')),
+        ('Sciences', _('Sciences')),
+        ('PSS', _('PSS')),
+        ('History', _('History')),
+        ('Geography', _('Geography')),
+        ('Civics', _('Civics')),
+        ('Computer', _('Computer')),
+    )
+    REGISTRATION_LEVEL = (
+        ('Level one', _('Level one')),
+        ('Level two', _('Level two')),
+        ('Level three', _('Level three')),
+        ('Level four', _('Level four')),
+        ('Level five', _('Level five')),
+        ('Level six', _('Level six')),
+    )
+    TEACHER_ASSIGNMENT = Choices(
+        ('Makani only', _('Makani only')),
+        ('Private and Makani', _('Private and Makani')),
+    )
+    YES_NO = Choices(
+        ('', _('----------')),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
 
-    first_name = models.CharField(max_length=64, db_index=True, blank=True, null=True, verbose_name=_('First name'))
-    father_name = models.CharField(max_length=64, db_index=True, blank=True, null=True, verbose_name=_('Father name'))
-    last_name = models.CharField(max_length=64, db_index=True, blank=True, null=True, verbose_name=_('Last name'))
-    phone_number = models.CharField(max_length=20, db_index=True, blank=True, null=True, verbose_name=_('Phone Number'))
-    sex = models.CharField(max_length=6, choices=GENDER, blank=True, null=True, verbose_name=_('Sex'))
-    school = models.ForeignKey(School, blank=False, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('School'))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, null=True, related_name='+', on_delete=models.SET_NULL)
+    first_name = models.CharField(
+        max_length=64, db_index=True, blank=True, null=True, verbose_name=_('First name')
+    )
+    father_name = models.CharField(
+        max_length=64, db_index=True, blank=True, null=True, verbose_name=_('Father name')
+    )
+    last_name = models.CharField(
+        max_length=64, db_index=True, blank=True, null=True, verbose_name=_('Last name')
+    )
+    mother_fullname = models.CharField(
+        max_length=64, db_index=True, blank=True, null=True, verbose_name=_('Mother full name')
+    )
+    sex = models.CharField(
+        max_length=6, choices=GENDER, blank=True, null=True, verbose_name=_('Sex')
+    )
+    birthdate = models.DateField(
+        blank=True, null=True, verbose_name=_('Birth date')
+    )
+    id_number = models.CharField(
+        max_length=45, db_index=True, blank=True, null=True, verbose_name=_('ID number')
+    )
+    id_type = models.ForeignKey(
+        IDType,
+        blank=True, null=True, verbose_name=_('ID type'),
+        related_name='+', on_delete=models.SET_NULL,
+    )
+    nationality = models.ForeignKey(
+        Nationality,
+        blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, verbose_name=_('Nationality')
+    )
+    unicef_id = models.CharField(
+        max_length=45, blank=True, null=True, verbose_name=_('UNIQUE ID')
+    )
+    round = models.ForeignKey(
+        ALPRound,
+        blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, verbose_name=_('Round')
+    )
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True, related_name='+',
+        on_delete=models.SET_NULL, verbose_name=_('School')
+    )
+    email = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name=_('Email')
+    )
+    phone_number = models.CharField(
+        max_length=50, blank=True, null=True, verbose_name=_('Phone number')
+    )
+    subjects_provided = ArrayField(
+        models.CharField(
+            choices=SUBJECT_PROVIDED, max_length=200, blank=True, null=True,
+        ),
+        blank=True, null=True, verbose_name=_('Subjects provided')
+    )
+    registration_level = ArrayField(
+        models.CharField(
+            choices=REGISTRATION_LEVEL, max_length=200, blank=True, null=True,
+        ),
+        blank=True, null=True, verbose_name=_('Dirasa Grade level')
+    )
+    teacher_assignment = models.CharField(
+        max_length=100, blank=True, null=True,
+        choices=TEACHER_ASSIGNMENT, verbose_name=_('Teacher Assignment')
+    )
+    teaching_hours_private_school = models.IntegerField(
+        blank=True, null=True, verbose_name=_('Number of teaching hours in private school')
+    )
+    teaching_hours_mscc = models.IntegerField(
+        blank=True, null=True, verbose_name=_('Number of teaching hours')
+    )
+    years_of_experience = models.IntegerField(
+        blank=True, null=True, verbose_name=_('Years of experience in NFE/FE')
+    )
+    trainings = models.ManyToManyField(
+        Training, blank=True, related_name='alp_teachers',
+        verbose_name=_('Topics of teacher training')
+    )
+    training_sessions_attended = models.IntegerField(
+        blank=True, null=True, choices=((x, x) for x in range(0, 30)),
+        verbose_name=_('Number of teacher training sessions (attended)')
+    )
+    training_date_of_completion = models.DateField(
+        blank=True, null=True, verbose_name=_('Date of completion of the listed training')
+    )
+    extra_coaching = models.CharField(
+        max_length=10, blank=True, null=True,
+        choices=YES_NO, verbose_name=_('Extra coaching')
+    )
+    extra_coaching_specify = models.TextField(
+        blank=True, null=True, verbose_name=_('Please specify')
+    )
+    attach_short_description_1 = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Description')
+    )
+    attach_file_1 = models.FileField(
+        upload_to='uploads/alp_teacher', blank=True, null=True, verbose_name=_('Attachment'),
+    )
+    attach_type_1 = models.ForeignKey(
+        AttachmentType, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name='+', verbose_name=_('Type')
+    )
+    attach_short_description_2 = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Description')
+    )
+    attach_file_2 = models.FileField(
+        upload_to='uploads/alp_teacher', blank=True, null=True, verbose_name=_('Attachment'),
+    )
+    attach_type_2 = models.ForeignKey(
+        AttachmentType, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name='+', verbose_name=_('Type')
+    )
+    attach_short_description_3 = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Description')
+    )
+    attach_file_3 = models.FileField(
+        upload_to='uploads/alp_teacher', blank=True, null=True, verbose_name=_('Attachment'),
+    )
+    attach_type_3 = models.ForeignKey(
+        AttachmentType, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name='+', verbose_name=_('Type')
+    )
+    attach_short_description_4 = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Description')
+    )
+    attach_file_4 = models.FileField(
+        upload_to='uploads/alp_teacher', blank=True, null=True, verbose_name=_('Attachment'),
+    )
+    attach_type_4 = models.ForeignKey(
+        AttachmentType, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name='+', verbose_name=_('Type')
+    )
+    attach_short_description_5 = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Description')
+    )
+    attach_file_5 = models.FileField(
+        upload_to='uploads/alp_teacher', blank=True, null=True, verbose_name=_('Attachment'),
+    )
+    attach_type_5 = models.ForeignKey(
+        AttachmentType, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name='+', verbose_name=_('Type')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, blank=False, null=True, related_name='+',
+        on_delete=models.SET_NULL, verbose_name=_('Owner')
+    )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, verbose_name=_('Modified by'),
+    )
 
     class Meta:
         ordering = ['-created']
