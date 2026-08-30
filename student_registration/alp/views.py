@@ -18,6 +18,14 @@ class ALPUserRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return user_has_alp_permission(self.request.user)
 
+
+class ALPPivotUserRequiredMixin(UserPassesTestMixin):
+    """Allow ALP focal points and site administrators into ALP reporting."""
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff or user_has_alp_permission(user)
+
 class ALPEditPermissionMixin(object):
     """
     Superadmins can see all schools info in read-only mode.
@@ -203,6 +211,71 @@ class GradingEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissio
 from django.views.generic import TemplateView, View
 from django.http import JsonResponse
 from django.db.models import Count
+
+
+def _alp_pivot_queryset(user):
+    """Return registrations in the reporting scope of ``user``."""
+    queryset = ALPRegistration.objects.filter(deleted=False)
+    if user.is_superuser or user.is_staff:
+        return queryset
+    return filter_by_school(queryset, user)
+
+
+class ALPPivotDashboardView(
+        LoginRequiredMixin, ALPPivotUserRequiredMixin, TemplateView):
+    """Display the interactive pivot builder using ALP registrations only."""
+
+    template_name = 'alp/pivot_dashboard.html'
+
+
+class ALPPivotDataView(LoginRequiredMixin, ALPPivotUserRequiredMixin, View):
+    """Return ALP registration dimensions within the connected user's scope."""
+
+    def get(self, request):
+        queryset = _alp_pivot_queryset(request.user).values(
+            'school__number',
+            'school__name',
+            'school__governorate__name',
+            'school__district__name',
+            'school__cadaster__name',
+            'child__gender',
+            'child__nationality__name',
+            'child__birthday_year',
+            'round__name',
+            'programme__name',
+            'registration_date',
+            'have_labour',
+            'labour_type',
+            'labour_weekly_income',
+            'source_of_identification',
+            'type',
+        )
+
+        data = []
+        for registration in queryset.iterator():
+            registration_date = registration['registration_date']
+            data.append({
+                'school_number': registration['school__number'] or '',
+                'school': registration['school__name'] or '',
+                'governorate': registration['school__governorate__name'] or '',
+                'district': registration['school__district__name'] or '',
+                'cadaster': registration['school__cadaster__name'] or '',
+                'gender': registration['child__gender'] or '',
+                'nationality': registration['child__nationality__name'] or '',
+                'birth_year': registration['child__birthday_year'] or '',
+                'round': registration['round__name'] or '',
+                'programme': registration['programme__name'] or '',
+                'registration_date': (
+                    registration_date.isoformat() if registration_date else ''
+                ),
+                'participates_in_work': registration['have_labour'] or '',
+                'work_type': registration['labour_type'] or '',
+                'weekly_income': registration['labour_weekly_income'] or '',
+                'referral_source': registration['source_of_identification'] or '',
+                'registration_type': registration['type'] or '',
+            })
+
+        return JsonResponse(data, safe=False)
 
 class ALPRegistrationDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
     template_name = 'alp/dashboard_registration.html'

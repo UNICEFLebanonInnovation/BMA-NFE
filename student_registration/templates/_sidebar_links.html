@@ -89,6 +89,16 @@
 <a href="{% url 'alp:dashboard_school' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'dashboard_school' %}active{% endif %}">
     <i class="bi bi-building"></i> <span>{% trans "School Dashboard" %}</span>
 </a>
+<a href="{% url 'alp:pivot_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'pivot_dashboard' %}active{% endif %}">
+    <i class="bi bi-graph-up"></i> <span>{% trans "ALP Pivot Builder" %}</span>
+</a>
+{% endif %}
+
+{% if request.user.is_staff and not request.user|has_group:"ALP_SCHOOL" %}
+<div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "ALP Analytics" %}</div>
+<a href="{% url 'alp:pivot_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'pivot_dashboard' %}active{% endif %}">
+    <i class="bi bi-graph-up"></i> <span>{% trans "ALP Pivot Builder" %}</span>
+</a>
 {% endif %}
 
 {% endif %}

@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+{% load util_tags %}
+{% load custom_tags %}
+{% load static i18n %}
+
+{% block project_title %}ALP Pivot Dashboard{% endblock %}
+
+{% block content %}
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-head center-elem page-title-heading">
+        <span class="d-inline-block pr-2">
+          <i class="pe-7s-graph1"></i>
+        </span>
+        <span class="d-inline-block">{% trans "ALP Pivot Dashboard" %}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pivot-wrapper">
+  <button id="toggle-fullscreen" class="fullscreen-btn" title="Toggle Fullscreen">
+    <i class="bi bi-arrows-fullscreen"></i>
+  </button>
+  <div id="pivot">
+    <div class="text-center p-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2">{% trans "Loading data..." %}</p>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.min.css">
+
+<style>
+  #pivot-wrapper {
+    margin: 20px;
+    background: #ffffff;
+    border: 1px solid #dfe3e8;
+    border-radius: 10px;
+    padding: 18px;
+    overflow: visible !important;
+    position: relative;
+  }
+
+  #pivot-wrapper.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    border-radius: 0;
+    z-index: 1050;
+    overflow: auto !important;
+    padding: 40px 20px 20px 20px;
+  }
+
+  body.no-scroll {
+    overflow: hidden;
+  }
+
+  .fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    z-index: 20;
+    background: #f4f7fb;
+    border: 1px solid #dbe3ec;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .fullscreen-btn:hover {
+    background: #e1e7ef;
+  }
+
+  #pivot {
+    overflow: auto;
+    min-height: 450px;
+  }
+
+  /* important for dropdown visibility */
+  #pivot,
+  #pivot * ,
+  .pvtUi,
+  .pvtRendererArea,
+  .pvtAxisContainer,
+  .pvtVals {
+    overflow: visible;
+  }
+
+  .pvtUi {
+    position: relative;
+    z-index: 10;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .pvtUi table {
+    border-collapse: separate;
+    border-spacing: 6px;
+  }
+
+  .pvtUi td,
+  .pvtUi th {
+    vertical-align: top;
+  }
+
+  .pvtAxisContainer,
+  .pvtVals,
+  .pvtUnused {
+    background: #f8fafc;
+    border: 1px solid #d8dee6;
+    border-radius: 8px;
+    padding: 8px;
+    min-width: 180px;
+  }
+
+  .pvtRenderer,
+  .pvtAggregator {
+    min-width: 180px;
+  }
+
+  #pivot select {
+    min-height: 40px;
+    border: 1px solid #cfd6de;
+    border-radius: 8px;
+    padding: 6px 10px;
+    background: #fff;
+    font-size: 14px;
+  }
+
+  .pvtTriangle {
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .pvtTriangle:hover {
+    background: #eef4ff;
+  }
+
+  /* filter popup */
+  .pvtFilterBox {
+    position: absolute !important;
+    z-index: 99999 !important;
+    background: #ffffff !important;
+    border: 1px solid #cfd6de !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+    padding: 12px !important;
+    min-width: 260px;
+    max-width: 340px;
+    max-height: 420px;
+    overflow: auto !important;
+  }
+
+  .pvtFilterBox h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .pvtFilterBox input[type="text"] {
+    width: 100%;
+    height: 38px;
+    border: 1px solid #cfd6de;
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+  }
+
+  .pvtCheckContainer {
+    max-height: 220px;
+    overflow-y: auto !important;
+    border: 1px solid #edf1f5;
+    border-radius: 8px;
+    padding: 8px;
+    background: #fafbfd;
+    margin-bottom: 10px;
+  }
+
+  .pvtCheckContainer p {
+    margin-bottom: 8px;
+  }
+
+  .pvtCheckContainer label {
+    display: inline-block;
+    margin-left: 6px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .pvtFilterBox button {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-right: 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .pvtFilterBox button:first-of-type {
+    background: #1f78d1;
+    color: #fff;
+  }
+
+  .pvtFilterBox button:last-of-type {
+    background: #e9edf2;
+    color: #333;
+  }
+
+  .pvtTable {
+    width: 100%;
+    border-collapse: collapse !important;
+    margin-top: 14px;
+    background: #fff;
+  }
+
+  .pvtTable th {
+    background: #f4f7fb;
+    border: 1px solid #dbe3ec !important;
+    padding: 10px 12px !important;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .pvtTable td {
+    border: 1px solid #e1e7ef !important;
+    padding: 9px 12px !important;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .pvtTable tr:nth-child(even) td {
+    background: #fcfdff;
+  }
+
+  .pvtRowLabel,
+  .pvtColLabel {
+    font-weight: 600;
+  }
+
+  .pvtTotal,
+  .pvtGrandTotal {
+    background: #eef5ff !important;
+    font-weight: 700;
+  }
+
+  @media (max-width: 991px) {
+    #pivot-wrapper {
+      padding: 12px;
+      margin: 10px;
+    }
+
+    .pvtAxisContainer,
+    .pvtVals,
+    .pvtUnused {
+      min-width: 140px;
+    }
+
+    .pvtFilterBox {
+      min-width: 220px;
+      max-width: 280px;
+    }
+  }
+</style>
+
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.min.js"></script>
+
+<script type="text/javascript">
+  $(function () {
+    const $pivot = $("#pivot");
+
+    // Fullscreen Toggle
+    $("#toggle-fullscreen").on("click", function() {
+      const $wrapper = $("#pivot-wrapper");
+      const $icon = $(this).find("i");
+
+      $wrapper.toggleClass("fullscreen");
+      $("body").toggleClass("no-scroll", $wrapper.hasClass("fullscreen"));
+
+      if ($wrapper.hasClass("fullscreen")) {
+        $icon.removeClass("bi-arrows-fullscreen").addClass("bi-fullscreen-exit");
+      } else {
+        $icon.removeClass("bi-fullscreen-exit").addClass("bi-arrows-fullscreen");
+      }
+    });
+
+    function enhancePivotFilters() {
+      // close all filter boxes initially
+      $(".pvtFilterBox").hide();
+
+      // remove previous handlers to avoid duplicate binding after rerender
+      $(document).off("click.pivotFilters");
+      $(document).off("mousedown.pivotFilters");
+
+      // only one filter open at a time
+      $(document).on("click.pivotFilters", ".pvtTriangle", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const $currentBox = $(this).closest("li, td, th, span, div").find(".pvtFilterBox").first();
+
+        if ($currentBox.length) {
+          if ($currentBox.is(":visible")) {
+            $currentBox.hide();
+          } else {
+            $(".pvtFilterBox").hide();
+            $currentBox.show();
+          }
+        }
+      });
+
+      // keep popup open when clicking inside it
+      $(document).on("click.pivotFilters", ".pvtFilterBox", function (e) {
+        e.stopPropagation();
+      });
+
+      // close when clicking anywhere else
+      $(document).on("mousedown.pivotFilters", function (e) {
+        if (
+          !$(e.target).closest(".pvtFilterBox").length &&
+          !$(e.target).closest(".pvtTriangle").length
+        ) {
+          $(".pvtFilterBox").hide();
+        }
+      });
+    }
+
+    function renderPivot(data) {
+      $pivot.pivotUI(
+        data,
+        {
+          rows: [],
+          cols: [],
+          vals: [],
+          rendererName: "Table",
+          aggregatorName: "Count",
+          unusedAttrsVertical: false,
+          menuLimit: 500,
+          autoSortUnusedAttrs: true,
+          onRefresh: function () {
+            setTimeout(function () {
+              enhancePivotFilters();
+            }, 50);
+          }
+        },
+        true
+      );
+
+      setTimeout(function () {
+        enhancePivotFilters();
+      }, 50);
+    }
+
+    $.getJSON("{% url 'alp:pivot_data' %}")
+      .done(function (data) {
+        if (data && data.length > 0) {
+          renderPivot(data);
+        } else {
+          $pivot.html(
+            '<div class="alert alert-info">{% trans "No data available for the pivot table." %}</div>'
+          );
+        }
+      })
+      .fail(function (jqXHR, textStatus, errorThrown) {
+        $pivot.html(
+          '<div class="alert alert-danger">{% trans "Error loading pivot data:" %} ' + textStatus + '</div>'
+        );
+        console.error("Pivot data load failed:", textStatus, errorThrown);
+      });
+  });
+</script>
+{% endblock %}
