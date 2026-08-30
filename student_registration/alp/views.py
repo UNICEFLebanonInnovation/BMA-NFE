@@ -372,7 +372,7 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
         )
 
         user = self.request.user
-        instances = filter_by_school(ALPTeacher.objects.select_related('school'), user)
+        instances = filter_by_school(ALPTeacher.objects.all(), user)
 
         schools = School.objects.all()
         rounds = ALPRound.objects.all()
@@ -461,17 +461,6 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
             'total': instances.count(),
             'schools': schools,
             'rounds': rounds,
-            'programmes': programmes,
-            'attendance_rate': rate,
-            'attendance_records': len(records),
-            'recorded_days': len({row['date'] for row in records}),
-            'start_date': start_date.isoformat(),
-            'end_date': end_date.isoformat(),
-            'selected_school': selected_school,
-            'selected_programme': selected_programme,
-            'trend': trend,
-            'school_data': by_school,
-            'programme_rows': programme_rows,
         }
 
 
