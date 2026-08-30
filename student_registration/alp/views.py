@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView, FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
@@ -21,6 +21,9 @@ from .models import (
     ALPGradingDefinition,
 )
 from .forms import ALPRegistrationForm, ALPTeacherForm, ALPSchoolProfileForm
+from .serializers import ALPRegistrationSerializer
+from student_registration.students.models import Nationality
+from student_registration.students.utils import generate_one_unique_id
 from .tables import ALPRegistrationTable, ALPTeacherTable
 from .filters import ALPRegistrationFilter, ALPTeacherFilter
 from .utils import user_has_alp_permission, filter_by_school
@@ -159,11 +162,12 @@ class RegistrationListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
 
-class RegistrationAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, CreateView):
-    model = ALPRegistration
+class RegistrationAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, FormView):
     form_class = ALPRegistrationForm
     template_name = 'alp/registration_form.html'
-    success_url = reverse_lazy('alp:registration_list')
+
+    def get_success_url(self):
+        return reverse_lazy('alp:child_profile', kwargs={'pk': self.request.session['instance_id']})
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -171,26 +175,34 @@ class RegistrationAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermi
         return kwargs
 
     def form_valid(self, form):
-        form.instance.owner = self.request.user
+        form.save(request=self.request)
         return super().form_valid(form)
 
-class RegistrationEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, UpdateView):
-    model = ALPRegistration
+
+class RegistrationEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, FormView):
     form_class = ALPRegistrationForm
     template_name = 'alp/registration_form.html'
-    success_url = reverse_lazy('alp:registration_list')
+
+    def get_registration(self):
+        return filter_by_school(ALPRegistration.objects.all(), self.request.user).get(pk=self.kwargs['pk'])
+
+    def get_success_url(self):
+        return reverse_lazy('alp:child_profile', kwargs={'pk': self.request.session['instance_id']})
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['request'] = self.request
+        instance = self.get_registration()
+        kwargs.update(instance=instance, request=self.request)
+        if self.request.method == 'GET':
+            data = ALPRegistrationSerializer(instance).data
+            for field in ('child_nationality', 'child_disability', 'main_caregiver_nationality',
+                          'father_educational_level', 'mother_educational_level', 'id_type'):
+                data[field] = data.get(field + '_id', '')
+            kwargs['initial'] = data
         return kwargs
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return filter_by_school(qs, self.request.user)
-
     def form_valid(self, form):
-        form.instance.modified_by = self.request.user
+        form.save(request=self.request, instance=self.get_registration())
         return super().form_valid(form)
 
 class RegistrationDeleteView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, DeleteView):
@@ -201,6 +213,34 @@ class RegistrationDeleteView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPe
     def get_queryset(self):
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
+
+def child_duplication_check(request):
+    """Find an existing ALP child using the same identity key as MSCC."""
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+        nationality = Nationality.objects.get(pk=body.get('nationality')).name_en
+    except (ValueError, TypeError, Nationality.DoesNotExist):
+        return JsonResponse({'result': []})
+    unicef_id = generate_one_unique_id(
+        '0', body.get('first_name'), body.get('father_name'),
+        body.get('last_name'), body.get('mother_fullname'),
+        '{0}-{1}-{2}'.format(body.get('birthday_year'), body.get('birthday_month'), body.get('birthday_day')),
+        nationality, body.get('sex'),
+    )
+    matches = ALPRegistration.objects.filter(child__unicef_id=unicef_id, deleted=False)
+    if body.get('registration_id'):
+        try:
+            current = ALPRegistration.objects.get(pk=body['registration_id'])
+            matches = matches.exclude(child_id=current.child_id)
+        except ALPRegistration.DoesNotExist:
+            matches = matches.exclude(pk=body['registration_id'])
+    result = matches.values(
+        'id', 'school__name', 'child__first_name', 'child__father_name',
+        'child__last_name', 'child__mother_fullname', 'child__birthday_day',
+        'child__birthday_month', 'child__birthday_year',
+    )[:10]
+    return JsonResponse({'result': list(result)})
+
 
 class TeacherListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin, SingleTableMixin, FilterView):
     model = ALPTeacher

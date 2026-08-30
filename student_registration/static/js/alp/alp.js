@@ -265,7 +265,7 @@ function child_duplication_check() {
         };
 
         var path = window.location.pathname;
-        var match = path.match(/child-edit\/([^\/]+)\//i);
+        var match = path.match(/registrations\/edit\/([^\/]+)\//i);
         if (match) {
             data.registration_id = match[1];
         }
@@ -290,8 +290,7 @@ function child_duplication_check() {
                     $('#nfe_search_result').closest('.card').find('.card-header').removeClass('bg-primary').addClass('bg-danger');
 
                     $(response.result).each(function(i, item){
-                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/alp/child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC programme in the Center: ' + item.center__name+'</br>';
-                        text = text + 'Click <a href="/alp/new-round/'+item.id+'/">here</a> to register this child in a new Round.'
+                        text = 'This child is already registered in the ALP programme at school: ' + (item.school__name || '-') + '.';
 
                         var full_name = item.child__first_name + " " + item.child__father_name + " " + item.child__last_name;
                         var html = `
@@ -306,10 +305,10 @@ function child_duplication_check() {
                                     <i class="bi bi-person-heart me-1"></i> ${item.child__mother_fullname}
                                 </p>
                                 <div class="small text-muted mb-3">
-                                    <i class="bi bi-geo-alt me-1"></i> ${item.center__name}
+                                    <i class="bi bi-geo-alt me-1"></i> ${item.school__name || "-"}
                                 </div>
-                                <a href="/alp/new-round/${item.id}/" class="btn btn-danger btn-sm w-100 fw-bold">
-                                    <i class="bi bi-person-plus-fill me-1"></i> Select & Re-register
+                                <a href="/alp/child-profile/${item.id}/" class="btn btn-danger btn-sm w-100 fw-bold">
+                                    <i class="bi bi-eye-fill me-1"></i> View existing registration
                                 </a>
                             </div>`;
                         $container.prepend(html);
