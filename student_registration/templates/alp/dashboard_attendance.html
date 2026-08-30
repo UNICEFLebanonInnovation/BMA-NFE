@@ -2,20 +2,76 @@
 {% load util_tags %}
 {% load custom_tags %}
 {% load static i18n %}
-{% load django_bootstrap5 %}
 
+{% block module_name %}{% trans "Attendance Analytics" %}{% endblock %}
 {% block project_title %}{% trans "Attendance Dashboard" %}{% endblock %}
 
+{% block extra_head %}
+<style>
+    .heatmap-container { overflow-x: auto; padding-bottom: 1rem; }
+    .heatmap-tooltip {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: none !important;
+    }
+    .month, .day { fill: #6c757d; font-weight: 500; }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid mt-4">
-    <h3 class="fw-bold mb-4">{% trans "Attendance Dashboard" %}</h3>
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card bg-success text-white text-center p-4">
-                <h5 class="fw-bold">{% trans "Total Attendance Records" %}</h5>
-                <h2 class="mb-0">{{ total }}</h2>
-            </div>
+<div class="row mb-4 align-items-end">
+    <div class="col">
+        <h2 class="fw-bold text-primary mb-1">{% trans "Attendance Dashboard" %}</h2>
+        <p class="text-muted mb-0">{% trans "Visualizing ALP attendance patterns across the year" %}</p>
+    </div>
+    <div class="col-auto">
+        <div class="d-flex align-items-center bg-white p-2 rounded border shadow-sm">
+            <label for="year-select" class="form-label mb-0 me-2 fw-bold text-muted small text-uppercase">{% trans "Selected Year" %}</label>
+            <select id="year-select" class="form-select form-select-sm border-0 fw-bold" style="width: 100px; cursor: pointer;">
+                {% for y in years %}
+                <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                {% empty %}
+                <option value="{{ year }}" selected>{{ year }}</option>
+                {% endfor %}
+            </select>
         </div>
     </div>
 </div>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-grid-3x3 text-primary me-2"></i>{% trans "Overall Attendance" %} ({{ year }})</h5>
+        <div id="heatmap-legend-container"></div>
+    </div>
+    <div class="card-body">
+        <div id="attendance-heatmap" class="heatmap-container"></div>
+    </div>
+</div>
+
+<div id="programme-heatmaps-container"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+    window.attendanceData = JSON.parse("{{ attendance_json|escapejs }}");
+    window.programAttendanceData = JSON.parse("{{ program_attendance_json|escapejs }}");
+    window.trans = {
+        present: "{% trans 'present' %}",
+        total: "{% trans 'total' %}",
+        months: [
+            "{% trans 'Jan' %}", "{% trans 'Feb' %}", "{% trans 'Mar' %}", "{% trans 'Apr' %}",
+            "{% trans 'May' %}", "{% trans 'Jun' %}", "{% trans 'Jul' %}", "{% trans 'Aug' %}",
+            "{% trans 'Sep' %}", "{% trans 'Oct' %}", "{% trans 'Nov' %}", "{% trans 'Dec' %}"
+        ]
+    };
+</script>
+<script src="{% static 'js/mscc/attendance-heatmap.js' %}"></script>
+<script>
+    document.getElementById('year-select').addEventListener('change', function() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('year', this.value);
+        window.location.href = url.toString();
+    });
+</script>
 {% endblock %}
