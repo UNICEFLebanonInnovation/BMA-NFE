@@ -9,11 +9,81 @@ from .models import ALPRegistration, ALPTeacher, ALPGrading, ALPRound
 from .mixins import ALPSchoolFilterMixin
 from student_registration.students.models import AttachmentType, IDType, Nationality, Training
 from student_registration.schools.models import School
+from student_registration.locations.models import Location
 from student_registration.students.widgets import CustomClearableFileInput
 
 
 class ALPSchoolProfileForm(forms.ModelForm):
     """School details that an ALP school focal point may maintain."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['governorate'].queryset = Location.objects.filter(
+            parent__isnull=True
+        ).order_by('name')
+        self.fields['district'].queryset = Location.objects.none()
+        self.fields['cadaster'].queryset = Location.objects.none()
+
+        governorate_id = self.data.get('governorate') if self.is_bound else None
+        district_id = self.data.get('district') if self.is_bound else None
+        if not self.is_bound and self.instance.pk:
+            governorate_id = self.instance.governorate_id
+            district_id = self.instance.district_id
+
+        if governorate_id:
+            self.fields['district'].queryset = Location.objects.filter(
+                parent_id=governorate_id
+            ).order_by('name')
+        if district_id:
+            self.fields['cadaster'].queryset = Location.objects.filter(
+                parent_id=district_id
+            ).order_by('name')
+
+        self.helper = FormHelper()
+        self.helper.form_action = reverse('alp:school_profile')
+        self.helper.layout = Layout(
+            Fieldset(
+                _('School Information'),
+                Div(
+                    Div('number', css_class='col-md-4'),
+                    Div('name', css_class='col-md-4'),
+                    Div('type', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('director_name', css_class='col-md-4'),
+                    Div('land_phone_number', css_class='col-md-4'),
+                    Div('email', css_class='col-md-4'),
+                    css_class='row',
+                ),
+            ),
+            Fieldset(
+                _('Location'),
+                Div(
+                    Div('governorate', css_class='col-md-4'),
+                    Div('district', css_class='col-md-4'),
+                    Div('cadaster', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('longitude', css_class='col-md-6'),
+                    Div('latitude', css_class='col-md-6'),
+                    css_class='row',
+                ),
+            ),
+            Fieldset(
+                _('School Capacity'),
+                Div(
+                    Div('registration_level', css_class='col-md-8 multiple-choice'),
+                    Div('school_capacity', css_class='col-md-4'),
+                    css_class='row',
+                ),
+            ),
+            FormActions(
+                Submit('save', _('Save changes'), css_class='btn btn-primary'),
+            ),
+        )
 
     class Meta:
         model = School
