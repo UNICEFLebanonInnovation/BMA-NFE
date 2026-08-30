@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -7,6 +9,7 @@ from django_tables2.views import SingleTableMixin
 from django_tables2.export.views import ExportMixin
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.utils import timezone
 
 from .models import ALPRegistration, ALPTeacher, ALPGrading
 from .forms import ALPRegistrationForm, ALPTeacherForm, ALPSchoolProfileForm
@@ -347,19 +350,107 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
 
     def get_context_data(self, **kwargs):
         from student_registration.schools.models import School
-        from .models import ALPTeacher
+        from .models import ALPProgram, ALPTeacher, ALPTeacherAttendance, ALPRegistration
 
         user = self.request.user
-        instances = filter_by_school(ALPTeacher.objects.all(), user)
+        instances = filter_by_school(ALPTeacher.objects.select_related('school'), user)
 
         schools = School.objects.all()
 
         if not user.is_superuser:
             schools = schools.filter(id=user.school_id)
 
+        programmes = ALPProgram.objects.all()
+        selected_school = self.request.GET.get('school', '')
+        selected_programme = self.request.GET.get('programme', '')
+        today = timezone.localdate()
+        default_start = today - timedelta(days=180)
+
+        try:
+            start_date = timezone.datetime.strptime(
+                self.request.GET.get('start_date', ''), '%Y-%m-%d'
+            ).date()
+        except (TypeError, ValueError):
+            start_date = default_start
+        try:
+            end_date = timezone.datetime.strptime(
+                self.request.GET.get('end_date', ''), '%Y-%m-%d'
+            ).date()
+        except (TypeError, ValueError):
+            end_date = today
+
+        if start_date > end_date:
+            start_date, end_date = end_date, start_date
+
+        if selected_school:
+            instances = instances.filter(school_id=selected_school)
+        if selected_programme:
+            programme_school_ids = ALPRegistration.objects.filter(
+                programme_id=selected_programme
+            ).values_list('school_id', flat=True)
+            instances = instances.filter(school_id__in=programme_school_ids)
+
+        attendance = ALPTeacherAttendance.objects.filter(
+            teacher__in=instances,
+            date__range=(start_date, end_date),
+        ).select_related('teacher__school')
+
+        records = list(attendance.values(
+            'date', 'status', 'teacher_id', 'teacher__school_id', 'teacher__school__name'
+        ))
+        present = sum(row['status'] == 'Present' for row in records)
+        rate = round((present / len(records)) * 100, 1) if records else 0
+
+        monthly = {}
+        school_totals = {}
+        for row in records:
+            month = row['date'].strftime('%Y-%m') if row['date'] else 'Unknown'
+            monthly.setdefault(month, {'present': 0, 'total': 0})
+            monthly[month]['total'] += 1
+            monthly[month]['present'] += row['status'] == 'Present'
+
+            school_name = row['teacher__school__name'] or 'Unassigned'
+            school_totals.setdefault(school_name, {'present': 0, 'total': 0})
+            school_totals[school_name]['total'] += 1
+            school_totals[school_name]['present'] += row['status'] == 'Present'
+
+        trend = [
+            {'month': month, 'rate': round(values['present'] / values['total'] * 100, 1)}
+            for month, values in sorted(monthly.items())
+        ]
+        by_school = [
+            {'school': name, 'rate': round(values['present'] / values['total'] * 100, 1),
+             'records': values['total']}
+            for name, values in sorted(school_totals.items(), key=lambda item: item[1]['total'], reverse=True)
+        ]
+
+        programme_rows = []
+        for programme in programmes:
+            programme_school_ids = set(ALPRegistration.objects.filter(
+                programme=programme
+            ).values_list('school_id', flat=True))
+            relevant = [row for row in records if row['teacher__school_id'] in programme_school_ids]
+            programme_present = sum(row['status'] == 'Present' for row in relevant)
+            programme_rows.append({
+                'programme': programme.name,
+                'rate': round(programme_present / len(relevant) * 100, 1) if relevant else 0,
+                'records': len(relevant),
+            })
+
         return {
             'total': instances.count(),
             'schools': schools,
+            'programmes': programmes,
+            'attendance_rate': rate,
+            'attendance_records': len(records),
+            'recorded_days': len({row['date'] for row in records}),
+            'start_date': start_date.isoformat(),
+            'end_date': end_date.isoformat(),
+            'selected_school': selected_school,
+            'selected_programme': selected_programme,
+            'trend': trend,
+            'school_data': by_school,
+            'programme_rows': programme_rows,
         }
 
 class ALPAttendanceDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
