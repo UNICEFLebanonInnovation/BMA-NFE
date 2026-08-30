@@ -11,6 +11,20 @@ from student_registration.students.models import AttachmentType, IDType, Nationa
 from student_registration.schools.models import School
 from student_registration.students.widgets import CustomClearableFileInput
 
+
+class ALPSchoolProfileForm(forms.ModelForm):
+    """School details that an ALP school focal point may maintain."""
+
+    class Meta:
+        model = School
+        fields = (
+            'number', 'name', 'type', 'director_name', 'land_phone_number',
+            'email', 'governorate', 'district', 'cadaster', 'longitude',
+            'latitude', 'registration_level', 'school_capacity',
+        )
+        widgets = {'registration_level': forms.CheckboxSelectMultiple}
+
+
 class ALPRegistrationForm(ALPSchoolFilterMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

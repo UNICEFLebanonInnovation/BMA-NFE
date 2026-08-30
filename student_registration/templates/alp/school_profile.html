@@ -1,12 +1,22 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container mt-4">
     <h2>{% trans "School Profile" %}</h2>
-    {% if request.user.school %}
-        <p><strong>{% trans "Name:" %}</strong> {{ request.user.school.name }}</p>
-        <p><strong>{% trans "Type:" %}</strong> {{ request.user.school.type }}</p>
+    {% if object %}
+        {% if request.user.is_superuser %}
+            <p><strong>{% trans "Name:" %}</strong> {{ object.name }}</p>
+            <p><strong>{% trans "Type:" %}</strong> {{ object.type }}</p>
+        {% else %}
+            <p class="text-muted">{% trans "Review and update your school's information below." %}</p>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-primary">{% trans "Save changes" %}</button>
+            </form>
+        {% endif %}
     {% else %}
         <p>{% trans "You are not assigned to any specific school." %}</p>
     {% endif %}
