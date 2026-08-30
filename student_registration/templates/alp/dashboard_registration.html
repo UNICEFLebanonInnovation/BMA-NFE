@@ -29,6 +29,12 @@
     .metric-card:hover {
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
     }
+    .learning-outcome-card {
+        border-top: 4px solid var(--bs-primary) !important;
+    }
+    .learning-outcome-chart {
+        min-height: 280px;
+    }
 </style>
 {% endblock %}
 
@@ -146,6 +152,28 @@
 
                     <!-- Charts Grid -->
                     <div class="row g-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm learning-outcome-card">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-1 fw-bold"><i class="bi bi-mortarboard-fill me-2 text-primary"></i>{% trans "Learning Outcomes" %}</h5>
+                <p class="small text-muted mb-0">{% trans "Latest assessment results and progress for children in the ALP programme." %}</p>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3"><div class="bg-light rounded p-3 h-100"><div class="small text-muted text-uppercase fw-bold">{% trans "Children assessed" %}</div><div class="h3 fw-bold text-primary mb-0" id="outcome-assessed">—</div></div></div>
+                    <div class="col-md-3"><div class="bg-light rounded p-3 h-100"><div class="small text-muted text-uppercase fw-bold">{% trans "Average achievement" %}</div><div class="h3 fw-bold text-info mb-0" id="outcome-average">—</div></div></div>
+                    <div class="col-md-3"><div class="bg-light rounded p-3 h-100"><div class="small text-muted text-uppercase fw-bold">{% trans "Follow-up assessments" %}</div><div class="h3 fw-bold text-warning mb-0" id="outcome-follow-up">—</div></div></div>
+                    <div class="col-md-3"><div class="bg-light rounded p-3 h-100"><div class="small text-muted text-uppercase fw-bold">{% trans "Children improving" %}</div><div class="h3 fw-bold text-success mb-0" id="outcome-improved">—</div></div></div>
+                </div>
+                <div id="learning-outcome-empty" class="alert alert-light border text-center d-none">{% trans "No learning assessments are available for the selected filters." %}</div>
+                <div class="row g-4" id="learning-outcome-charts">
+                    <div class="col-lg-4"><h6 class="fw-bold text-center">{% trans "Latest performance" %}</h6><div id="outcome-bands" class="learning-outcome-chart"></div></div>
+                    <div class="col-lg-4"><h6 class="fw-bold text-center">{% trans "Progress since first assessment" %}</h6><div id="outcome-progress" class="learning-outcome-chart"></div></div>
+                    <div class="col-lg-4"><h6 class="fw-bold text-center">{% trans "Achievement by subject" %}</h6><div id="outcome-subjects" class="learning-outcome-chart"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-0 py-3">
@@ -295,7 +323,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
 
 <script>
-window.msccDashboardConfig = {
+window.alpDashboardConfig = {
     urls: {
         data: "{% url 'alp:alp_dashboard_data' %}"
     }
@@ -313,4 +341,5 @@ $(function() {
 });
 </script>
 <script src="{% static 'js/mscc/alp_dashboard_d3.js' %}?v=2021"></script>
+<script src="{% static 'js/alp/learning_outcomes_dashboard.js' %}?v=1"></script>
 {% endblock %}
