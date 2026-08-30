@@ -1,37 +1,101 @@
 {% extends "mscc/base.html" %}
-{% load util_tags %}
-{% load custom_tags %}
 {% load static i18n %}
-{% load django_bootstrap5 %}
 
 {% block project_title %}{% trans "School Dashboard" %}{% endblock %}
+{% block module_name %}{% trans "ALP Schools Geographic Information" %}{% endblock %}
 
-{% block content %}
-<div class="container-fluid mt-4">
-    <h3 class="fw-bold mb-4">{% trans "School Dashboard" %}</h3>
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card bg-info text-white text-center p-4">
-                <h5 class="fw-bold">{% trans "Accessible Schools" %}</h5>
-                <h2 class="mb-0">{{ total }}</h2>
-            </div>
-        </div>
-    </div>
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+  #alp-school-map { height: min(620px, calc(100vh - 265px)); min-height: 460px; width: 100%; z-index: 1; }
+  .school-map-popup h6 { color: #0081c6; border-bottom: 1px solid #e9ecef; padding-bottom: .5rem; }
+  .school-map-popup dl { display: grid; grid-template-columns: auto 1fr; gap: .25rem .75rem; margin: 0; }
+  .school-map-popup dt { color: #6c757d; font-weight: 600; }
+  .school-map-popup dd { margin: 0; text-align: end; }
+</style>
+{% endblock %}
 
-    <div class="mt-5">
-        <h5 class="fw-bold border-bottom pb-2">{% trans "School Details" %}</h5>
-        <div class="list-group mt-3">
-            {% for school in schools %}
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>{{ school.name }}</strong><br>
-                        <small class="text-muted">{{ school.type|default:"No type specified" }}</small>
-                    </div>
-                </div>
-            {% empty %}
-                <p class="text-muted">{% trans "No schools available." %}</p>
-            {% endfor %}
-        </div>
+{% block main_content %}
+<div class="container-fluid">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h3 class="fw-bold mb-1">{% trans "ALP School Dashboard" %}</h3>
+      <p class="text-muted mb-0">{% trans "Explore school locations, enrollment, staff, and facilities." %}</p>
     </div>
+    <span class="badge bg-primary rounded-pill fs-6 px-3 py-2">
+      <span id="mapped-school-count">0</span> {% trans "schools mapped" %}
+    </span>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3"><div class="card metric-card h-100"><div class="metric-label">{% trans "Accessible Schools" %}</div><div class="metric-value">{{ total }}</div><div class="small text-muted">{% trans "In your reporting scope" %}</div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="card metric-card h-100"><div class="metric-label">{% trans "Mapped Schools" %}</div><div class="metric-value" id="mapped-total">—</div><div class="small text-primary">{% trans "With GPS coordinates" %}</div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="card metric-card h-100"><div class="metric-label">{% trans "ALP Students" %}</div><div class="metric-value" id="student-total">—</div><div class="small text-muted">{% trans "Active registrations" %}</div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="card metric-card h-100"><div class="metric-label">{% trans "ALP Teachers" %}</div><div class="metric-value" id="teacher-total">—</div><div class="small text-muted">{% trans "Across mapped schools" %}</div></div></div>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <form id="school-filter-form" class="row g-3 align-items-end">
+        <div class="col-md-8 col-lg-5">
+          <label for="school-filter" class="form-label small fw-bold">{% trans "School" %}</label>
+          <select id="school-filter" class="form-select">
+            <option value="">{% trans "All Schools" %}</option>
+            {% for school in schools %}<option value="{{ school.id }}">{{ school.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4"><button class="btn btn-primary fw-bold" type="submit"><i class="bi bi-geo-alt me-1"></i>{% trans "Show on map" %}</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 overflow-hidden">
+    <div id="alp-school-map" role="region" aria-label="{% trans 'ALP school locations map' %}"></div>
+    <div id="map-message" class="card-body text-center text-muted d-none"></div>
+  </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const map = L.map('alp-school-map').setView([33.8547, 35.8623], 8);
+  const markers = L.featureGroup().addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  const escapeHtml = value => String(value == null ? '' : value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  const message = document.getElementById('map-message');
+
+  function loadSchools() {
+    const schoolId = document.getElementById('school-filter').value;
+    const url = new URL('{% url "alp:school_geo_data" %}', window.location.origin);
+    if (schoolId) url.searchParams.set('school_id', schoolId);
+    message.classList.add('d-none');
+
+    fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+      .then(response => { if (!response.ok) throw new Error('Request failed'); return response.json(); })
+      .then(schools => {
+        markers.clearLayers();
+        schools.forEach(school => {
+          const popup = `<div class="school-map-popup"><h6 class="fw-bold mb-2">${escapeHtml(school.name)}</h6><dl><dt>{% trans "CERD number" %}</dt><dd>${escapeHtml(school.number)}</dd><dt>{% trans "Location" %}</dt><dd>${escapeHtml(school.cadaster)}, ${escapeHtml(school.district)}</dd><dt>{% trans "Students" %}</dt><dd>${school.students}</dd><dt>{% trans "Teachers" %}</dt><dd>${school.teachers}</dd><dt>{% trans "Capacity" %}</dt><dd>${school.capacity || '—'}</dd><dt>{% trans "CWD accessible" %}</dt><dd>${escapeHtml(school.cwd_accessible)}</dd><dt>{% trans "Internet" %}</dt><dd>${escapeHtml(school.internet_available)}</dd></dl></div>`;
+          L.marker([school.latitude, school.longitude]).bindPopup(popup).addTo(markers);
+        });
+        document.getElementById('mapped-school-count').textContent = schools.length;
+        document.getElementById('mapped-total').textContent = schools.length;
+        document.getElementById('student-total').textContent = schools.reduce((sum, school) => sum + school.students, 0);
+        document.getElementById('teacher-total').textContent = schools.reduce((sum, school) => sum + school.teachers, 0);
+        if (schools.length) map.fitBounds(markers.getBounds().pad(0.15), {maxZoom: 15});
+        else { message.textContent = '{% trans "No schools with GPS coordinates are available for this selection." %}'; message.classList.remove('d-none'); }
+      })
+      .catch(() => { message.textContent = '{% trans "School map data could not be loaded. Please try again." %}'; message.classList.remove('d-none'); });
+  }
+
+  document.getElementById('school-filter-form').addEventListener('submit', event => { event.preventDefault(); loadSchools(); });
+  loadSchools();
+});
+</script>
 {% endblock %}

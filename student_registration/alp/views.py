@@ -519,6 +519,77 @@ class ALPSchoolDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
             'total': schools.count(),
             'schools': schools,
         }
+
+      
+class ALPSchoolGeoDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
+    """Return map-ready school data within the current ALP user's scope."""
+
+    def get(self, request):
+        from django.db.models import Count
+        from student_registration.schools.models import School
+
+        schools = School.objects.select_related(
+            'governorate', 'district', 'cadaster'
+        ).filter(
+            latitude__isnull=False, longitude__isnull=False
+        ).order_by('name')
+
+        if not request.user.is_superuser:
+            if not request.user.school_id:
+                return JsonResponse([], safe=False)
+            schools = schools.filter(id=request.user.school_id)
+
+        school_id = request.GET.get('school_id')
+        if school_id:
+            schools = schools.filter(id=school_id)
+
+        school_list = list(schools)
+        school_ids = [school.id for school in school_list]
+        registration_stats = {
+            row['school_id']: row['total']
+            for row in ALPRegistration.objects.filter(
+                school_id__in=school_ids, deleted=False
+            ).values('school_id').annotate(total=Count('id'))
+        }
+        teacher_stats = {
+            row['school_id']: row['total']
+            for row in ALPTeacher.objects.filter(
+                school_id__in=school_ids
+            ).values('school_id').annotate(total=Count('id'))
+        }
+
+        data = [{
+            'id': school.id,
+            'number': school.number,
+            'name': school.name,
+            'type': school.get_type_display() if school.type else 'N/A',
+            'governorate': (
+                school.governorate.name if school.governorate else 'N/A'
+            ),
+            'district': school.district.name if school.district else 'N/A',
+            'cadaster': school.cadaster.name if school.cadaster else 'N/A',
+            'latitude': school.latitude,
+            'longitude': school.longitude,
+            'students': registration_stats.get(school.id, 0),
+            'teachers': teacher_stats.get(school.id, 0),
+            'capacity': school.school_capacity or 0,
+            'cwd_accessible': (
+                school.get_CWD_accessible_display()
+                if school.CWD_accessible else 'N/A'
+            ),
+            'internet_available': (
+                school.get_internet_available_display()
+                if school.internet_available else 'N/A'
+            ),
+        } for school in school_list]
+
+        return JsonResponse(data, safe=False)
+      
+      
+import json
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.conf import settings
 from django.db.models.functions import TruncDate
 from student_registration.backends.models import ExportHistory
