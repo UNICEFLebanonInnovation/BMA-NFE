@@ -16,7 +16,10 @@ from django.utils import timezone
 import json
 from collections import OrderedDict
 
-from .models import ALPAttendanceChild, ALPRegistration, ALPTeacher, ALPGrading
+from .models import (
+    ALPAttendanceChild, ALPRegistration, ALPTeacher, ALPGrading,
+    ALPGradingDefinition,
+)
 from .forms import ALPRegistrationForm, ALPTeacherForm, ALPSchoolProfileForm
 from .tables import ALPRegistrationTable, ALPTeacherTable
 from .filters import ALPRegistrationFilter, ALPTeacherFilter
@@ -28,6 +31,100 @@ def _current_date():
     if settings.USE_TZ:
         return timezone.localdate()
     return timezone.now().date()
+
+
+def _normalise_grade(value, definition):
+    """Return a grade as a percentage of its configured grading range."""
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return None
+
+    grade_range = definition.max_grade - definition.min_grade
+    if grade_range <= 0:
+        return None
+    percentage = ((value - definition.min_grade) / grade_range) * 100
+    return max(0, min(100, percentage))
+
+
+def build_learning_outcome_data(gradings, definitions):
+    """Summarise latest outcomes and change since each child's first assessment."""
+    definitions = {str(item.id): item for item in definitions}
+    assessments = {}
+    subject_totals = {key: [] for key in definitions}
+
+    for grading in gradings:
+        scores = []
+        for definition_id, value in (grading.grading_data or {}).items():
+            definition = definitions.get(str(definition_id))
+            if not definition:
+                continue
+            percentage = _normalise_grade(value, definition)
+            if percentage is not None:
+                scores.append(percentage)
+
+        if scores and grading.registration_id:
+            assessments.setdefault(grading.registration_id, []).append(
+                (grading.created, sum(scores) / len(scores), grading.grading_data)
+            )
+
+    latest_scores = []
+    progress = {'Improved': 0, 'Stable': 0, 'Declined': 0}
+    for registration_assessments in assessments.values():
+        registration_assessments.sort(key=lambda item: item[0])
+        latest = registration_assessments[-1]
+        latest_scores.append(latest[1])
+
+        for definition_id, value in (latest[2] or {}).items():
+            definition = definitions.get(str(definition_id))
+            if definition:
+                percentage = _normalise_grade(value, definition)
+                if percentage is not None:
+                    subject_totals[str(definition_id)].append(percentage)
+
+        if len(registration_assessments) > 1:
+            change = latest[1] - registration_assessments[0][1]
+            if change > 0.5:
+                progress['Improved'] += 1
+            elif change < -0.5:
+                progress['Declined'] += 1
+            else:
+                progress['Stable'] += 1
+
+    bands = {'On track': 0, 'Developing': 0, 'Needs support': 0}
+    for score in latest_scores:
+        if score >= 75:
+            bands['On track'] += 1
+        elif score >= 50:
+            bands['Developing'] += 1
+        else:
+            bands['Needs support'] += 1
+
+    subjects = []
+    for definition_id, scores in subject_totals.items():
+        if scores:
+            subjects.append({
+                'name': definitions[definition_id].material,
+                'y': round(sum(scores) / len(scores), 1),
+            })
+    subjects.sort(key=lambda item: item['name'])
+
+    return {
+        'assessed_children': len(latest_scores),
+        'average_achievement': (
+            round(sum(latest_scores) / len(latest_scores), 1)
+            if latest_scores else None
+        ),
+        'children_with_follow_up': sum(progress.values()),
+        'improved_children': progress['Improved'],
+        'performance_bands': [
+            {'name': name, 'y': total} for name, total in bands.items()
+        ],
+        'progress': [
+            {'name': name, 'y': total} for name, total in progress.items()
+        ],
+        'subjects': subjects,
+    }
 
 
 class ALPUserRequiredMixin(UserPassesTestMixin):
@@ -349,11 +446,19 @@ class ALPDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
         round_data = aggregate(qs, 'round__name')
         programme_data = aggregate(qs, 'programme__name')
 
+        gradings = ALPGrading.objects.filter(
+            registration_id__in=qs.values('id')
+        ).only('registration_id', 'grading_data', 'created').order_by('created')
+        learning_outcomes = build_learning_outcome_data(
+            gradings, ALPGradingDefinition.objects.all()
+        )
+
         response_data = {
             'nationality': nationality_data,
             'gender': gender_data,
             'round': round_data,
             'programme': programme_data,
+            'learning_outcomes': learning_outcomes,
         }
 
         return JsonResponse(response_data)
