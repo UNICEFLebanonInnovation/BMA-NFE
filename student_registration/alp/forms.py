@@ -307,7 +307,9 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
+        # Let ALPSchoolFilterMixin consume the request.  Popping it here meant
+        # that the mixin never saw the user and exposed every school in the
+        # ALP teacher form.
         super(ALPTeacherForm, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper()
@@ -398,6 +400,12 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
                     Div('attach_short_description_4', css_class='col-md-3'),
                     css_class='row mb-2 align-items-end'
                 ),
+                Div(
+                    Div('attach_file_5', css_class='col-md-6'),
+                    Div('attach_type_5', css_class='col-md-3'),
+                    Div('attach_short_description_5', css_class='col-md-3'),
+                    css_class='row mb-2 align-items-end'
+                ),
             ),
             FormActions(
                 Submit('save', _('Complete Registration'), css_class='btn btn-primary px-5 fw-bold shadow-sm'),
@@ -413,9 +421,9 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         teaching_hours_mscc = cleaned_data.get('teaching_hours_mscc')
 
         if teacher_assignment == 'Private and Makani':
-            if not teaching_hours_private_school:
+            if teaching_hours_private_school is None:
                 self.add_error('teaching_hours_private_school', _('This field is required'))
-            if not teaching_hours_mscc:
+            if teaching_hours_mscc is None:
                 self.add_error('teaching_hours_mscc', _('This field is required'))
 
         extra_coaching = cleaned_data.get('extra_coaching')
@@ -423,6 +431,8 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
 
         if extra_coaching == 'yes' and not extra_coaching_specify:
             self.add_error('extra_coaching_specify', _('This field is required'))
+
+        return cleaned_data
 
 
     class Meta:
