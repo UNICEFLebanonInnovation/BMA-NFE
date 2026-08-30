@@ -1,0 +1,101 @@
+{% extends "mscc/base.html" %}
+{% load util_tags %}
+{% load custom_tags %}
+{% load static i18n %}
+
+{% block project_title %}Attendance{% endblock %}
+
+{% block content %}
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="pe-7s-date icon-gradient bg-plum-plate">
+                                    </i>
+                                </div>
+                                <div>
+                                    {% trans "Daily Attendance" %}
+                                    <div class="page-title-subheading">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="{% url 'mscc:list' %}">{% trans "Home" %}</a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.school.governorate }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.school.caza }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.school.cadaster }} - {{ request.user.school.p_code }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.school.name }} - {{ request.user.school.type }}
+                                                </li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions"></div>
+                        </div>
+</div>
+
+<div class="row">
+{% if request.user|has_group:"ALP_SCHOOL" and not request.user.school %}
+  <div class="alert alert-danger fade show" role="alert"> {% trans "You don't have a school assigned to your profile please contact the administrator" %}</div>
+{% endif %}
+</div>
+
+<div class="row">
+<div class="col-md-4">
+                                    <div class="main-card mb-3 card">
+                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>{% trans "Daily Teacher Attendance" %}
+
+                                        </div>
+                                        <div class="card-body">
+
+                                          <div class="mb-4">
+                                              {% csrf_token %}
+                                              <input type="hidden" value="{{ request.user.school.id }}" name="school_id" id="school_id" />
+                                              <label for="attendance_date" class="form-label">{% trans "Attendance Date" %}</label>
+                                              <div class="input-group">
+                                                  <span class="input-group-text">
+                                                      <i class="bi bi-calendar3"></i>
+                                                  </span>
+                                                  <input type="date" class="form-control" id="attendance_date" value="{{ attendance_date_iso }}"/>
+                                              </div>
+                                          </div>
+
+                                        </div>
+                                        <div class="d-block text-right card-footer">
+                                            <a href="{% url 'alp:load_attendance_teachers' %}?school_id={{ request.user.school_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_teachers"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>{% trans "Load" %}</a>
+{% if request.user|has_group:"ALP_SCHOOL" and request.user.school.id %}
+                                            <a href="{% url 'alp:save_attendance_teachers' %}?school_id={{ request.user.school_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_teachers"><i class="pe-7s-diskette btn-icon-wrapper"></i>{% trans "Save" %}</a>
+{% endif %}
+                                        </div>
+                                      </div>
+                                    </div>
+
+            <div class="col-md-8">
+
+                <div class="main-card mb-3 card">
+                  <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>
+                    <p class="mb-0">{% trans "Teachers:" %} <span id="teachers_count">0</span></p>
+                  </div>
+                  <div class="card-body" style="height: 400px; overflow: auto;">
+                      <div id="attendance_teachers"></div>
+                  </div>
+                  <div class="d-block text-center card-footer"></div>
+
+                </div>
+
+            </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" language="javascript" src="{% static 'js/alp/teacher_attendance.js' %}?v=42"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+{% endblock %}
