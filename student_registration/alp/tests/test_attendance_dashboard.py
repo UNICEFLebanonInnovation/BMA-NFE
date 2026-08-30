@@ -1,8 +1,21 @@
+from datetime import datetime
 from types import SimpleNamespace
+from unittest.mock import patch
 
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, override_settings
 
-from student_registration.alp.views import _alp_attendance_queryset
+from student_registration.alp.views import _alp_attendance_queryset, _current_date
+
+
+class CurrentDateTests(SimpleTestCase):
+    @override_settings(USE_TZ=False)
+    @patch('student_registration.alp.views.timezone.localdate')
+    @patch('student_registration.alp.views.timezone.now')
+    def test_naive_datetime_does_not_get_localized(self, now, localdate):
+        now.return_value = datetime(2026, 8, 30, 13, 57, 32)
+
+        self.assertEqual(_current_date(), datetime(2026, 8, 30).date())
+        localdate.assert_not_called()
 
 
 class ALPAttendanceDashboardQuerysetTests(SimpleTestCase):
