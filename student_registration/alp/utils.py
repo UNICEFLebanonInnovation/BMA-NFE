@@ -181,3 +181,79 @@ def create_attendance(data, school_id):
     except Exception as ex:
         logger.exception("create_attendance failed: %s", ex)
         return False
+
+from .models import ALPTeacher, ALPTeacherAttendance
+
+def load_teacher_attendance(school_id, attendance_date_str):
+    if not attendance_date_str:
+        return {'instances': [], 'new_instances': []}
+
+    attendance_date = parse_date_flexible(attendance_date_str)
+    if not attendance_date:
+        return {'instances': [], 'new_instances': []}
+
+    attendance_date = attendance_date.date() if hasattr(attendance_date, "date") else attendance_date
+
+    existing_teachers = []
+    new_teachers = []
+
+    try:
+        teachers = ALPTeacher.objects.filter(school_id=school_id)
+        existing_attendances = ALPTeacherAttendance.objects.filter(
+            teacher__in=teachers,
+            date=attendance_date
+        ).select_related('teacher')
+
+        existing_ids = [att.teacher.id for att in existing_attendances]
+
+        for att in existing_attendances:
+            teacher_record = {
+                'teacher_id': att.teacher.id,
+                'teacher_fullname': att.teacher.first_name + ' ' + (att.teacher.last_name or ''),
+                'status': att.status,
+            }
+            existing_teachers.append(teacher_record)
+
+        for teacher in teachers.exclude(id__in=existing_ids):
+            teacher_record = {
+                'teacher_id': teacher.id,
+                'teacher_fullname': teacher.first_name + ' ' + (teacher.last_name or ''),
+                'status': 'Present',
+            }
+            new_teachers.append(teacher_record)
+
+        return {'instances': existing_teachers, 'new_instances': new_teachers}
+
+    except Exception as ex:
+        logger.exception(ex)
+        return {'instances': [], 'new_instances': []}
+
+
+def create_teacher_attendance(data, school_id, user):
+    attendance_date = parse_date_flexible(data.get("attendance_date"))
+    if not attendance_date:
+        logger.error(f"Invalid date format: {data.get('attendance_date')}")
+        return False
+
+    attendance_date = attendance_date.date() if hasattr(attendance_date, "date") else attendance_date
+
+    try:
+        for teacher_data in data.get('teachers_attendance', []):
+            teacher_id = teacher_data.get('teacher_id')
+            if not teacher_id:
+                logger.warning(f"Missing teacher_id for teacher: {teacher_data}")
+                continue
+
+            teacher_attendance, created = ALPTeacherAttendance.objects.get_or_create(
+                teacher_id=teacher_id,
+                date=attendance_date,
+            )
+
+            teacher_attendance.status = teacher_data.get('status')
+            teacher_attendance.owner = user
+            teacher_attendance.save()
+
+        return True
+    except Exception as ex:
+        logger.exception("create_teacher_attendance failed: %s", ex)
+        return False
