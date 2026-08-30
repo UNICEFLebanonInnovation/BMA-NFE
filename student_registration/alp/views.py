@@ -9,6 +9,7 @@ from django_tables2.views import SingleTableMixin
 from django_tables2.export.views import ExportMixin
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.conf import settings
 
 from django.db.models import Count, Q
 from django.utils import timezone
@@ -20,6 +21,14 @@ from .forms import ALPRegistrationForm, ALPTeacherForm, ALPSchoolProfileForm
 from .tables import ALPRegistrationTable, ALPTeacherTable
 from .filters import ALPRegistrationFilter, ALPTeacherFilter
 from .utils import user_has_alp_permission, filter_by_school
+
+
+def _current_date():
+    """Return today's date without localizing a naive datetime."""
+    if settings.USE_TZ:
+        return timezone.localdate()
+    return timezone.now().date()
+
 
 class ALPUserRequiredMixin(UserPassesTestMixin):
     def test_func(self):
@@ -366,7 +375,7 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
         programmes = ALPProgram.objects.all()
         selected_school = self.request.GET.get('school', '')
         selected_programme = self.request.GET.get('programme', '')
-        today = timezone.localdate()
+        today = _current_date()
         default_start = today - timedelta(days=180)
 
         try:
@@ -590,7 +599,6 @@ import json
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from django.conf import settings
 from django.db.models.functions import TruncDate
 from student_registration.backends.models import ExportHistory
 
@@ -600,10 +608,7 @@ class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if settings.USE_TZ:
-            today = timezone.localdate()
-        else:
-            today = timezone.now().date()
+        today = _current_date()
         week_start = today - timezone.timedelta(days=6)
         trend_start = today - timezone.timedelta(days=13)
         month_start = today.replace(day=1)
