@@ -1,0 +1,163 @@
+{% extends "mscc/base.html" %}
+{% load util_tags %}
+{% load custom_tags %}
+{% load static i18n %}
+
+{% block module_name %}{% trans "Attendance Management" %}{% endblock %}
+{% block project_title %}Attendance{% endblock %}
+
+{% block content %}
+
+<style>
+.is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #fff8f8 !important;
+}
+</style>
+
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-child"></i>
+                                        </span>
+                                        <span class="d-inline-block">
+                                          {% trans "Daily Attendance" %}
+                                        </span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="{% url 'mscc:list' %}">{% trans "Home" %}</a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.school.governorate }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.school.caza }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.school.cadaster }} - {{ request.user.school.p_code }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.school.name }} - {{ request.user.school.type }}
+                                                </li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions"></div>
+
+
+                        </div>
+</div>
+
+<div class="row">
+{% if request.user|has_group:"ALP_SCHOOL" and not request.user.school %}
+  <div class="alert alert-danger fade show" role="alert"> {% trans "You don't have a school assigned to your profile please contact the administrator" %}</div>
+{% endif %}
+</div>
+
+<div class="row">
+<div class="col-md-4">
+                                    <div class="main-card mb-3 card">
+                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>{% trans "Daily Attendance" %}
+
+                                        </div>
+                                        <div class="card-body">
+
+                                          <div class="mb-4">
+                                              {% csrf_token %}
+                                              <input type="hidden" value="{{ request.user.school.id }}" name="school_id" id="school_id" />
+                                              <label for="attendance_date" class="form-label">{% trans "Attendance Date" %}</label>
+                                              <div class="input-group">
+                                                  <span class="input-group-text">
+                                                      <i class="bi bi-calendar3"></i>
+                                                  </span>
+                                                  <input type="date" class="form-control" id="attendance_date" value="{{ attendance_date_iso }}"/>
+                                              </div>
+                                          </div>
+
+                                          <div class="row g-3 mb-4">
+                                                <div class="col-md-6">
+                                                    <label for="programme" class="form-label">{% trans "Programme" %}</label>
+                                                    <select id="programme" class="form-select">
+                                                        <option value="">{% trans "Select Programme" %}</option>
+                                                        {% for item in programmes %}
+                                                            <option value="{{ item.id }}" {% if programme == item %}selected{% endif %}>{{ item.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="round" class="form-label">{% trans "Round" %}</label>
+                                                    <select id="round" class="form-select">
+                                                        <option value="">{% trans "Select Round" %}</option>
+                                                         {% for item in rounds %}
+                                                              <option value="{{ item.id }}" {% if round == item %}selected{% endif %}>{{ item.name }}</option>
+                                                          {% endfor %}
+                                                    </select>
+                                                </div>
+                                              </div>
+                                          <div class="row g-3 mb-3">
+                                                  <div class="col-md-6">
+                                                            <label class="form-label d-block">{% trans "Attendance Type" %}</label>
+                                                            <div class="btn-group w-20 attendance_day_off" role="group">
+                                                                <input type="radio" class="btn-check" name="attendance_day_off" id="working_day" value="No" {% if day_off == 'No' %} checked{% endif %}>
+                                                                <label class="btn btn-outline-primary" for="working_day">{% trans "Working day" %}</label>
+
+                                                                <input type="radio" class="btn-check" name="attendance_day_off" id="day_off" value="Yes" {% if day_off == 'Yes' %} checked{% endif %}>
+                                                                <label class="btn btn-outline-primary" for="day_off">{% trans "Day Off" %}</label>
+                                                            </div>
+                                                  </div>
+                                                  <div class="col-md-6" id="close_reason_container">
+                                                       <label for="close_reason" class="form-label">{% trans "Closing Reason" %}</label>
+                                                       <select id="close_reason" class="form-select {% if close_reason == '' %}hidden{% endif %}">
+                                                          <option value="">{% trans "Select Reason" %}</option>
+                                                          <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>{% trans "Public Holiday" %}</option>
+                                                          <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>{% trans "School Holiday" %}</option>
+                                                          <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>{% trans "Strike" %}</option>
+                                                          <option value="Weekly Holiday" {% if close_reason == 'Weekly Holiday' %}selected{% endif %}>{% trans "Weekly Holiday" %}</option>
+                                                          <option value="Roads Closed" {% if close_reason == 'Roads Closed' %}selected{% endif %}>{% trans "Roads Closed" %}</option>
+                                                          <option value="Other" {% if close_reason == 'Other' %}selected{% endif %}>{% trans "Other" %}</option>
+                                                       </select>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                        <div class="d-block text-right card-footer">
+                                            <a href="#" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary"><i class="pe-7s-cloud-download btn-icon-wrapper"></i>{% trans "Download" %}</a>
+                                            <a href="{% url 'alp:load_attendance_children' %}?school_id={{ request.user.school_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>{% trans "Load" %}</a>
+{% if request.user|has_group:"ALP_SCHOOL" and request.user.school.id %}
+                                            <a href="{% url 'alp:save_attendance_children' %}?school_id={{ request.user.school_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>{% trans "Save" %}</a>
+{% endif %}
+                                        </div>
+                                      </div>
+                                    </div>
+
+
+            <div class="col-md-8">
+
+                <div class="main-card mb-3 card">
+                  <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>
+                    <p class="mb-0">{% trans "Children Registered:" %} <span id="children_count">0</span></p>
+                  </div>
+                  <div class="card-body" style="height: 400px; overflow: auto;">
+                      <div id="attendance_children"></div>
+                  </div>
+                  <div class="d-block text-center card-footer"></div>
+
+                </div>
+
+            </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" language="javascript" src="{% static 'js/alp/attendance.js' %}?v=42"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+
+{% endblock %}

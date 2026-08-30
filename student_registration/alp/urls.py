@@ -18,9 +18,9 @@ re_path(r'^teachers/add/$', view=views.TeacherAddView.as_view(), name='teacher_a
 re_path(r'^teachers/edit/(?P<pk>[\w.@+-]+)/$', view=views.TeacherEditView.as_view(), name='teacher_edit'),
 re_path(r'^teachers/delete/(?P<pk>[\w.@+-]+)/$', view=views.TeacherDeleteView.as_view(), name='teacher_delete'),
 
-re_path(r'^attendance/$', view=attendance_views.AttendanceListView.as_view(), name='attendance_list'),
-re_path(r'^attendance/add/$', view=attendance_views.AttendanceAddView.as_view(), name='attendance_add'),
-re_path(r'^attendance/edit/(?P<pk>[\w.@+-]+)/$', view=attendance_views.AttendanceEditView.as_view(), name='attendance_edit'),
+re_path(r'^attendance/$', view=attendance_views.AttendanceView.as_view(), name='attendance_list'),
+re_path(r'^load-attendance-children/$', view=attendance_views.LoadAttendanceChildren.as_view(), name='load_attendance_children'),
+re_path(r'^save-attendance-children/$', view=attendance_views.save_attendance_children, name='save_attendance_children'),
 
 re_path(r'^teacher-attendance/$', view=attendance_views.TeacherAttendanceListView.as_view(), name='teacher_attendance_list'),
 re_path(r'^teacher-attendance/add/$', view=attendance_views.TeacherAttendanceAddView.as_view(), name='teacher_attendance_add'),

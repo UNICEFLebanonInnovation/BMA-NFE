@@ -295,15 +295,128 @@ class ALPTeacherAttendance(TimeStampedModel):
         verbose_name_plural = _("ALP Teacher Attendances")
 
 class ALPAttendance(TimeStampedModel):
-    SHIFT = Choices(('', _('----------')), ('Morning shift', _('Morning shift')), ('Afternoon shift', _('Afternoon shift')))
+    YES_NO = Choices(
+        ('', '----------'),
+        ('Yes', _("Yes")),
+        ('No', _("No")),
+    )
+    CLOSE_REASON = Choices(
+        ('', '----------'),
+        ('Public Holiday', _('Public Holiday')),
+        ('School Holiday', _('School Holiday')),
+        ('Strike', _('Strike')),
+        ('Weekly Holiday', _('Weekly Holiday')),
+        ('Roads Closed', _('Roads Closed')),
+    )
 
-    registration = models.ForeignKey(ALPRegistration, blank=False, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Registration'))
-    date = models.DateField(blank=True, null=True, verbose_name=_('Attendance Date'))
-    status = models.CharField(max_length=20, choices=[('Present', _('Present')), ('Absent', _('Absent'))], blank=True, null=True, verbose_name=_('Status'))
-    shift = models.CharField(max_length=50, choices=SHIFT, blank=True, null=True, verbose_name=_('Operating Shift'))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, null=True, related_name='+', on_delete=models.SET_NULL)
+    round = models.ForeignKey(ALPRound, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Round'))
+    school = models.ForeignKey(School, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('School'))
+    programme = models.ForeignKey(ALPProgram, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Programme'))
+
+    attendance_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Attendance date')
+    )
+    day_off = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Day off ?')
+    )
+    close_reason = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=CLOSE_REASON,
+        verbose_name=_('Day off reason')
+    )
 
     class Meta:
-        ordering = ['-date']
+        ordering = ['attendance_date']
         verbose_name = _("ALP Attendance")
         verbose_name_plural = _("ALP Attendances")
+
+    def __str__(self):
+        return f"{self.school} - {self.attendance_date}"
+
+
+class ALPAttendanceChild(TimeStampedModel):
+    ABSENCE_REASON = Choices(
+        ('', '----------'),
+        ('Sick', _('Sick')),
+        ('No transport', _('No transport')),
+        ('Other', _('Other')),
+        ('Unspecified', _('Unspecified')),
+    )
+    attendance_day = models.ForeignKey(
+        ALPAttendance,
+        blank=True, null=True,
+        related_name='attendance_child',
+        on_delete=models.SET_NULL,
+    )
+    registration = models.ForeignKey(
+        ALPRegistration,
+        blank=False, null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Registration')
+    )
+    child = models.ForeignKey(
+        Child,
+        blank=False, null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Child')
+    )
+    attended = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=ALPRegistration.YES_NO,
+        verbose_name=_('Child Attended?')
+    )
+    absence_reason = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=ABSENCE_REASON
+    )
+    absence_reason_other = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('specify')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = _("ALP Child Attendance")
+
+    @property
+    def attendance_date(self):
+        return self.attendance_day.attendance_date.strftime("%d/%m/%Y")
+
+    @property
+    def child_name(self):
+        result = ''
+        if self.child:
+            result = self.child.full_name
+        return result
+
+    @property
+    def child_gender(self):
+        result = ''
+        if self.child:
+            result = self.child.gender
+        return result
+
+    @property
+    def child_fullname(self):
+        if self.child:
+            return self.child.full_name
+        return ''
+
+    def __str__(self):
+        return f"{self.child} - {self.attendance_day}"

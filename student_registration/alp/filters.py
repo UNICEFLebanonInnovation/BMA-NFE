@@ -47,11 +47,11 @@ class ALPTeacherFilter(FilterSet):
 from .models import ALPAttendance, ALPTeacherAttendance
 
 class ALPAttendanceFilter(FilterSet):
-    date = CharFilter(lookup_expr='icontains', label=_('Date'))
+    attendance_date = CharFilter(lookup_expr='icontains', label=_('Date'))
 
     class Meta:
         model = ALPAttendance
-        fields = ['registration', 'date', 'status']
+        fields = ['school', 'attendance_date']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

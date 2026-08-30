@@ -1,0 +1,199 @@
+{% load static i18n %}
+{% load custom_tags %}
+{% load util_tags %}
+
+<div class="attendance-list">
+    {% for item in instances %}
+    <div class="card border shadow-none mb-3 list-group-item p-0 overflow-hidden">
+        <div class="card-body p-3">
+            <div class="d-flex align-items-center flex-wrap gap-3">
+                <!-- Avatar & Status Indicator -->
+                <div class="position-relative">
+                    <img width="50" height="50" class="rounded-circle border" src="{% static 'images/avatars/male.png' %}" alt="Avatar">
+                    <span class="position-absolute bottom-0 end-0 badge rounded-pill bg-warning border border-2 border-white p-1">
+                        <span class="visually-hidden">{% trans "Status" %}</span>
+                    </span>
+                </div>
+
+                <!-- Basic Info -->
+                <div class="flex-grow-1" style="min-width: 200px;">
+                    <input type="hidden" class="registration_id" name="registry_id[]" value="{{ item.registration_id }}" />
+                    <input type="hidden" class="attendance_id" name="attendance_id[]" value="{{ item.attendance_id }}" />
+                    <input type="hidden" class="child_id" name="child_id[]" value="{{ item.child_id }}" />
+
+                    <h6 class="mb-0 fw-bold">
+                        <a class="show-child-details text-decoration-none text-dark hover-primary"
+                           href="#?registry_id={{ item.registration_id }}">
+                            {{ item.child_fullname }}
+                        </a>
+                    </h6>
+                    <small class="text-muted d-block">
+                        <i class="bi bi-person-heart me-1"></i> {{ item.child_mother_fullname }}
+                    </small>
+                </div>
+
+                <!-- Secondary Metadata -->
+                <div class="d-none d-md-block" style="min-width: 150px;">
+                    <div class="small fw-semibold text-dark">
+                        <i class="bi bi-calendar-event me-1 text-primary"></i> {{ item.child_birthday }}
+                    </div>
+                    <div class="small text-muted">
+                        <i class="bi bi-globe me-1"></i> {{ item.child_nationality }}
+                    </div>
+                </div>
+
+                <!-- Attendance Toggle -->
+                <div class="ms-auto">
+                    <div class="btn-group btn-group-sm attendance_status" role="group">
+                        <input type="radio" class="btn-check status" name="attendance_status_{{ item.registration_id }}"
+                               id="status_yes_{{ item.registration_id }}" value="Yes"
+                               {% if item.attended == 'Yes' or item.attended == '' %} checked {% endif %}
+                               data-itemscope="#reason_block_{{ item.registration_id }}">
+                        <label class="btn btn-outline-success px-3" for="status_yes_{{ item.registration_id }}">
+                            <i class="bi bi-check-lg me-1"></i> {% trans "Attended" %}
+                        </label>
+
+                        <input type="radio" class="btn-check status" name="attendance_status_{{ item.registration_id }}"
+                               id="status_no_{{ item.registration_id }}" value="No"
+                               {% if item.attended == 'No' %} checked {% endif %}
+                               data-itemscope="#reason_block_{{ item.registration_id }}">
+                        <label class="btn btn-outline-danger px-3" for="status_no_{{ item.registration_id }}">
+                            <i class="bi bi-x-lg me-1"></i> {% trans "Absent" %}
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Absence Details Block -->
+            <div class="mt-3 p-3 bg-light rounded border-start border-danger border-4 {% if item.attended == 'Yes' or item.attended == '' %} d-none {% endif %}"
+                 id="reason_block_{{ item.registration_id }}">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <span class="small fw-bold text-danger text-uppercase">{% trans "Absence Details" %}:</span>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="absence_reason_{{ item.registration_id }}" class="form-select form-select-sm absence_reason">
+                            <option value="">{% trans "Select Reason" %}</option>
+                            <option value="Sick" {% if item.absence_reason == 'Sick' %} selected {% endif %}>{% trans "Sick" %}</option>
+                            <option value="No transport" {% if item.absence_reason == 'No transport' %} selected {% endif %}>{% trans "Transportation" %}</option>
+                            <option value="Other" {% if item.absence_reason == 'Other' %} selected {% endif %}>{% trans "Other" %}</option>
+                        </select>
+                    </div>
+                    <div class="col-md">
+                        <input id="absence_reason_other_{{ item.registration_id }}" type="text"
+                               class="form-control form-control-sm absence_reason_other"
+                               placeholder="{% trans 'Provide more details if other...' %}"
+                               value="{{ item.absence_reason_other }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if new_instances %}
+<div class="mt-5">
+    <div class="d-flex align-items-center mb-3">
+        <h5 class="mb-0 fw-bold text-primary">{% trans "Newly Registered Children" %}</h5>
+        <hr class="flex-grow-1 ms-3 opacity-25">
+    </div>
+    <div class="attendance-list">
+        {% for item in new_instances %}
+        <div class="card border shadow-none mb-3 list-group-item p-0 overflow-hidden border-start border-info border-4">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <div class="position-relative">
+                        <img width="50" height="50" class="rounded-circle border" src="{% static 'images/avatars/male.png' %}" alt="Avatar">
+                        <span class="position-absolute bottom-0 end-0 badge rounded-pill bg-info border border-2 border-white p-1">
+                            <span class="visually-hidden">{% trans "New" %}</span>
+                        </span>
+                    </div>
+
+                    <div class="flex-grow-1" style="min-width: 200px;">
+                        <input type="hidden" class="registration_id" name="registry_id[]" value="{{ item.registration_id }}" />
+                        <input type="hidden" class="attendance_id" name="attendance_id[]" value="{{ item.attendance_id }}" />
+                        <input type="hidden" class="child_id" name="child_id[]" value="{{ item.child_id }}" />
+
+                        <h6 class="mb-0 fw-bold">
+                            <a class="show-child-details text-decoration-none text-dark hover-primary"
+                               href="#?registry_id={{ item.registration_id }}">
+                                {{ item.child_fullname }}
+                            </a>
+                        </h6>
+                        <small class="text-muted d-block">
+                            <i class="bi bi-person-heart me-1"></i> {{ item.child_mother_fullname }}
+                        </small>
+                    </div>
+
+                    <div class="d-none d-md-block" style="min-width: 150px;">
+                        <div class="small fw-semibold text-dark">
+                            <i class="bi bi-calendar-event me-1 text-primary"></i> {{ item.child_birthday }}
+                        </div>
+                        <div class="small text-muted">
+                            <i class="bi bi-globe me-1"></i> {{ item.child_nationality }}
+                        </div>
+                    </div>
+
+                    <div class="ms-auto">
+                        <div class="btn-group btn-group-sm attendance_status" role="group">
+                            <input type="radio" class="btn-check status" name="attendance_status_{{ item.registration_id }}"
+                                   id="status_yes_new_{{ item.registration_id }}" value="Yes"
+                                   {% if item.attended == 'Yes' or item.attended == '' %} checked {% endif %}
+                                   data-itemscope="#reason_block_new_{{ item.registration_id }}">
+                            <label class="btn btn-outline-success px-3" for="status_yes_new_{{ item.registration_id }}">
+                                <i class="bi bi-check-lg me-1"></i> {% trans "Attended" %}
+                            </label>
+
+                            <input type="radio" class="btn-check status" name="attendance_status_{{ item.registration_id }}"
+                                   id="status_no_new_{{ item.registration_id }}" value="No"
+                                   {% if item.attended == 'No' %} checked {% endif %}
+                                   data-itemscope="#reason_block_new_{{ item.registration_id }}">
+                            <label class="btn btn-outline-danger px-3" for="status_no_new_{{ item.registration_id }}">
+                                <i class="bi bi-x-lg me-1"></i> {% trans "Absent" %}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3 p-3 bg-light rounded border-start border-danger border-4 {% if item.attended == 'Yes' or item.attended == '' %} d-none {% endif %}"
+                     id="reason_block_new_{{ item.registration_id }}">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <span class="small fw-bold text-danger text-uppercase">{% trans "Absence Details" %}:</span>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="absence_reason_new_{{ item.registration_id }}" class="form-select form-select-sm absence_reason">
+                                <option value="">{% trans "Select Reason" %}</option>
+                                <option value="Sick" {% if item.absence_reason == 'Sick' %} selected {% endif %}>{% trans "Sick" %}</option>
+                                <option value="No transport" {% if item.absence_reason == 'No transport' %} selected {% endif %}>{% trans "Transportation" %}</option>
+                                <option value="Other" {% if item.absence_reason == 'Other' %} selected {% endif %}>{% trans "Other" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-md">
+                            <input id="absence_reason_other_new_{{ item.registration_id }}" type="text"
+                                   class="form-control form-control-sm absence_reason_other"
+                                   placeholder="{% trans 'Provide more details if other...' %}"
+                                   value="{{ item.absence_reason_other }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<script>
+    $('.attendance_status .btn-check').on('change', function() {
+        var attendance_status = $(this).val();
+        var itemscope = $(this).data('itemscope');
+
+        if (attendance_status == 'No') {
+            $(itemscope).removeClass('d-none');
+        } else {
+            $(itemscope).addClass('d-none');
+        }
+    });
+</script>
