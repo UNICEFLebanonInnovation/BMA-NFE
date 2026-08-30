@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from student_registration.schools.models import School
+from student_registration.locations.models import Location, LocationType
 from student_registration.users.models import User
 
 
@@ -45,3 +46,36 @@ class SchoolProfileViewTests(TestCase):
         response = self.client.get(reverse('alp:school_profile'))
 
         self.assertEqual(response.status_code, 403)
+
+    def test_location_fields_only_show_linked_choices(self):
+        location_type = LocationType.objects.create(name='Administrative area')
+        governorate = Location.objects.create(name='Governorate', type=location_type)
+        other_governorate = Location.objects.create(
+            name='Other governorate', type=location_type
+        )
+        district = Location.objects.create(
+            name='District', type=location_type, parent=governorate
+        )
+        Location.objects.create(
+            name='Other district', type=location_type, parent=other_governorate
+        )
+        cadaster = Location.objects.create(
+            name='Cadaster', type=location_type, parent=district
+        )
+        self.school.governorate = governorate
+        self.school.district = district
+        self.school.cadaster = cadaster
+        self.school.save()
+
+        response = self.client.get(reverse('alp:school_profile'))
+
+        self.assertQuerySetEqual(
+            response.context['form'].fields['district'].queryset,
+            [district],
+        )
+        self.assertQuerySetEqual(
+            response.context['form'].fields['cadaster'].queryset,
+            [cadaster],
+        )
+        self.assertContains(response, reverse('schools:load_districts'))
+        self.assertContains(response, reverse('schools:load_cadasters'))

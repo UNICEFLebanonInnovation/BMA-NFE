@@ -1,24 +1,79 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load static i18n %}
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>{% trans "School Profile" %}</h2>
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "School Profile" %}</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+  <div class="col-xl-10">
     {% if object %}
         {% if request.user.is_superuser %}
-            <p><strong>{% trans "Name:" %}</strong> {{ object.name }}</p>
-            <p><strong>{% trans "Type:" %}</strong> {{ object.type }}</p>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <p><strong>{% trans "Name:" %}</strong> {{ object.name }}</p>
+                    <p class="mb-0"><strong>{% trans "Type:" %}</strong> {{ object.type }}</p>
+                </div>
+            </div>
         {% else %}
-            <p class="text-muted">{% trans "Review and update your school's information below." %}</p>
-            <form method="post">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-primary">{% trans "Save changes" %}</button>
-            </form>
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 fw-bold text-primary">
+                        <i class="bi bi-pencil-square me-2"></i>{% trans "School Management" %}
+                    </h5>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <p class="text-muted">{% trans "Review and update your school's information below." %}</p>
+                    {% if form.errors %}
+                        <div class="alert alert-danger border-0 shadow-sm mb-4">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            {% trans "Please correct the errors below." %}
+                        </div>
+                    {% endif %}
+                    <div class="redesign-form">{% crispy form %}</div>
+                </div>
+            </div>
         {% endif %}
     {% else %}
-        <p>{% trans "You are not assigned to any specific school." %}</p>
+        <div class="alert alert-warning">{% trans "You are not assigned to any specific school." %}</div>
     {% endif %}
+  </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+<script>
+(function ($) {
+    'use strict';
+    var districtsUrl = "{% url 'schools:load_districts' %}";
+    var cadastersUrl = "{% url 'schools:load_cadasters' %}";
+
+    $('#id_governorate').on('change', function () {
+        var governorate = $(this).val();
+        $('#id_district').html('<option value="">---------</option>');
+        $('#id_cadaster').html('<option value="">---------</option>');
+        if (governorate) {
+            $.get(districtsUrl, {id_governorate: governorate}, function (options) {
+                $('#id_district').html(options);
+            });
+        }
+    });
+
+    $('#id_district').on('change', function () {
+        var district = $(this).val();
+        $('#id_cadaster').html('<option value="">---------</option>');
+        if (district) {
+            $.get(cadastersUrl, {id_district: district}, function (options) {
+                $('#id_cadaster').html(options);
+            });
+        }
+    });
+}(jQuery));
+</script>
 {% endblock %}
