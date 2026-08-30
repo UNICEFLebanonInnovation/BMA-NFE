@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -8,7 +10,12 @@ from django_tables2.export.views import ExportMixin
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 
-from .models import ALPRegistration, ALPTeacher, ALPGrading
+from django.db.models import Count, Q
+from django.utils import timezone
+import json
+from collections import OrderedDict
+
+from .models import ALPAttendanceChild, ALPRegistration, ALPTeacher, ALPGrading
 from .forms import ALPRegistrationForm, ALPTeacherForm, ALPSchoolProfileForm
 from .tables import ALPRegistrationTable, ALPTeacherTable
 from .filters import ALPRegistrationFilter, ALPTeacherFilter
@@ -208,7 +215,7 @@ class GradingEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissio
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
 
-from django.views.generic import TemplateView, View
+from django.views.generic import View
 from django.http import JsonResponse
 from django.db.models import Avg, Count, Q, Sum
 
@@ -347,10 +354,10 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
 
     def get_context_data(self, **kwargs):
         from student_registration.schools.models import School
-        from .models import ALPRound, ALPTeacher
+        from .models import ALPProgram, ALPTeacher, ALPTeacherAttendance, ALPRegistration
 
         user = self.request.user
-        instances = filter_by_school(ALPTeacher.objects.all(), user)
+        instances = filter_by_school(ALPTeacher.objects.select_related('school'), user)
 
         schools = School.objects.all()
         rounds = ALPRound.objects.all()
@@ -358,10 +365,98 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
         if not user.is_superuser:
             schools = schools.filter(id=user.school_id)
 
+        programmes = ALPProgram.objects.all()
+        selected_school = self.request.GET.get('school', '')
+        selected_programme = self.request.GET.get('programme', '')
+        today = timezone.localdate()
+        default_start = today - timedelta(days=180)
+
+        try:
+            start_date = timezone.datetime.strptime(
+                self.request.GET.get('start_date', ''), '%Y-%m-%d'
+            ).date()
+        except (TypeError, ValueError):
+            start_date = default_start
+        try:
+            end_date = timezone.datetime.strptime(
+                self.request.GET.get('end_date', ''), '%Y-%m-%d'
+            ).date()
+        except (TypeError, ValueError):
+            end_date = today
+
+        if start_date > end_date:
+            start_date, end_date = end_date, start_date
+
+        if selected_school:
+            instances = instances.filter(school_id=selected_school)
+        if selected_programme:
+            programme_school_ids = ALPRegistration.objects.filter(
+                programme_id=selected_programme
+            ).values_list('school_id', flat=True)
+            instances = instances.filter(school_id__in=programme_school_ids)
+
+        attendance = ALPTeacherAttendance.objects.filter(
+            teacher__in=instances,
+            date__range=(start_date, end_date),
+        ).select_related('teacher__school')
+
+        records = list(attendance.values(
+            'date', 'status', 'teacher_id', 'teacher__school_id', 'teacher__school__name'
+        ))
+        present = sum(row['status'] == 'Present' for row in records)
+        rate = round((present / len(records)) * 100, 1) if records else 0
+
+        monthly = {}
+        school_totals = {}
+        for row in records:
+            month = row['date'].strftime('%Y-%m') if row['date'] else 'Unknown'
+            monthly.setdefault(month, {'present': 0, 'total': 0})
+            monthly[month]['total'] += 1
+            monthly[month]['present'] += row['status'] == 'Present'
+
+            school_name = row['teacher__school__name'] or 'Unassigned'
+            school_totals.setdefault(school_name, {'present': 0, 'total': 0})
+            school_totals[school_name]['total'] += 1
+            school_totals[school_name]['present'] += row['status'] == 'Present'
+
+        trend = [
+            {'month': month, 'rate': round(values['present'] / values['total'] * 100, 1)}
+            for month, values in sorted(monthly.items())
+        ]
+        by_school = [
+            {'school': name, 'rate': round(values['present'] / values['total'] * 100, 1),
+             'records': values['total']}
+            for name, values in sorted(school_totals.items(), key=lambda item: item[1]['total'], reverse=True)
+        ]
+
+        programme_rows = []
+        for programme in programmes:
+            programme_school_ids = set(ALPRegistration.objects.filter(
+                programme=programme
+            ).values_list('school_id', flat=True))
+            relevant = [row for row in records if row['teacher__school_id'] in programme_school_ids]
+            programme_present = sum(row['status'] == 'Present' for row in relevant)
+            programme_rows.append({
+                'programme': programme.name,
+                'rate': round(programme_present / len(relevant) * 100, 1) if relevant else 0,
+                'records': len(relevant),
+            })
+
         return {
             'total': instances.count(),
             'schools': schools,
             'rounds': rounds,
+            'programmes': programmes,
+            'attendance_rate': rate,
+            'attendance_records': len(records),
+            'recorded_days': len({row['date'] for row in records}),
+            'start_date': start_date.isoformat(),
+            'end_date': end_date.isoformat(),
+            'selected_school': selected_school,
+            'selected_programme': selected_programme,
+            'trend': trend,
+            'school_data': by_school,
+            'programme_rows': programme_rows,
         }
 
 
@@ -452,21 +547,47 @@ class ALPAttendanceDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Templ
     template_name = 'alp/dashboard_attendance.html'
 
     def get_context_data(self, **kwargs):
-        from student_registration.schools.models import School
-        from .models import ALPAttendance
-
+        context = super().get_context_data(**kwargs)
         user = self.request.user
-        instances = filter_by_school(ALPAttendance.objects.all(), user)
+        year = int(self.request.GET.get('year', timezone.now().year))
+        base_qs = _alp_attendance_queryset(user).filter(
+            attendance_day__attendance_date__year=year,
+        )
+        attendance = _aggregate_alp_attendance(base_qs, 'attendance_day__attendance_date')
+        programme_attendance = _aggregate_alp_attendance(
+            base_qs, 'attendance_day__attendance_date', 'attendance_day__programme__name'
+        )
 
-        schools = School.objects.all()
+        programme_data = OrderedDict()
+        for row in programme_attendance:
+            programme = row.pop('attendance_day__programme__name') or 'Unknown'
+            programme_data.setdefault(programme, []).append(row)
 
-        if not user.is_superuser:
-            schools = schools.filter(id=user.school_id)
+        years = _alp_attendance_queryset(user).dates('attendance_day__attendance_date', 'year')
+        context.update({
+            'attendance_json': json.dumps(list(attendance), default=str),
+            'program_attendance_json': json.dumps(programme_data, default=str),
+            'year': year,
+            'years': [date.year for date in years],
+        })
+        return context
 
-        return {
-            'total': instances.count(),
-            'schools': schools,
-        }
+
+def _alp_attendance_queryset(user):
+    """Return child attendance records visible to an ALP user."""
+    queryset = ALPAttendanceChild.objects.all()
+    if not user.is_superuser:
+        queryset = queryset.filter(attendance_day__school_id=user.school_id)
+    return queryset
+
+
+def _aggregate_alp_attendance(queryset, *group_fields):
+    """Aggregate total and absent child records for heatmap groups."""
+    return (
+        queryset.values(*group_fields)
+        .annotate(total=Count('id'), absent=Count('id', filter=Q(attended='No')))
+        .order_by(*group_fields)
+    )
 
 class ALPSchoolDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
     template_name = 'alp/dashboard_school.html'
@@ -485,15 +606,79 @@ class ALPSchoolDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
             'total': schools.count(),
             'schools': schools,
         }
+
+      
+class ALPSchoolGeoDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
+    """Return map-ready school data within the current ALP user's scope."""
+
+    def get(self, request):
+        from django.db.models import Count
+        from student_registration.schools.models import School
+
+        schools = School.objects.select_related(
+            'governorate', 'district', 'cadaster'
+        ).filter(
+            latitude__isnull=False, longitude__isnull=False
+        ).order_by('name')
+
+        if not request.user.is_superuser:
+            if not request.user.school_id:
+                return JsonResponse([], safe=False)
+            schools = schools.filter(id=request.user.school_id)
+
+        school_id = request.GET.get('school_id')
+        if school_id:
+            schools = schools.filter(id=school_id)
+
+        school_list = list(schools)
+        school_ids = [school.id for school in school_list]
+        registration_stats = {
+            row['school_id']: row['total']
+            for row in ALPRegistration.objects.filter(
+                school_id__in=school_ids, deleted=False
+            ).values('school_id').annotate(total=Count('id'))
+        }
+        teacher_stats = {
+            row['school_id']: row['total']
+            for row in ALPTeacher.objects.filter(
+                school_id__in=school_ids
+            ).values('school_id').annotate(total=Count('id'))
+        }
+
+        data = [{
+            'id': school.id,
+            'number': school.number,
+            'name': school.name,
+            'type': school.get_type_display() if school.type else 'N/A',
+            'governorate': (
+                school.governorate.name if school.governorate else 'N/A'
+            ),
+            'district': school.district.name if school.district else 'N/A',
+            'cadaster': school.cadaster.name if school.cadaster else 'N/A',
+            'latitude': school.latitude,
+            'longitude': school.longitude,
+            'students': registration_stats.get(school.id, 0),
+            'teachers': teacher_stats.get(school.id, 0),
+            'capacity': school.school_capacity or 0,
+            'cwd_accessible': (
+                school.get_CWD_accessible_display()
+                if school.CWD_accessible else 'N/A'
+            ),
+            'internet_available': (
+                school.get_internet_available_display()
+                if school.internet_available else 'N/A'
+            ),
+        } for school in school_list]
+
+        return JsonResponse(data, safe=False)
+      
+      
 import json
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.conf import settings
-from django.utils import timezone
-from django.db.models import Count
 from django.db.models.functions import TruncDate
-from student_registration.alp.models import ALPRegistration
-from student_registration.alp.models import ALPAttendanceChild
 from student_registration.backends.models import ExportHistory
 
 class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):

@@ -78,6 +78,72 @@
         <div class="d-grid gap-2 mt-4"><button id="applyFilters" class="btn btn-primary" data-bs-dismiss="offcanvas">{% trans "Apply Filters" %}</button><button id="resetFilters" class="btn btn-outline-secondary">{% trans "Reset" %}</button></div>
     </div>
 </div>
+{% block project_title %}{% trans "Teacher Attendance Dashboard" %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/alp/teacher-attendance-dashboard.css' %}">
+<main class="alp-attendance-dashboard">
+    <header class="dashboard-heading">
+        <div>
+            <span class="eyebrow">{% trans "ALP performance overview" %}</span>
+            <h1>{% trans "Teacher attendance" %}</h1>
+            <p>{% trans "Track attendance trends and compare performance across schools and programme coverage." %}</p>
+        </div>
+        <a class="record-attendance" href="{% url 'alp:teacher_attendance_list' %}">
+            <i class="bi bi-plus-circle"></i> {% trans "Record attendance" %}
+        </a>
+    </header>
+
+    <form method="get" class="filter-panel" aria-label="{% trans 'Dashboard filters' %}">
+        <div class="filter-field">
+            <label for="school">{% trans "School" %}</label>
+            <select id="school" name="school">
+                <option value="">{% trans "All schools" %}</option>
+                {% for school in schools %}<option value="{{ school.id }}" {% if selected_school == school.id|stringformat:'s' %}selected{% endif %}>{{ school.name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="filter-field">
+            <label for="programme">{% trans "Programme" %}</label>
+            <select id="programme" name="programme">
+                <option value="">{% trans "All programmes" %}</option>
+                {% for programme in programmes %}<option value="{{ programme.id }}" {% if selected_programme == programme.id|stringformat:'s' %}selected{% endif %}>{{ programme.name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="filter-field"><label for="start_date">{% trans "From" %}</label><input id="start_date" name="start_date" type="date" value="{{ start_date }}"></div>
+        <div class="filter-field"><label for="end_date">{% trans "To" %}</label><input id="end_date" name="end_date" type="date" value="{{ end_date }}"></div>
+        <button type="submit" class="apply-filters"><i class="bi bi-sliders"></i> {% trans "Apply filters" %}</button>
+    </form>
+
+    <section class="metric-grid" aria-label="{% trans 'Attendance summary' %}">
+        <article class="metric-card metric-highlight"><div class="metric-icon"><i class="bi bi-check2-circle"></i></div><div><span>{% trans "Attendance rate" %}</span><strong>{{ attendance_rate }}%</strong><small>{% trans "Present records in period" %}</small></div></article>
+        <article class="metric-card"><div class="metric-icon"><i class="bi bi-people"></i></div><div><span>{% trans "Teachers" %}</span><strong>{{ total }}</strong><small>{% trans "In selected schools" %}</small></div></article>
+        <article class="metric-card"><div class="metric-icon"><i class="bi bi-calendar3"></i></div><div><span>{% trans "Days reported" %}</span><strong>{{ recorded_days }}</strong><small>{% trans "Unique attendance days" %}</small></div></article>
+        <article class="metric-card"><div class="metric-icon"><i class="bi bi-journal-check"></i></div><div><span>{% trans "Records" %}</span><strong>{{ attendance_records }}</strong><small>{% trans "Teacher check-ins" %}</small></div></article>
+    </section>
+
+    <section class="chart-grid">
+        <article class="dashboard-card trend-card">
+            <div class="card-heading"><div><span class="eyebrow">{% trans "Trend" %}</span><h2>{% trans "Monthly attendance rate" %}</h2></div><span class="legend"><i></i>{% trans "Present" %}</span></div>
+            <div id="attendance-trend" class="chart" role="img" aria-label="{% trans 'Monthly teacher attendance trend' %}"></div>
+        </article>
+        <article class="dashboard-card">
+            <div class="card-heading"><div><span class="eyebrow">{% trans "Comparison" %}</span><h2>{% trans "Attendance by school" %}</h2></div></div>
+            <div id="school-comparison" class="school-bars"></div>
+        </article>
+    </section>
+
+    <section class="dashboard-card programme-card">
+        <div class="card-heading"><div><span class="eyebrow">{% trans "Programme lens" %}</span><h2>{% trans "Attendance by programme coverage" %}</h2><p>{% trans "Teacher records are grouped by programmes delivered at their school." %}</p></div></div>
+        <div class="programme-grid">
+            {% for item in programme_rows %}
+            <article class="programme-stat"><div class="programme-top"><strong>{{ item.programme }}</strong><span>{{ item.rate }}%</span></div><div class="progress-track"><i style="width: {{ item.rate }}%"></i></div><small>{{ item.records }} {% trans "records" %}</small></article>
+            {% empty %}<p class="empty-state">{% trans "No programme information is available." %}</p>{% endfor %}
+        </div>
+    </section>
+</main>
+{{ trend|json_script:"trend-data" }}
+{{ school_data|json_script:"school-data" }}
+<script src="{% static 'js/alp/teacher_attendance_dashboard.js' %}"></script>
 {% endblock %}
 
 {% block extra_js %}
