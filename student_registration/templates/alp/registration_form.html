@@ -1,10 +1,21 @@
 {% extends "mscc/base.html" %}
-{% load static i18n %}
 {% load util_tags %}
+{% load custom_tags %}
+{% load static i18n %}
 {% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+
+{% block project_title %}{% trans "Registration" %}{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+{% endblock %}
+
+{% block module_name %}{% trans "Beneficiary Registration" %}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container-fluid">
+    <!-- Breadcrumbs / Center Info -->
     <div class="row mb-4 align-items-center">
         <div class="col-md-8">
             <nav aria-label="breadcrumb">
@@ -21,6 +32,12 @@
                     {% trans "Register New Child" %}
                 {% endif %}
             </h3>
+        </div>
+        <div class="col-md-4 text-md-end">
+             <span class="badge bg-light text-dark border p-2">
+                <i class="bi bi-geo-alt-fill text-primary me-1"></i>
+                {{ request.user.school.governorate }} / {{ request.user.school.district }}
+             </span>
         </div>
     </div>
 
@@ -46,30 +63,473 @@
     </div>
     {% endif %}
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
-            <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" enctype="multipart/form-data" novalidate>
-                {% csrf_token %}
-                {% crispy form %}
+    {% if form.instance.id == None %}
+    <!-- Duplication Alert -->
+    <div class="" style="display:none;" id="child-duplication-error">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+            <div id="child-duplication-error-text"></div>
+        </div>
+    </div>
+    {% endif %}
 
-                <div class="mt-4 p-4 bg-primary bg-opacity-10 rounded border border-primary border-opacity-25">
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-shield-check fs-4 text-primary me-3"></i>
-                        <p class="small text-dark mb-0">{% trans "By completing this registration, you confirm that all entered details are verified against physical documentation." %}</p>
+    <!-- Potential Matches Header Row -->
+    <div class="row g-4 mb-4">
+        <!-- Potential Matches Full Width -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white d-flex align-items-center">
+                    <i class="bi bi-search me-2"></i>
+                    <span>{% trans "Potential Matches" %}</span>
+                </div>
+                <div class="card-body p-0" style="max-height: 300px; overflow-y: auto;">
+                    <div id="nfe_search_loader" class="text-center py-4 d-none">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <p class="small text-muted mt-2">{% trans "Searching..." %}</p>
                     </div>
-                    <div class="d-flex justify-content-end">
-                        <a href="{% url 'alp:registration_list' %}" class="btn btn-light border me-3">{% trans "Cancel" %}</a>
-                        <button type="submit" name="save" class="btn btn-primary px-5 fw-bold" id="submit-id-save">
-                            <i class="bi bi-check-circle me-2"></i> {% trans "Complete Registration" %}
+                    <div class="list-group list-group-flush" id="nfe_search_result">
+                        <div class="p-4 text-center text-muted small">
+                            <i class="bi bi-info-circle fs-4 mb-2 d-block opacity-50"></i>
+                            {% trans "Start typing child's name and DOB to see potential duplicate records." %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Form Column -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <!-- Custom Stepper -->
+                    <div class="wizard-progress">
+                        <div class="wizard-progress-bar" id="wizardProgressBar" style="width: 33%;"></div>
+                    </div>
+                    <ul class="stepper mb-5" id="registrationStepper">
+                        <li class="step active" data-step="1">
+                            <div class="step-icon"><i class="bi bi-person"></i></div>
+                            <div class="small fw-bold mt-1">{% trans "Identity" %}</div>
+                        </li>
+                        <li class="step" data-step="2">
+                            <div class="step-icon"><i class="bi bi-telephone"></i></div>
+                            <div class="small fw-bold mt-1">{% trans "Caregivers" %}</div>
+                        </li>
+                        <li class="step" data-step="3">
+                            <div class="step-icon"><i class="bi bi-shield-check"></i></div>
+                            <div class="small fw-bold mt-1">{% trans "Review" %}</div>
+                        </li>
+                    </ul>
+
+                    <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {% for h in form.hidden_fields %}{{ h }}{% endfor %}
+
+                        <!-- Step 1: Child Information -->
+                        <div class="step-content active" id="step-1">
+                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "1. Basic Identity Information" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-12">{{ form.child_photo|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_first_name|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_father_name|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_last_name|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.child_birthday_day|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_birthday_month|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_birthday_year|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.child_gender|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_mother_fullname|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.child_nationality|as_crispy_field }}</div>
+                                <div class="col-md-6" id="div_id_child_nationality_other">{{ form.child_nationality_other|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.child_p_code|as_crispy_field }}</div>
+                                <div class="col-md-8">{{ form.child_address|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.source_of_identification|as_crispy_field }}</div>
+                                <div class="col-md-6 " id="div_id_source_of_identification_specify">{{ form.source_of_identification_specify|as_crispy_field }}</div>
+
+                                <div class="col-md-6">{{ form.partner_unique_number|as_crispy_field }}</div>
+                                <div class="col-md-6 " id="child_fe_unique_id_block">{{ form.child_fe_unique_id|as_crispy_field }}</div>
+                            </div>
+
+                            <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "2. Status & Background" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-4">{{ form.child_living_arrangement|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_disability|as_crispy_field }}</div>
+                                <div class="col-md-4" >{{ form.child_disability_other|as_crispy_field }}</div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">{{ form.child_marital_status|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_have_children|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.child_children_number|as_crispy_field }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Parent/Caregiver Information -->
+                        <div class="step-content d-none" id="step-2">
+                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "3. Caregiver Details" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">{{ form.child_have_sibling|as_crispy_field }}</div>
+                                <div class="col-md-6 " id="div_id_child_siblings_have_disability">{{ form.child_siblings_have_disability|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_mother_pregnant_expecting|as_crispy_field }}</div>
+                                <div class="col-md-6"></div> <!-- Empty column for layout balance -->
+
+                                <div class="col-md-6">{{ form.father_educational_level|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.mother_educational_level|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.first_phone_number|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.first_phone_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.first_phone_owner|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.second_phone_number|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.second_phone_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.second_phone_owner|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.children_number_under18|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.main_caregiver|as_crispy_field }}</div>
+                                <div class="col-md-4 " id="div_id_main_caregiver_other">{{ form.main_caregiver_other|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.caregiver_first_name|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.caregiver_middle_name|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.caregiver_last_name|as_crispy_field }}</div>
+
+                                <div class="col-md-4">{{ form.caregiver_mother_name|as_crispy_field }}</div>
+                                <div class="col-md-4">{{ form.main_caregiver_nationality|as_crispy_field }}</div>
+                                <div class="col-md-4 " id="div_id_main_caregiver_nationality_other">{{ form.main_caregiver_nationality_other|as_crispy_field }}</div>
+                            </div>
+
+                            <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "4. Identification Documentation" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-12">{{ form.id_type|as_crispy_field }}</div>
+
+                                <!-- Group 1: UNHCR Registered -->
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.case_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.case_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.parent_individual_case_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.parent_individual_case_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.individual_case_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id1 d-none">{{ form.individual_case_number_confirm|as_crispy_field }}</div>
+
+                                <!-- Group 2: UNHCR Recorded -->
+                                <div class="col-md-6 child_id child_id2 d-none">{{ form.recorded_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id2 d-none">{{ form.recorded_number_confirm|as_crispy_field }}</div>
+
+                                <!-- Group 3: Lebanese ID -->
+                                <div class="col-md-6 child_id child_id3 d-none">{{ form.parent_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id3 d-none">{{ form.parent_national_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id3 d-none">{{ form.national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id3 d-none">{{ form.national_number_confirm|as_crispy_field }}</div>
+
+                                <!-- Group 4: Syrian ID -->
+                                <div class="col-md-6 child_id child_id4 d-none">{{ form.parent_syrian_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id4 d-none">{{ form.parent_syrian_national_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id4 d-none">{{ form.syrian_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id4 d-none">{{ form.syrian_national_number_confirm|as_crispy_field }}</div>
+
+                                <!-- Group 5: Palestinian ID -->
+                                <div class="col-md-6 child_id child_id5 d-none">{{ form.parent_sop_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id5 d-none">{{ form.parent_sop_national_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id5 d-none">{{ form.sop_national_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id5 d-none">{{ form.sop_national_number_confirm|as_crispy_field }}</div>
+
+                                <!-- Group 6: Other ID -->
+                                <div class="col-md-6 child_id child_id6 d-none">{{ form.parent_other_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id6 d-none">{{ form.parent_other_number_confirm|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id6 d-none">{{ form.other_number|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id6 d-none">{{ form.other_number_confirm|as_crispy_field }}</div>
+
+                                <!-- Group 7: Extract Record -->
+                                <div class="col-md-6 child_id child_id7 d-none">{{ form.parent_extract_record|as_crispy_field }}</div>
+                                <div class="col-md-6 child_id child_id7 d-none">{{ form.parent_extract_record_confirm|as_crispy_field }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Work Status & Final -->
+                        <div class="step-content d-none" id="step-3">
+                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "5. ALP Enrolment" %}</h5>
+                            <div class="row g-3 mb-5">
+                                <div class="col-md-6">{{ form.school|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.registration_date|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.round|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.programme|as_crispy_field }}</div>
+                            </div>
+
+                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "6. Labour & Vulnerability" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">{{ form.have_labour|as_crispy_field }}</div>
+                                <div class="col-md-6 " id="div_id_labour_type">{{ form.labour_type|as_crispy_field }}</div>
+
+                                <div class="col-md-12 " id="labour_details_1">{{ form.labour_type_specify|as_crispy_field }}</div>
+
+                                <div class="col-md-6 " id="labour_details_2">{{ form.labour_hours|as_crispy_field }}</div>
+                                <div class="col-md-6 " id="labour_details_2_alt">{{ form.labour_weekly_income|as_crispy_field }}</div>
+
+                                <div class="col-md-12 " id="labour_details_3">{{ form.labour_condition|as_crispy_field }}</div>
+
+                                <div class="col-md-12 mt-4">
+                                    {{ form.cash_support_programmes|as_crispy_field }}
+                                </div>
+                            </div>
+
+                            <!-- Form Summary / Review -->
+                            <div class="mt-5 border-top pt-4">
+                                <h5 class="fw-bold mb-3"><i class="bi bi-card-checklist me-2 text-primary"></i> {% trans "Final Review" %}</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="summary-card p-3 rounded border h-100">
+                                            <h6 class="fw-bold mb-3 text-muted small text-uppercase">{% trans "Child Identity" %}</h6>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "Full Name" %}</label>
+                                                <span id="summary-name" class="fw-medium text-dark">-</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "DOB" %}</label>
+                                                <span id="summary-dob" class="fw-medium text-dark">-</span>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <label class="small text-muted d-block">{% trans "Nationality" %}</label>
+                                                    <span id="summary-nat" class="fw-medium text-dark">-</span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="small text-muted d-block">{% trans "Gender" %}</label>
+                                                    <span id="summary-gender" class="fw-medium text-dark">-</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="summary-card p-3 rounded border h-100">
+                                            <h6 class="fw-bold mb-3 text-muted small text-uppercase">{% trans "Caregiver Information" %}</h6>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "Contact Method" %}</label>
+                                                <span id="summary-phone" class="fw-medium text-dark">-</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "ID Document" %}</label>
+                                                <span id="summary-id-type" class="fw-medium text-dark">-</span>
+                                            </div>
+                                            <div>
+                                                <label class="small text-muted d-block">{% trans "ID Number" %}</label>
+                                                <span id="summary-id-num" class="fw-medium text-dark">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 p-4 bg-primary bg-opacity-10 rounded border border-primary border-opacity-25">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-shield-check fs-4 text-primary me-3"></i>
+                                    <p class="small text-dark mb-0">{% trans "By completing this registration, you confirm that all entered details are verified against physical documentation." %}</p>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="reset" class="btn btn-light border me-3">{% trans "Reset Form" %}</button>
+                                    <button type="submit" name="save" class="btn btn-primary px-5 fw-bold" id="submit-id-save">
+                                        <i class="bi bi-check-circle me-2"></i> {% trans "Complete Registration" %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="card-footer bg-white p-4 border-top-0 d-flex justify-content-between">
+                    <button type="button" id="prev-btn" class="btn btn-outline-secondary px-4 ">
+                        <i class="bi bi-arrow-left me-2"></i> {% trans "Previous" %}
+                    </button>
+                    <div class="ms-auto">
+                        <button type="button" id="next-btn" class="btn btn-primary px-5 fw-bold">
+                            {% trans "Next Step" %} <i class="bi bi-arrow-right ms-2"></i>
                         </button>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
+
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/alp/alp.js' %}"></script>
+    <script type="text/javascript">
+        window.isAddPage = function() { return {% if not form.instance.id %}true{% else %}false{% endif %}; };
+    </script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/alp/alp.js' %}?v=42"></script>
+    <script type="text/javascript">
+        $(function() {
+            let currentStep = 1;
+            const totalSteps = 3;
+
+            function updateSummary() {
+                $('#summary-name').text(`${$('#id_child_first_name').val()} ${$('#id_child_father_name').val()} ${$('#id_child_last_name').val()}`);
+                $('#summary-dob').text(`${$('#id_child_birthday_day').val()}/${$('#id_child_birthday_month').val()}/${$('#id_child_birthday_year').val()}`);
+                $('#summary-nat').text($('#id_child_nationality option:selected').text());
+                $('#summary-gender').text($('#id_child_gender').val());
+                $('#summary-phone').text($('#id_first_phone_number').val() || '{% trans "Not provided" %}');
+                $('#summary-id-type').text($('#id_id_type option:selected').text() || '{% trans "Not selected" %}');
+
+                // Get the visible ID field value
+                let $visibleIdField = $('.child_id:visible').find('input');
+                let idVal = $visibleIdField.val() || '{% trans "N/A" %}';
+                $('#summary-id-num').text(idVal);
+            }
+
+            function updateWizard(step) {
+                // Progress Bar
+                const progress = (step / totalSteps) * 100;
+                $('#wizardProgressBar').css('width', `${progress}%`);
+
+                // Transitions
+                $('.step-content').addClass('d-none');
+                const $target = $(`#step-${step}`);
+                $target.removeClass('d-none');
+
+                // Stepper Icons
+                $('.step').removeClass('active completed');
+                $(`.step[data-step="${step}"]`).addClass('active');
+                for (let i = 1; i < step; i++) {
+                    $(`.step[data-step="${i}"]`).addClass('completed');
+                }
+
+                // Nav Buttons
+                if (step === 1) {
+                    $('#prev-btn').addClass('d-none');
+                } else {
+                    $('#prev-btn').removeClass('d-none');
+                }
+
+                if (step === totalSteps) {
+                    $('#next-btn').addClass('d-none');
+                    updateSummary();
+                } else {
+                    $('#next-btn').removeClass('d-none');
+                }
+
+                // Scroll to top of card on step change
+                $('html, body').animate({
+                    scrollTop: $(".card").offset().top - 100
+                }, 200);
+            }
+
+            $('#next-btn').on('click', function() {
+                if (typeof validateCurrentStep === 'function') {
+                   if (!validateCurrentStep(currentStep)) return;
+                } else if (typeof validateMainForm === 'function') {
+                   if (!validateMainForm(true, currentStep)) return;
+                }
+    if (currentStep === 2) {
+        const idTypeVal = $('#id_id_type').val();
+
+        if (!idTypeVal) {
+            $('#id_id_type').addClass('is-invalid');
+
+            // scroll to field
+            $('html, body').animate({
+                scrollTop: $('#id_id_type').offset().top - 150
+            }, 200);
+
+            return;
+        } else {
+            $('#id_id_type').removeClass('is-invalid');
+        }
+    }
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateWizard(currentStep);
+                }
+            });
+
+            $('#prev-btn').on('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateWizard(currentStep);
+                }
+            });
+
+            // Expose updateWizard globally so it can be called from mscc.js
+            window.updateWizard = updateWizard;
+            window.currentStep = currentStep;
+
+            // Initial call
+            updateWizard(1);
+
+            // If there are server-side errors, find the first step with an error and navigate to it
+            const errorFields = document.querySelectorAll('.is-invalid');
+            if (errorFields.length > 0) {
+                let firstStepWithError = totalSteps;
+                errorFields.forEach(field => {
+                    // Highlight the parent container
+                    const mb3 = field.closest('.mb-3');
+                    if (mb3) mb3.classList.add('has-error');
+
+                    const stepContent = field.closest('.step-content');
+                    if (stepContent) {
+                        const stepNum = parseInt(stepContent.id.split('-')[1]);
+                        // Mark step in stepper as error
+                        $(`.step[data-step="${stepNum}"]`).addClass('error');
+                        if (stepNum < firstStepWithError) {
+                            firstStepWithError = stepNum;
+                        }
+                    }
+                });
+
+                currentStep = firstStepWithError;
+                updateWizard(firstStepWithError);
+            };
+        });
+    </script>
+    <script>
+    $(function () {
+        const $cashChecks = $('#div_id_cash_support_programmes input[type="checkbox"]');
+
+        $cashChecks.on('change', function () {
+            const $changed = $(this);
+            const value = $changed.val();
+            const checked = $changed.is(':checked');
+
+            if (!checked) return;
+
+            if (value === 'None') {
+                $cashChecks.not($changed).prop('checked', false);
+            } else {
+                $cashChecks.filter('[value="None"]').prop('checked', false);
+            }
+        });
+    });
+</script>
+<script>
+$(function () {
+    const $haveChildren = $('#id_child_have_children');
+    const $childrenDiv = $('#div_id_child_children_number');
+    const $childrenInput = $('#id_child_children_number');
+
+    function toggleChildrenField() {
+        const value = $haveChildren.val();
+
+        if (value === "Yes" || value === "Child pregnant or expecting children") {
+            $childrenDiv.removeClass('d-none');
+
+            if (!$childrenInput.val() || $childrenInput.val() == 0) {
+                $childrenInput.val(1);
+            }
+
+        } else {
+            $childrenDiv.addClass('d-none');
+            $childrenInput.val(0);
+        }
+    }
+
+    // Run on page load
+    toggleChildrenField();
+
+    // Run on change
+    $haveChildren.on('change', toggleChildrenField);
+});
+</script>
 {% endblock %}

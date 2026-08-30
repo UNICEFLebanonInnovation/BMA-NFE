@@ -11,6 +11,10 @@ from student_registration.students.models import AttachmentType, IDType, Nationa
 from student_registration.schools.models import School
 from student_registration.locations.models import Location
 from student_registration.students.widgets import CustomClearableFileInput
+from student_registration.mscc.forms import MainForm
+from student_registration.students.utils import generate_one_unique_id
+from django.contrib import messages
+from .serializers import ALPRegistrationSerializer
 
 
 class ALPSchoolProfileForm(forms.ModelForm):
@@ -95,79 +99,52 @@ class ALPSchoolProfileForm(forms.ModelForm):
         widgets = {'registration_level': forms.CheckboxSelectMultiple}
 
 
-class ALPRegistrationForm(ALPSchoolFilterMixin, forms.ModelForm):
+class ALPRegistrationForm(MainForm):
+    """ALP registration with the MSCC child, caregiver and ID workflow."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
+        route = 'alp:registration_edit' if self.instance.pk else 'alp:registration_add'
+        route_kwargs = {'pk': self.instance.pk} if self.instance.pk else None
+        self.helper.form_action = reverse(route, kwargs=route_kwargs)
+        request = self.request
+        if request and not request.user.is_superuser and request.user.school_id:
+            self.fields['school'].queryset = School.objects.filter(pk=request.user.school_id)
+            self.fields['school'].initial = request.user.school_id
 
-        self.helper.layout = Layout(
-            Fieldset(
-                _('Child Information'),
-                Div(
-                    Div('child', css_class='form-group col-md-6 mb-0'),
-                    Div('school', css_class='form-group col-md-6 mb-0'),
-                    css_class='row'
-                ),
-                Div(
-                    Div('student_old', css_class='form-group col-md-6 mb-0'),
-                    Div('registration_date', css_class='form-group col-md-6 mb-0'),
-                    css_class='row'
-                ),
-                Div(
-                    Div('partner_unique_number', css_class='form-group col-md-12 mb-0'),
-                    css_class='row'
-                ),
-                Div(
-                    Div('source_of_identification', css_class='form-group col-md-6 mb-0'),
-                    Div('source_of_identification_specify', css_class='form-group col-md-6 mb-0'),
-                    css_class='row'
-                ),
-                Div(
-                    Div('cash_support_programmes', css_class='form-group col-md-12 mb-0'),
-                    css_class='row'
-                ),
-            ),
-            Fieldset(
-                _('Education Status'),
-                Div(
-                    Div('round', css_class='form-group col-md-6 mb-0'),
-                    Div('programme', css_class='form-group col-md-6 mb-0'),
-                    css_class='row'
-                )
-            ),
-            Fieldset(
-                _('Labour Details'),
-                Div(
-                    Div('have_labour', css_class='form-group col-md-6 mb-0'),
-                    Div('labour_type', css_class='form-group col-md-6 mb-0'),
-                    css_class='row'
-                ),
-                Div(
-                    Div('labour_type_specify', css_class='form-group col-md-6 mb-0'),
-                    Div('labour_hours', css_class='form-group col-md-6 mb-0'),
-                    css_class='row'
-                ),
-                Div(
-                    Div('labour_weekly_income', css_class='form-group col-md-6 mb-0'),
-                    Div('labour_condition', css_class='form-group col-md-6 mb-0'),
-                    css_class='row'
-                )
-            )
+    def save(self, request=None, instance=None):
+        serializer = ALPRegistrationSerializer(
+            instance, data=request.POST
+        ) if instance else ALPRegistrationSerializer(data=request.POST)
+        if not serializer.is_valid():
+            messages.warning(request, serializer.errors)
+            return None
+        registration = serializer.save()
+        registration.owner = registration.owner or request.user
+        registration.modified_by = request.user
+        if not registration.school_id and request.user.school_id:
+            registration.school_id = request.user.school_id
+        child = registration.child
+        if request.FILES.get('child_photo'):
+            child.photo = request.FILES['child_photo']
+        child.disability_other = request.POST.get('child_disability_other', '')
+        child.unicef_id = generate_one_unique_id(
+            str(child.pk), child.first_name, child.father_name, child.last_name,
+            child.mother_fullname, child.birthdate, child.nationality_name_en,
+            child.gender,
         )
+        child.save()
+        registration.save()
+        request.session['instance_id'] = registration.id
+        messages.success(request, _('Your data has been sent successfully to the server'))
+        return registration
 
     class Meta:
         model = ALPRegistration
-        fields = [
-            'child', 'school', 'student_old', 'registration_date', 'partner_unique_number',
-            'source_of_identification', 'source_of_identification_specify', 'cash_support_programmes',
-            'round', 'programme',
-            'have_labour', 'labour_type', 'labour_type_specify', 'labour_hours', 'labour_weekly_income', 'labour_condition'
-        ]
-        widgets = {
-            'registration_date': forms.DateInput(attrs={'type': 'date'}),
-            'source_of_identification_specify': forms.Textarea(attrs={'rows': 2}),
-        }
+        fields = MainForm.Meta.fields + (
+            'school', 'round', 'programme', 'registration_date',
+        )
+        widgets = {'registration_date': forms.DateInput(attrs={'type': 'date'})}
 
 class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
     round = forms.ModelChoiceField(
