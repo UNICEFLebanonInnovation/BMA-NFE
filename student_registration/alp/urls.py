@@ -38,4 +38,6 @@ urlpatterns = [
     re_path(r'^dashboard/school/$', view=views.ALPSchoolDashboardView.as_view(), name='dashboard_school'),
 
     re_path(r'^alp_dashboard_data/$', view=views.ALPDashboardDataView.as_view(), name='alp_dashboard_data'),
+
+    re_path(r'^landing-page/$', view=views.ALPLandingPage.as_view(), name='landing_page'),
 ]
