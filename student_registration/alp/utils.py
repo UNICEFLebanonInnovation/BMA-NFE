@@ -11,14 +11,14 @@ def filter_by_school(queryset, user):
     if user.is_superuser:
         return queryset
 
-    # We assume models have a `school` field directly, except Attendance which has `registration__school` or `teacher__school`.
-    # Let's handle different models.
+    # Most ALP models have a school field directly. Related attendance models
+    # must be filtered through their owning teacher or registration instead.
     model_name = queryset.model.__name__
 
     if model_name in ['ALPRegistration', 'ALPTeacher']:
         return queryset.filter(school=user.school)
     elif model_name == 'ALPAttendance':
-        return queryset.filter(registration__school=user.school)
+        return queryset.filter(school=user.school)
     elif model_name == 'ALPTeacherAttendance':
         return queryset.filter(teacher__school=user.school)
     elif model_name == 'ALPGrading':
