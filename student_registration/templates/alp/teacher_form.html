@@ -1,15 +1,72 @@
-{% extends "base.html" %}
-{% load i18n %}
+{% extends "mscc/base.html" %}
+{% load static i18n %}
 {% load crispy_forms_tags %}
 
+{% block project_title %}{% trans "ALP Teacher" %} | {% if form.instance.id %}{% trans "Edit" %}{% else %}{% trans "New" %}{% endif %}{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <h2>{% if object %}{% trans "Edit Teacher" %}{% else %}{% trans "New Teacher" %}{% endif %}</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
-        <a href="{% url 'alp:teacher_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
-    </form>
+<div class="container-fluid">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'alp:teacher_list' %}">{% trans "ALP Teachers List" %}</a></li>
+                    <li class="breadcrumb-item active">{% if form.instance.id %}{% trans "Edit Teacher" %}{% else %}{% trans "Add Teacher" %}{% endif %}</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold mt-2">
+                {% if form.instance.id %}{% trans "Edit ALP Teacher Record" %}{% else %}{% trans "Register New ALP Teacher" %}{% endif %}
+            </h3>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% if form.instance.id %}
+            <div class="card bg-light border-0 mb-4">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-journal-check me-2 text-primary"></i>{% trans "Teacher Training Record" %}</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1 text-muted small">{% trans "Topics of teacher training" %}</p>
+                            <ul class="list-unstyled mb-0">
+                                {% for training in form.instance.trainings.all %}
+                                    <li><i class="bi bi-check-circle-fill text-success me-2 small"></i>{{ training.name }}</li>
+                                {% empty %}
+                                    <li class="text-muted fst-italic">{% trans "No trainings recorded." %}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1 text-muted small">{% trans "Sessions Attended" %}</p>
+                            <p class="fw-bold fs-5 mb-0">{{ form.instance.training_sessions_attended|default:"0" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% crispy form %}
+            </form>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script src="{% static 'js/alp/teacher.js' %}?v=1"></script>
+    <script src="{% static 'js/mscc/general.js' %}?v=2"></script>
 {% endblock %}
