@@ -6,9 +6,10 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2.export.views import ExportMixin
 from django.core.exceptions import PermissionDenied
+from django.contrib import messages
 
 from .models import ALPRegistration, ALPTeacher, ALPGrading
-from .forms import ALPRegistrationForm, ALPTeacherForm
+from .forms import ALPRegistrationForm, ALPTeacherForm, ALPSchoolProfileForm
 from .tables import ALPRegistrationTable, ALPTeacherTable
 from .filters import ALPRegistrationFilter, ALPTeacherFilter
 from .utils import user_has_alp_permission, filter_by_school
@@ -129,8 +130,28 @@ class TeacherDeleteView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermiss
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
 
-class SchoolProfileView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
+class SchoolProfileView(LoginRequiredMixin, ALPUserRequiredMixin, UpdateView):
+    """Display a school profile and let its focal point update it."""
+
+    form_class = ALPSchoolProfileForm
     template_name = 'alp/school_profile.html'
+    success_url = reverse_lazy('alp:school_profile')
+
+    def get_object(self, queryset=None):
+        school = self.request.user.school
+        if school is None:
+            raise PermissionDenied("Your account is not assigned to a school.")
+        return school
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'POST' and request.user.is_superuser:
+            raise PermissionDenied("Superusers have read-only access to ALP data.")
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.modified_by = self.request.user
+        messages.success(self.request, 'School information updated successfully.')
+        return super().form_valid(form)
 
 class ChildProfileView(LoginRequiredMixin, ALPUserRequiredMixin, DetailView):
     model = ALPRegistration
