@@ -300,3 +300,94 @@ class ALPSchoolDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
             'total': schools.count(),
             'schools': schools,
         }
+import json
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.conf import settings
+from django.utils import timezone
+from django.db.models import Count
+from django.db.models.functions import TruncDate
+from student_registration.alp.models import ALPRegistration
+from student_registration.alp.models import ALPAttendanceChild
+from student_registration.backends.models import ExportHistory
+
+class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
+    template_name = 'alp/landing_page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if settings.USE_TZ:
+            today = timezone.localdate()
+        else:
+            today = timezone.now().date()
+        week_start = today - timezone.timedelta(days=6)
+        trend_start = today - timezone.timedelta(days=13)
+        month_start = today.replace(day=1)
+
+        user = self.request.user
+
+        # apply school filtering for standard users
+        registrations = ALPRegistration.objects.filter(deleted=False)
+        if not user.is_superuser:
+            registrations = registrations.filter(school_id=user.school_id)
+
+        today_count = registrations.filter(created__date=today).count()
+        week_count = registrations.filter(created__date__gte=week_start).count()
+        schools_reporting = registrations.filter(
+            created__date__gte=today - timezone.timedelta(days=30),
+            school__isnull=False,
+        ).values('school_id').distinct().count()
+
+        attendance_rows = ALPAttendanceChild.objects.filter(
+            attendance_day__attendance_date__gte=month_start,
+            attendance_day__attendance_date__lte=today,
+        )
+        if not user.is_superuser:
+            attendance_rows = attendance_rows.filter(attendance_day__school_id=user.school_id)
+
+        attendance_total = attendance_rows.count()
+        attendance_yes = attendance_rows.filter(attended='Yes').count()
+        attendance_percent = round((attendance_yes / attendance_total) * 100) if attendance_total else 0
+
+        trend_map = {
+            row['day'].strftime('%Y-%m-%d'): row['value']
+            for row in registrations.filter(created__date__gte=trend_start)
+            .annotate(day=TruncDate('created'))
+            .values('day')
+            .annotate(value=Count('id'))
+        }
+        trend_data = []
+        for idx in range(14):
+            day = trend_start + timezone.timedelta(days=idx)
+            key = day.strftime('%Y-%m-%d')
+            trend_data.append({'date': key, 'value': trend_map.get(key, 0)})
+
+        recent_exports = ExportHistory.objects.filter(
+            export_type__icontains='ALP'
+        ).order_by('-created')[:5]
+        export_rows = []
+        for export in recent_exports:
+            created = export.created
+            if created and timezone.is_aware(created):
+                created_display = timezone.localtime(created).strftime('%Y-%m-%d %H:%M')
+            elif created:
+                created_display = created.strftime('%Y-%m-%d %H:%M')
+            else:
+                created_display = ''
+            export_rows.append({
+                'export_type': export.export_type,
+                'created_display': created_display,
+                'status': export.status,
+                'file_url': export.file.url if export.file and export.file.name else '#',
+            })
+
+        context.update({
+            'kpi_today': today_count,
+            'kpi_week': week_count,
+            'kpi_schools': schools_reporting,
+            'kpi_attendance': attendance_percent,
+            'trend_data': json.dumps(trend_data),
+            'recent_exports': export_rows,
+        })
+        return context

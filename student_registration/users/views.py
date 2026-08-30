@@ -97,7 +97,7 @@ def login_success(request):
         return redirect('/accounts/login/')
 
     if has_group(request.user, 'ALP_SCHOOL'):
-        return redirect('alp:dashboard_registration')
+        return redirect('alp:landing_page')
 
     # Default to landing page if multiple modules or no specific match
     return redirect('/landing-page/')
@@ -108,8 +108,8 @@ class LandingPage(LoginRequiredMixin,
     template_name = 'landing_page.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if has_group(request.user, 'ALP_SCHOOL'):
-            return redirect('alp:dashboard_registration')
+        if request.user.is_authenticated and has_group(request.user, 'ALP_SCHOOL'):
+            return redirect('alp:landing_page')
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
