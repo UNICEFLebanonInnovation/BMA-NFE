@@ -32,7 +32,7 @@ from student_registration.users.templatetags.custom_tags import has_group
 
 from django.utils.safestring import mark_safe
 
-from django.forms.widgets import ClearableFileInput
+from student_registration.students.widgets import CustomClearableFileInput
 
 
 class AdminFileWidget(forms.FileInput):
@@ -101,10 +101,6 @@ class StudentEnrollmentForm(forms.ModelForm):
             'number',
             'unicef_id'
         )
-
-
-class CustomClearableFileInput(ClearableFileInput):
-    template_name = 'students/clearable_file_input.html'
 
 
 class TeacherForm(forms.ModelForm):
