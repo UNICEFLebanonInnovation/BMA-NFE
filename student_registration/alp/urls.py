@@ -36,6 +36,8 @@ urlpatterns = [
     re_path(r'^dashboard/teacher/$', view=views.ALPTeacherDashboardView.as_view(), name='dashboard_teacher'),
     re_path(r'^dashboard/attendance/$', view=views.ALPAttendanceDashboardView.as_view(), name='dashboard_attendance'),
     re_path(r'^dashboard/school/$', view=views.ALPSchoolDashboardView.as_view(), name='dashboard_school'),
+    re_path(r'^dashboard/pivot/$', view=views.ALPPivotDashboardView.as_view(), name='pivot_dashboard'),
+    re_path(r'^dashboard/pivot/data/$', view=views.ALPPivotDataView.as_view(), name='pivot_data'),
 
     re_path(r'^alp_dashboard_data/$', view=views.ALPDashboardDataView.as_view(), name='alp_dashboard_data'),
 ]
