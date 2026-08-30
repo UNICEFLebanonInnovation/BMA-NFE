@@ -217,6 +217,7 @@ class GradingEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissio
 
 from django.views.generic import View
 from django.http import JsonResponse
+from django.db.models import Avg, Count, Q, Sum
 
 
 def _alp_pivot_queryset(user):
@@ -359,6 +360,7 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
         instances = filter_by_school(ALPTeacher.objects.select_related('school'), user)
 
         schools = School.objects.all()
+        rounds = ALPRound.objects.all()
 
         if not user.is_superuser:
             schools = schools.filter(id=user.school_id)
@@ -443,6 +445,7 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
         return {
             'total': instances.count(),
             'schools': schools,
+            'rounds': rounds,
             'programmes': programmes,
             'attendance_rate': rate,
             'attendance_records': len(records),
@@ -455,6 +458,90 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
             'school_data': by_school,
             'programme_rows': programme_rows,
         }
+
+
+class ALPTeacherDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
+    """Return teacher workforce indicators within the user's ALP school scope."""
+
+    def get(self, request):
+        teachers = filter_by_school(ALPTeacher.objects.all(), request.user)
+
+        school_ids = request.GET.getlist('schools')
+        if school_ids:
+            teachers = teachers.filter(school_id__in=school_ids)
+
+        round_ids = request.GET.getlist('rounds')
+        if round_ids:
+            teachers = teachers.filter(round_id__in=round_ids)
+
+        total = teachers.count()
+        trained = teachers.filter(
+            Q(trainings__isnull=False) | Q(training_sessions_attended__gt=0)
+        ).distinct().count()
+        contactable = teachers.exclude(
+            Q(phone_number__isnull=True) | Q(phone_number='')
+        ).count()
+        averages = teachers.aggregate(
+            experience=Avg('years_of_experience'),
+            sessions=Avg('training_sessions_attended'),
+        )
+        hours = teachers.aggregate(
+            alp=Sum('teaching_hours_mscc'),
+            private=Sum('teaching_hours_private_school'),
+        )
+
+        def percent(value):
+            return round(value * 100 / total, 1) if total else 0
+
+        def grouped(field):
+            rows = teachers.values(field).annotate(y=Count('id')).order_by(field)
+            return [
+                {'name': row[field] or 'Not specified', 'y': row['y']}
+                for row in rows
+            ]
+
+        subjects = {}
+        levels = {}
+        for teacher in teachers.only('subjects_provided', 'registration_level'):
+            for subject in teacher.subjects_provided or []:
+                if subject:
+                    subjects[subject] = subjects.get(subject, 0) + 1
+            for level in teacher.registration_level or []:
+                if level:
+                    levels[level] = levels.get(level, 0) + 1
+
+        training_rows = (
+            teachers.filter(trainings__isnull=False)
+            .values('trainings__name')
+            .annotate(y=Count('id', distinct=True))
+            .order_by('-y', 'trainings__name')
+        )
+
+        return JsonResponse({
+            'total': total,
+            'schools': teachers.exclude(school_id__isnull=True).values('school_id').distinct().count(),
+            'trained': trained,
+            'trained_percent': percent(trained),
+            'contact_percent': percent(contactable),
+            'average_experience': round(averages['experience'] or 0, 1),
+            'average_sessions': round(averages['sessions'] or 0, 1),
+            'gender': grouped('sex'),
+            'nationality': grouped('nationality__name'),
+            'school': grouped('school__name'),
+            'round': grouped('round__name'),
+            'assignment': grouped('teacher_assignment'),
+            'coaching': grouped('extra_coaching'),
+            'subjects': [{'name': key, 'y': value} for key, value in subjects.items()],
+            'levels': [{'name': key, 'y': value} for key, value in levels.items()],
+            'trainings': [
+                {'name': row['trainings__name'] or 'Not specified', 'y': row['y']}
+                for row in training_rows
+            ],
+            'hours': [
+                {'name': 'ALP', 'y': hours['alp'] or 0},
+                {'name': 'Private school', 'y': hours['private'] or 0},
+            ],
+        })
 
 class ALPAttendanceDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
     template_name = 'alp/dashboard_attendance.html'
