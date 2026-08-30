@@ -24,6 +24,7 @@ from student_registration.mscc.models import Registration
 from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.backends.models import ExportHistory
 import json
+from student_registration.users.templatetags.custom_tags import has_group
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -95,6 +96,9 @@ def login_success(request):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
 
+    if has_group(request.user, 'ALP_SCHOOL'):
+        return redirect('alp:dashboard_registration')
+
     # Default to landing page if multiple modules or no specific match
     return redirect('/landing-page/')
 
@@ -102,6 +106,11 @@ def login_success(request):
 class LandingPage(LoginRequiredMixin,
                    TemplateView):
     template_name = 'landing_page.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if has_group(request.user, 'ALP_SCHOOL'):
+            return redirect('alp:dashboard_registration')
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
