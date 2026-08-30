@@ -7,8 +7,13 @@ from django_tables2.views import SingleTableMixin
 from django_tables2.export.views import ExportMixin
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.db.models import Count, Q
+from django.utils import timezone
 
-from .models import ALPRegistration, ALPTeacher, ALPGrading
+import json
+from collections import OrderedDict
+
+from .models import ALPAttendanceChild, ALPRegistration, ALPTeacher, ALPGrading
 from .forms import ALPRegistrationForm, ALPTeacherForm, ALPSchoolProfileForm
 from .tables import ALPRegistrationTable, ALPTeacherTable
 from .filters import ALPRegistrationFilter, ALPTeacherFilter
@@ -208,9 +213,8 @@ class GradingEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissio
         qs = super().get_queryset()
         return filter_by_school(qs, self.request.user)
 
-from django.views.generic import TemplateView, View
+from django.views.generic import View
 from django.http import JsonResponse
-from django.db.models import Count
 
 
 def _alp_pivot_queryset(user):
@@ -366,21 +370,47 @@ class ALPAttendanceDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Templ
     template_name = 'alp/dashboard_attendance.html'
 
     def get_context_data(self, **kwargs):
-        from student_registration.schools.models import School
-        from .models import ALPAttendance
-
+        context = super().get_context_data(**kwargs)
         user = self.request.user
-        instances = filter_by_school(ALPAttendance.objects.all(), user)
+        year = int(self.request.GET.get('year', timezone.now().year))
+        base_qs = _alp_attendance_queryset(user).filter(
+            attendance_day__attendance_date__year=year,
+        )
+        attendance = _aggregate_alp_attendance(base_qs, 'attendance_day__attendance_date')
+        programme_attendance = _aggregate_alp_attendance(
+            base_qs, 'attendance_day__attendance_date', 'attendance_day__programme__name'
+        )
 
-        schools = School.objects.all()
+        programme_data = OrderedDict()
+        for row in programme_attendance:
+            programme = row.pop('attendance_day__programme__name') or 'Unknown'
+            programme_data.setdefault(programme, []).append(row)
 
-        if not user.is_superuser:
-            schools = schools.filter(id=user.school_id)
+        years = _alp_attendance_queryset(user).dates('attendance_day__attendance_date', 'year')
+        context.update({
+            'attendance_json': json.dumps(list(attendance), default=str),
+            'program_attendance_json': json.dumps(programme_data, default=str),
+            'year': year,
+            'years': [date.year for date in years],
+        })
+        return context
 
-        return {
-            'total': instances.count(),
-            'schools': schools,
-        }
+
+def _alp_attendance_queryset(user):
+    """Return child attendance records visible to an ALP user."""
+    queryset = ALPAttendanceChild.objects.all()
+    if not user.is_superuser:
+        queryset = queryset.filter(attendance_day__school_id=user.school_id)
+    return queryset
+
+
+def _aggregate_alp_attendance(queryset, *group_fields):
+    """Aggregate total and absent child records for heatmap groups."""
+    return (
+        queryset.values(*group_fields)
+        .annotate(total=Count('id'), absent=Count('id', filter=Q(attended='No')))
+        .order_by(*group_fields)
+    )
 
 class ALPSchoolDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
     template_name = 'alp/dashboard_school.html'
@@ -399,15 +429,8 @@ class ALPSchoolDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
             'total': schools.count(),
             'schools': schools,
         }
-import json
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
-from django.utils import timezone
-from django.db.models import Count
 from django.db.models.functions import TruncDate
-from student_registration.alp.models import ALPRegistration
-from student_registration.alp.models import ALPAttendanceChild
 from student_registration.backends.models import ExportHistory
 
 class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
