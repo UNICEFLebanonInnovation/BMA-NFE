@@ -337,6 +337,34 @@ class School(TimeStampedModel):
         verbose_name=_('Modified by'),
     )
 
+
+    admin_staff_number = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 300)),
+        verbose_name=_('Number of Admin staff in the school')
+    )
+    offer_digital_learning = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the school offer digital learning services?')
+    )
+    have_digital_hub = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the school have a digital hub?')
+    )
+    neaby_phcc = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name=_('Nearby PHCC name')
+    )
+
     class Meta:
         ordering = ['number']
 
@@ -384,6 +412,32 @@ class School(TimeStampedModel):
            or not self.academic_year_exam_end:
             return False
         return True
+
+    @property
+    def total_admin_staff(self):
+        return self.admin_staff_number if self.admin_staff_number is not None else 0
+
+    @property
+    def total_teachers(self):
+        from student_registration.students.models import Teacher
+        return Teacher.objects.filter(school=self.id).count()
+
+    @property
+    def total_teachers_male(self):
+        from student_registration.students.models import Teacher
+        return Teacher.objects.filter(school=self.id, sex='Male').count()
+
+    @property
+    def total_teachers_female(self):
+        from student_registration.students.models import Teacher
+        return Teacher.objects.filter(school=self.id, sex='Female').count()
+
+    @property
+    def total_staff(self):
+        admin_staff = self.total_admin_staff
+        teachers = self.total_teachers
+        return admin_staff + teachers
+
 
     def __unicode__(self):
         """Return the unicode representation combining number and name.

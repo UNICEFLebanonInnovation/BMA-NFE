@@ -167,6 +167,27 @@ class SchoolForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=School.YES_NO
     )
+    admin_staff_number = forms.ChoiceField(
+        label=_("Number of Admin staff in the school"),
+        widget=forms.Select, required=False,
+        choices=((x, x) for x in range(0, 300)),
+    )
+    offer_digital_learning = forms.ChoiceField(
+        label=_("Does the school offer digital learning services?"),
+        widget=forms.Select, required=False,
+        choices=School.YES_NO
+    )
+    have_digital_hub = forms.ChoiceField(
+        label=_("Does the school have a digital hub?"),
+        widget=forms.Select, required=False,
+        choices=School.YES_NO
+    )
+    neaby_phcc = forms.CharField(
+        label=_("Nearby PHCC name"),
+        widget=forms.TextInput(attrs={'placeholder': _('Nearby PHCC name')}),
+        required=False
+    )
+
     number_dirasa_children_disability = forms.IntegerField(
         label=_('Total number of Children With Disability (Dirasa only)'),
         widget=forms.TextInput, required=False
@@ -241,9 +262,21 @@ class SchoolForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('is_closed', css_class='col-md-3 '),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                    Div('admin_staff_number', css_class='col-md-3 '),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                    Div('offer_digital_learning', css_class='col-md-3 '),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('have_digital_hub', css_class='col-md-3 '),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    Div('neaby_phcc', css_class='col-md-3 '),
                     css_class='row card-body',
                 ),
                 css_id='step-1'
+
             ),
             Div(
                 Div(
@@ -421,6 +454,10 @@ class SchoolForm(forms.ModelForm):
             'academic_year_start',
             'academic_year_end',
             'receive_supplies',
+            'admin_staff_number',
+            'offer_digital_learning',
+            'have_digital_hub',
+            'neaby_phcc',
             'number_dirasa_children_disability',
             'number_total_children_disability',
             'type',
