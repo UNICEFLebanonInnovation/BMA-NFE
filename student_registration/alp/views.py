@@ -363,7 +363,13 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
 
     def get_context_data(self, **kwargs):
         from student_registration.schools.models import School
-        from .models import ALPRound, ALPTeacher
+        from .models import (
+            ALPProgram,
+            ALPRegistration,
+            ALPRound,
+            ALPTeacher,
+            ALPTeacherAttendance,
+        )
 
         user = self.request.user
         instances = filter_by_school(ALPTeacher.objects.all(), user)

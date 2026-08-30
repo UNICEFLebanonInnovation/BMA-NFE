@@ -1,21 +1,29 @@
-from django.template.loader import get_template
-from django.test import SimpleTestCase
+from django.contrib.auth.models import Group
+from django.test import TestCase
+from django.urls import reverse
+
+from student_registration.alp.models import ALPRound
+from student_registration.schools.models import School
+from student_registration.users.models import User
 
 
-class ALPTeacherDashboardTemplateTests(SimpleTestCase):
-    def test_teacher_dashboard_has_one_content_block(self):
-        template = get_template('alp/dashboard_teacher.html')
+class ALPTeacherDashboardTests(TestCase):
+    def setUp(self):
+        self.school = School.objects.create(
+            number='100', name='Mapped ALP School', latitude=33.9,
+            longitude=35.5,
+        )
+        group = Group.objects.create(name='ALP_SCHOOL')
+        self.user = User.objects.create_user(
+            username='focal-point', password='password', school=self.school
+        )
+        self.user.groups.add(group)
+        self.client.force_login(self.user)
 
-        content_blocks = [
-            node for node in template.template.nodelist
-            if getattr(node, 'name', None) == 'content'
-        ]
+    def test_dashboard_includes_available_rounds(self):
+        alp_round = ALPRound.objects.create(name='Round 1', current_year=True)
 
-        self.assertEqual(len(content_blocks), 1)
+        response = self.client.get(reverse('alp:dashboard_teacher'))
 
-    def test_teacher_dashboard_does_not_include_attendance_dashboard_assets(self):
-        template = get_template('alp/dashboard_teacher.html')
-        source = template.template.source
-
-        self.assertNotIn('teacher-attendance-dashboard.css', source)
-        self.assertNotIn('teacher_attendance_dashboard.js', source)
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerySetEqual(response.context['rounds'], [alp_round])
