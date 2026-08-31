@@ -1,0 +1,9 @@
+{% load i18n %}
+<div class="btn-group btn-group-sm" role="group">
+    <a href="{% url 'alp:teacher_edit' record.pk %}" class="btn btn-outline-secondary" title="{% trans 'Edit' %}">
+        <i class="bi bi-pencil"></i>
+    </a>
+    <a href="{% url 'alp:teacher_delete' record.pk %}" class="btn btn-outline-danger" title="{% trans 'Delete' %}">
+        <i class="bi bi-trash"></i>
+    </a>
+</div>
