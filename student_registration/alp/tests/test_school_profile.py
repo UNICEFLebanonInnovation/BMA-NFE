@@ -23,6 +23,10 @@ class SchoolProfileViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'name="name"')
         self.assertContains(response, self.school.name)
+        self.assertContains(response, 'name="operating_shift"')
+        self.assertContains(response, 'Public School')
+        self.assertContains(response, 'Morning shift')
+        self.assertContains(response, 'Afternoon shift')
 
     def test_focal_point_can_only_update_assigned_school(self):
         other_school = School.objects.create(number='200', name='Other school')
@@ -30,12 +34,16 @@ class SchoolProfileViewTests(TestCase):
         response = self.client.post(reverse('alp:school_profile'), {
             'number': self.school.number,
             'name': 'Updated name',
+            'type': 'Public School',
+            'operating_shift': 'afternoon shift',
         })
 
         self.assertRedirects(response, reverse('alp:school_profile'))
         self.school.refresh_from_db()
         other_school.refresh_from_db()
         self.assertEqual(self.school.name, 'Updated name')
+        self.assertEqual(self.school.type, 'Public School')
+        self.assertEqual(self.school.operating_shift, 'afternoon shift')
         self.assertEqual(other_school.name, 'Other school')
         self.assertEqual(self.school.modified_by, self.user)
 

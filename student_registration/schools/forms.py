@@ -21,6 +21,11 @@ class SchoolForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=School.TYPE
     )
+    operating_shift = forms.ChoiceField(
+        label=_("Operating shift"),
+        widget=forms.Select, required=False,
+        choices=School.OPERATING_SHIFT
+    )
     number = forms.IntegerField(
         label=_('School CERD Number'),
         widget=forms.TextInput(attrs={'placeholder': _('e.g. 1234')}), required=False
@@ -232,46 +237,48 @@ class SchoolForm(forms.ModelForm):
                     Div('name', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('type', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('operating_shift', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('director_name', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('land_phone_number', css_class='col-md-3'),
+                    Div('director_name', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">6</span>'),
+                    Div('land_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('email', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('district', css_class='col-md-3'),
+                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">9</span>'),
+                    Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">10</span>'),
                     Div('cadaster', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('longitude', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                    Div('longitude', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('latitude', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('is_closed', css_class='col-md-3 '),
                     HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                    Div('is_closed', css_class='col-md-3 '),
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('admin_staff_number', css_class='col-md-3 '),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('offer_digital_learning', css_class='col-md-3 '),
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('have_digital_hub', css_class='col-md-3 '),
+                    Div('offer_digital_learning', css_class='col-md-3 '),
                     HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    Div('have_digital_hub', css_class='col-md-3 '),
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
                     Div('neaby_phcc', css_class='col-md-3 '),
                     css_class='row card-body',
                 ),
@@ -461,6 +468,7 @@ class SchoolForm(forms.ModelForm):
             'number_dirasa_children_disability',
             'number_total_children_disability',
             'type',
+            'operating_shift',
         )
 
 
