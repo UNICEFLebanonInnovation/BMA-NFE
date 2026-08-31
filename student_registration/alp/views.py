@@ -6,7 +6,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from django_tables2.export.views import ExportMixin
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.conf import settings
@@ -27,6 +26,7 @@ from student_registration.students.utils import generate_one_unique_id
 from .tables import ALPRegistrationTable, ALPTeacherTable
 from .filters import ALPRegistrationFilter, ALPTeacherFilter
 from .utils import user_has_alp_permission, filter_by_school
+from .export import ALPExportMixin
 
 
 def _current_date():
@@ -152,7 +152,7 @@ class ALPEditPermissionMixin(object):
             raise PermissionDenied("Superusers have read-only access to ALP data.")
         return super().dispatch(request, *args, **kwargs)
 
-class RegistrationListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin, SingleTableMixin, FilterView):
+class RegistrationListView(LoginRequiredMixin, ALPUserRequiredMixin, ALPExportMixin, SingleTableMixin, FilterView):
     model = ALPRegistration
     table_class = ALPRegistrationTable
     filterset_class = ALPRegistrationFilter
@@ -242,7 +242,7 @@ def child_duplication_check(request):
     return JsonResponse({'result': list(result)})
 
 
-class TeacherListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin, SingleTableMixin, FilterView):
+class TeacherListView(LoginRequiredMixin, ALPUserRequiredMixin, ALPExportMixin, SingleTableMixin, FilterView):
     model = ALPTeacher
     table_class = ALPTeacherTable
     filterset_class = ALPTeacherFilter
