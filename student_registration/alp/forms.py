@@ -166,13 +166,6 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         empty_label='-------',
         required=True, to_field_name='id',
     )
-    school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_closed=False).order_by('-id'), widget=forms.Select,
-        label=_('School'),
-        empty_label='-------',
-        required=True, to_field_name='id',
-        initial=0
-    )
     first_name = forms.CharField(
         label=_("First name"),
         widget=forms.TextInput(attrs={'placeholder': _('e.g. Mohamad')}), required=True
@@ -406,7 +399,6 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
             Fieldset(
                 _('Assignment & Qualifications'),
                 Div(
-                    Div('school', css_class='col-md-6'),
                     Div('round', css_class='col-md-6'),
                     css_class='row mb-3'
                 ),
@@ -499,7 +491,6 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         model = ALPTeacher
         fields = [
             'round',
-            'school',
             'first_name',
             'father_name',
             'last_name',

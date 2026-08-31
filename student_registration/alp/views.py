@@ -266,6 +266,7 @@ class TeacherAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermission
     def form_valid(self, form):
         form.instance.owner = self.request.user
         form.instance.modified_by = self.request.user
+        form.instance.school = self.request.user.school
         return super().form_valid(form)
 
 class TeacherEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, UpdateView):
@@ -285,6 +286,7 @@ class TeacherEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissio
 
     def form_valid(self, form):
         form.instance.modified_by = self.request.user
+        form.instance.school = self.request.user.school
         return super().form_valid(form)
 
 class TeacherDeleteView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, DeleteView):
