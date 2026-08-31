@@ -82,6 +82,22 @@ class School(TimeStampedModel):
         ('Saturday', _('Saturday')),
         ('Sunday', _('Sunday')),
     )
+    PROVIDED_PACKAGES = Choices(
+        ('Education', 'Education'),
+        ('Youth', 'Youth'),
+        ('Health & Nutrition', 'Health & Nutrition'),
+        ('Child Protection', 'Child Protection'),
+        ('Social Protection', 'Social Protection'),
+    )
+    PROGRAM = Choices(
+        ('ALP', 'ALP'),
+        ('BLN', 'BLN'),
+        ('ABLN', 'ABLN'),
+        ('RS', 'RS'),
+        ('CBECE', 'CBECE'),
+        ('YBLN', 'YBLN'),
+        ('YFS', 'YFS'),
+    )
     number = models.CharField(
         max_length=45,
         unique=True,
@@ -151,6 +167,28 @@ class School(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Grade level')
+    )
+    provided_packages = ArrayField(
+        models.CharField(
+            choices=PROVIDED_PACKAGES,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Provided Services')
+    )
+    programs = ArrayField(
+        models.CharField(
+            choices=PROGRAM,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Programs')
     )
     school_capacity = models.IntegerField(
         blank=True, null=True,
