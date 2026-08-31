@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from student_registration.alp.forms import ALPTeacherForm
-from student_registration.alp.models import ALPRound
+from student_registration.alp.models import ALPRound, ALPTeacher
 from student_registration.schools.models import School
 from student_registration.users.models import User
 

@@ -59,6 +59,10 @@
 {% endif %}
 
 {% if request.user|has_group:"ALP_SCHOOL" %}
+<a href="{% url 'alp:landing_page' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'landing_page' %}active{% endif %}">
+    <i class="bi bi-house-door"></i> <span>{% trans "Home" %}</span>
+</a>
+
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Operations" %}</div>
 <a href="{% url 'alp:registration_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'registration' in request.resolver_match.url_name and 'dashboard' not in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-person-plus"></i> <span>{% trans "ALP Registrations" %}</span>
