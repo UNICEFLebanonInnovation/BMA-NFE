@@ -60,8 +60,6 @@ class ALPTeacher(TimeStampedModel):
         ('Level two', _('Level two')),
         ('Level three', _('Level three')),
         ('Level four', _('Level four')),
-        ('Level five', _('Level five')),
-        ('Level six', _('Level six')),
     )
     TEACHER_ASSIGNMENT = Choices(
         ('Makani only', _('Makani only')),

@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
 
+from student_registration.alp.forms import ALPTeacherForm
 from student_registration.alp.models import ALPRound
 from student_registration.schools.models import School
 from student_registration.users.models import User
@@ -27,3 +28,16 @@ class ALPTeacherDashboardTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertQuerySetEqual(response.context['rounds'], [alp_round])
+
+    def test_teacher_grade_levels_only_include_levels_one_to_four(self):
+        form = ALPTeacherForm(user=self.user)
+
+        self.assertEqual(
+            list(form.fields['registration_level'].choices),
+            [
+                ('Level one', 'Level one'),
+                ('Level two', 'Level two'),
+                ('Level three', 'Level three'),
+                ('Level four', 'Level four'),
+            ],
+        )
