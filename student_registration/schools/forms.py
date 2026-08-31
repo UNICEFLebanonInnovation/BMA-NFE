@@ -83,6 +83,18 @@ class SchoolForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
+    provided_packages = forms.MultipleChoiceField(
+        label=_('Provided Services'),
+        choices=School.PROVIDED_PACKAGES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    programs = forms.MultipleChoiceField(
+        label=_('Education Program'),
+        choices=School.PROGRAM,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
     school_capacity = forms.IntegerField(
         label=_('School capacity'),
         widget=forms.TextInput(attrs={'placeholder': '0'}), required=False,
@@ -283,6 +295,14 @@ class SchoolForm(forms.ModelForm):
                     Div('neaby_phcc', css_class='col-md-3 '),
                     css_class='row card-body',
                 ),
+                Fieldset(
+                    _('Provided Services & Programs'),
+                    Div(
+                        Div('provided_packages', css_class='col-md-6 bg-light p-3 rounded-3'),
+                        Div('programs', css_class='col-md-6 bg-light p-3 rounded-3'),
+                        css_class='row mb-3 mx-0',
+                    ),
+                ),
                 css_id='step-1'
 
             ),
@@ -441,6 +461,8 @@ class SchoolForm(forms.ModelForm):
             'longitude',
             'latitude',
             'registration_level',
+            'provided_packages',
+            'programs',
             'school_capacity',
             'empty_building',
             'number_children',
