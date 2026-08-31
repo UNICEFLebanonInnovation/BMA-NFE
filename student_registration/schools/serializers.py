@@ -48,6 +48,7 @@ class SchoolSerializer(serializers.ModelSerializer):
             'number_dirasa_children_disability',
             'number_total_children_disability',
             'type',
+            'operating_shift',
             'owner',
             'modified_by',
             'created',

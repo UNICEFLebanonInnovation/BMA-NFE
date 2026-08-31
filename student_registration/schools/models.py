@@ -70,8 +70,14 @@ class School(TimeStampedModel):
     )
     TYPE = Choices(
         ('', '----------'),
+        ('Public School', _("Public School")),
         ('Private School', _("Private School")),
         ('Private Free School', _("Private Free School")),
+    )
+    OPERATING_SHIFT = Choices(
+        ('', '----------'),
+        ('morning shift', _("Morning shift")),
+        ('afternoon shift', _("Afternoon shift")),
     )
     DAYS_OF_THE_WEEK = Choices(
         ('Monday', _('Monday')),
@@ -90,6 +96,11 @@ class School(TimeStampedModel):
     type = models.CharField(
         blank=True, null=True, max_length=100,
         choices=TYPE,
+    )
+    operating_shift = models.CharField(
+        blank=True, null=True, max_length=20,
+        choices=OPERATING_SHIFT,
+        verbose_name=_('Operating shift'),
     )
     name = models.CharField(
         max_length=255,

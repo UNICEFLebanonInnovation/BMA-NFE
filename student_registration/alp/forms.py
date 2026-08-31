@@ -56,6 +56,10 @@ class ALPSchoolProfileForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
+                    Div('operating_shift', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
                     Div('director_name', css_class='col-md-4'),
                     Div('land_phone_number', css_class='col-md-4'),
                     Div('email', css_class='col-md-4'),
@@ -92,9 +96,9 @@ class ALPSchoolProfileForm(forms.ModelForm):
     class Meta:
         model = School
         fields = (
-            'number', 'name', 'type', 'director_name', 'land_phone_number',
-            'email', 'governorate', 'district', 'cadaster', 'longitude',
-            'latitude', 'registration_level', 'school_capacity',
+            'number', 'name', 'type', 'operating_shift', 'director_name',
+            'land_phone_number', 'email', 'governorate', 'district', 'cadaster',
+            'longitude', 'latitude', 'registration_level', 'school_capacity',
         )
         widgets = {'registration_level': forms.CheckboxSelectMultiple}
 
