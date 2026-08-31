@@ -15,7 +15,7 @@ class ALPRegistrationTable(tables.Table):
         model = ALPRegistration
         template_name = 'django_tables2/bootstrap5.html'
         attrs = {'class': 'table table-hover table-striped align-middle'}
-        fields = ('id', 'child__first_name', 'child__last_name', 'school', 'round', 'programme', 'actions')
+        fields = ('actions', 'id', 'child__first_name', 'child__last_name', 'school', 'round', 'programme')
 
 class ALPTeacherTable(tables.Table):
     actions = tables.TemplateColumn(
