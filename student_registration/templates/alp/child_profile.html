@@ -1,27 +1,128 @@
-{% extends "base.html" %}
+{% extends "mscc/base.html" %}
 {% load i18n %}
 
+{% block project_title %}{% trans "Beneficiary Profile" %}{% endblock %}
+{% block module_name %}{% trans "ALP Beneficiary Profile" %}{% endblock %}
+
 {% block content %}
-<div class="container-fluid mt-4">
-    <h2>{% trans "ALP Child Profile" %}</h2>
-    <div class="card mb-4">
-        <div class="card-header">
-            <h4>{{ registration.child.full_name }}</h4>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>{% trans "Registration ID:" %}</strong> {{ registration.id }}</p>
-                    <p><strong>{% trans "Child Name:" %}</strong> {{ registration.child.full_name }}</p>
-                    <p><strong>{% trans "School:" %}</strong> {{ registration.school.name|default:"-" }}</p>
+<div class="container-fluid">
+    <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <div class="col-md-auto bg-primary d-flex align-items-center justify-content-center p-4" style="min-width: 150px;">
+                    <div class="text-white text-center">
+                        {% if registration.child.photo %}
+                            <img src="{{ registration.child.photo.url }}" alt="{% trans 'Child Photo' %}" class="img-fluid rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid white;">
+                        {% else %}
+                            <i class="bi bi-person-bounding-box display-3"></i>
+                        {% endif %}
+                        <div class="small mt-2 opacity-75">{% trans "Beneficiary" %}</div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <p><strong>{% trans "Round:" %}</strong> {{ registration.round.name|default:"-" }}</p>
-                    <p><strong>{% trans "Programme:" %}</strong> {{ registration.programme.name|default:"-" }}</p>
+                <div class="col-md p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h2 class="fw-bold mb-1 text-dark">{{ registration.child.full_name }}</h2>
+                            <div class="d-flex flex-wrap gap-3 text-muted">
+                                <span><i class="bi bi-fingerprint me-1"></i> <span class="fw-bold text-dark">{{ registration.child.unicef_id|default:registration.child.id }}</span></span>
+                                <span><i class="bi bi-calendar3 me-1"></i> {{ registration.child.birthday|default:"—" }}{% if registration.child.age %} ({{ registration.child.age }}{% trans "y)" %}{% endif %}</span>
+                                <span><i class="bi bi-person me-1"></i> {{ registration.child.gender|default:"—" }}</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="text-primary fw-bold small text-uppercase mb-2">{% trans "ALP" %}</div>
+                            <span class="badge bg-light text-dark border">{% trans "Registration" %} #{{ registration.id }}</span>
+                        </div>
+                    </div>
+                    <div class="border-top pt-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div class="d-flex flex-wrap gap-4">
+                            <div>
+                                <div class="text-muted small">{% trans "School" %}</div>
+                                <div class="fw-bold">{{ registration.school.name|default:"—" }}</div>
+                            </div>
+                            <div>
+                                <div class="text-muted small">{% trans "Programme" %}</div>
+                                <div class="fw-bold">{{ registration.programme.name|default:"—" }}</div>
+                            </div>
+                            <div>
+                                <div class="text-muted small">{% trans "Current Round" %}</div>
+                                <div class="fw-bold text-primary">{{ registration.round.name|default:"—" }}</div>
+                            </div>
+                        </div>
+                        {% if not request.user.is_superuser %}
+                            <a href="{% url 'alp:registration_edit' registration.pk %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-pencil me-2"></i> {% trans "Edit Profile" %}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white p-0 border-bottom-0">
+            <ul class="nav nav-tabs nav-fill redesign-tabs" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-3 active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-pane" type="button" role="tab" aria-controls="info-pane" aria-selected="true">
+                        <i class="bi bi-info-circle me-2"></i> {% trans "Personal Info" %}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-3" id="programme-tab" data-bs-toggle="tab" data-bs-target="#programme-pane" type="button" role="tab" aria-controls="programme-pane" aria-selected="false">
+                        <i class="bi bi-mortarboard me-2"></i> {% trans "Programme Details" %}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-3" id="support-tab" data-bs-toggle="tab" data-bs-target="#support-pane" type="button" role="tab" aria-controls="support-pane" aria-selected="false">
+                        <i class="bi bi-people me-2"></i> {% trans "Caregiver & Support" %}
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="profileTabsContent">
+            <div class="tab-pane fade show active p-4" id="info-pane" role="tabpanel" aria-labelledby="info-tab" tabindex="0">
+                <h5 class="fw-bold mb-4"><i class="bi bi-person-vcard text-primary me-2"></i>{% trans "Personal Information" %}</h5>
+                <div class="row g-4">
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Full name" %}</div><div class="fw-semibold">{{ registration.child.full_name|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Mother's full name" %}</div><div class="fw-semibold">{{ registration.child.mother_fullname|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Nationality" %}</div><div class="fw-semibold">{{ registration.child.nationality|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Date of birth" %}</div><div class="fw-semibold">{{ registration.child.birthday|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Gender" %}</div><div class="fw-semibold">{{ registration.child.gender|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "ID type" %}</div><div class="fw-semibold">{{ registration.child.id_type|default:"—" }}</div></div>
+                    <div class="col-md-8"><div class="text-muted small">{% trans "Home address" %}</div><div class="fw-semibold">{{ registration.child.address|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Living arrangement" %}</div><div class="fw-semibold">{{ registration.child.living_arrangement|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Disability or special need" %}</div><div class="fw-semibold">{{ registration.child.disability|default:"—" }}</div></div>
                 </div>
             </div>
 
-            <a href="{% url 'alp:registration_edit' registration.pk %}" class="btn btn-primary mt-3">{% trans "Edit Registration" %}</a>
+            <div class="tab-pane fade p-4" id="programme-pane" role="tabpanel" aria-labelledby="programme-tab" tabindex="0">
+                <h5 class="fw-bold mb-4"><i class="bi bi-journal-check text-primary me-2"></i>{% trans "ALP Registration" %}</h5>
+                <div class="row g-4">
+                    <div class="col-md-4"><div class="text-muted small">{% trans "School" %}</div><div class="fw-semibold">{{ registration.school.name|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Programme" %}</div><div class="fw-semibold">{{ registration.programme.name|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Round" %}</div><div class="fw-semibold">{{ registration.round.name|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Registration date" %}</div><div class="fw-semibold">{{ registration.registration_date|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Partner unique child number" %}</div><div class="fw-semibold">{{ registration.partner_unique_number|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Source of referral" %}</div><div class="fw-semibold">{{ registration.source_of_identification|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Does the child participate in work?" %}</div><div class="fw-semibold">{{ registration.have_labour|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Type of work" %}</div><div class="fw-semibold">{{ registration.labour_type|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Working hours per week" %}</div><div class="fw-semibold">{{ registration.labour_hours|default:"—" }}</div></div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade p-4" id="support-pane" role="tabpanel" aria-labelledby="support-tab" tabindex="0">
+                <h5 class="fw-bold mb-4"><i class="bi bi-person-heart text-primary me-2"></i>{% trans "Caregiver & Support Information" %}</h5>
+                <div class="row g-4">
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Primary caregiver" %}</div><div class="fw-semibold">{{ registration.child.main_caregiver|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Caregiver name" %}</div><div class="fw-semibold">{{ registration.child.caregiver_full_name|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Primary phone" %}</div><div class="fw-semibold">{{ registration.child.first_phone_number|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Secondary phone" %}</div><div class="fw-semibold">{{ registration.child.second_phone_number|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Cash support programmes" %}</div><div class="fw-semibold">{{ registration.cash_support_programmes|join:", "|default:"—" }}</div></div>
+                    <div class="col-md-4"><div class="text-muted small">{% trans "Packages received" %}</div><div class="fw-semibold">{{ registration.mscc_packages|join:", "|default:"—" }}</div></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
