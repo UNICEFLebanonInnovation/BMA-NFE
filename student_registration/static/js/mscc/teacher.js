@@ -48,15 +48,7 @@ function organize_form() {
     }
 
     teacher_assignment = $('#id_teacher_assignment').val();
-    if (teacher_assignment == 'other') {
-        $('#div_id_teacher_assignment_other').removeClass('d-none');
-    }
-    else {
-        $('#id_teacher_assignment_other').val('');
-        $('#div_id_teacher_assignment_other').addClass('d-none');
-    }
-
-    if (teacher_assignment == 'ALP and private') {
+    if (teacher_assignment == 'Private and Makani') {
         $('#div_id_teaching_hours_private_school').removeClass('d-none');
         $('#span_teaching_hours_private_school').removeClass('d-none');
 

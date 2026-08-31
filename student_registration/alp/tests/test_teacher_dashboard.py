@@ -42,28 +42,25 @@ class ALPTeacherDashboardTests(TestCase):
             ],
         )
 
-    def test_teacher_form_does_not_show_school(self):
-        form = ALPTeacherForm(request=type('Request', (), {'user': self.user})())
+    def test_teacher_assignment_options_match_alp_programme(self):
+        form = ALPTeacherForm(user=self.user)
 
-        self.assertNotIn('school', form.fields)
+        self.assertEqual(
+            list(form.fields['teacher_assignment'].choices),
+            [
+                ('ALP only', 'ALP only'),
+                ('ALP and FE', 'ALP and FE'),
+                ('ALP and private', 'ALP and private'),
+                ('other', 'other'),
+            ],
+        )
 
-    def test_teacher_school_is_automatically_assigned_on_create(self):
-        other_school = School.objects.create(number='200', name='Other school')
-        alp_round = ALPRound.objects.create(name='Round 1', current_year=True)
+    def test_other_teacher_assignment_requires_details(self):
+        form = ALPTeacherForm(
+            data={'teacher_assignment': 'other'},
+            user=self.user,
+        )
 
-        response = self.client.post(reverse('alp:teacher_add'), {
-            'school': other_school.pk,
-            'round': alp_round.pk,
-            'first_name': 'Maya',
-            'father_name': 'Ali',
-            'last_name': 'Hassan',
-            'mother_fullname': 'Rima Hassan',
-            'phone_number': '70-123456',
-            'subjects_provided': ['math'],
-            'registration_level': ['Level one'],
-            'extra_coaching': 'no',
-        })
+        form.is_valid()
 
-        self.assertRedirects(response, reverse('alp:teacher_list'))
-        teacher = ALPTeacher.objects.get(first_name='Maya')
-        self.assertEqual(teacher.school, self.school)
+        self.assertIn('teacher_assignment_other', form.errors)
