@@ -62,8 +62,10 @@ class ALPTeacher(TimeStampedModel):
         ('Level four', _('Level four')),
     )
     TEACHER_ASSIGNMENT = Choices(
-        ('Makani only', _('Makani only')),
-        ('Private and Makani', _('Private and Makani')),
+        ('ALP only', _('ALP only')),
+        ('ALP and FE', _('ALP and FE')),
+        ('ALP and private', _('ALP and private')),
+        ('other', _('other')),
     )
     YES_NO = Choices(
         ('', _('----------')),
@@ -136,6 +138,10 @@ class ALPTeacher(TimeStampedModel):
     teacher_assignment = models.CharField(
         max_length=100, blank=True, null=True,
         choices=TEACHER_ASSIGNMENT, verbose_name=_('Teacher Assignment')
+    )
+    teacher_assignment_other = models.CharField(
+        max_length=255, blank=True, null=True,
+        verbose_name=_('Other teacher assignment')
     )
     teaching_hours_private_school = models.IntegerField(
         blank=True, null=True, verbose_name=_('Number of teaching hours in private school')

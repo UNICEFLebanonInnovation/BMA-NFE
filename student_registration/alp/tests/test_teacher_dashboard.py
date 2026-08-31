@@ -41,3 +41,26 @@ class ALPTeacherDashboardTests(TestCase):
                 ('Level four', 'Level four'),
             ],
         )
+
+    def test_teacher_assignment_options_match_alp_programme(self):
+        form = ALPTeacherForm(user=self.user)
+
+        self.assertEqual(
+            list(form.fields['teacher_assignment'].choices),
+            [
+                ('ALP only', 'ALP only'),
+                ('ALP and FE', 'ALP and FE'),
+                ('ALP and private', 'ALP and private'),
+                ('other', 'other'),
+            ],
+        )
+
+    def test_other_teacher_assignment_requires_details(self):
+        form = ALPTeacherForm(
+            data={'teacher_assignment': 'other'},
+            user=self.user,
+        )
+
+        form.is_valid()
+
+        self.assertIn('teacher_assignment_other', form.errors)

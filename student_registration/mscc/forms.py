@@ -1261,11 +1261,6 @@ class TeacherForm(forms.ModelForm):
         required=False,
         choices=Teacher.TEACHER_ASSIGNMENT,
     )
-    teacher_assignment_other = forms.CharField(
-        label=_('Other teacher assignment'),
-        widget=forms.TextInput,
-        required=False,
-    )
     teaching_hours_private_school = forms.IntegerField(
         label=_('Number of teaching hours in private school'),
         widget=forms.TextInput,
@@ -1429,7 +1424,6 @@ class TeacherForm(forms.ModelForm):
                 ),
                 Div(
                     Div('teacher_assignment', css_class='col-md-4'),
-                    Div('teacher_assignment_other', css_class='col-md-4'),
                     Div('teaching_hours_private_school', css_class='col-md-4'),
                     Div('teaching_hours_mscc', css_class='col-md-4'),
                     css_class='row mb-3'
@@ -1530,18 +1524,14 @@ class TeacherForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(TeacherForm, self).clean()
         teacher_assignment = cleaned_data.get('teacher_assignment')
-        teacher_assignment_other = cleaned_data.get('teacher_assignment_other')
         teaching_hours_private_school = cleaned_data.get('teaching_hours_private_school')
         teaching_hours_mscc = cleaned_data.get('teaching_hours_mscc')
 
-        if teacher_assignment == 'ALP and private':
+        if teacher_assignment == 'Private and Makani':
             if not teaching_hours_private_school:
                 self.add_error('teaching_hours_private_school', _('This field is required'))
             if not teaching_hours_mscc:
                 self.add_error('teaching_hours_mscc', _('This field is required'))
-
-        if teacher_assignment == 'other' and not teacher_assignment_other:
-            self.add_error('teacher_assignment_other', _('This field is required'))
 
         extra_coaching = cleaned_data.get('extra_coaching')
         extra_coaching_specify = cleaned_data.get('extra_coaching_specify')
@@ -1571,7 +1561,6 @@ class TeacherForm(forms.ModelForm):
             'subjects_provided',
             'registration_level',
             'teacher_assignment',
-            'teacher_assignment_other',
             'teaching_hours_private_school',
             'teaching_hours_mscc',
             'trainings',
