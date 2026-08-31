@@ -107,15 +107,24 @@ class ALPRegistrationForm(MainForm):
         route = 'alp:registration_edit' if self.instance.pk else 'alp:registration_add'
         route_kwargs = {'pk': self.instance.pk} if self.instance.pk else None
         self.helper.form_action = reverse(route, kwargs=route_kwargs)
-        request = self.request
-        if request and not request.user.is_superuser and request.user.school_id:
-            self.fields['school'].queryset = School.objects.filter(pk=request.user.school_id)
-            self.fields['school'].initial = request.user.school_id
+        self.fields.pop('school', None)
+
+    @staticmethod
+    def _registration_data(request):
+        """Return submitted data scoped to the school assigned to the user."""
+        data = request.POST.copy()
+        if not request.user.is_superuser:
+            if request.user.school_id:
+                data['school'] = request.user.school_id
+            else:
+                data.pop('school', None)
+        return data
 
     def save(self, request=None, instance=None):
+        data = self._registration_data(request)
         serializer = ALPRegistrationSerializer(
-            instance, data=request.POST
-        ) if instance else ALPRegistrationSerializer(data=request.POST)
+            instance, data=data
+        ) if instance else ALPRegistrationSerializer(data=data)
         if not serializer.is_valid():
             messages.warning(request, serializer.errors)
             return None
