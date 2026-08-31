@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from student_registration.alp.forms import ALPTeacherForm
-from student_registration.alp.models import ALPRound
+from student_registration.alp.models import ALPRound, ALPTeacher
 from student_registration.schools.models import School
 from student_registration.users.models import User
 
@@ -41,3 +41,29 @@ class ALPTeacherDashboardTests(TestCase):
                 ('Level four', 'Level four'),
             ],
         )
+
+    def test_teacher_form_does_not_show_school(self):
+        form = ALPTeacherForm(request=type('Request', (), {'user': self.user})())
+
+        self.assertNotIn('school', form.fields)
+
+    def test_teacher_school_is_automatically_assigned_on_create(self):
+        other_school = School.objects.create(number='200', name='Other school')
+        alp_round = ALPRound.objects.create(name='Round 1', current_year=True)
+
+        response = self.client.post(reverse('alp:teacher_add'), {
+            'school': other_school.pk,
+            'round': alp_round.pk,
+            'first_name': 'Maya',
+            'father_name': 'Ali',
+            'last_name': 'Hassan',
+            'mother_fullname': 'Rima Hassan',
+            'phone_number': '70-123456',
+            'subjects_provided': ['math'],
+            'registration_level': ['Level one'],
+            'extra_coaching': 'no',
+        })
+
+        self.assertRedirects(response, reverse('alp:teacher_list'))
+        teacher = ALPTeacher.objects.get(first_name='Maya')
+        self.assertEqual(teacher.school, self.school)
