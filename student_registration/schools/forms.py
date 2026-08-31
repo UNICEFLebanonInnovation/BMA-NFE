@@ -172,10 +172,11 @@ class SchoolForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=School.YES_NO
     )
-    admin_staff_number = forms.ChoiceField(
+    admin_staff_number = forms.IntegerField(
         label=_("Number of Admin staff in the school"),
-        widget=forms.Select, required=False,
-        choices=((x, x) for x in range(0, 300)),
+        widget=forms.NumberInput(attrs={'min': 0, 'placeholder': '0'}),
+        required=True,
+        min_value=0,
     )
     offer_digital_learning = forms.ChoiceField(
         label=_("Does the school offer digital learning services?"),
