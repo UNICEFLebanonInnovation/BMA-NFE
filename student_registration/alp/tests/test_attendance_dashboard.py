@@ -36,3 +36,14 @@ class ALPAttendanceDashboardQuerysetTests(SimpleTestCase):
 
         self.assertNotIn('school_id', sql)
         self.assertEqual(params, ())
+
+    def test_staff_user_can_report_across_all_schools(self):
+        user = SimpleNamespace(
+            is_superuser=False, is_staff=True, school_id=42
+        )
+
+        queryset = _alp_attendance_queryset(user)
+        sql, params = queryset.query.sql_with_params()
+
+        self.assertNotIn('school_id', sql)
+        self.assertEqual(params, ())

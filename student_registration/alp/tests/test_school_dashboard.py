@@ -52,6 +52,22 @@ class ALPSchoolDashboardTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [])
 
+    def test_staff_user_sees_all_schools_and_geo_data(self):
+        self.user.is_staff = True
+        self.user.save(update_fields=['is_staff'])
+
+        dashboard = self.client.get(reverse('alp:dashboard_school'))
+        geo_data = self.client.get(reverse('alp:school_geo_data'))
+
+        self.assertQuerySetEqual(
+            dashboard.context['schools'], [self.school, self.other_school],
+            ordered=False,
+        )
+        self.assertCountEqual(
+            [school['id'] for school in geo_data.json()],
+            [self.school.id, self.other_school.id],
+        )
+
     def test_geo_data_requires_alp_permission(self):
         outsider = User.objects.create_user(
             username='outsider', password='password', school=self.school
