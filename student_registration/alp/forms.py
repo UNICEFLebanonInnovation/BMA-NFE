@@ -20,6 +20,38 @@ from .serializers import ALPRegistrationSerializer
 class ALPSchoolProfileForm(forms.ModelForm):
     """School details that an ALP school focal point may maintain."""
 
+    provided_packages = forms.MultipleChoiceField(
+        label=_('Provided Services'),
+        choices=School.PROVIDED_PACKAGES,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+    )
+    programs = forms.MultipleChoiceField(
+        label=_('Education Program'),
+        choices=tuple(choice for choice in School.PROGRAM if choice[0] != 'ALP'),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    offer_digital_learning = forms.ChoiceField(
+        label=_('Does the center offer digital learning services?'),
+        choices=School.YES_NO,
+        required=False,
+    )
+    have_digital_hub = forms.ChoiceField(
+        label=_('Does the center have a digital hub?'),
+        choices=School.YES_NO,
+        required=False,
+    )
+    admin_staff_number = forms.IntegerField(
+        label=_('Number of Admin staff in the center'),
+        min_value=0,
+        required=True,
+    )
+    neaby_phcc = forms.CharField(
+        label=_('Nearby PHCC name'),
+        required=True,
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -88,6 +120,24 @@ class ALPSchoolProfileForm(forms.ModelForm):
                     css_class='row',
                 ),
             ),
+            Fieldset(
+                _('Provided Services & Programs'),
+                Div(
+                    Div('provided_packages', css_class='col-md-6 multiple-choice'),
+                    Div('programs', css_class='col-md-6 multiple-choice'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('offer_digital_learning', css_class='col-md-6'),
+                    Div('have_digital_hub', css_class='col-md-6'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('admin_staff_number', css_class='col-md-6'),
+                    Div('neaby_phcc', css_class='col-md-6'),
+                    css_class='row',
+                ),
+            ),
             FormActions(
                 Submit('save', _('Save changes'), css_class='btn btn-primary'),
             ),
@@ -99,6 +149,8 @@ class ALPSchoolProfileForm(forms.ModelForm):
             'number', 'name', 'type', 'operating_shift', 'director_name',
             'land_phone_number', 'email', 'governorate', 'district', 'cadaster',
             'longitude', 'latitude', 'registration_level', 'school_capacity',
+            'provided_packages', 'programs', 'offer_digital_learning',
+            'have_digital_hub', 'admin_staff_number', 'neaby_phcc',
         )
         widgets = {'registration_level': forms.CheckboxSelectMultiple}
 
