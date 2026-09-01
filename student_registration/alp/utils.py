@@ -6,10 +6,14 @@ def user_has_alp_permission(user):
 def filter_by_school(queryset, user):
     """
     Filter the queryset to only include records related to the user's school.
-    Superusers can see all records.
+
+    ALP records are school-owned data, so the connected user's school remains
+    the boundary even when that user has elevated Django permissions. Views
+    that intentionally provide cross-school reporting must opt in explicitly
+    instead of relying on a privilege-based exception here.
     """
-    if user.is_superuser:
-        return queryset
+    if user.school_id is None:
+        return queryset.none()
 
     # Most ALP models have a school field directly. Related attendance models
     # must be filtered through their owning teacher or registration instead.
