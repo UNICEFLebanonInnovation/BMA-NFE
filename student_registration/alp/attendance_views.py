@@ -56,7 +56,7 @@ class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
     def get_context_data(self, **kwargs):
         current_date = datetime.today().date()
         attendance_date_str = self.request.GET.get("attendance_date")
-        school_id = self.request.GET.get("school_id")
+        school_id = self.request.user.school_id
         programme_id = self.request.GET.get("programme")
         round_id = self.request.GET.get("round_id")
 
@@ -86,6 +86,8 @@ class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
 def save_attendance_children(request):
     if not request.user.is_authenticated or not request.user.groups.filter(name='ALP_SCHOOL').exists():
         return HttpResponseBadRequest("Unauthorized")
+    if request.user.school_id is None:
+        return HttpResponseBadRequest("No school assigned")
 
     body_unicode = request.body.decode("utf-8")
 
@@ -98,7 +100,7 @@ def save_attendance_children(request):
         return HttpResponseBadRequest("Invalid JSON payload")
 
     try:
-        result = create_attendance(data, request.GET.get("school_id"))
+        result = create_attendance(data, request.user.school_id)
     except Exception:
         return HttpResponseBadRequest("Failed to save attendance")
 
@@ -125,7 +127,7 @@ class LoadAttendanceTeachers(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
     def get_context_data(self, **kwargs):
         current_date = datetime.today().date()
         attendance_date_str = self.request.GET.get("attendance_date")
-        school_id = self.request.GET.get("school_id")
+        school_id = self.request.user.school_id
 
         if attendance_date_str is None:
             return {'instances': [], 'new_instances': []}
@@ -151,6 +153,8 @@ class LoadAttendanceTeachers(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
 def save_attendance_teachers(request):
     if not request.user.is_authenticated or not request.user.groups.filter(name='ALP_SCHOOL').exists():
         return HttpResponseBadRequest("Unauthorized")
+    if request.user.school_id is None:
+        return HttpResponseBadRequest("No school assigned")
 
     body_unicode = request.body.decode("utf-8")
 
@@ -163,7 +167,7 @@ def save_attendance_teachers(request):
         return HttpResponseBadRequest("Invalid JSON payload")
 
     try:
-        result = create_teacher_attendance(data, request.GET.get("school_id"), request.user)
+        result = create_teacher_attendance(data, request.user.school_id, request.user)
     except Exception:
         return HttpResponseBadRequest("Failed to save teacher attendance")
 
