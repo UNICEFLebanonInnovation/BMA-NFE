@@ -113,14 +113,6 @@ class ALPSchoolProfileForm(forms.ModelForm):
                 ),
             ),
             Fieldset(
-                _('School Capacity'),
-                Div(
-                    Div('registration_level', css_class='col-md-8 multiple-choice'),
-                    Div('school_capacity', css_class='col-md-4'),
-                    css_class='row',
-                ),
-            ),
-            Fieldset(
                 _('Provided Services & Programs'),
                 Div(
                     Div('provided_packages', css_class='col-md-6 multiple-choice'),
@@ -148,13 +140,10 @@ class ALPSchoolProfileForm(forms.ModelForm):
         fields = (
             'number', 'name', 'type', 'operating_shift', 'director_name',
             'land_phone_number', 'email', 'governorate', 'district', 'cadaster',
-            'longitude', 'latitude', 'registration_level', 'school_capacity',
+            'longitude', 'latitude',
             'provided_packages', 'programs', 'offer_digital_learning',
             'have_digital_hub', 'admin_staff_number', 'neaby_phcc',
         )
-        widgets = {'registration_level': forms.CheckboxSelectMultiple}
-
-
 class ALPRegistrationForm(MainForm):
     """ALP registration with the MSCC child, caregiver and ID workflow."""
 
