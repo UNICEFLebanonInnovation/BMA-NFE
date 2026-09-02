@@ -39,6 +39,8 @@
 <style>
   #pivot-wrapper {
     margin: 20px;
+    max-width: calc(100% - 40px);
+    min-width: 0;
     background: #ffffff;
     border: 1px solid #dfe3e8;
     border-radius: 10px;
@@ -82,18 +84,10 @@
   }
 
   #pivot {
-    overflow: auto;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
     min-height: 450px;
-  }
-
-  /* important for dropdown visibility */
-  #pivot,
-  #pivot * ,
-  .pvtUi,
-  .pvtRendererArea,
-  .pvtAxisContainer,
-  .pvtVals {
-    overflow: visible;
   }
 
   .pvtUi {
@@ -101,11 +95,22 @@
     z-index: 10;
     font-size: 14px;
     width: 100%;
+    min-width: 700px;
+    table-layout: fixed;
   }
 
-  .pvtUi table {
+  .pvtUi {
     border-collapse: separate;
     border-spacing: 6px;
+  }
+
+  /* Keep the controls compact and give the result the remaining width. */
+  .pvtUi > tbody > tr > td:first-child {
+    width: 280px;
+  }
+
+  .pvtUi > tbody > tr > td:last-child {
+    width: auto;
   }
 
   .pvtUi td,
@@ -121,6 +126,32 @@
     border-radius: 8px;
     padding: 8px;
     min-width: 180px;
+  }
+
+  /* PivotTable.js puts every unused field in one cell. Allow those fields to
+     wrap instead of making the entire application wider than the viewport. */
+  .pvtUnused {
+    max-width: 0;
+    white-space: normal;
+  }
+
+  .pvtUnused .pvtAttr {
+    display: inline-flex;
+    max-width: 100%;
+    margin: 3px;
+    vertical-align: top;
+  }
+
+  .pvtUnused .pvtAttr .pvtAttrDropdown {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pvtRendererArea {
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   .pvtRenderer,
@@ -259,6 +290,7 @@
     #pivot-wrapper {
       padding: 12px;
       margin: 10px;
+      max-width: calc(100% - 20px);
     }
 
     .pvtAxisContainer,
