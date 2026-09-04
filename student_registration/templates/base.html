@@ -308,6 +308,12 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    {% comment %}
+    Defines window.gettext for the scripts below. It has to come first: without
+    it translateMessage() silently fell through to the English msgid.
+    {% endcomment %}
+    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+
     <script type="text/javascript" src="{% static 'js/project.js' %}?v=2"></script>
     <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
     {% if request.user.is_authenticated %}

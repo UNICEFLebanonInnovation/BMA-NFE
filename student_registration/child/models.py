@@ -7,7 +7,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django.db.models import JSONField
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from student_registration.students.models import Nationality, IDType
 from student_registration.clm.models import Disability, EducationalLevel

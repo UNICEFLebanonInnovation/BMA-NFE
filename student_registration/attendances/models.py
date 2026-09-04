@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
-from django.utils.translation import gettext as _ # Will be fixed in a subsequent step
+from django.utils.translation import gettext_lazy as _
 from django.db.models import JSONField
 
 from model_utils import Choices

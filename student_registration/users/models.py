@@ -6,10 +6,7 @@ from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.db import models
 # from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import gettext as _
-
-
-# @python_2_unicode_compatible
+from django.utils.translation import gettext_lazy as _
 class User(AbstractUser):
     # from student_registration.locations.models import Location, Center
     # from student_registration.schools.models import PartnerOrganization, School

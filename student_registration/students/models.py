@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 from django.conf import settings
 from django.db import models
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.postgres.fields import ArrayField
 
 from model_utils import Choices

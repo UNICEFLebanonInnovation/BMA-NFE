@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models import JSONField
 from django.contrib.postgres.fields import ArrayField
 

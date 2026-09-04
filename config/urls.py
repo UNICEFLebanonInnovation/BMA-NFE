@@ -13,6 +13,7 @@ admin.site.index_title = "BMA"
 admin.site.site_url = "/"
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
+from django.views.i18n import JavaScriptCatalog
 
 from rest_framework_nested import routers
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
@@ -83,6 +84,10 @@ urlpatterns = [
     re_path(r'^api/', include(api.urls)),
     re_path(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file"),
     re_path(r"^i18n/", include("django.conf.urls.i18n")),
+    # Serves the djangojs catalogue that the scripts' translateMessage() reads.
+    # Without it window.gettext was undefined and every message the JS inserts
+    # stayed in English no matter which language was selected.
+    re_path(r"^jsi18n/$", JavaScriptCatalog.as_view(), name="javascript-catalog"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

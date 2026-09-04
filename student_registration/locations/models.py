@@ -7,7 +7,7 @@ from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.postgres.fields import ArrayField
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class LocationType(models.Model):

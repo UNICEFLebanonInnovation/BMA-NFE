@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.forms import modelformset_factory
 from django.urls import reverse
