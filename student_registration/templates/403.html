@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block project_title %}{% trans "Page not found" %}{% endblock %}
-{% block module_name %}{% trans "Page not found" %}{% endblock %}
+{% block project_title %}{% trans "Access not allowed" %}{% endblock %}
+{% block module_name %}{% trans "Access not allowed" %}{% endblock %}
 
 {% block content %}
 <div class="empty-state" role="main">
-    <i class="bi bi-signpost-split empty-state-icon" aria-hidden="true"></i>
-    <h1 class="empty-state-title h4">{% trans "We couldn't find that page" %}</h1>
+    <i class="bi bi-shield-lock empty-state-icon" aria-hidden="true"></i>
+    <h1 class="empty-state-title h4">{% trans "You don't have access to this page" %}</h1>
     <p class="empty-state-description">
-        {% trans "The link may be out of date, or the record may have been removed. Nothing has been lost — use the menu or one of the buttons below to continue." %}
+        {% trans "This page belongs to a part of the system your account isn't assigned to. If you need it for your work, ask your coordinator to update your permissions." %}
     </p>
     <div class="d-flex gap-2 justify-content-center flex-wrap">
         <a href="{% url 'login_success' %}" class="btn btn-primary">

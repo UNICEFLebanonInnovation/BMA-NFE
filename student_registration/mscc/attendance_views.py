@@ -6,7 +6,7 @@ import json
 from collections import OrderedDict
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from braces.views import GroupRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, Q
 from django.utils import timezone
@@ -240,20 +240,39 @@ class LoadAttendanceChild(LoginRequiredMixin,
     template_name = 'mscc/child_attendance_month.html'
 
     def get_context_data(self, **kwargs):
-        import calendar
+        from datetime import date
+        from django.utils.dates import MONTHS
 
         child_id = kwargs["child"]
-        month = int(self.request.GET.get("month"))
+        today = date.today()
 
-        instances = MSCCAttendanceChild.objects.filter(child_id=child_id,
-                                                       attendance_day__attendance_date__month=month)\
-            .order_by('attendance_day__attendance_date')
+        # Both parameters are optional: fall back to the current month/year
+        # instead of raising when a caller omits them.
+        def _int_param(name, default):
+            try:
+                return int(self.request.GET.get(name))
+            except (TypeError, ValueError):
+                return default
+
+        month = _int_param("month", today.month)
+        year = _int_param("year", today.year)
+        if not 1 <= month <= 12:
+            month = today.month
+
+        # Filter on year as well, otherwise the same month from every year of
+        # the child's history is merged into one list.
+        instances = MSCCAttendanceChild.objects.filter(
+            child_id=child_id,
+            attendance_day__attendance_date__month=month,
+            attendance_day__attendance_date__year=year,
+        ).order_by('attendance_day__attendance_date')
 
         return {
             'instances': instances,
             'nbr_attended': instances.filter(attended='Yes').count(),
             'nbr_absent': instances.filter(attended='No').count(),
-            'attendance_month': calendar.month_name[month]
+            'attendance_month': MONTHS[month],
+            'attendance_year': year,
         }
 
 

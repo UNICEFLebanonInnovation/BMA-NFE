@@ -3,7 +3,8 @@ from __future__ import absolute_import, unicode_literals
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from dal import autocomplete
@@ -300,7 +301,9 @@ class EducationSchoolGradingFormView(LoginRequiredMixin,
             return EducationSchoolGradingForm(self.request.POST, instance=instance, registry=registry,
                                               programme_type=programme_type, request=self.request)
         else:
-            grade_data = EducationProgrammeAssessment.objects.get(id=instance)
+            # A missing assessment must be a 404, not an unhandled DoesNotExist
+            # bubbling up as a server error page.
+            grade_data = get_object_or_404(EducationProgrammeAssessment, id=instance)
             data = grade_data.school_test
             return EducationSchoolGradingForm(data, registry=registry, programme_type=programme_type, instance=instance, request=self.request)
 

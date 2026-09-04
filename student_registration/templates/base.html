@@ -32,24 +32,33 @@
 
     {% block extra_head %}{% endblock %}
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J68P860Y4K"></script>
+    {% comment %}
+    Web analytics is opt-in: this system holds children's identity and
+    protection data, and page URLs contain record ids. Set
+    GOOGLE_ANALYTICS_ID in the environment only for deployments where
+    sending that to a third party has been formally approved.
+    {% endcomment %}
+    {% if GOOGLE_ANALYTICS_ID %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-J68P860Y4K');
+      // Do not send the page path: it contains beneficiary record ids.
+      gtag('config', '{{ GOOGLE_ANALYTICS_ID }}', { 'send_page_view': false });
     </script>
+    {% endif %}
 </head>
 
 <body>
     <div class="app-wrapper">
         {% if request.user.is_authenticated %}
+        <a class="skip-link" href="#main-content">{% trans "Skip to main content" %}</a>
         <!-- Sidebar -->
-        <nav class="sidebar d-none d-lg-block" style="max-width: 250px;min-width: 250px;">
+        <nav class="sidebar d-none d-lg-block" id="mainSidebar" aria-label="{% trans 'Main menu' %}">
             <div class="p-4 text-center">
-                <a href="{% url 'landing_page' %}">
-                    <img src="{% static 'images/clm_plus_logo.png' %}" alt="BMA Logo" height="60">
+                <a href="{% url 'login_success' %}">
+                    <img src="{% static 'images/clm_plus_logo.png' %}" alt="{% trans 'BMA — Beneficiary Monitoring and Assessment' %}" height="60">
                 </a>
             </div>
             <div class="mt-4">
@@ -63,21 +72,24 @@
             {% if request.user.is_authenticated %}
             <!-- Topbar -->
             <header class="topbar">
-                <!--<button class="btn d-none d-lg-block me-3" type="button" id="sidebarToggle">-->
-                    <!--<i class="bi bi-list fs-4"></i>-->
-                <!--</button>-->
-                <!--<button class="btn d-lg-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">-->
-                    <!--<i class="bi bi-list fs-4"></i>-->
-                <!--</button>-->
+                <button class="btn d-none d-lg-inline-flex me-2" type="button" id="sidebarToggle"
+                        aria-label="{% trans 'Collapse or expand the menu' %}" title="{% trans 'Collapse or expand the menu' %}"
+                        aria-controls="mainSidebar" aria-expanded="true">
+                    <i class="bi bi-list fs-4" aria-hidden="true"></i>
+                </button>
+                <button class="btn d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar"
+                        aria-label="{% trans 'Open the menu' %}" title="{% trans 'Open the menu' %}" aria-controls="mobileSidebar">
+                    <i class="bi bi-list fs-4" aria-hidden="true"></i>
+                </button>
 
-                <h5 class="mb-0 me-auto">{% block module_name %}{% endblock %}</h5>
+                <span class="topbar-title mb-0 me-auto fw-semibold">{% block module_name %}{% endblock %}</span>
 
                 <div class="d-flex align-items-center">
                     <!-- Documentation -->
                     {% if request.user.is_superuser %}
                     <div class="dropdown me-3">
-                        <button class="btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-label="Documentation" title="Documentation">
-                            <i class="bi bi-book fs-5 text-dark"></i>
+                        <button class="btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-label="{% trans 'Documentation' %}" title="{% trans 'Documentation' %}">
+                            <i class="bi bi-book fs-5 text-dark" aria-hidden="true"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end shadow border-0 py-0" style="width:290px;z-index:1300;">
                             <div class="px-3 py-2 border-bottom bg-light rounded-top d-flex align-items-center gap-2">
@@ -108,8 +120,10 @@
                     <!-- Notifications -->
                     <div class="dropdown me-3 export-history-dropdown">
                         {% recent_export_history as exports %}
-                        <button class="btn btn-link position-relative p-1" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-bell fs-5 text-dark"></i>
+                        <button class="btn btn-link position-relative p-1" type="button" data-bs-toggle="dropdown"
+                                aria-label="{% blocktrans count counter=exports.count %}Exports, {{ counter }} recent{% plural %}Exports, {{ counter }} recent{% endblocktrans %}"
+                                title="{% trans 'Recent exports' %}">
+                            <i class="bi bi-bell fs-5 text-dark" aria-hidden="true"></i>
                             {% if exports.count > 0 %}
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-count">
                                 {{ exports.count }}
@@ -156,19 +170,20 @@
                                 </div>
                                 {% endfor %}
                             </div>
-                            {% if exports.count > 0 %}
                             <div class="p-2 border-top text-center">
-                                <a href="#" class="btn btn-link btn-sm text-decoration-none text-muted">{% trans "View All History" %}</a>
+                                <a href="{% url 'backends:export_history' %}" class="btn btn-link btn-sm text-decoration-none text-muted">{% trans "View all export history" %}</a>
                             </div>
-                            {% endif %}
                         </div>
                     </div>
 
 
                     <!-- Language Selection -->
                     <div class="dropdown me-3">
-                        <button class="btn btn-link p-1 text-dark" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-globe fs-5"></i>
+                        {% get_current_language as CURRENT_LANGUAGE_CODE %}
+                        <button class="btn btn-link p-1 text-dark" type="button" data-bs-toggle="dropdown"
+                                aria-label="{% trans 'Change language' %}" title="{% trans 'Change language' %}">
+                            <i class="bi bi-globe fs-5" aria-hidden="true"></i>
+                            <span class="small text-uppercase ms-1">{{ CURRENT_LANGUAGE_CODE }}</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                             <form action="{% url 'set_language' %}" method="post">
@@ -190,8 +205,9 @@
 
                     <!-- User Profile -->
                     <div class="dropdown">
-                        <button class="btn d-flex align-items-center p-1" type="button" data-bs-toggle="dropdown">
-                            <img src="{% static 'images/avatars/user.png' %}" alt="User" class="rounded-circle me-2" width="32">
+                        <button class="btn d-flex align-items-center p-1" type="button" data-bs-toggle="dropdown"
+                                aria-label="{% trans 'Account menu' %}" title="{% trans 'Account menu' %}">
+                            <img src="{% static 'images/avatars/user.png' %}" alt="" class="rounded-circle me-2" width="32">
                             <span class="d-none d-md-inline small fw-medium">
                                 {% if request.user.is_authenticated %}{{ request.user.get_full_name|default:request.user.username }}{% else %}{% trans "Guest" %}{% endif %}
                             </span>
@@ -216,7 +232,7 @@
             {% endif %}
 
             <!-- Page Content -->
-            <div class="p-4 flex-grow-1">
+            <div class="p-4 flex-grow-1" id="main-content" role="main">
                 {% if messages %}
                     {% for message in messages %}
                         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -226,11 +242,18 @@
                     {% endfor %}
                 {% endif %}
 
-                {% if form and form.errors %}
-                  <div class="alert alert-danger">
-                    {% trans "Please review and check the error messages." %}
-                  </div>
-                {% endif %}
+                {% comment %}
+                Pages that render their own error summary (the auth pages, the
+                registration wizard) override this block so the same failure is
+                not reported twice in two different styles.
+                {% endcomment %}
+                {% block form_errors %}
+                  {% if form and form.errors %}
+                    <div class="alert alert-danger" role="alert">
+                      {% trans "Please review and check the error messages." %}
+                    </div>
+                  {% endif %}
+                {% endblock form_errors %}
 
                 {% block main_content %}{% endblock %}
                 {% block content %}{% endblock %}
@@ -240,8 +263,8 @@
             <!-- Footer -->
             <footer class="p-4 bg-white border-top mt-auto">
                 <div class="d-flex justify-content-between align-items-center small text-muted">
-                    <div>{% trans "&copy; 2026 MEHE BMA - Beneficiary Monitoring & Assessment" %}</div>
-                    <div>{% trans "Version 1.0" %} </div>
+                    <div>&copy; {% now "Y" %} {% trans "MEHE BMA — Beneficiary Monitoring &amp; Assessment" %}</div>
+                    <div>{% blocktrans with version=APP_VERSION %}Version {{ version }}{% endblocktrans %}</div>
                 </div>
             </footer>
         </main>
@@ -249,10 +272,11 @@
 
     {% if request.user.is_authenticated %}
     <!-- Mobile Sidebar (Offcanvas) -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" style="width: 350px;">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar"
+         aria-label="{% trans 'Main menu' %}" style="width: min(350px, 85vw);">
         <div class="offcanvas-header border-bottom">
-            <img src="{% static 'images/clm_plus_logo.png' %}" alt="BMA Logo" height="30">
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <img src="{% static 'images/clm_plus_logo.png' %}" alt="{% trans 'BMA' %}" height="30">
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Close the menu' %}"></button>
         </div>
         <div class="offcanvas-body p-0">
             <div class="mt-4">
@@ -299,32 +323,30 @@
           }
         });
 
-        // Sidebar Toggle Logic
-        function updateSidebarIcon() {
-            const isCollapsed = $('.sidebar').hasClass('collapsed');
-            const icon = $('#sidebarToggle i');
-            if (isCollapsed) {
-                icon.removeClass('bi-list').addClass('bi-x-lg');
-            } else {
-                icon.removeClass('bi-x-lg').addClass('bi-list');
-            }
+        // Sidebar collapse (desktop). The button reports its state to
+        // assistive technology, and the choice is remembered per browser.
+        function updateSidebarToggle() {
+            var isCollapsed = $('.sidebar').hasClass('collapsed');
+            $('#sidebarToggle i')
+                .toggleClass('bi-list', !isCollapsed)
+                .toggleClass('bi-x-lg', isCollapsed);
+            $('#sidebarToggle').attr('aria-expanded', isCollapsed ? 'false' : 'true');
         }
 
-        $('#sidebarToggle').on('click', function() {
+        $('#sidebarToggle').on('click', function () {
             $('.sidebar').toggleClass('collapsed');
-            updateSidebarIcon();
-            if ($('.sidebar').hasClass('collapsed')) {
-                localStorage.setItem('sidebarCollapsed', 'true');
-            } else {
-                localStorage.setItem('sidebarCollapsed', 'false');
-            }
+            try {
+                localStorage.setItem('sidebarCollapsed', $('.sidebar').hasClass('collapsed') ? 'true' : 'false');
+            } catch (e) { /* private mode: state simply is not remembered */ }
+            updateSidebarToggle();
         });
 
-        // Restore sidebar state
-        if (localStorage.getItem('sidebarCollapsed') === 'true') {
-            $('.sidebar').addClass('collapsed');
-            updateSidebarIcon();
-        }
+        try {
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                $('.sidebar').addClass('collapsed');
+            }
+        } catch (e) { /* ignore */ }
+        updateSidebarToggle();
       });
     </script>
 

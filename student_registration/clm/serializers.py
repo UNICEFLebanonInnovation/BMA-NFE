@@ -193,7 +193,6 @@ class CLMSerializer(serializers.ModelSerializer):
             'child_health_examed',
             'child_health_concern',
             'barriers',
-            'new_registry',
             'csrfmiddlewaretoken',
             'save',
             'comments',

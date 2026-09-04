@@ -52,6 +52,19 @@
             <form class="login redesign-form" method="POST" action="{% url 'account_login' %}">
                 {% csrf_token %}
 
+{% comment %}
+"Your username and password didn't match" is a non-field error. Without this
+block the page re-rendered unchanged and the user had no idea what was wrong.
+{% endcomment %}
+{% if form.non_field_errors %}
+<div class="alert alert-danger d-flex align-items-start gap-2" role="alert">
+    <i class="bi bi-exclamation-circle-fill mt-1" aria-hidden="true"></i>
+    <div>
+        {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+    </div>
+</div>
+{% endif %}
+
 <div class="mb-4">
     <label for="{{ form.login.id_for_label }}" class="form-label fw-bold">
         {{ form.login.label }}{% if form.login.field.required %} <span class="text-danger">*</span>{% endif %}
@@ -60,13 +73,19 @@
         type="text"
         name="{{ form.login.html_name }}"
         id="{{ form.login.id_for_label }}"
-        class="form-control form-control-lg"
+        class="form-control form-control-lg{% if form.login.errors or form.non_field_errors %} is-invalid{% endif %}"
         placeholder="{{ form.login.label }}"
         value="{{ form.login.value|default_if_none:'' }}"
+        autocomplete="username"
+        autocapitalize="none"
+        autocorrect="off"
+        spellcheck="false"
+        autofocus
+        {% if form.login.errors %}aria-describedby="login-error"{% endif %}
         {% if form.login.field.required %}required{% endif %}
     >
     {% if form.login.errors %}
-        <div class="text-danger small mt-1">
+        <div class="text-danger small mt-1" id="login-error">
             {{ form.login.errors }}
         </div>
     {% endif %}
@@ -82,8 +101,10 @@
             type="password"
             name="{{ form.password.html_name }}"
             id="{{ form.password.id_for_label }}"
-            class="form-control form-control-lg pe-5"
+            class="form-control form-control-lg pe-5{% if form.password.errors or form.non_field_errors %} is-invalid{% endif %}"
             placeholder="{{ form.password.label }}"
+            autocomplete="current-password"
+            {% if form.password.errors %}aria-describedby="password-error"{% endif %}
             {% if form.password.field.required %}required{% endif %}
         >
 
@@ -93,10 +114,14 @@
     </div>
 
     {% if form.password.errors %}
-        <div class="text-danger small mt-1">
+        <div class="text-danger small mt-1" id="password-error">
             {{ form.password.errors }}
         </div>
     {% endif %}
+
+    <div class="mt-2 text-end">
+        <a href="{% url 'account_reset_password' %}" class="small text-decoration-none">{% trans "Forgotten your password?" %}</a>
+    </div>
 </div>
                 {% if redirect_field_value %}
                     <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
@@ -104,7 +129,7 @@
 
                 <div class="d-grid mt-5">
                     <button class="primaryAction btn btn-primary btn-lg fw-bold py-3 shadow-sm" type="submit">
-                        {% trans "Access System" %} <i class="bi bi-arrow-right ms-2"></i>
+                        {% trans "Sign in" %} <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i>
                     </button>
                 </div>
             </form>
@@ -113,39 +138,20 @@
 </div>
 
 <script>
+  // The button is in the markup above; this only wires it up. It used to
+  // build a second, duplicate button and leave the visible one inert.
   document.addEventListener('DOMContentLoaded', function () {
-    const passwordInput = document.querySelector('form.login input[type="password"]');
-    if (!passwordInput || passwordInput.dataset.toggleInitialized === 'true') {
-      return;
-    }
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'position-relative';
-
-    passwordInput.parentNode.insertBefore(wrapper, passwordInput);
-    wrapper.appendChild(passwordInput);
-    passwordInput.classList.add('pe-5');
-
-    const toggleButton = document.createElement('button');
-    toggleButton.type = 'button';
-    toggleButton.className = 'password-toggle-btn';
-    toggleButton.setAttribute('aria-label', '{% trans "Show password" %}');
-    toggleButton.innerHTML = '<i class="bi bi-eye" aria-hidden="true"></i>';
-
-    toggleButton.addEventListener('click', function () {
-      const isPassword = passwordInput.type === 'password';
-      passwordInput.type = isPassword ? 'text' : 'password';
-      toggleButton.setAttribute(
-        'aria-label',
-        isPassword ? '{% trans "Hide password" %}' : '{% trans "Show password" %}'
-      );
-      toggleButton.innerHTML = isPassword
+    var input = document.getElementById('{{ form.password.id_for_label }}');
+    var button = document.getElementById('togglePassword');
+    if (!input || !button) { return; }
+    button.addEventListener('click', function () {
+      var hidden = input.type === 'password';
+      input.type = hidden ? 'text' : 'password';
+      button.setAttribute('aria-label', hidden ? '{% trans "Hide password" %}' : '{% trans "Show password" %}');
+      button.innerHTML = hidden
         ? '<i class="bi bi-eye-slash" aria-hidden="true"></i>'
         : '<i class="bi bi-eye" aria-hidden="true"></i>';
     });
-
-    wrapper.appendChild(toggleButton);
-    passwordInput.dataset.toggleInitialized = 'true';
   });
 </script>
 

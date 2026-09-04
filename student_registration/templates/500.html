@@ -1,16 +1,41 @@
-{% extends "base.html" %}
-{% load util_tags %}
-{% load custom_tags %}
-{% load i18n %}
-
-{% block title %}Server Error{% endblock %}
-
-{% block content %}
-<h1>{% trans "Ooops!!! 500" %}</h1>
-
-<h3>{% trans "Looks like something went wrong!" %}</h3>
-
-<p>{% trans "We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing." %}</p>
-{% endblock content %}
-
-
+{% load static i18n %}<!doctype html>
+{% comment %}
+Django renders 500.html with an empty context (no request, no context
+processors), so this page must not extend base.html or use {% url %} — a
+failure here would leave the user with a blank browser error instead.
+{% endcomment %}
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "Something went wrong" %} | BMA</title>
+    <style>
+        body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+               background: #f8f9fa; color: #212529;
+               font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        .card { background: #fff; border-radius: 8px; box-shadow: 0 .125rem .5rem rgba(0,0,0,.08);
+                padding: 2.5rem; max-width: 32rem; margin: 1.5rem; text-align: center; }
+        .icon { font-size: 3rem; line-height: 1; color: #0097D7; }
+        h1 { font-size: 1.35rem; font-weight: 600; margin: 1rem 0 .5rem; }
+        p { color: #5a6570; line-height: 1.55; margin: 0 0 1.5rem; }
+        .actions { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
+        a.btn, button.btn { font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+                border-radius: 6px; padding: .5rem 1.1rem; border: 1px solid transparent; }
+        a.primary { background: #0097D7; color: #fff; }
+        button.secondary { background: #fff; color: #495057; border-color: #ced4da; }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <div class="icon" aria-hidden="true">&#9888;</div>
+        <h1>{% trans "Something went wrong on our side" %}</h1>
+        <p>
+            {% trans "This page could not be loaded. Your saved work is not affected. Please try again, and if it keeps happening tell your system administrator what you were doing when it appeared." %}
+        </p>
+        <div class="actions">
+            <a class="btn primary" href="/">{% trans "Go to my home page" %}</a>
+            <button class="btn secondary" type="button" onclick="location.reload()">{% trans "Try again" %}</button>
+        </div>
+    </main>
+</body>
+</html>

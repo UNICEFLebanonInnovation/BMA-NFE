@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 from dal import autocomplete
 from rest_framework import viewsets, mixins, permissions
 from drf_spectacular.openapi import AutoSchema
-from braces.views import GroupRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
@@ -351,7 +351,10 @@ class SchoolEditView(LoginRequiredMixin,
             return SchoolForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = SchoolSerializer(instance).data
-            return SchoolForm(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return SchoolForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         """Persist school edits then proceed with default processing.

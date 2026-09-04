@@ -1,10 +1,21 @@
 {% extends "base.html" %}
 {% load util_tags %}
 {% load custom_tags %}
-{% block title %}{% block head_title %}{% endblock head_title %}{% endblock title %}
+
+{% comment %}
+head_title feeds the browser tab title; without this the tab read
+"BMA | Home" on sign-in, sign-out and every password page.
+{% endcomment %}
+{% block project_title %}{% block head_title %}{% endblock head_title %}{% endblock project_title %}
+{% block module_name %}{{ self.head_title }}{% endblock %}
+
+{% comment %}
+Auth pages render their own error summary inside the card.
+{% endcomment %}
+{% block form_errors %}{% endblock form_errors %}
 
 {% block content %}
-<div class="container-fluid min-vh-100 d-flex align-items-center bg-light">
+<div class="container-fluid d-flex align-items-center justify-content-center py-5">
     <div class="container">
         <div class="row justify-content-center">
             {% block inner %}{% endblock %}

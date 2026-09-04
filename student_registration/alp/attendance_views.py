@@ -7,7 +7,7 @@ from django_tables2.export.views import ExportMixin
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
 from django import forms
-from braces.views import GroupRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin
 from datetime import datetime
 
 from .models import ALPAttendance, ALPTeacherAttendance, ALPRound, ALPProgram

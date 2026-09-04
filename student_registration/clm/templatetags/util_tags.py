@@ -340,11 +340,12 @@ def get_label(field):
 
 @register.filter
 def is_allowed_create(programme):
-    from student_registration.clm.utils import is_allowed_create
+    # The canonical implementation lives with the CLMRound model, in schools.utils.
+    from student_registration.schools.utils import is_allowed_create
     return is_allowed_create(programme)
 
 
 @register.filter
 def is_allowed_edit(programme):
-    from student_registration.clm.utils import is_allowed_edit
+    from student_registration.schools.utils import is_allowed_edit
     return is_allowed_edit(programme)

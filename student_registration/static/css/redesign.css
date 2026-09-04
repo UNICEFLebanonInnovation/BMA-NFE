@@ -1,6 +1,8 @@
 /* BMA Redesign - Bootstrap 5 Overrides & Design System */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Inter carries no Arabic glyphs, so an Arabic companion face is loaded too;
+   without it Arabic text fell back to an uncontrolled system font. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
 
 :root {
     --unicef-blue: #0097D7;
@@ -20,9 +22,29 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Noto Sans Arabic', 'Segoe UI', system-ui, sans-serif;
     background-color: #f8f9fa;
     color: #212529;
+}
+
+/* Keyboard users can jump past the sidebar instead of tabbing through it on
+   every page. Visible only while focused. */
+.skip-link {
+    position: absolute;
+    inset-inline-start: 0.5rem;
+    top: -3rem;
+    z-index: 2000;
+    padding: 0.5rem 1rem;
+    background: var(--unicef-blue);
+    color: #fff;
+    border-radius: 0 0 6px 6px;
+    text-decoration: none;
+    transition: top 0.15s ease-in-out;
+}
+
+.skip-link:focus {
+    top: 0;
+    color: #fff;
 }
 
 /* Layout */
@@ -38,9 +60,13 @@ body {
     height: 100vh;
     position: sticky;
     top: 0;
-    transition: all 0.2s ease-in-out;
+    transition: width 0.2s ease-in-out;
     z-index: 1000;
     overflow-x: hidden;
+    /* Without this, menu items past the viewport height were unreachable on
+       short screens and for users with many roles. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .sidebar.collapsed {
@@ -239,6 +265,21 @@ h1, h2, h3, h4, h5 {
     flex: 1;
 }
 
+/* The steps navigate the wizard, so they need to look and focus like controls. */
+.step[role="button"] {
+    cursor: pointer;
+}
+
+.step[role="button"]:hover .step-icon {
+    border-color: var(--unicef-blue);
+}
+
+.step[role="button"]:focus-visible {
+    outline: 2px solid var(--unicef-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
 .step-icon {
     width: 48px;
     height: 48px;
@@ -388,16 +429,21 @@ h1, h2, h3, h4, h5 {
     }
 }
 
-/* Override legacy base.css if necessary */
+/* Data-heavy tables still need room, but forcing 1200px on every table meant
+   even a three-column table scrolled sideways on a 1280px laptop and hid the
+   child's name on a phone. Opt in per table with .table-wide instead. */
 .table-responsive table {
     width: 100% !important;
-    min-width: 1200px; /* Force horizontal scroll for data-heavy tables */
+}
+
+.table-responsive table.table-wide,
+.table-responsive .w-100.table-wide {
+    min-width: 1200px;
 }
 
 /* Specific override for base.css w-100 which is hardcoded to 1500px */
 .table-responsive .w-100 {
     width: 100% !important;
-    min-width: 1200px !important;
 }
 
 .table {
@@ -633,6 +679,39 @@ h1, h2, h3, h4, h5 {
     flex-direction: column;
 }
 
-/* RTL Specific Logical properties for spacing if not handled by Bootstrap */
-[dir="rtl"] .me-2 { margin-left: 0.5rem !important; margin-right: 0 !important; }
-[dir="rtl"] .ms-2 { margin-right: 0.5rem !important; margin-left: 0 !important; }
+/* Bootstrap's RTL build already mirrors me-*/ms-* utilities; the manual
+   overrides that used to live here double-flipped them. */
+
+/* Directional icons must mirror in RTL, otherwise "next" points backwards. */
+[dir="rtl"] .page-link .bi-chevron-left,
+[dir="rtl"] .page-link .bi-chevron-right,
+[dir="rtl"] .btn .bi-arrow-right,
+[dir="rtl"] .btn .bi-arrow-left {
+    transform: scaleX(-1);
+}
+
+/* Uppercase + letter-spacing is a Latin-only device: it makes Arabic harder
+   to read and breaks its joined letterforms. */
+[dir="rtl"] .table thead th,
+[dir="rtl"] .metric-label,
+[dir="rtl"] .text-uppercase {
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Respect the viewer's motion preference for the wizard's step animation. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* The topbar page label: a real heading level lives in the page content. */
+.topbar-title {
+    font-size: 1.05rem;
+}

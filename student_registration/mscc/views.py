@@ -31,7 +31,7 @@ from django.db.models import F, Q, OuterRef, Exists, Subquery, IntegerField, Avg
 from django.db.models.functions import Coalesce, NullIf, Cast
 from django.urls import reverse, reverse_lazy
 from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -221,11 +221,29 @@ class ProfileView(LoginRequiredMixin,
         services = ProvidedServices.objects.filter(registration=instance)
         services_dict = {service.name: service for service in services}
 
+        # Years the child actually has attendance for, so the monthly history
+        # can be scoped to one year instead of merging every year together.
+        from datetime import date
+        from django.utils.dates import MONTHS
+        attendance_years = sorted(
+            {
+                d.year for d in MSCCAttendanceChild.objects
+                .filter(child_id=instance.child_id)
+                .values_list('attendance_day__attendance_date', flat=True)
+                if d
+            },
+            reverse=True,
+        ) or [date.today().year]
+
         return {
             'instance': instance,
             'new_round': new_round,
             'current_tab': current_tab,
             'provided_services': services_dict,
+            'attendance_years': attendance_years,
+            'selected_attendance_year': attendance_years[0],
+            # Localised month names (lazy) instead of a hard-coded English list.
+            'month_choices': [MONTHS[i] for i in range(1, 13)],
         }
 
 
@@ -548,7 +566,11 @@ class MainEditView(LoginRequiredMixin,
             data['father_educational_level'] = data['father_educational_level_id']if 'father_educational_level_id' in data else ''
             data['mother_educational_level'] = data['mother_educational_level_id']if 'mother_educational_level_id' in data else ''
             data['id_type'] = data['id_type_id']if 'id_type_id' in data else ''
-            return MainForm(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a record for editing ran validation and
+            # greeted the user with "Registration Failed" plus a dozen errors
+            # before they had typed anything.
+            return MainForm(initial=data, instance=instance, request=self.request)
 
     def form_valid(self, form):
         instance = Registration.objects.get(id=self.kwargs['pk'])
@@ -987,7 +1009,10 @@ class TeacherEditView(LoginRequiredMixin,
         if self.request.method == "POST":
             return TeacherForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         data = TeacherSerializer(instance).data
-        return TeacherForm(data, instance=instance, request=self.request)
+        # `initial=`, not positional: passing the serialized record as `data`
+        # bound the form, so opening a saved record for editing ran validation
+        # and showed errors before the user had typed anything.
+        return TeacherForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         instance = Teacher.objects.get(id=self.kwargs['pk'])

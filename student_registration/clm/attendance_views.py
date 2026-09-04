@@ -5,7 +5,7 @@ import json
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from student_registration.users.templatetags.custom_tags import has_group
-from braces.views import GroupRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance

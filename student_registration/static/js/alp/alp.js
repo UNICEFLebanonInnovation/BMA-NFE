@@ -2,6 +2,40 @@ function translateMessage(message) {
     return window.gettext ? window.gettext(message) : message;
 }
 
+/*
+ * Clearing a dependent field is only correct when its container is genuinely
+ * hidden. Several containers in reorganizeForm() have their .hide() commented
+ * out, so the unconditional .val('') was wiping fields the user could still see
+ * and had already filled in.
+ *
+ * Deliberately not using :visible - the registration wizard keeps whole steps
+ * off-screen, and every field on a step the user has not reached yet would
+ * count as hidden.
+ */
+function clearIfHidden(fieldSelector, containerSelector) {
+    var $container = $(containerSelector);
+    if ($container.length && ($container.hasClass('d-none') || $container.css('display') === 'none')) {
+        $(fieldSelector).val('');
+    }
+}
+
+/*
+ * The spinner was shown by removing `d-none` but hidden again by adding
+ * `hidden` - a class neither the template nor Bootstrap 5 defines - so it span
+ * forever. One helper, one class.
+ */
+function showSearchLoader(visible) {
+    $('#nfe_search_loader').toggleClass('d-none', !visible);
+    $('#search_loader').toggleClass('d-none', !visible);
+}
+
+/* Bootstrap 5 dropped the jQuery plugin, so $(el).modal() throws. */
+function showModalById(modalId) {
+    var el = document.getElementById(modalId);
+    if (!el || typeof bootstrap === 'undefined' || !bootstrap.Modal) { return; }
+    bootstrap.Modal.getOrCreateInstance(el).show();
+}
+
 
 
 var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, " +
@@ -105,8 +139,8 @@ $(document).ready(function() {
         e.preventDefault();
 
         $('#child-content').empty("");
-        $('#child-content').append("Loading...");
-        $('#childModal').modal('show');
+        $('#child-content').append(translateMessage("Loading..."));
+        showModalById('childModal');
 
         $.ajax({
             type: "GET",
@@ -132,7 +166,45 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
+    // Every ID number captured under the previous ID type. Switching type hides
+    // these, so they are cleared - but on an existing record that silently
+    // throws away stored data, so confirm first when any of them is filled in.
+    var id_number_fields = [
+        '#id_case_number', '#id_case_number_confirm',
+        '#id_individual_case_number', '#id_individual_case_number_confirm',
+        '#id_parent_individual_case_number', '#id_parent_individual_case_number_confirm',
+        '#id_recorded_number', '#id_recorded_number_confirm',
+        '#id_national_number', '#id_national_number_confirm',
+        '#id_syrian_national_number', '#id_syrian_national_number_confirm',
+        '#id_sop_national_number', '#id_sop_national_number_confirm',
+        '#id_parent_national_number', '#id_parent_national_number_confirm',
+        '#id_parent_syrian_national_number', '#id_parent_syrian_national_number_confirm',
+        '#id_parent_sop_national_number', '#id_parent_sop_national_number_confirm',
+        '#id_parent_other_number', '#id_parent_other_number_confirm',
+        '#id_other_number', '#id_other_number_confirm'
+    ];
+
+    $(document).on('focus', '#id_id_type', function(){
+        $(this).data('previousValue', $(this).val());
+    });
+
     $(document).on('change', '#id_id_type', function(){
+        var $select = $(this);
+        var filled = id_number_fields.filter(function(selector){
+            return $.trim($(selector).val() || '') !== '';
+        });
+
+        if (filled.length && !window.confirm(translateMessage(
+                'Changing the ID type will clear the ID numbers already entered. Continue?'))) {
+            // Put the select back the way it was and leave the numbers alone.
+            var previous = $select.data('previousValue');
+            if (previous !== undefined) {
+                $select.val(previous);
+            }
+            return false;
+        }
+
+        $select.data('previousValue', $select.val());
         reorganizeForm();
 
         $('#id_case_number').val('');
@@ -191,10 +263,13 @@ $(document).ready(function() {
 
         if (first_name && father_name && last_name && year && month && day) {
 
-          $('#search_loader').removeClass('hidden');
-          $('#nfe_search_loader').removeClass('d-none');
-
-          if (typeof outreach_child_search === 'function') outreach_child_search();
+          // Only raise the spinner for work that is actually going to happen:
+          // outreach_child_search is not defined on this page, so showing it
+          // unconditionally left it spinning with nothing to wait for.
+          if (typeof outreach_child_search === 'function') {
+              showSearchLoader(true);
+              outreach_child_search();
+          }
 
           if (mother_fullname && sex && nationality) {
                 child_duplication_check();
@@ -331,7 +406,7 @@ function append_old_result(data)
 
     var $container = $('#nfe_search_result');
     $container.empty();
-    $('#nfe_search_loader').addClass('d-none');
+    showSearchLoader(false);
 
     if(data.result.error) {
         $container.append('<div class="list-group-item text-warning p-3"><i class="bi bi-exclamation-triangle me-2"></i>' + data.result.error + '</div>');
@@ -373,7 +448,7 @@ function append_old_result(data)
 
 function get_old_child_data(student_id)
 {
-    $('#nfe_search_loader').removeClass('hidden');
+    showSearchLoader(true);
 
     $.ajax({
         url: '/alp/get-old-child-data/',
@@ -392,7 +467,7 @@ function get_old_child_data(student_id)
 
 function fill_old_child_data(data)
 {
-    $('#nfe_search_loader').addClass('hidden');
+    showSearchLoader(false);
     $(data).each(function(i, item) {
         console.log(item);
         {
@@ -401,7 +476,7 @@ function fill_old_child_data(data)
             });
         }
     });
-    $('#nfe_search_loader').addClass('hidden');
+    showSearchLoader(false);
 }
 
 function reorganizeForm()
@@ -438,15 +513,17 @@ function reorganizeForm()
         $('#div_id_child_nationality_other').removeClass('d-none').show();
     }
     else{
-        $('#id_child_nationality_other').val('');
+        clearIfHidden('#id_child_nationality_other', '#div_id_child_nationality_other');
     }
 
-    if(child_nationality == 5 && $('#id_type').val() == 'Walk-in'){
+    // `#id_type` never matched anything: crispy renders the ID-type select as
+    // `#id_id_type`, so .val() was undefined, this branch never ran, and the
+    // else below wiped the Formal Education ID on every field change.
+    if(child_nationality == 5){
         $('#child_fe_unique_id_block').removeClass('d-none').show();
     }
     else{
-//        $('#child_fe_unique_id_block').addClass('d-none').hide();
-        $('#id_child_fe_unique_id').val('');
+        clearIfHidden('#id_child_fe_unique_id', '#child_fe_unique_id_block');
     }
 
 //    Child have children
@@ -457,7 +534,7 @@ function reorganizeForm()
     }
     else{
 //        $('div#div_id_child_children_number').addClass('d-none').hide();
-        $('#id_child_children_number').val('');
+        clearIfHidden('#id_child_children_number', 'div#div_id_child_children_number');
     }
 
     //child_have_sibling
@@ -487,7 +564,7 @@ function reorganizeForm()
     }
     else
     {
-        $('#id_main_caregiver_other').val('');
+        clearIfHidden('#id_main_caregiver_other', '#div_id_main_caregiver_other');
     }
 
 //    Main Caregiver Nationality
@@ -498,7 +575,7 @@ function reorganizeForm()
     }
     else
     {
-        $('#id_main_caregiver_nationality_other').val('');
+        clearIfHidden('#id_main_caregiver_nationality_other', '#div_id_main_caregiver_nationality_other');
     }
 
 
@@ -551,7 +628,7 @@ function reorganizeForm()
 //        $('#labour_details_2_alt').addClass('d-none').hide();
 //        $('#labour_details_3').addClass('d-none').hide();
         $('#id_labour_type').val('');
-        $('#id_labour_type_specify').val('');
+        clearIfHidden('#id_labour_type_specify', 'div#div_id_labour_type_specify');
         $('#id_labour_hours').val('');
         $('#id_labour_weekly_income').val('');
         $('input[name="labour_condition"]').prop('checked', false);
@@ -663,6 +740,15 @@ function validateField(field) {
     field.removeClass('is-invalid is-valid');
     field.closest('.mb-3').removeClass('has-error');
     field.siblings('.invalid-feedback').text('');
+
+    // The Arabic-only check runs on the same blur event and owns its own
+    // feedback element. Re-running it here keeps one verdict per field instead
+    // of two handlers overwriting each other's result.
+    if (typeof checkArabicOnly === 'function' && field.is(arabic_fields)) {
+        if (!checkArabicOnly(field)) {
+            return false;
+        }
+    }
 
     if (field.prop('required') && field.is(':visible') && (!field.val() || field.val().trim() === '')) {
         showError(selector, 'This field is required');

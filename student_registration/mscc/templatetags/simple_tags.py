@@ -418,3 +418,18 @@ def grading_improvement(instance, field):
         except ZeroDivisionError:
             return 0.0
     return 0.0
+
+
+@register.filter
+def month_name(value):
+    """Return the localised month name for a 1-12 month number.
+
+    ``django.utils.dates.MONTHS`` values are lazily translated, so Arabic
+    users see Arabic month names instead of the hard-coded English list that
+    used to live in the attendance templates.
+    """
+    from django.utils.dates import MONTHS
+    try:
+        return MONTHS[int(value)]
+    except (TypeError, ValueError, KeyError):
+        return ''

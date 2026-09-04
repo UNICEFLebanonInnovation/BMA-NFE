@@ -751,7 +751,7 @@ class BridgingForm(CommonForm):
 
         is_Kayany = False
         if self.request.user.partner:
-            is_Kayany = self.request.user.partner.is_Kayany
+            is_Kayany = getattr(self.request.user.partner, 'is_Kayany', False)
         choices = list()
         if not is_Kayany:
             choices.append(('level_one', _('Level one')))
@@ -1808,7 +1808,7 @@ class BridgingForm(CommonForm):
         registration_level = cleaned_data.get("registration_level")
         language = cleaned_data.get("language")
 
-        if self.request.user.partner and not self.request.user.partner.is_Kayany:
+        if self.request.user.partner and not getattr(self.request.user.partner, 'is_Kayany', False):
             arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
             arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
             arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")
@@ -2201,7 +2201,7 @@ class BridgingAssessmentForm(forms.ModelForm):
 
         is_Kayany = False
         if self.request.user.partner:
-            is_Kayany = self.request.user.partner.is_Kayany
+            is_Kayany = getattr(self.request.user.partner, 'is_Kayany', False)
 
         display_assessment = ''
         form_action = reverse('clm:bridging_post_assessment', kwargs={'pk': instance.id})
@@ -2442,7 +2442,7 @@ class BridgingAssessmentForm(forms.ModelForm):
         # artistic = cleaned_data.get("artistic")
 
         if test_done == 'yes':
-            if self.request.user.partner and not self.request.user.partner.is_Kayany:
+            if self.request.user.partner and not getattr(self.request.user.partner, 'is_Kayany', False):
                 if arabic_alphabet_knowledge is None:
                     self.add_error('arabic_alphabet_knowledge', 'This field is required')
                 elif arabic_alphabet_knowledge > 48:
@@ -2646,7 +2646,7 @@ class BridgingMidAssessmentForm(forms.ModelForm):
         self.fields['clm_type'].initial = 'Bridging'
         is_Kayany = False
         if self.request.user.partner:
-            is_Kayany = self.request.user.partner.is_Kayany
+            is_Kayany = getattr(self.request.user.partner, 'is_Kayany', False)
 
         display_assessment = ''
         assessment_number = int(number)
@@ -2771,7 +2771,7 @@ class BridgingMidAssessmentForm(forms.ModelForm):
             registration_level = cleaned_data.get("registration_level")
             language = cleaned_data.get("language")
 
-            if self.request.user.partner and not self.request.user.partner.is_Kayany:
+            if self.request.user.partner and not getattr(self.request.user.partner, 'is_Kayany', False):
                 arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
                 arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
                 arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")

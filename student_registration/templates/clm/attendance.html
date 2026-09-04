@@ -1,0 +1,121 @@
+{% extends "clm/base.html" %}
+{% load static i18n %}
+
+{% block project_title %}{% trans "Attendance" %}{% endblock %}
+{% block module_name %}{% trans "Attendance Management" %}{% endblock %}
+
+{% block content %}
+<nav aria-label="{% trans 'Breadcrumb' %}">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a href="{% url 'login_success' %}">{% trans "Home" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Daily Attendance" %}</li>
+    </ol>
+</nav>
+<h1 class="h4 fw-bold mb-4">{% trans "Daily Attendance" %}</h1>
+
+<form id="form" class="no-overlay row g-4" onsubmit="return false;">
+    {% csrf_token %}
+
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">{% trans "Select the session" %}</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label" for="attendance_date">{% trans "Attendance date" %}</label>
+                    <input type="date" class="form-control" id="attendance_date" name="attendance_date"
+                           value="{{ attendance_date|date:'Y-m-d' }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="school">{% trans "School" %}</label>
+                    <select class="form-select" id="school" name="school" required>
+                        <option value="">{% trans "Select a school" %}</option>
+                        {% for item in school %}
+                        <option value="{{ item.id }}">{{ item.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="round">{% trans "Round" %}</label>
+                    <select class="form-select" id="round" name="round" required>
+                        <option value="">{% trans "Select a round" %}</option>
+                        {% for item in round %}
+                        <option value="{{ item.id }}">{{ item.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="registration_level">{% trans "Registration level" %}</label>
+                    <select class="form-select" id="registration_level" name="registration_level" required>
+                        <option value="">{% trans "Select a level" %}</option>
+                        {% for display, value in registration_level.items %}
+                        <option value="{{ value }}">{{ display }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <fieldset class="mb-3 attendance_day_off">
+                    <legend class="form-label">{% trans "Attendance type" %}</legend>
+                    <div class="btn-group w-100" role="group" aria-label="{% trans 'Attendance type' %}">
+                        <input type="radio" class="btn-check" name="attendance_day_off" id="day_off_no"
+                               value="No" {% if day_off != 'Yes' %}checked{% endif %}>
+                        <label class="btn btn-outline-primary" for="day_off_no">{% trans "Working day" %}</label>
+
+                        <input type="radio" class="btn-check" name="attendance_day_off" id="day_off_yes"
+                               value="Yes" {% if day_off == 'Yes' %}checked{% endif %}>
+                        <label class="btn btn-outline-primary" for="day_off_yes">{% trans "Day off" %}</label>
+                    </div>
+                </fieldset>
+
+                <div class="mb-3">
+                    <label class="form-label" for="close_reason">{% trans "Closing reason" %}</label>
+                    <select class="form-select {% if day_off != 'Yes' %}hidden{% endif %}" id="close_reason" name="close_reason">
+                        <option value="">{% trans "Select a reason" %}</option>
+                        <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>{% trans "Public Holiday" %}</option>
+                        <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>{% trans "School Holiday" %}</option>
+                        <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>{% trans "Strike" %}</option>
+                        <option value="Weekly Holiday" {% if close_reason == 'Weekly Holiday' %}selected{% endif %}>{% trans "Weekly Holiday" %}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-footer bg-white d-flex gap-2">
+                <a href="{% url 'clm:load_attendance_children' %}" id="load_attendance_children"
+                   class="btn btn-primary flex-fill">
+                    <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>{% trans "Load children" %}
+                </a>
+                <a href="{% url 'clm:save_attendance_children' %}" id="save_attendance_children"
+                   class="btn btn-success flex-fill disabled">
+                    <i class="bi bi-check2 me-1" aria-hidden="true"></i>{% trans "Save" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>{% trans "Children" %}</span>
+                <span class="badge bg-light text-dark border">
+                    <span id="children_count">0</span> {% trans "loaded" %}
+                </span>
+            </div>
+            <div class="card-body">
+                <div id="attendance_children" aria-live="polite">
+                    <div class="empty-state py-5">
+                        <i class="bi bi-people empty-state-icon" aria-hidden="true"></i>
+                        <p class="empty-state-description mb-0">
+                            {% trans "Choose a school, round and level, then select Load children to mark attendance." %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock content %}
+
+{% block extra_js %}
+<script type="text/javascript" src="{% static 'js/bridging/attendance.js' %}"></script>
+{% endblock %}

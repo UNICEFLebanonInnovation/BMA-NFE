@@ -73,35 +73,39 @@
     <!-- Main Profile Tabs -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white p-0 border-bottom-0">
+            {% comment %}
+            current_tab comes back from service saves (e.g. ?current_tab=services)
+            so the user returns to the section they were working in.
+            {% endcomment %}
             <ul class="nav nav-tabs nav-fill redesign-tabs" id="profileTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link py-3 active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-pane" type="button" role="tab">
-                        <i class="bi bi-info-circle me-2"></i> {% trans "Personal Info" %}
+                    <button class="nav-link py-3{% if current_tab == 'info' %} active{% endif %}" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-pane" type="button" role="tab" aria-selected="{% if current_tab == 'info' %}true{% else %}false{% endif %}" aria-controls="info-pane">
+                        <i class="bi bi-info-circle me-2" aria-hidden="true"></i> {% trans "Personal information" %}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link py-3" id="edu-tab" data-bs-toggle="tab" data-bs-target="#edu-pane" type="button" role="tab">
-                        <i class="bi bi-mortarboard me-2"></i> {% trans "Education situation" %}
+                    <button class="nav-link py-3{% if current_tab == 'edu' or current_tab == 'services' %} active{% endif %}" id="edu-tab" data-bs-toggle="tab" data-bs-target="#edu-pane" type="button" role="tab" aria-selected="{% if current_tab == 'edu' or current_tab == 'services' %}true{% else %}false{% endif %}" aria-controls="edu-pane">
+                        <i class="bi bi-mortarboard me-2" aria-hidden="true"></i> {% trans "Education and services" %}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link py-3" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance-pane" type="button" role="tab">
-                        <i class="bi bi-calendar-check me-2"></i> {% trans "Attendances" %}
+                    <button class="nav-link py-3{% if current_tab == 'attendance' %} active{% endif %}" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance-pane" type="button" role="tab" aria-selected="{% if current_tab == 'attendance' %}true{% else %}false{% endif %}" aria-controls="attendance-pane">
+                        <i class="bi bi-calendar-check me-2" aria-hidden="true"></i> {% trans "Attendance" %}
                     </button>
                 </li>
             </ul>
         </div>
         <div class="tab-content" id="profileTabsContent">
-            <div class="tab-pane fade show active p-4" id="info-pane" role="tabpanel" aria-labelledby="info-tab">
+            <div class="tab-pane fade{% if current_tab == 'info' %} show active{% endif %} p-4" id="info-pane" role="tabpanel" aria-labelledby="info-tab">
                 {% include 'mscc/child_info_tab.html' %}
             </div>
-            <div class="tab-pane fade p-4" id="edu-pane" role="tabpanel" aria-labelledby="edu-tab">
+            <div class="tab-pane fade{% if current_tab == 'edu' or current_tab == 'services' %} show active{% endif %} p-4" id="edu-pane" role="tabpanel" aria-labelledby="edu-tab">
                 {% include 'mscc/child_education_details.html' %}
                 <div class="mt-4">
                     {% include 'mscc/child_services_tab.html' %}
                 </div>
             </div>
-            <div class="tab-pane fade p-4" id="attendance-pane" role="tabpanel" aria-labelledby="attendance-tab">
+            <div class="tab-pane fade{% if current_tab == 'attendance' %} show active{% endif %} p-4" id="attendance-pane" role="tabpanel" aria-labelledby="attendance-tab">
                 {% include 'mscc/child_attendance_tab.html' %}
             </div>
         </div>

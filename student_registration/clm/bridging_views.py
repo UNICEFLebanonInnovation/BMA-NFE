@@ -31,7 +31,7 @@ from django.shortcuts import render
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -254,7 +254,10 @@ class BridgingEditView(LoginRequiredMixin,
                     if "Bridging_ASSESSMENT/exam1" in p_test:
                         data['exam1'] = p_test["Bridging_ASSESSMENT/exam1"]
 
-            return BridgingForm(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return BridgingForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         instance = Bridging.objects.get(id=self.kwargs['pk'])
@@ -540,7 +543,10 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
                     # if "Bridging_ASSESSMENT/social_emotional" in p_test:
                     #     data['social_emotional'] = p_test["Bridging_ASSESSMENT/social_emotional"]
 
-            return form_class(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return form_class(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         instance = Bridging.objects.get(id=self.kwargs['pk'])
@@ -612,7 +618,10 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
                 if "Bridging_ASSESSMENT/exam2" in p_test:
                     data['exam2'] = p_test["Bridging_ASSESSMENT/exam2"]
 
-            return form_class(data, instance=instance, number=number, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return form_class(instance=instance, number=number, request=self.request, initial=data)
 
     def form_valid(self, form):
         instance = Bridging.objects.get(id=self.kwargs['pk'])
@@ -644,7 +653,10 @@ class BridgingFollowupView(LoginRequiredMixin,
 
         else:
             data = BridgingSerializer(instance).data
-            return form_class(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return form_class(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         instance = Bridging.objects.get(id=self.kwargs['pk'])
@@ -675,7 +687,10 @@ class BridgingServiceView(LoginRequiredMixin,
 
         else:
             data = BridgingSerializer(instance).data
-            return form_class(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return form_class(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         instance = Bridging.objects.get(id=self.kwargs['pk'])

@@ -292,7 +292,7 @@ class TeacherForm(forms.ModelForm):
         super(TeacherForm, self).__init__(*args, **kwargs)
         is_Kayany = False
         if self.request.user.partner:
-            is_Kayany = self.request.user.partner.is_Kayany
+            is_Kayany = getattr(self.request.user.partner, 'is_Kayany', False)
         choices = list()
         subject_choices = list()
         if not is_Kayany:

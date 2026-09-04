@@ -107,16 +107,19 @@
                     <div class="wizard-progress">
                         <div class="wizard-progress-bar" id="wizardProgressBar" style="width: 33%;"></div>
                     </div>
+                    {% comment %}
+                    The steps look clickable, so they are: role/tabindex here, handler below.
+                    {% endcomment %}
                     <ul class="stepper mb-5" id="registrationStepper">
-                        <li class="step active" data-step="1">
+                        <li class="step active" data-step="1" role="button" tabindex="0" aria-current="step">
                             <div class="step-icon"><i class="bi bi-person"></i></div>
                             <div class="small fw-bold mt-1">{% trans "Identity" %}</div>
                         </li>
-                        <li class="step" data-step="2">
+                        <li class="step" data-step="2" role="button" tabindex="0">
                             <div class="step-icon"><i class="bi bi-telephone"></i></div>
                             <div class="small fw-bold mt-1">{% trans "Caregivers" %}</div>
                         </li>
-                        <li class="step" data-step="3">
+                        <li class="step" data-step="3" role="button" tabindex="0">
                             <div class="step-icon"><i class="bi bi-shield-check"></i></div>
                             <div class="small fw-bold mt-1">{% trans "Review" %}</div>
                         </li>
@@ -318,8 +321,13 @@
                                     <i class="bi bi-shield-check fs-4 text-primary me-3"></i>
                                     <p class="small text-dark mb-0">{% trans "By completing this registration, you confirm that all entered details are verified against physical documentation." %}</p>
                                 </div>
-                                <div class="d-flex justify-content-end">
-                                    <button type="reset" class="btn btn-light border me-3">{% trans "Reset Form" %}</button>
+                                {% comment %}
+                                Reset sits on the opposite side of the row from Submit, and asks
+                                first: it used to be a misclick away from the submit button and
+                                cleared the whole registration without warning.
+                                {% endcomment %}
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button type="reset" class="btn btn-light border" id="reset-registration-form">{% trans "Reset Form" %}</button>
                                     <button type="submit" name="save" class="btn btn-primary px-5 fw-bold" id="submit-id-save">
                                         <i class="bi bi-check-circle me-2"></i> {% trans "Complete Registration" %}
                                     </button>
@@ -343,6 +351,23 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+{% comment %}
+The duplicate warning links to a record preview via `.show-child-details`, whose
+handler fills `#child-content` and opens `#childModal`. Neither existed, so the
+link did nothing at all.
+{% endcomment %}
+<div class="modal fade" id="childModal" tabindex="-1" aria-labelledby="childModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="childModalLabel">{% trans "Existing record" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+            </div>
+            <div class="modal-body" id="child-content"></div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -383,8 +408,8 @@
                 $target.removeClass('d-none');
 
                 // Stepper Icons
-                $('.step').removeClass('active completed');
-                $(`.step[data-step="${step}"]`).addClass('active');
+                $('.step').removeClass('active completed').removeAttr('aria-current');
+                $(`.step[data-step="${step}"]`).addClass('active').attr('aria-current', 'step');
                 for (let i = 1; i < step; i++) {
                     $(`.step[data-step="${i}"]`).addClass('completed');
                 }
@@ -409,28 +434,48 @@
                 }, 200);
             }
 
-            $('#next-btn').on('click', function() {
+            // Pulled out of the Next handler so the stepper can reuse exactly the
+            // same checks when jumping forward.
+            function stepIsValid(step) {
                 if (typeof validateCurrentStep === 'function') {
-                   if (!validateCurrentStep(currentStep)) return;
+                    if (!validateCurrentStep(step)) return false;
                 } else if (typeof validateMainForm === 'function') {
-                   if (!validateMainForm(true, currentStep)) return;
+                    if (!validateMainForm(true, step)) return false;
                 }
-    if (currentStep === 2) {
-        const idTypeVal = $('#id_id_type').val();
 
-        if (!idTypeVal) {
-            $('#id_id_type').addClass('is-invalid');
+                if (step === 2) {
+                    const idTypeVal = $('#id_id_type').val();
+                    if (!idTypeVal) {
+                        $('#id_id_type').addClass('is-invalid');
+                        $('html, body').animate({
+                            scrollTop: $('#id_id_type').offset().top - 150
+                        }, 200);
+                        return false;
+                    }
+                    $('#id_id_type').removeClass('is-invalid');
+                }
+                return true;
+            }
 
-            // scroll to field
-            $('html, body').animate({
-                scrollTop: $('#id_id_type').offset().top - 150
-            }, 200);
+            function goToStep(target) {
+                if (target === currentStep || target < 1 || target > totalSteps) return;
 
-            return; 
-        } else {
-            $('#id_id_type').removeClass('is-invalid');
-        }
-    }
+                // Going back is always allowed; going forward has to clear the
+                // same validation the Next button applies, one step at a time.
+                if (target < currentStep) {
+                    currentStep = target;
+                    updateWizard(currentStep);
+                    return;
+                }
+                while (currentStep < target) {
+                    if (!stepIsValid(currentStep)) return;
+                    currentStep++;
+                    updateWizard(currentStep);
+                }
+            }
+
+            $('#next-btn').on('click', function() {
+                if (!stepIsValid(currentStep)) return;
                 if (currentStep < totalSteps) {
                     currentStep++;
                     updateWizard(currentStep);
@@ -441,6 +486,22 @@
                 if (currentStep > 1) {
                     currentStep--;
                     updateWizard(currentStep);
+                }
+            });
+
+            // The stepper was decoration until now - nothing was bound to it.
+            $('#registrationStepper').on('click', '.step', function() {
+                goToStep(parseInt($(this).data('step'), 10));
+            }).on('keydown', '.step', function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    goToStep(parseInt($(this).data('step'), 10));
+                }
+            });
+
+            $('#reset-registration-form').on('click', function(e) {
+                if (!window.confirm('{% trans "Reset the form? Everything entered will be cleared." %}')) {
+                    e.preventDefault();
                 }
             });
 
