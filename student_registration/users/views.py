@@ -44,7 +44,12 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
 
-    fields = ['name', ]
+    # `name` is not a field on this User model, so the view raised FieldError
+    # for anyone who reached it - which is why users/user_detail.html's
+    # "Edit My Info" button had no route behind it. These are the details a user
+    # may reasonably maintain about themselves; role, centre, partner and school
+    # stay with the administrators.
+    fields = ['first_name', 'last_name', 'email', 'phone_number']
 
     # we already imported User in the view code above, remember?
     model = User
@@ -79,6 +84,16 @@ class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
         return reverse('home')
 
 
+def _is_alp_school_user(user):
+    """True only for genuine members of ALP_SCHOOL.
+
+    Deliberately not has_group(): that reports True for every group when the
+    user is a superuser, so an administrator opening the site was redirected
+    into the ALP school landing page and could never reach the main one.
+    """
+    return user.is_authenticated and user.groups.filter(name='ALP_SCHOOL').exists()
+
+
 def login_success(request):
     """
     Redirects users based on whether they are in the admins group
@@ -96,7 +111,7 @@ def login_success(request):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
 
-    if has_group(request.user, 'ALP_SCHOOL'):
+    if _is_alp_school_user(request.user):
         return redirect('alp:landing_page')
 
     # Default to landing page if multiple modules or no specific match
@@ -108,7 +123,7 @@ class LandingPage(LoginRequiredMixin,
     template_name = 'landing_page.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and has_group(request.user, 'ALP_SCHOOL'):
+        if _is_alp_school_user(request.user):
             return redirect('alp:landing_page')
         return super().dispatch(request, *args, **kwargs)
 
@@ -123,7 +138,20 @@ class LandingPage(LoginRequiredMixin,
         trend_start = today - timezone.timedelta(days=13)
         month_start = today.replace(day=1)
 
+        # Scope every figure to what this account is responsible for. Without
+        # this a single centre's focal point saw national totals and a league
+        # table of centres they have nothing to do with. Matches the scoping
+        # mscc.views.chart_data already applies.
+        user = self.request.user
         registrations = Registration.objects.filter(deleted=False)
+        attendance_rows = MSCCAttendanceChild.objects.all()
+        if not (user.is_superuser or user.is_staff):
+            if user.partner_id:
+                registrations = registrations.filter(partner_id=user.partner_id)
+                attendance_rows = attendance_rows.filter(registration__partner_id=user.partner_id)
+            if user.center_id:
+                registrations = registrations.filter(center_id=user.center_id)
+                attendance_rows = attendance_rows.filter(registration__center_id=user.center_id)
 
         today_count = registrations.filter(created__date=today).count()
         week_count = registrations.filter(created__date__gte=week_start).count()
@@ -132,7 +160,7 @@ class LandingPage(LoginRequiredMixin,
             center__isnull=False,
         ).values('center_id').distinct().count()
 
-        attendance_rows = MSCCAttendanceChild.objects.filter(
+        attendance_rows = attendance_rows.filter(
             attendance_day__attendance_date__gte=month_start,
             attendance_day__attendance_date__lte=today,
         )
@@ -164,8 +192,11 @@ class LandingPage(LoginRequiredMixin,
             for row in top_centers_qs
         ]
 
+        # Only the signed-in user's own exports: this listed every NFR Sector
+        # export in the system, exposing what other organisations had pulled.
         recent_exports = ExportHistory.objects.filter(
-            export_type__icontains='NFR Sector'
+            created_by=user,
+            export_type__icontains='NFR Sector',
         ).order_by('-created')[:5]
         export_rows = []
         for export in recent_exports:
@@ -210,7 +241,9 @@ def user_overview(request):
     return render(request, 'users/profile.html', args)
 
 
-@csrf_exempt
+# Not csrf_exempt: this rebinds the caller's push token and deletes their other
+# tokens, so an exempt POST let any site hijack a signed-in user's
+# notifications. firebase-messaging.js already sends the X-CSRFToken header.
 @require_POST
 @login_required
 def save_fcm_token(request):

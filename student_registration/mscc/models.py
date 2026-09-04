@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models import JSONField
 from django.contrib.postgres.fields import ArrayField
 
@@ -497,7 +497,10 @@ class Registration(TimeStampedModel):
             ('Other Sources', _('Other Sources')),
     )
     CASH_SUPPORT_PROGRAMMES = Choices(
-            ('None', _('None')),
+            # The stored value stays 'None' - only the label changes, because a
+            # profile reading "Active Cash Support: None" was indistinguishable
+            # from a field that had simply never been filled in.
+            ('None', _('No cash support')),
             ('Haddi', _('Haddi')),
             ('Education Cash assistance', _('Education Cash assistance')),
             ('UNHCR cash assistance', _('UNHCR cash assistance')),

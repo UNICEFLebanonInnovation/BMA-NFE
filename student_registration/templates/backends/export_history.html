@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block project_title %}{% trans "Export history" %}{% endblock %}
+{% block module_name %}{% trans "Export history" %}{% endblock %}
+
+{% block content %}
+<nav aria-label="{% trans 'Breadcrumb' %}">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a href="{% url 'login_success' %}">{% trans "Home" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Export history" %}</li>
+    </ol>
+</nav>
+<h1 class="h4 fw-bold mb-4">{% trans "Export history" %}</h1>
+
+<div class="card">
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <caption class="visually-hidden">{% trans "Exports you have requested, most recent first" %}</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Export" %}</th>
+                        <th scope="col">{% trans "Requested" %}</th>
+                        <th scope="col">{% trans "Status" %}</th>
+                        <th scope="col">{% trans "Format" %}</th>
+                        <th scope="col" class="text-end">{% trans "File" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for export in exports %}
+                    <tr>
+                        <th scope="row" class="fw-semibold">{{ export.export_type|default:_("Export") }}</th>
+                        <td>{{ export.created|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            {% if export.status == 'done' %}
+                            <span class="badge badge-table bg-success-subtle text-success-emphasis border border-success-subtle">
+                                <i class="bi bi-check-circle me-1" aria-hidden="true"></i>{% trans "Ready" %}
+                            </span>
+                            {% elif export.status == 'failed' %}
+                            <span class="badge badge-table bg-danger-subtle text-danger-emphasis border border-danger-subtle">
+                                <i class="bi bi-x-circle me-1" aria-hidden="true"></i>{% trans "Failed" %}
+                            </span>
+                            {% else %}
+                            <span class="badge badge-table bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                                <i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>{% trans "Processing" %}
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-uppercase small text-muted">{{ export.file_format|default:"—" }}</td>
+                        <td class="text-end">
+                            {% if export.status == 'done' and export.file_url %}
+                            <a href="{{ export.file_url }}" class="btn btn-sm btn-outline-primary" download>
+                                <i class="bi bi-download me-1" aria-hidden="true"></i>{% trans "Download" %}
+                            </a>
+                            {% else %}
+                            <span class="text-muted small">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <i class="bi bi-cloud-arrow-down empty-state-icon" aria-hidden="true"></i>
+                                <p class="empty-state-title">{% trans "No exports yet" %}</p>
+                                <p class="empty-state-description mb-0">
+                                    {% trans "Exports you request from the beneficiary or attendance lists will appear here." %}
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

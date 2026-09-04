@@ -26,12 +26,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
+from django.views.decorators.http import require_POST
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin, group_required
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -216,7 +217,7 @@ class BridgingEditView(LoginRequiredMixin,
         return super(BridgingEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return BridgingForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         else:
@@ -254,10 +255,13 @@ class BridgingEditView(LoginRequiredMixin,
                     if "Bridging_ASSESSMENT/exam1" in p_test:
                         data['exam1'] = p_test["Bridging_ASSESSMENT/exam1"]
 
-            return BridgingForm(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return BridgingForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingEditView, self).form_valid(form)
 
@@ -495,7 +499,7 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
 
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
@@ -540,10 +544,13 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
                     # if "Bridging_ASSESSMENT/social_emotional" in p_test:
                     #     data['social_emotional'] = p_test["Bridging_ASSESSMENT/social_emotional"]
 
-            return form_class(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return form_class(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingPostAssessmentView, self).form_valid(form)
 
@@ -565,7 +572,7 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         number = int(self.kwargs.get('number', 1))
 
         if self.request.method == "POST":
@@ -612,10 +619,13 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
                 if "Bridging_ASSESSMENT/exam2" in p_test:
                     data['exam2'] = p_test["Bridging_ASSESSMENT/exam2"]
 
-            return form_class(data, instance=instance, number=number, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return form_class(instance=instance, number=number, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         number = self.kwargs['number'] if 'number' in self.kwargs else None
         form.save(request=self.request, number=number, instance=instance)
         return super(BridgingMidAssessmentView, self).form_valid(form)
@@ -637,17 +647,20 @@ class BridgingFollowupView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
 
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
 
         else:
             data = BridgingSerializer(instance).data
-            return form_class(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return form_class(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingFollowupView, self).form_valid(form)
 
@@ -668,17 +681,20 @@ class BridgingServiceView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
 
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
 
         else:
             data = BridgingSerializer(instance).data
-            return form_class(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return form_class(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingServiceView, self).form_valid(form)
 
@@ -718,7 +734,7 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
 # def BridgingDeleteView(request, pk):
 #     if request.user.is_authenticated:
 #         try:
-#             registration =  Bridging.objects.get(pk=pk)
+#             registration =  get_object_or_404(Bridging, pk=pk)
 #             registration.delete()
 #             result = {"isSuccessful": True}
 #         except Bridging.DoesNotExist:
@@ -728,6 +744,11 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
 #     return JsonResponse(result)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def bridging_mark_delete_view(request, pk):
     """Mark a Bridging enrollment as deleted and return the result as JSON.
 
@@ -740,7 +761,7 @@ def bridging_mark_delete_view(request, pk):
     """
     if request.user.is_authenticated:
         try:
-            registration = Bridging.objects.get(id=pk)
+            registration = Bridging.objects.get(pk=pk)
             registration.deleted = True
             registration.save()
             result = {"isSuccessful": True}

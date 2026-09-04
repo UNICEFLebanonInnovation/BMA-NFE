@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+from django.shortcuts import get_object_or_404
 import datetime
 from django.contrib.auth.decorators import login_required
 import io
@@ -20,7 +21,7 @@ from django.db.models import Q, Sum, Avg, F, Func, When
 from django.urls import reverse
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
@@ -276,15 +277,18 @@ class TeacherEditView(LoginRequiredMixin,
         return super(TeacherEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Teacher, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return TeacherForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         else:
             data = TeacherSerializer(instance).data
-            return TeacherForm(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return TeacherForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Teacher, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(TeacherEditView, self).form_valid(form)
 
@@ -295,7 +299,6 @@ class TeacherDeleteView(LoginRequiredMixin, GroupRequiredMixin, DeleteView):
     group_required = [u"CLM_TEACHER"]
 
     def get_object(self):
-        from django.shortcuts import get_object_or_404
         return get_object_or_404(Teacher, pk=self.kwargs['pk'])
 
     def get(self, request, *args, **kwargs):

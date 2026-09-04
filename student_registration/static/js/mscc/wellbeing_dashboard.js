@@ -1,6 +1,9 @@
 (function () {
   'use strict';
 
+  // mscc.js is not loaded on this page, so this file needs its own.
+  const translateMessage = (message) => (window.gettext ? window.gettext(message) : message);
+
   const state = {
     filters: {},
   };
@@ -307,8 +310,18 @@
     const kpiAvgNfeGrade = document.getElementById('kpi_avg_nfe_grade');
     if (kpiAvgNfeGrade) kpiAvgNfeGrade.innerText = `${data.transitions.avg_nfe_grade}%`;
 
+    // The rate is null when no child yet has enough recorded attendance to be
+    // judged. Printing "null%" or "0%" would both read as a real measurement.
     const kpiDropoutRate = document.getElementById('kpi_dropout_rate');
-    if (kpiDropoutRate) kpiDropoutRate.innerText = `${data.transitions.dropout_rate}%`;
+    if (kpiDropoutRate) {
+      const dropoutRate = data.transitions.dropout_rate;
+      kpiDropoutRate.innerText = dropoutRate === null || dropoutRate === undefined
+        ? '—'
+        : `${dropoutRate}%`;
+      kpiDropoutRate.title = dropoutRate === null || dropoutRate === undefined
+        ? translateMessage('Not enough attendance recorded yet to measure dropout.')
+        : translateMessage('Based on children with enough recorded attendance to assess.');
+    }
 
     const kpiEligibleForFe = document.getElementById('kpi_eligible_for_fe');
     if (kpiEligibleForFe) kpiEligibleForFe.innerText = `${data.transitions.eligible_for_fe_count}`;

@@ -29,15 +29,16 @@ import traceback
 from rest_framework import status
 from django.db.models import F, Q, OuterRef, Exists, Subquery, IntegerField, Avg, FloatField
 from django.db.models.functions import Coalesce, NullIf, Cast
+from django.views.decorators.http import require_POST
 from django.urls import reverse, reverse_lazy
 from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin, group_required
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 import uuid
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
@@ -93,6 +94,14 @@ from .utils import *
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
+
+
+# Thresholds for the attendance-based dropout indicator. A child is only judged
+# once their centre has recorded at least this many sessions for them, and counts
+# as dropped out when they were present for less than this share of those
+# sessions. Kept here so the programme team can tune them in one place.
+DROPOUT_MIN_RECORDED_SESSIONS = 10
+DROPOUT_ATTENDANCE_THRESHOLD = 0.5
 
 
 def chart_data(request):
@@ -201,7 +210,7 @@ class ProfileView(LoginRequiredMixin,
             dict: Context containing the registration, service metadata and
             whether the child can be enrolled in a new round.
         """
-        instance = Registration.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Registration, pk=self.kwargs['pk'])
         current_tab = self.request.GET.get('current_tab', 'info')
 
         rounds_registered = EducationService.objects.filter(
@@ -221,11 +230,29 @@ class ProfileView(LoginRequiredMixin,
         services = ProvidedServices.objects.filter(registration=instance)
         services_dict = {service.name: service for service in services}
 
+        # Years the child actually has attendance for, so the monthly history
+        # can be scoped to one year instead of merging every year together.
+        from datetime import date
+        from django.utils.dates import MONTHS
+        attendance_years = sorted(
+            {
+                d.year for d in MSCCAttendanceChild.objects
+                .filter(child_id=instance.child_id)
+                .values_list('attendance_day__attendance_date', flat=True)
+                if d
+            },
+            reverse=True,
+        ) or [date.today().year]
+
         return {
             'instance': instance,
             'new_round': new_round,
             'current_tab': current_tab,
             'provided_services': services_dict,
+            'attendance_years': attendance_years,
+            'selected_attendance_year': attendance_years[0],
+            # Localised month names (lazy) instead of a hard-coded English list.
+            'month_choices': [MONTHS[i] for i in range(1, 13)],
         }
 
 
@@ -537,7 +564,7 @@ class MainEditView(LoginRequiredMixin,
         return super(MainEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Registration.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Registration, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return MainForm(self.request.POST, instance=instance, request=self.request)
         else:
@@ -548,10 +575,14 @@ class MainEditView(LoginRequiredMixin,
             data['father_educational_level'] = data['father_educational_level_id']if 'father_educational_level_id' in data else ''
             data['mother_educational_level'] = data['mother_educational_level_id']if 'mother_educational_level_id' in data else ''
             data['id_type'] = data['id_type_id']if 'id_type_id' in data else ''
-            return MainForm(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a record for editing ran validation and
+            # greeted the user with "Registration Failed" plus a dozen errors
+            # before they had typed anything.
+            return MainForm(initial=data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Registration.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Registration, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(MainEditView, self).form_valid(form)
 
@@ -588,10 +619,15 @@ class NewRoundView(LoginRequiredMixin,
         return super(NewRoundView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("MSCC")
 def main_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
-            registration = Registration.objects.get(id=pk)
+            registration = Registration.objects.get(pk=pk)
             registration.deleted = True
             registration.deleted_by = request.user
             registration.save()
@@ -736,7 +772,7 @@ class MainViewSet(mixins.RetrieveModelMixin,
 def main_registration_cancel_view(request, pk):
     if request.user.is_authenticated:
         try:
-            registration = Registration.objects.get(id=pk)
+            registration = get_object_or_404(Registration, pk=pk)
             registration.save()
             return redirect('mscc:list')
         except Registration.DoesNotExist:
@@ -773,7 +809,7 @@ class ReferralFormView(LoginRequiredMixin,
             return ReferralForm(self.request.POST, pk=pk, registry=registry, request=self.request)
         else:
             if pk:
-                instance = Referral.objects.get(id=pk)
+                instance = get_object_or_404(Referral, pk=pk)
 
                 return ReferralForm(instance=instance, registry=registry, pk=pk, request=self.request)
             return ReferralForm(registry=registry, pk=pk, request=self.request)
@@ -851,8 +887,10 @@ def quick_search(request):
     from django.db.models.functions import Concat
     from django.db.models import Value
 
-    term = request.GET.get('term', 0).strip()
-    terms = request.GET.get('term', 0).strip()
+    # The default was the integer 0, so .strip() raised AttributeError and the
+    # endpoint returned 500 whenever it was called without a term.
+    term = (request.GET.get('term') or '').strip()
+    terms = term
     qs = {}
 
     if terms:
@@ -983,14 +1021,17 @@ class TeacherEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_form(self, form_class=None):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Teacher, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return TeacherForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         data = TeacherSerializer(instance).data
-        return TeacherForm(data, instance=instance, request=self.request)
+        # `initial=`, not positional: passing the serialized record as `data`
+        # bound the form, so opening a saved record for editing ran validation
+        # and showed errors before the user had typed anything.
+        return TeacherForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Teacher, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(TeacherEditView, self).form_valid(form)
 
@@ -1536,30 +1577,46 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             for item in nfe_transitions
         ]
 
-        # NEW INDICATOR: Dropout rate based on attendance (< 45 days average per round)
-        # We define a dropped out child as one whose average attended days per round is < 45.
-        child_rounds = qs.values('child_id').annotate(
-            total_rounds=Count('id', distinct=True)
+        # INDICATOR: Dropout rate based on attendance.
+        #
+        # This used to compare a child's attended days against a flat 45 - a full
+        # round's worth - over every registration, whether or not that round had
+        # finished. Early in a round nobody has 45 days yet, so the dashboard
+        # reported a 100% dropout rate for most of the year. Round carries no end
+        # date, so instead measure each child against the sessions actually
+        # recorded for them: a child who was marked absent for most of the
+        # sessions their centre registered has dropped out, and a child whose
+        # round has barely started simply has too little data to judge.
+        attendance_by_child = (
+            MSCCAttendanceChild.objects
+            .filter(registration__in=qs)
+            .exclude(attended='')
+            .values('registration__child_id')
+            .annotate(
+                recorded=Count('id'),
+                attended_days=Count('id', filter=Q(attended__iexact='Yes')),
+            )
         )
-        child_to_rounds = {item['child_id']: item['total_rounds'] for item in child_rounds if item['child_id']}
-
-        child_attended = MSCCAttendanceChild.objects.filter(registration__in=qs, attended='Yes').values('registration__child_id').annotate(
-            total_attended=Count('id')
-        )
-        child_to_attended = {item['registration__child_id']: item['total_attended'] for item in child_attended if item['registration__child_id']}
 
         all_dropped_out_children = set()
-        for child_id, total_rounds in child_to_rounds.items():
-            total_attended = child_to_attended.get(child_id, 0)
-            if total_rounds > 0 and (total_attended / total_rounds) < 45:
+        judged_children = set()
+        for row in attendance_by_child:
+            child_id = row['registration__child_id']
+            if not child_id or row['recorded'] < DROPOUT_MIN_RECORDED_SESSIONS:
+                continue
+            judged_children.add(child_id)
+            if (row['attended_days'] / row['recorded']) < DROPOUT_ATTENDANCE_THRESHOLD:
                 all_dropped_out_children.add(child_id)
 
-        total_children = len(child_to_rounds)
+        total_children = len(judged_children)
         total_dropouts = len(all_dropped_out_children)
 
-        avg_dropout_rate = 0
+        # None, not 0, when no child has enough recorded attendance to judge:
+        # "0% dropout" and "we cannot tell yet" are very different messages to
+        # put in front of a programme manager.
+        avg_dropout_rate = None
         if total_children > 0:
-            avg_dropout_rate = (total_dropouts / total_children) * 100
+            avg_dropout_rate = round((total_dropouts / total_children) * 100, 1)
 
         # NEW INDICATOR: Dropout rate by program
         dropout_by_program = []
@@ -1571,6 +1628,11 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             program_dropouts = {}
 
             for reg in qs_with_edu.values('child_id', 'latest_program'):
+                # Same denominator as the headline rate: only children with
+                # enough recorded sessions to judge, or the per-programme rates
+                # would be diluted by children nobody has assessed yet.
+                if reg['child_id'] not in judged_children:
+                    continue
                 prog = reg['latest_program'] or 'Unknown'
                 program_totals[prog] = program_totals.get(prog, 0) + 1
                 if reg['child_id'] in all_dropped_out_children:
@@ -1623,7 +1685,8 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             'transitions': {
                 'nfe_to_fe': nfe_to_fe_count,
                 'nfe_platforms': nfe_transitions,
-                'dropout_rate': round(avg_dropout_rate, 1),
+                'dropout_rate': avg_dropout_rate,
+                'dropout_assessed_children': total_children,
                 'dropout_by_program': dropout_by_program,
                 'avg_nfe_grade': round(avg_nfe_grade, 1),
                 'eligible_for_fe_count': len(eligible_for_fe_list),

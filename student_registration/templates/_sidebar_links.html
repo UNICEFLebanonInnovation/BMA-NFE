@@ -73,9 +73,16 @@
 <a href="{% url 'alp:teacher_attendance_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'teacher_attendance' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-calendar-check-fill"></i> <span>{% trans "ALP Teacher Attendance" %}</span>
 </a>
+{% comment %}
+The profile view raises PermissionDenied without an assigned school, and
+has_group passes every check for superusers - so admins were shown a link that
+could only ever return 403.
+{% endcomment %}
+{% if request.user.school_id %}
 <a href="{% url 'alp:school_profile' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'school' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-building"></i> <span>{% trans "School Profile" %}</span>
 </a>
+{% endif %}
 <a href="{% url 'alp:teacher_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'teacher' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-people"></i> <span>{% trans "ALP Teachers" %}</span>
 </a>

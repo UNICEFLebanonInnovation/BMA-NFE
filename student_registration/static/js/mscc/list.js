@@ -30,7 +30,7 @@ $(document).ready(function() {
 
         $.ajax({
             url: "/mscc/child-mark-delete/" + registrationId + "/",
-            type: "GET",
+            type: "POST",
             headers: requestHeaders,
             success: function(data) {
                 parentTR.fadeOut(300, function() { $(this).remove(); });

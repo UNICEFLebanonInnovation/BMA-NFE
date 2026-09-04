@@ -5,7 +5,10 @@
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 
-$(window).load(function () {
+// jQuery 3 removed the .load() event shorthand - $(window).load(fn) now calls
+// the AJAX loader with a function as the URL and throws, so everything in this
+// block silently never ran once the app moved to jQuery 3.7.
+$(window).on('load', function () {
 
     /* Background loading full-size images */
     $('.image-link').each(function() {

@@ -6,7 +6,9 @@ import json
 from collections import OrderedDict
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from braces.views import GroupRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from student_registration.users.mixins import GroupRequiredMixin, group_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, Q
 from django.utils import timezone
@@ -100,6 +102,59 @@ def _aggregate_attendance(queryset, *group_fields):
     )
 
 
+def _parse_attendance_date(value):
+    """Parse an ISO or US-style attendance date, or return None."""
+    if not value:
+        return None
+    from datetime import datetime as _dt
+    for fmt in ('%Y-%m-%d', '%m/%d/%Y'):
+        try:
+            return _dt.strptime(value, fmt).date()
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+def _normalise_day_off(value):
+    """Return 'Yes'/'No' whatever casing the row was stored with."""
+    return 'Yes' if (value or '').strip().lower() == 'yes' else 'No'
+
+
+def _day_off_status(center_id, day):
+    """Whether a centre was closed on ``day``, and why.
+
+    A centre stores one attendance row per programme and section, so picking
+    .last() returned whichever row happened to sort last and the closure could
+    show or not show depending on the ordering. A centre is closed if any of the
+    day's rows says so.
+    """
+    rows = MSCCAttendance.objects.filter(center_id=center_id, attendance_date=day)
+    closed = rows.filter(day_off__iexact='yes').first()
+    if closed:
+        return 'Yes', (closed.close_reason or ''), True
+    return 'No', '', rows.exists()
+
+
+@login_required
+def attendance_day_status(request):
+    """Day-off state for a centre on one date, for the date picker to read.
+
+    Without this the page could only ever show today's day-off flag, because it
+    is rendered server-side and nothing refreshed it when the date changed.
+    """
+    center_id = request.GET.get('center_id') or request.user.center_id
+    day = _parse_attendance_date(request.GET.get('attendance_date'))
+    if not center_id or not day:
+        return HttpResponseBadRequest('center_id and attendance_date are required')
+
+    day_off, close_reason, recorded = _day_off_status(center_id, day)
+    return JsonResponse({
+        'day_off': day_off,
+        'close_reason': close_reason,
+        'recorded': recorded,
+    })
+
+
 class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      TemplateView):
@@ -122,7 +177,11 @@ class AttendanceView(LoginRequiredMixin,
         from collections import OrderedDict
 
         center_id = self.request.user.center_id
-        now = datetime.now()
+        # Honour ?attendance_date=: the page lets the user pick a date, but this
+        # was pinned to today, so opening a past day showed today's day-off state
+        # and saving would have overwritten the stored one.
+        selected = _parse_attendance_date(self.request.GET.get('attendance_date'))
+        now = selected or datetime.now().date()
         attendance_date = now.strftime('%m/%d/%Y')
         attendance_date_iso = now.strftime('%Y-%m-%d')
         day_off = 'No'
@@ -140,10 +199,9 @@ class AttendanceView(LoginRequiredMixin,
         if center_id:
             instance = MSCCAttendance.objects.filter(center_id=center_id,
                                                  attendance_date=now).last()
-
-        if instance:
-            day_off = instance.day_off
-            close_reason = instance.close_reason
+            # The field's choices are 'yes'/'no' but the template compares
+            # against 'Yes'/'No', so a stored day off never came back checked.
+            day_off, close_reason, _recorded = _day_off_status(center_id, now)
 
         return {
             'instance': instance,
@@ -157,6 +215,8 @@ class AttendanceView(LoginRequiredMixin,
         }
 
 
+@require_POST
+@group_required("MSCC", "MSCC_UNICEF", "MSCC_CENTER", "MSCC_PARTNER")
 def save_attendance_children(request):
     """Persist attendance for MSCC children.
 
@@ -240,20 +300,39 @@ class LoadAttendanceChild(LoginRequiredMixin,
     template_name = 'mscc/child_attendance_month.html'
 
     def get_context_data(self, **kwargs):
-        import calendar
+        from datetime import date
+        from django.utils.dates import MONTHS
 
         child_id = kwargs["child"]
-        month = int(self.request.GET.get("month"))
+        today = date.today()
 
-        instances = MSCCAttendanceChild.objects.filter(child_id=child_id,
-                                                       attendance_day__attendance_date__month=month)\
-            .order_by('attendance_day__attendance_date')
+        # Both parameters are optional: fall back to the current month/year
+        # instead of raising when a caller omits them.
+        def _int_param(name, default):
+            try:
+                return int(self.request.GET.get(name))
+            except (TypeError, ValueError):
+                return default
+
+        month = _int_param("month", today.month)
+        year = _int_param("year", today.year)
+        if not 1 <= month <= 12:
+            month = today.month
+
+        # Filter on year as well, otherwise the same month from every year of
+        # the child's history is merged into one list.
+        instances = MSCCAttendanceChild.objects.filter(
+            child_id=child_id,
+            attendance_day__attendance_date__month=month,
+            attendance_day__attendance_date__year=year,
+        ).order_by('attendance_day__attendance_date')
 
         return {
             'instances': instances,
             'nbr_attended': instances.filter(attended='Yes').count(),
             'nbr_absent': instances.filter(attended='No').count(),
-            'attendance_month': calendar.month_name[month]
+            'attendance_month': MONTHS[month],
+            'attendance_year': year,
         }
 
 

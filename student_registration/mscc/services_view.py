@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
+from django.shortcuts import get_object_or_404
 
 import json
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin
 from django.urls import reverse
 
 from .utils import *
@@ -40,7 +41,7 @@ class InclusionFormView(LoginRequiredMixin,
             return InclusionServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(InclusionServiceForm.Meta.fields, InclusionService.objects.get(id=instance))
+                data = to_array(InclusionServiceForm.Meta.fields, get_object_or_404(InclusionService, pk=instance))
                 return InclusionServiceForm(data, registry=registry, instance=instance, request=self.request)
             return InclusionServiceForm(registry=registry, instance=instance, request=self.request)
 
@@ -77,7 +78,7 @@ class DigitalFormView(LoginRequiredMixin,
             return DigitalServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(DigitalServiceForm.Meta.fields, DigitalService.objects.get(id=instance))
+                data = to_array(DigitalServiceForm.Meta.fields, get_object_or_404(DigitalService, pk=instance))
                 return DigitalServiceForm(data, registry=registry, instance=instance, request=self.request)
             return DigitalServiceForm(registry=registry, instance=instance, request=self.request)
 
@@ -115,7 +116,7 @@ class HealthNutritionFormView(LoginRequiredMixin,
             return HealthNutritionServiceForm(self.request.POST, instance=instance, registry=registry, age=age, request=self.request)
         else:
             if instance:
-                data = to_array(HealthNutritionServiceForm.Meta.fields, HealthNutritionService.objects.get(id=instance))
+                data = to_array(HealthNutritionServiceForm.Meta.fields, get_object_or_404(HealthNutritionService, pk=instance))
                 return HealthNutritionServiceForm(data, registry=registry, age=age, instance=instance, request=self.request)
             return HealthNutritionServiceForm(registry=registry, age=age, instance=instance, request=self.request)
 
@@ -152,7 +153,7 @@ class HealthNutritionReferralFormView(LoginRequiredMixin,
             return HealthNutritionReferralForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(HealthNutritionReferralForm.Meta.fields, HealthNutritionReferral.objects.get(id=instance))
+                data = to_array(HealthNutritionReferralForm.Meta.fields, get_object_or_404(HealthNutritionReferral, pk=instance))
                 return HealthNutritionReferralForm(data, registry=registry, instance=instance, request=self.request)
             return HealthNutritionReferralForm(registry=registry, instance=instance, request=self.request)
 
@@ -189,7 +190,7 @@ class PSSFormView(LoginRequiredMixin,
             return PSSServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(PSSServiceForm.Meta.fields, PSSService.objects.get(id=instance))
+                data = to_array(PSSServiceForm.Meta.fields, get_object_or_404(PSSService, pk=instance))
                 return PSSServiceForm(data, registry=registry, instance=instance, request=self.request)
             return PSSServiceForm(registry=registry, instance=instance, request=self.request)
 
@@ -226,7 +227,7 @@ class YouthKitServiceFormView(LoginRequiredMixin,
             return YouthKitServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(YouthKitServiceForm.Meta.fields, YouthKitService.objects.get(id=instance))
+                data = to_array(YouthKitServiceForm.Meta.fields, get_object_or_404(YouthKitService, pk=instance))
                 return YouthKitServiceForm(data, registry=registry, instance=instance, request=self.request)
             return YouthKitServiceForm(registry=registry, instance=instance, request=self.request)
 
@@ -263,7 +264,7 @@ class YouthServiceMaharatiFormView(LoginRequiredMixin,
             return YouthServiceMaharatiForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                service_data = YouthService.objects.get(id=instance)
+                service_data = get_object_or_404(YouthService, pk=instance)
                 data = service_data.service_values
                 return YouthServiceMaharatiForm(data, registry=registry, instance=instance, request=self.request)
             return YouthServiceMaharatiForm(registry=registry, instance=instance, request=self.request)
@@ -301,7 +302,7 @@ class YouthServiceGilFormView(LoginRequiredMixin,
             return YouthServiceGilForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                service_data = YouthService.objects.get(id=instance)
+                service_data = get_object_or_404(YouthService, pk=instance)
                 data = service_data.service_values
                 return YouthServiceGilForm(data, registry=registry, instance=instance, request=self.request)
             return YouthServiceGilForm(registry=registry, instance=instance, request=self.request)
@@ -339,7 +340,7 @@ class FollowUpFormView(LoginRequiredMixin,
             return FollowUpServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(FollowUpServiceForm.Meta.fields, FollowUpService.objects.get(id=instance))
+                data = to_array(FollowUpServiceForm.Meta.fields, get_object_or_404(FollowUpService, pk=instance))
                 return FollowUpServiceForm(data, registry=registry, instance=instance, request=self.request)
             return FollowUpServiceForm(registry=registry, instance=instance, request=self.request)
 
@@ -376,7 +377,7 @@ class YouthAssessmentFormView(LoginRequiredMixin,
             return YouthAssessmentForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(YouthAssessmentForm.Meta.fields, YouthAssessment.objects.get(id=instance))
+                data = to_array(YouthAssessmentForm.Meta.fields, get_object_or_404(YouthAssessment, pk=instance))
                 return YouthAssessmentForm(data, registry=registry, instance=instance, request=self.request)
             return YouthAssessmentForm(registry=registry, instance=instance, request=self.request)
 
@@ -413,7 +414,7 @@ class YouthReferralFormView(LoginRequiredMixin,
             return YouthReferralForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(YouthReferralForm.Meta.fields, YouthReferral.objects.get(id=instance))
+                data = to_array(YouthReferralForm.Meta.fields, get_object_or_404(YouthReferral, pk=instance))
                 return YouthReferralForm(data, registry=registry, instance=instance, request=self.request)
             return YouthReferralForm(registry=registry, instance=instance, request=self.request)
 
@@ -467,7 +468,7 @@ class RecreationalFormView(LoginRequiredMixin,
             return RecreationalForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                assessment_data = Recreational.objects.get(id=instance)
+                assessment_data = get_object_or_404(Recreational, pk=instance)
                 data = assessment_data.assessment
                 return RecreationalForm(data, registry=registry, instance=instance, request=self.request)
             return RecreationalForm(registry=registry, instance=instance, request=self.request)
@@ -506,7 +507,7 @@ class LegoServiceFormView(LoginRequiredMixin,
             return LegoServiceForm(self.request.POST, instance=instance, registry=registry, age=age, request=self.request)
         else:
             if instance:
-                data = to_array(LegoServiceForm.Meta.fields, LegoService.objects.get(id=instance))
+                data = to_array(LegoServiceForm.Meta.fields, get_object_or_404(LegoService, pk=instance))
                 return LegoServiceForm(data, registry=registry, age=age, instance=instance, request=self.request)
             return LegoServiceForm(registry=registry, age=age, instance=instance, request=self.request)
 

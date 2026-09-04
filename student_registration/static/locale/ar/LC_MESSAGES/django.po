@@ -15,8 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: student_registration/attendances/filters.py:11
 #: student_registration/students/filters.py:53
@@ -2205,8 +2204,8 @@ msgstr "تاريخ التسجيل"
 #: student_registration/clm/bridging_forms.py:737
 #: student_registration/clm/models.py:1877
 msgid ""
-"Was this child enrolled in Formal Education last year and dropped out due to "
-"lack of documentation?"
+"Was this child enrolled in Formal Education last year and dropped out due to"
+" lack of documentation?"
 msgstr ""
 "هل كان هذا الطفل مسجلاً في التعليم الرسمي في العام الماضي وتسرب بسبب نقص "
 "الوثائق؟"
@@ -2545,7 +2544,8 @@ msgstr "هل خضع ولي أمر الطفل إلى جلسات متابعة"
 
 #: student_registration/clm/bridging_forms.py:3214
 #: student_registration/clm/models.py:1843
-msgid "Have the child caregivers been contacted by the School Community Laison"
+msgid ""
+"Have the child caregivers been contacted by the School Community Laison"
 msgstr ""
 "هل تم التواصل مع مقدمي الرعاية للطفل من قبل مسؤول التواصل المجتمعي في "
 "المدرسة؟"
@@ -2565,7 +2565,8 @@ msgstr "يرجى تحديد ما تمت مناقشته"
 msgid "Disability"
 msgstr "احتياجات خاصة"
 
-#: student_registration/clm/models.py:82 student_registration/clm/models.py:728
+#: student_registration/clm/models.py:82
+#: student_registration/clm/models.py:728
 #: student_registration/locations/filters.py:66
 #: student_registration/locations/forms.py:28
 #: student_registration/locations/models.py:101
@@ -2668,8 +2669,8 @@ msgstr "إحالة من غيرجمعية"
 
 #: student_registration/clm/models.py:161
 msgid ""
-"Referral from an official reference (Mukhtar, Municipality, School Director, "
-"etc.)"
+"Referral from an official reference (Mukhtar, Municipality, School Director,"
+" etc.)"
 msgstr "إحالة من مرجع رسمي (مختار، بلدية، مدير مدرسة، إلخ ..)"
 
 #: student_registration/clm/models.py:162
@@ -3244,7 +3245,8 @@ msgstr "عدم القدرة للوصول إلى الطفل"
 
 #: student_registration/clm/models.py:1291
 msgid "Child did not fit the criteria - enrolled in previous FE"
-msgstr "الطفل لا يستوفي الشروط المطلوبة للمشاركة (كان مسجلًا في التعليم الرسمي)"
+msgstr ""
+"الطفل لا يستوفي الشروط المطلوبة للمشاركة (كان مسجلًا في التعليم الرسمي)"
 
 #: student_registration/clm/models.py:1294
 msgid "what other reasons for this child not being engaged?"
@@ -3258,8 +3260,8 @@ msgstr "هل  خدمة إنترنت متوفرة للأهل في منطقتهم 
 
 #: student_registration/clm/models.py:1316
 msgid ""
-"Did both girls and boys in the same family participate in the class and have "
-"access to the phone/device?"
+"Did both girls and boys in the same family participate in the class and have"
+" access to the phone/device?"
 msgstr ""
 "هل شارك كل من الفتيات والفتيان من نفس العائلة في الفصل التعليمي وتمكنوا من "
 "استخدام الهاتف/الجهاز؟"
@@ -3284,8 +3286,8 @@ msgstr "كيف تقيم دعم اأهل الطفل في تقديم المساع�
 
 #: student_registration/clm/models.py:1350
 msgid ""
-"Has the child directly been reached with awareness messaging on Covid-19 and "
-"prevention measures?"
+"Has the child directly been reached with awareness messaging on Covid-19 and"
+" prevention measures?"
 msgstr ""
 "هل تم التواصل مع الطفل مباشرةً من خلال رسائل التوعية حول Covid-19 وتدابير "
 "الوقاية؟"
@@ -3305,8 +3307,8 @@ msgstr ""
 
 #: student_registration/clm/models.py:1381
 msgid ""
-"Was any follow-up done to ensure messages were well received, understood and "
-"adopted?"
+"Was any follow-up done to ensure messages were well received, understood and"
+" adopted?"
 msgstr "هل تم إجراء أي متابعة لضمان تلقي الرسائل وفهمها واعتمادها بشكل جيد؟"
 
 #: student_registration/clm/models.py:1388
@@ -3454,7 +3456,8 @@ msgstr "تاريخ التسجيل"
 msgid "Age"
 msgstr "العمر"
 
-#: student_registration/clm/tables.py:18 student_registration/mscc/tables.py:27
+#: student_registration/clm/tables.py:18
+#: student_registration/mscc/tables.py:27
 #: student_registration/templates/mscc/child_profile_preview.html:94
 msgid "Birthday"
 msgstr "تاريخ الولادة"
@@ -3875,7 +3878,8 @@ msgstr "يحتاج إلى المساعدة"
 
 #: student_registration/mscc/education_form.py:1128
 #: student_registration/mscc/education_form.py:1747
-#: student_registration/mscc/forms.py:99 student_registration/mscc/forms.py:124
+#: student_registration/mscc/forms.py:99
+#: student_registration/mscc/forms.py:124
 #: student_registration/mscc/forms.py:149
 #: student_registration/mscc/forms.py:202
 #: student_registration/mscc/forms.py:268
@@ -4174,8 +4178,8 @@ msgstr "الصيغة: XXX-XXXXXXXX"
 
 #: student_registration/mscc/forms.py:354
 msgid ""
-"Cargiver Individual ID from the certificate (Optional, in case not listed in "
-"the certificate)"
+"Cargiver Individual ID from the certificate (Optional, in case not listed in"
+" the certificate)"
 msgstr ""
 "المعرّف الفردي لمقدم الرعاية من الشهادة (اختياري، في حال عدم إدراجه في "
 "الشهادة)"
@@ -4185,21 +4189,23 @@ msgid ""
 "Confirm Cargiver Individual ID from the certificate (Optional, in case not "
 "listed in the certificate)"
 msgstr ""
-"تأكيد المعرّف الفردي لمقدم الرعاية من الشهادة (اختياري، في حال عدم إدراجه في "
-"الشهادة)"
+"تأكيد المعرّف الفردي لمقدم الرعاية من الشهادة (اختياري، في حال عدم إدراجه في"
+" الشهادة)"
 
 #: student_registration/mscc/forms.py:368
 msgid ""
 "Individual ID of the Child from the certificate (Optional, in case not "
 "listed in the certificate)"
-msgstr "المعرّف الفردي للطفل من الشهادة (اختياري، في حال عدم إدراجه في الشهادة)"
+msgstr ""
+"المعرّف الفردي للطفل من الشهادة (اختياري، في حال عدم إدراجه في الشهادة)"
 
 #: student_registration/mscc/forms.py:375
 msgid ""
 "Confirm Individual ID of the Child from the certificate (Optional, in case "
 "not listed in the certificate)"
 msgstr ""
-"تأكيد المعرّف الفردي للطفل من الشهادة (اختياري، في حال عدم إدراجه في الشهادة)"
+"تأكيد المعرّف الفردي للطفل من الشهادة (اختياري، في حال عدم إدراجه في "
+"الشهادة)"
 
 #: student_registration/mscc/forms.py:379
 #: student_registration/mscc/forms.py:385
@@ -4285,8 +4291,8 @@ msgstr "رفع إلى التعليم النظامي - الصف الأول"
 #: student_registration/mscc/forms.py:942
 #: student_registration/mscc/models.py:2459
 msgid ""
-"Did the child receive all needed materials and resources (Stationery, Books, "
-"Learning bundle)?"
+"Did the child receive all needed materials and resources (Stationery, Books,"
+" Learning bundle)?"
 msgstr "هل تلقى الطفل جميع المواد والموارد اللازمة (قرطاسية، كتب، حزمة تعلم)؟"
 
 #: student_registration/mscc/forms.py:947
@@ -4334,8 +4340,7 @@ msgstr "التقدم إلى التعليم الرسمي"
 msgid "Referred to YBLN"
 msgstr "الأحالة إالى برنامج المراهقين (YBLN)"
 
-#: student_registration/mscc/forms.py
-#: student_registration/mscc/models.py
+#: student_registration/mscc/forms.py student_registration/mscc/models.py
 msgid "Left to Syria"
 msgstr "غادر إلى سوريا"
 
@@ -5237,15 +5242,16 @@ msgid ""
 "Is the child equipped at home to access the platforms (Based on Child and "
 "parents confirmation)"
 msgstr ""
-"هل تتوفر لدى الطفل في المنزل الإمكانات اللازمة للوصول إلى المنصات (بناءً على "
-"تأكيد الطفل والأهل)؟"
+"هل تتوفر لدى الطفل في المنزل الإمكانات اللازمة للوصول إلى المنصات (بناءً على"
+" تأكيد الطفل والأهل)؟"
 
 #: student_registration/mscc/models.py:1003
 #: student_registration/mscc/models.py:1051
 #: student_registration/mscc/services_form.py:310
 #: student_registration/mscc/services_form.py:346
 msgid ""
-"As a teacher, are you noticing a change in motivation & output about Literacy"
+"As a teacher, are you noticing a change in motivation & output about "
+"Literacy"
 msgstr ""
 "كمعلم، هل تلاحظ تغيراً في الدافعية والمخرجات المتعلقة بالقراءة والكتابة؟"
 
@@ -5396,7 +5402,8 @@ msgstr ""
 msgid ""
 "Are any of the children in your HH experiencing any signs of distress or "
 "negative mental health symptoms ?"
-msgstr "هل يعاني أي من الأطفال في أسرتك من أي علامات ضيق أو أعراض نفسية سلبية؟"
+msgstr ""
+"هل يعاني أي من الأطفال في أسرتك من أي علامات ضيق أو أعراض نفسية سلبية؟"
 
 #: student_registration/mscc/models.py:1174
 #: student_registration/mscc/services_form.py:79
@@ -5422,8 +5429,8 @@ msgid ""
 "Does the facilitator identify any child protection concern or has the "
 "caregiver expressed any of the below signs on their children?"
 msgstr ""
-"هل يحدد الميسر أي مخاوف تتعلق بحماية الطفل، أو هل عبّر مقدم الرعاية عن أي من "
-"العلامات أدناه لدى أطفاله؟"
+"هل يحدد الميسر أي مخاوف تتعلق بحماية الطفل، أو هل عبّر مقدم الرعاية عن أي من"
+" العلامات أدناه لدى أطفاله؟"
 
 #: student_registration/mscc/models.py:1194
 #, fuzzy
@@ -5579,8 +5586,8 @@ msgstr "هل يتلقى الرضيع الرضاعة الطبيعية؟"
 #: student_registration/mscc/models.py:1264
 #: student_registration/mscc/services_form.py:570
 msgid ""
-"if yes, is it exclusively breastfeeding for infants between 0-6 months?(only "
-"brest milk no other liquids even water)"
+"if yes, is it exclusively breastfeeding for infants between 0-6 months?(only"
+" brest milk no other liquids even water)"
 msgstr ""
 "إذا كانت الإجابة نعم، هل هي رضاعة طبيعية حصرية للرضع بين 0 و6 أشهر؟ (حليب "
 "الأم فقط دون أي سوائل أخرى حتى الماء)"
@@ -5625,7 +5632,8 @@ msgstr "هل الطّفل قادرٌ على مواكبة التّعلّم الم
 #: student_registration/mscc/services_form.py:618
 #: student_registration/templates/mscc/child_services_tab_org.html:2605
 #: student_registration/templates/mscc/child_services_tab_org.html:2637
-msgid "Is the child being vaccinated as per the National vaccination calendar?"
+msgid ""
+"Is the child being vaccinated as per the National vaccination calendar?"
 msgstr "هل يتم تلقيح الطفل وفق التقويم الوطني للتلقيح؟"
 
 #: student_registration/mscc/models.py:1325
@@ -5660,10 +5668,11 @@ msgstr "هل يمارس الطفل نشاطاً بدنياً مرتين على �
 #: student_registration/mscc/models.py:1354
 #: student_registration/mscc/services_form.py:642
 msgid ""
-"In case of a child marriage to ask if the child is accessing in reproductive "
-"health services"
+"In case of a child marriage to ask if the child is accessing in reproductive"
+" health services"
 msgstr ""
-"في حالة زواج الأطفال، يُسأل عمّا إذا كان الطفل يحصل على خدمات الصحة الإنجابية"
+"في حالة زواج الأطفال، يُسأل عمّا إذا كان الطفل يحصل على خدمات الصحة "
+"الإنجابية"
 
 #: student_registration/mscc/models.py:1364
 #: student_registration/mscc/services_form.py:649
@@ -5822,8 +5831,8 @@ msgid ""
 "child feeding practice refeered to IYCF specialists and to receive "
 "Micronutrient supplements?"
 msgstr ""
-"هل تمت إحالة الأطفال بعمر 6 إلى 59 شهراً الذين لديهم تحديات في ممارسات تغذية "
-"الرضع وصغار الأطفال إلى اختصاصيي IYCF ولتلقي مكملات المغذيات الدقيقة؟"
+"هل تمت إحالة الأطفال بعمر 6 إلى 59 شهراً الذين لديهم تحديات في ممارسات تغذية"
+" الرضع وصغار الأطفال إلى اختصاصيي IYCF ولتلقي مكملات المغذيات الدقيقة؟"
 
 #: student_registration/mscc/models.py:1538
 #: student_registration/mscc/services_form.py:1231
@@ -6493,7 +6502,8 @@ msgstr "تقييم الشباب"
 #: student_registration/mscc/services_form.py:2393
 msgid "Did the partner refer youth who are above 18 to the TVET centers"
 msgstr ""
-"هل أحال الشريك الشباب فوق 18 عاماً إلى مراكز التعليم والتدريب التقني والمهني؟"
+"هل أحال الشريك الشباب فوق 18 عاماً إلى مراكز التعليم والتدريب التقني "
+"والمهني؟"
 
 #: student_registration/mscc/models.py:2628
 #: student_registration/mscc/services_form.py:2398
@@ -6640,8 +6650,8 @@ msgid ""
 "child feeding practice referred to IYCF specialists and to receive "
 "Micronutrient supplements?"
 msgstr ""
-"هل تمت إحالة الأطفال بعمر 6 إلى 59 شهراً الذين لديهم تحديات في ممارسات تغذية "
-"الرضع وصغار الأطفال إلى اختصاصيي IYCF ولتلقي مكملات المغذيات الدقيقة؟"
+"هل تمت إحالة الأطفال بعمر 6 إلى 59 شهراً الذين لديهم تحديات في ممارسات تغذية"
+" الرضع وصغار الأطفال إلى اختصاصيي IYCF ولتلقي مكملات المغذيات الدقيقة؟"
 
 #: student_registration/mscc/services_form.py:1407
 msgid "e.g. Skill development, social integration"
@@ -6776,19 +6786,19 @@ msgstr "يجب أن تحتوي كلمة المرور الخاصة بك على ح
 
 #: student_registration/password_validators.py:57
 msgid ""
-"The password must contain at least 1 symbol: ()[]{}|\\`~!@#$%^&*_-+=;:'\","
-"<>./?"
+"The password must contain at least 1 symbol: "
+"()[]{}|\\`~!@#$%^&*_-+=;:'\",<>./?"
 msgstr ""
-"يجب أن تحتوي كلمة المرور على رمز واحد على الأقل: ()[]{}|\\`~!@#$%^&*_-"
-"+=;:'\",<>./?"
+"يجب أن تحتوي كلمة المرور على رمز واحد على الأقل: "
+"()[]{}|\\`~!@#$%^&*_-+=;:'\",<>./?"
 
 #: student_registration/password_validators.py:64
 msgid ""
-"Your password must contain at least 1 symbol: ()[]{}|\\`~!@#$%^&*_-+=;:'\","
-"<>./?"
+"Your password must contain at least 1 symbol: "
+"()[]{}|\\`~!@#$%^&*_-+=;:'\",<>./?"
 msgstr ""
-"يجب أن تحتوي كلمة المرور الخاصة بك على رمز واحد على الأقل: ()[]{}|\\`~!@#$"
-"%^&*_-+=;:'\",<>./?"
+"يجب أن تحتوي كلمة المرور الخاصة بك على رمز واحد على الأقل: "
+"()[]{}|\\`~!@#$%^&*_-+=;:'\",<>./?"
 
 #: student_registration/schools/filters.py:51
 msgid "School is closed"
@@ -7290,8 +7300,8 @@ msgid ""
 "We track these errors automatically, but if the problem persists feel free "
 "to contact us. In the meantime, try refreshing."
 msgstr ""
-"نقوم بتتبع هذه الأخطاء تلقائياً، ولكن إذا استمرت المشكلة فلا تتردد في التواصل "
-"معنا. في هذه الأثناء، حاول تحديث الصفحة."
+"نقوم بتتبع هذه الأخطاء تلقائياً، ولكن إذا استمرت المشكلة فلا تتردد في "
+"التواصل معنا. في هذه الأثناء، حاول تحديث الصفحة."
 
 #: student_registration/templates/_sidebar_links.html:7
 #: student_registration/templates/admin/export_history_change_list.html:7
@@ -7438,7 +7448,8 @@ msgstr "تنبيه:"
 #: student_registration/templates/account/email.html:46
 msgid ""
 "You currently do not have any e-mail address set up. You should really add "
-"an e-mail address so you can receive notifications, reset your password, etc."
+"an e-mail address so you can receive notifications, reset your password, "
+"etc."
 msgstr ""
 "لا يوجد حالياً أي عنوان بريد إلكتروني مرتبط بحسابك. يرجى إضافة عنوان بريد "
 "إلكتروني لاستلام إشعارات النظام وإعادة تعيين كلمة المرور عند الحاجة."
@@ -7488,13 +7499,11 @@ msgstr ""
 #, python-format
 msgid ""
 "You have confirmed that\n"
-"                    <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
-"address for user %(user_display)s\n"
+"                    <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail address for user %(user_display)s\n"
 "                    ."
 msgstr ""
 "لقد أكدت أن\n"
-"                    <a href=\"mailto:%(email)s\">%(email)s</a> هو عنوان بريد "
-"إلكتروني للمستخدم %(user_display)s\n"
+"                    <a href=\"mailto:%(email)s\">%(email)s</a> هو عنوان بريد إلكتروني للمستخدم %(user_display)s\n"
 "                    ."
 
 #: student_registration/templates/account/login.html:8
@@ -7562,8 +7571,8 @@ msgstr "إعادة تعيين كلمة المرور"
 
 #: student_registration/templates/account/password_reset.html:25
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you "
-"an e-mail allowing you to reset it."
+"Forgotten your password? Enter your e-mail address below, and we'll send you"
+" an e-mail allowing you to reset it."
 msgstr ""
 "هل نسيت كلمة المرور؟ أدخل عنوان بريدك الإلكتروني أدناه وسنرسل لك رسالة تتيح "
 "إعادة تعيينها."
@@ -7612,8 +7621,8 @@ msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used. Please request a new link."
 msgstr ""
-"رابط إعادة تعيين كلمة المرور غير صالح، ربما لأنه استُخدم سابقاً. يرجى طلب رابط "
-"جديد."
+"رابط إعادة تعيين كلمة المرور غير صالح، ربما لأنه استُخدم سابقاً. يرجى طلب "
+"رابط جديد."
 
 #: student_registration/templates/account/password_reset_from_key.html:23
 msgid "Request New Link"
@@ -7663,31 +7672,19 @@ msgstr "هل لديك حساب مسبقاً؟ يرجى <a href=\"%(login_url)s\"
 #: student_registration/templates/account/signup.html:23
 msgid ""
 "\n"
-"            This is a digital platform used by youth and the partners "
-"implementing youth activities to register their bio-data, enroll in courses, "
-"and track their progress through.\n"
-"            To ensure the coordination of the needed protection and "
-"assistance, we may need to share the collected information, including your "
-"personal data, with other humanitarian agencies.\n"
-"            In all cases, measures will be taken to prevent unauthorized "
-"dissemination of your personal data in line with international data "
-"protection standards.\n"
+"            This is a digital platform used by youth and the partners implementing youth activities to register their bio-data, enroll in courses, and track their progress through.\n"
+"            To ensure the coordination of the needed protection and assistance, we may need to share the collected information, including your personal data, with other humanitarian agencies.\n"
+"            In all cases, measures will be taken to prevent unauthorized dissemination of your personal data in line with international data protection standards.\n"
 "\n"
-"            By Clicking Sign Up you are giving us your consent to collect "
-"your bio-data and enroll you on our platform.\n"
+"            By Clicking Sign Up you are giving us your consent to collect your bio-data and enroll you on our platform.\n"
 "            "
 msgstr ""
 "\n"
-"            هذه منصة رقمية ضمن نظام معلومات الإدارة، يستخدمها الشباب والجهات "
-"الشريكة المنفذة للأنشطة لتسجيل البيانات الشخصية، والالتحاق بالدورات، ومتابعة "
-"التقدم.\n"
-"            ولضمان تنسيق خدمات الحماية والمساعدة اللازمة، قد نحتاج إلى "
-"مشاركة المعلومات المجمعة، بما في ذلك بياناتك الشخصية، مع جهات إنسانية أخرى.\n"
-"            في جميع الحالات، ستُتخذ الإجراءات اللازمة لمنع نشر بياناتك "
-"الشخصية دون تصريح وبما يتوافق مع معايير حماية البيانات الدولية.\n"
+"            هذه منصة رقمية ضمن نظام معلومات الإدارة، يستخدمها الشباب والجهات الشريكة المنفذة للأنشطة لتسجيل البيانات الشخصية، والالتحاق بالدورات، ومتابعة التقدم.\n"
+"            ولضمان تنسيق خدمات الحماية والمساعدة اللازمة، قد نحتاج إلى مشاركة المعلومات المجمعة، بما في ذلك بياناتك الشخصية، مع جهات إنسانية أخرى.\n"
+"            في جميع الحالات، ستُتخذ الإجراءات اللازمة لمنع نشر بياناتك الشخصية دون تصريح وبما يتوافق مع معايير حماية البيانات الدولية.\n"
 "\n"
-"            بالنقر على إنشاء حساب، فإنك توافق على جمع بياناتك الشخصية "
-"وتسجيلك في المنصة.\n"
+"            بالنقر على إنشاء حساب، فإنك توافق على جمع بياناتك الشخصية وتسجيلك في المنصة.\n"
 "            "
 
 #: student_registration/templates/account/signup_closed.html:7
@@ -7736,8 +7733,8 @@ msgstr ""
 #: student_registration/templates/account/verified_email_required.html:22
 #, python-format
 msgid ""
-"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
-"mail address</a>."
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
+"e-mail address</a>."
 msgstr ""
 "<strong>ملاحظة:</strong> لا يزال بإمكانك <a href=\"%(email_url)s\">تغيير "
 "عنوان بريدك الإلكتروني</a>."
@@ -7839,8 +7836,8 @@ msgstr "العودة الى لائحة الشعب"
 msgid ""
 "Are you sure that the students of this class are away for a exam reason?"
 msgstr ""
-"هل انت متاكد من ان طلاب هذا الصف لم يحضروا الى المدرسة اليوم كونه يوم امتحان "
-"لباقي الشعب ؟"
+"هل انت متاكد من ان طلاب هذا الصف لم يحضروا الى المدرسة اليوم كونه يوم امتحان"
+" لباقي الشعب ؟"
 
 #: student_registration/templates/attendances/level_section.html:56
 msgid "Exam day"
@@ -8104,8 +8101,8 @@ msgid ""
 "This student is not eligible to go into 2nd shift program, are you sure you "
 "want to register this student"
 msgstr ""
-"هذا الطالب غير مؤهل للالتحاق ببرنامج الدوام الثاني، هل أنت متأكد من رغبتك في "
-"تسجيل هذا الطالب؟"
+"هذا الطالب غير مؤهل للالتحاق ببرنامج الدوام الثاني، هل أنت متأكد من رغبتك في"
+" تسجيل هذا الطالب؟"
 
 #: student_registration/templates/bootstrap4/common_form.html:41
 msgid ""
@@ -8601,8 +8598,8 @@ msgid ""
 "Select a base dataset, choose the fields you need, apply filters, and "
 "generate a customized export file."
 msgstr ""
-"اختر مجموعة بيانات أساسية، وحدد الحقول التي تحتاجها، وطبّق الفلاتر، وأنشئ ملف "
-"تصدير مخصصاً."
+"اختر مجموعة بيانات أساسية، وحدد الحقول التي تحتاجها، وطبّق الفلاتر، وأنشئ "
+"ملف تصدير مخصصاً."
 
 #: student_registration/templates/dashboard/advanced_exporter.html:31
 msgid "Export Configuration"
@@ -8857,8 +8854,12 @@ msgid "Data (JSON)"
 msgstr "البيانات (JSON)"
 
 #: student_registration/templates/dashboard/chart_builder.html:125
-msgid "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, {\"label\": \"C\", \"value\": 45} ]"
-msgstr "[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, {\"label\": \"C\", \"value\": 45} ]"
+msgid ""
+"[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, "
+"{\"label\": \"C\", \"value\": 45} ]"
+msgstr ""
+"[ {\"label\": \"A\", \"value\": 30}, {\"label\": \"B\", \"value\": 80}, "
+"{\"label\": \"C\", \"value\": 45} ]"
 
 #: student_registration/templates/dashboard/chart_builder.html:129
 msgid "Render Chart"
@@ -9201,8 +9202,8 @@ msgstr "حسابك مسجل كمستخدم مركز، ولكن لم يتم تع�
 
 #: student_registration/templates/error.html:20
 msgid ""
-"Your account is registered as a Partner User, but you have not been assigned "
-"to a partner organization yet."
+"Your account is registered as a Partner User, but you have not been assigned"
+" to a partner organization yet."
 msgstr "حسابك مسجل كمستخدم شريك، ولكن لم يتم تعيينك لأي منظمة شريكة بعد."
 
 #: student_registration/templates/error.html:22
@@ -9218,7 +9219,8 @@ msgstr ""
 "المعنية."
 
 #: student_registration/templates/error.html:30
-msgid "Please contact the system administrator to complete your account setup."
+msgid ""
+"Please contact the system administrator to complete your account setup."
 msgstr "يرجى التواصل مع مسؤول النظام لإكمال إعداد حسابك."
 
 #: student_registration/templates/error.html:34
@@ -9801,7 +9803,8 @@ msgstr "اختر شهراً لعرض السجلات التفصيلية"
 msgid ""
 "Click on a month from the sidebar to load the specific attendance logs for "
 "that period."
-msgstr "انقر على شهر من الشريط الجانبي لتحميل سجلات الحضور الخاصة بتلك الفترة."
+msgstr ""
+"انقر على شهر من الشريط الجانبي لتحميل سجلات الحضور الخاصة بتلك الفترة."
 
 #: student_registration/templates/mscc/child_attendance_tab.html:130
 msgid "Loading attendance..."
@@ -10667,8 +10670,8 @@ msgstr "يمارس الطفل نشاطاً بدنياً مرتين على الأ
 
 #: student_registration/templates/mscc/child_services_tab_org.html:2658
 msgid ""
-"In case of a child marriage to ask if the child is accessing in reproductive "
-"health services?"
+"In case of a child marriage to ask if the child is accessing in reproductive"
+" health services?"
 msgstr ""
 "في حال زواج الأطفال، يُسأل عما إذا كان الطفل يحصل على خدمات الصحة الإنجابية؟"
 
@@ -10897,11 +10900,11 @@ msgstr ""
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3533
 msgid ""
-"Facilitator identify any child protection concern or the caregiver expressed "
-"any of the below signs on their children"
+"Facilitator identify any child protection concern or the caregiver expressed"
+" any of the below signs on their children"
 msgstr ""
-"حدد الميسر أي مخاوف تتعلق بحماية الطفل أو عبّر مقدم الرعاية عن أي من العلامات "
-"التالية لدى أطفاله"
+"حدد الميسر أي مخاوف تتعلق بحماية الطفل أو عبّر مقدم الرعاية عن أي من "
+"العلامات التالية لدى أطفاله"
 
 #: student_registration/templates/mscc/child_services_tab_org.html:3581
 #: student_registration/templates/mscc/service_follow_up_form.html:28
@@ -11389,8 +11392,8 @@ msgstr "تفاصيل التعليم"
 #: student_registration/templates/mscc/new_round.html:40
 #, fuzzy
 #| msgid ""
-#| "To add this child to a new round, please confirm the action below. This "
-#| "will create a new registration record for the current active cycle."
+#| "To add this child to a new round, please confirm the action below. This will"
+#| " create a new registration record for the current active cycle."
 msgid ""
 "To add this child to a new round, please confirm the education situation "
 "below. This will create a new registration record for the current active "
@@ -11408,8 +11411,8 @@ msgstr "سجل التسجيل"
 #: student_registration/templates/mscc/service_education_service_form.html:51
 msgid ""
 "The education situation determines which support packages and services are "
-"available for this beneficiary. Ensure all dates and programs match official "
-"records."
+"available for this beneficiary. Ensure all dates and programs match official"
+" records."
 msgstr ""
 "تحدد الحالة التعليمية حزم الدعم والخدمات المتاحة لهذا المستفيد. تأكد من أن "
 "جميع التواريخ والبرامج تطابق السجلات الرسمية."
@@ -11697,7 +11700,8 @@ msgid ""
 "Holistic overview of child welfare, socio-economic factors, and educational "
 "outcomes."
 msgstr ""
-"نظرة شاملة على رفاه الطفل والعوامل الاجتماعية والاقتصادية والنتائج التعليمية."
+"نظرة شاملة على رفاه الطفل والعوامل الاجتماعية والاقتصادية والنتائج "
+"التعليمية."
 
 #: student_registration/templates/mscc/wellbeing_dashboard.html:69
 msgid "Refresh"
@@ -12127,11 +12131,60 @@ msgstr "التواريخ المهمة"
 msgid "User"
 msgstr "المستخدم"
 
-#~| msgid "Enrollment"
+msgid "Birth date cannot be after today."
+msgstr "لا يمكن أن يكون تاريخ الولادة بعد تاريخ اليوم."
+
+msgid "No matches found"
+msgstr "لم يتم العثور على نتائج مطابقة"
+
+msgid "Please fill: Attendance Date, Round, and Programme."
+msgstr "يرجى تعبئة: تاريخ الحضور، الجولة، والبرنامج."
+
+msgid "Please fill: Attendance Date."
+msgstr "يرجى تعبئة: تاريخ الحضور."
+
+msgid "Please use Arabic letters only."
+msgstr "يرجى استخدام الأحرف العربية فقط."
+
+msgid "Please use English letters only."
+msgstr "يرجى استخدام الأحرف الإنكليزية فقط."
+
+msgid "Please use digits only."
+msgstr "يرجى استخدام الأرقام فقط."
+
+msgid "The ID numbers are not matched"
+msgstr "أرقام الهوية غير متطابقة"
+
+msgid "The Parent Extract Record are not matched"
+msgstr "أرقام إخراج القيد لولي الأمر غير متطابقة"
+
+msgid "The case numbers are not matched"
+msgstr "أرقام الحالة غير متطابقة"
+
+msgid "The date is not valid."
+msgstr "التاريخ غير صالح."
+
+msgid "The duplicate check could not be completed. Please try again."
+msgstr "تعذّر إتمام التحقق من التكرار. يرجى المحاولة مرة أخرى."
+
+msgid "The individual case numbers are not matched"
+msgstr "أرقام الحالة الفردية غير متطابقة"
+
+msgid "The national numbers are not matched"
+msgstr "الأرقام الوطنية غير متطابقة"
+
+msgid "The phone numbers are not matched"
+msgstr "أرقام الهاتف غير متطابقة"
+
+msgid "The recorded numbers are not matched"
+msgstr "الأرقام المسجلة غير متطابقة"
+
+msgid "This value contains characters that are not allowed."
+msgstr "تحتوي هذه القيمة على أحرف غير مسموح بها."
+
 #~ msgid "Confirm Enrollment"
 #~ msgstr "تأكيد التسجيل"
 
-#~| msgid "Course completed successfully"
 #~ msgid "Export completed successfully."
 #~ msgstr "انقر خانة الاختيار إذا تم اكمال الدورة بنجاح"
 
@@ -12415,8 +12468,8 @@ msgstr "المستخدم"
 #~ msgstr "ابحث عن تلميذ قديم"
 
 #~ msgid ""
-#~ "Search by the following keywords: child first name, father name, last "
-#~ "name, child number or partner internal number"
+#~ "Search by the following keywords: child first name, father name, last name, "
+#~ "child number or partner internal number"
 #~ msgstr ""
 #~ "يمكن البحث عن الطفل عن طريق: ( الاسم الأول, أسم الأب ,الشهرة ) أو ( الرقم "
 #~ "التسلسلي الخاص بالجمعية ) او (الرقم  الخاص)"
@@ -12440,8 +12493,7 @@ msgstr "المستخدم"
 #~ msgid "Not begun yet"
 #~ msgstr "لم يبدأ بعد"
 
-#~ msgid ""
-#~ "What is the measurement of the child's arm circumference? (Centimeter)"
+#~ msgid "What is the measurement of the child's arm circumference? (Centimeter)"
 #~ msgstr "ما هو قياس محيط ذراع الطفل؟ (بالسنتمتر)"
 
 #~ msgid "< 11.5 CM (severe malnutrition)"
@@ -12475,8 +12527,7 @@ msgstr "المستخدم"
 #~ "What was the child education level when first joining formal education in "
 #~ "lebanon"
 #~ msgstr ""
-#~ "ما هو المستوى التعليمي للطفل عند التسجيل لأول مرة في التعليم الرسمي في "
-#~ "لبنان"
+#~ "ما هو المستوى التعليمي للطفل عند التسجيل لأول مرة في التعليم الرسمي في لبنان"
 
 #~ msgid "From where did the child first come to join  FE"
 #~ msgstr " مصدر إحالة الطفل عند التسجيل لأول مرة في التعليم الرسمي"
@@ -12484,16 +12535,12 @@ msgstr "المستخدم"
 #~ msgid "School of Enrollment"
 #~ msgstr "اسم مدرسة الطفل"
 
-#~| msgid "Search a student"
 #~ msgid "Search Outreach student"
 #~ msgstr "ابحث عن تلميذ"
 
-#~| msgid ""
-#~| "Search by the following keywords: child first name, father name, last "
-#~| "name, child number or partner internal number"
 #~ msgid ""
-#~ "Search by the following keywords: child first name, father name, last "
-#~ "name, or child number"
+#~ "Search by the following keywords: child first name, father name, last name, "
+#~ "or child number"
 #~ msgstr ""
 #~ "يمكن البحث عن الطفل عن طريق: ( الاسم الأول, أسم الأب ,الشهرة ) أو ( الرقم "
 #~ "التسلسلي الخاص بالجمعية ) او (الرقم  الخاص)"
@@ -12563,8 +12610,8 @@ msgstr "المستخدم"
 #~ "Covid-19 وتدابير الوقاية؟"
 
 #~ msgid ""
-#~ "Has the parents directly been reached with awareness messaging on "
-#~ "Covid-19 and prevention measures?"
+#~ "Has the parents directly been reached with awareness messaging on Covid-19 "
+#~ "and prevention measures?"
 #~ msgstr ""
 #~ "هل تم التواصل مع الأطفل مباشرةً من خلال رسائل التوعية حول Covid-19 وتدابير "
 #~ "الوقاية؟"
@@ -12623,8 +12670,7 @@ msgstr "المستخدم"
 #~ msgid "Date of monitoring"
 #~ msgstr "تاريخ إعطاء الدّرس (اليوم، الشّهر، السّنة)"
 
-#~ msgid ""
-#~ "Did the child have these learning materials available for the lesson?"
+#~ msgid "Did the child have these learning materials available for the lesson?"
 #~ msgstr "هل توفر لدى الطفل الوسائل التعليمية الضرورية لهذا الدرس؟"
 
 #~ msgid "Did the child interact with the teacher during the session?"
@@ -12639,8 +12685,7 @@ msgstr "المستخدم"
 #~ msgid "Did the child acquire the targeted competency?"
 #~ msgstr "هل اكتسب الطفل المهارة المستهدفة؟"
 
-#~ msgid ""
-#~ "Does the child show improvement in achieving the targeted competency?"
+#~ msgid "Does the child show improvement in achieving the targeted competency?"
 #~ msgstr "هل يظهر  الطفل تحسنًا في بلوغ الكفاية المستهدفة؟"
 
 #~ msgid "Was the child expected to work independently during the lesson?"
@@ -12659,11 +12704,11 @@ msgstr "المستخدم"
 #~ msgstr "هل تم إعطاء بطاقات تشريج الإنترنت للطفل؟"
 
 #~ msgid ""
-#~ "Any specific actions to be taken with this child before the next lesson "
-#~ "for better participation"
+#~ "Any specific actions to be taken with this child before the next lesson for "
+#~ "better participation"
 #~ msgstr ""
-#~ "هل من إجراءات معينة يجب اتخاذها مع هذا الطفل قبل الانتقال الى الدرس "
-#~ "القادم لضمان مشاركة أفضل؟"
+#~ "هل من إجراءات معينة يجب اتخاذها مع هذا الطفل قبل الانتقال الى الدرس القادم "
+#~ "لضمان مشاركة أفضل؟"
 
 #~ msgid "Does the child have any PSS/ wellbeing needs?"
 #~ msgstr "هل يحتاج الطفل إلى دعم نفسي-اجتماعي/الرّفاه؟"
@@ -12711,7 +12756,6 @@ msgstr "المستخدم"
 #~ msgid "Steps to help the child acquire the targeted competency"
 #~ msgstr "ما هي الخطوات التالية لمساعدة الطفل على اكتساب الكفاية المستهدفة"
 
-#~| msgid "Facilitator name"
 #~ msgid "Facilitator Full Name"
 #~ msgstr "اسم المعلّم/ةّ"
 
@@ -12754,7 +12798,6 @@ msgstr "المستخدم"
 #~ msgid "Extra Howmework"
 #~ msgstr "انشطة اضافية"
 
-#~| msgid "Referred to YBLN"
 #~ msgid "Referred to YOutreach"
 #~ msgstr "الأحالة إالى برنامج المراهقين (YBLN)"
 
@@ -12782,7 +12825,6 @@ msgstr "المستخدم"
 #~ msgid "Attending in school"
 #~ msgstr "يحضر في مدرسة"
 
-#~| msgid "Referred to CBT"
 #~ msgid "Referred to YCBECE"
 #~ msgstr "أحيل إلى برنامج CBT"
 
@@ -12850,136 +12892,103 @@ msgstr "المستخدم"
 #~ msgid "Not participating at all"
 #~ msgstr "لم يشارك أبدًا"
 
-#~| msgid "Math"
 #~ msgid "Pre Math"
 #~ msgstr "الرياضيات"
 
-#~| msgid "Arabic"
 #~ msgid "Post Arabic"
 #~ msgstr "اللغة العربية"
 
 #~ msgid "How do you rate child performance for the current lesson:?"
 #~ msgstr "كيف تقيم أداء الطفل لهذا الدرس؟"
 
-#~| msgid "Other reason"
 #~ msgid "if Other explain"
 #~ msgstr "سبب آخر"
 
-#~| msgid "Arabic"
 #~ msgid "Pre Arabic"
 #~ msgstr "اللغة العربية"
 
-#~| msgid "Foreign Language"
 #~ msgid "Pre Language"
 #~ msgstr " اللغة الأجنبية"
 
-#~| msgid "Foreign Language"
 #~ msgid "Post Language"
 #~ msgstr " اللغة الأجنبية"
 
-#~| msgid "Biology"
 #~ msgid "Pre Biology"
 #~ msgstr "علوم الحياة"
 
-#~| msgid "Chemistry"
 #~ msgid "Pre Chemistry"
 #~ msgstr "كيمياء"
 
-#~| msgid "Physic"
 #~ msgid "Pre Physics"
 #~ msgstr "فيزياء"
 
-#~| msgid "Science"
 #~ msgid "Post Science"
 #~ msgstr "العلوم"
 
-#~| msgid "Biology"
 #~ msgid "Post Biology"
 #~ msgstr "علوم الحياة"
 
-#~| msgid "Chemistry"
 #~ msgid "Post Chemistry"
 #~ msgstr "كيمياء"
 
-#~| msgid "Physic"
 #~ msgid "Post Physics"
 #~ msgstr "فيزياء"
 
 #~ msgid "WhatsApp"
 #~ msgstr "رسائل صوتيّة عبر الواتس أب"
 
-#~| msgid "2-3 times a week"
 #~ msgid "One time per week"
 #~ msgstr " مرّتين أو ثلاث مرّات في الأسبوع"
 
-#~| msgid "2-3 times a week"
 #~ msgid "2 times per week"
 #~ msgstr " مرّتين أو ثلاث مرّات في الأسبوع"
 
-#~| msgid "2-3 times a week"
 #~ msgid "3 times per week"
 #~ msgstr " مرّتين أو ثلاث مرّات في الأسبوع"
 
-#~| msgid "2-3 times a week"
 #~ msgid "4 times per week"
 #~ msgstr " مرّتين أو ثلاث مرّات في الأسبوع"
 
-#~| msgid "2-3 times a week"
 #~ msgid "5 times per week"
 #~ msgstr " مرّتين أو ثلاث مرّات في الأسبوع"
 
-#~| msgid "Less than 5 absence days"
 #~ msgid "Less than 15 minutes"
 #~ msgstr "غياب اقل من 5 ايام/او ما يعادلها بالنسبة للتعليم عن بعد"
 
-#~| msgid "Writing"
 #~ msgid "In writing"
 #~ msgstr " كتابة"
 
-#~| msgid "Text messages / WhatsApp messages "
 #~ msgid "Response via whatsapp voice messages"
 #~ msgstr "رسائل مكتوبة / عبر الواتس أب"
 
-#~| msgid "Did the child ask questions?"
 #~ msgid "Answering teachers questions"
 #~ msgstr "هل طرح الطفل أسئلة؟"
 
-#~| msgid "WhatsApp"
 #~ msgid "WhatsApp group"
 #~ msgstr "رسائل صوتيّة عبر الواتس أب"
 
-#~| msgid "Mother"
 #~ msgid "other"
 #~ msgstr "الأم"
 
-#~| msgid "Subjects"
 #~ msgid "Subject"
 #~ msgstr "المواد"
 
-#~| msgid "Activities Reported"
 #~ msgid "Activities Reported Date"
 #~ msgstr "النشاطات الواردة في الاستمارة (اختيار متعدد)"
 
-#~| msgid ""
-#~| "Does the child show improvement in achieving the targeted competency?"
 #~ msgid "How was the child assessed on achieving the targeted competency/ies?"
 #~ msgstr "هل يظهر  الطفل تحسنًا في بلوغ الكفاية المستهدفة؟"
 
-#~| msgid "Reason"
 #~ msgid "Reasons"
 #~ msgstr "السبب"
 
-#~| msgid ""
-#~| "Did both girls and boys in the same family participate in the class and "
-#~| "have access to the phone/device?"
 #~ msgid ""
-#~ "Did both girls and boys in the same family participate in the class and "
-#~ "have access to the phone/ device/resources? "
+#~ "Did both girls and boys in the same family participate in the class and have"
+#~ " access to the phone/ device/resources? "
 #~ msgstr ""
-#~ "هل شارك كل من الفتيات والفتيان من نفس العائلة في الفصل التعليمي وتمكنوا "
-#~ "من استخدام الهاتف/الجهاز؟"
+#~ "هل شارك كل من الفتيات والفتيان من نفس العائلة في الفصل التعليمي وتمكنوا من "
+#~ "استخدام الهاتف/الجهاز؟"
 
-#~| msgid "How often?"
 #~ msgid "How often"
 #~ msgstr " كم مرة؟"
 
@@ -12995,14 +13004,12 @@ msgstr "المستخدم"
 #~ msgid "Phone"
 #~ msgstr "إتصال هاتفي"
 
-#~| msgid "Not attending"
 #~ msgid "attend"
 #~ msgstr "لا حضور اليوم"
 
 #~ msgid "absent"
 #~ msgstr "غائب"
 
-#~| msgid "First attendance date"
 #~ msgid "first attend"
 #~ msgstr "تاريخ حضور الطفل للمرة الأولى في الدورة الأولى"
 
@@ -13067,8 +13074,8 @@ msgstr "المستخدم"
 #~ msgstr "الدعم المالي"
 
 #~ msgid ""
-#~ "Details of the documents justifying the most recent school year (regular "
-#~ "or informal)"
+#~ "Details of the documents justifying the most recent school year (regular or "
+#~ "informal)"
 #~ msgstr "تفاصيل المستند الذي يثبت اخر سنة دراسية - نظامي أو غير نظامي"
 
 #~ msgid "Upload Pictures"
@@ -13110,11 +13117,9 @@ msgstr "المستخدم"
 #~ msgid "Justification Number"
 #~ msgstr "المعلومات الشخصية للطفل"
 
-#~| msgid "Justified"
 #~ msgid "Justified Date"
 #~ msgstr "مبرر"
 
-#~| msgid "Justified"
 #~ msgid "Justified by"
 #~ msgstr "مبرر"
 
@@ -13133,7 +13138,6 @@ msgstr "المستخدم"
 #~ msgid "Incomplete?"
 #~ msgstr "اكمال"
 
-#~| msgid "Justified"
 #~ msgid "Is Justified"
 #~ msgstr "مبرر"
 
@@ -13230,63 +13234,48 @@ msgstr "المستخدم"
 #~ msgid "CLM round"
 #~ msgstr "CLM round"
 
-#~| msgid "Education system 1"
 #~ msgid "Evaluation for Cylce 1"
 #~ msgstr "السنة الدراسية"
 
-#~| msgid "Cycle"
 #~ msgid "Cycle 1"
 #~ msgstr "رقم"
 
-#~| msgid "Cycle"
 #~ msgid "Cycle 2"
 #~ msgstr "رقم"
 
-#~| msgid "Cycle"
 #~ msgid "Cycle 3"
 #~ msgstr "رقم"
 
-#~| msgid "Education system 2"
 #~ msgid "Evaluation for Cycle 2"
 #~ msgstr "السنة الدراسية"
 
-#~| msgid "Cycle"
 #~ msgid "Cycle 4"
 #~ msgstr "رقم"
 
-#~| msgid "Cycle"
 #~ msgid "Cycle 5"
 #~ msgstr "رقم"
 
-#~| msgid "Cycle"
 #~ msgid "Cycle 6"
 #~ msgstr "رقم"
 
-#~| msgid "Education system 3"
 #~ msgid "Evaluation for Cycle 3"
 #~ msgstr "السنة الدراسية"
 
-#~| msgid "Cycle"
 #~ msgid "Cycle 7"
 #~ msgstr "رقم"
 
-#~| msgid "Cycle"
 #~ msgid "Cycle 8"
 #~ msgstr "رقم"
 
-#~| msgid "Cycle"
 #~ msgid "Cycle 9"
 #~ msgstr "رقم"
 
-#~| msgid "French"
 #~ msgid "Frensh"
 #~ msgstr "الفرنسية"
 
-#~| msgid "Total students"
 #~ msgid "Total of students"
 #~ msgstr "مجموع التلامذة"
 
-#~| msgid "Public Holiday"
 #~ msgid "Public holidays"
 #~ msgstr "عطلة رسمية"
 
@@ -13326,11 +13315,9 @@ msgstr "المستخدم"
 #~ msgid "school type"
 #~ msgstr "نوع المدرسة"
 
-#~| msgid "Last education level"
 #~ msgid "Distance education implemented ?"
 #~ msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
 
-#~| msgid "Expected number of students in ALP"
 #~ msgid "The number of interacted students  "
 #~ msgstr "عدد التلامذة المتوقع تسجيلهم في ALP"
 
@@ -13394,7 +13381,6 @@ msgstr "المستخدم"
 #~ msgid "University Name"
 #~ msgstr "إسم الجامعة"
 
-#~| msgid "ID type of the caretaker"
 #~ msgid "Picture of the certificate"
 #~ msgstr "نوع بطاقة تعريف ولي الأمر"
 
@@ -13437,18 +13423,15 @@ msgstr "المستخدم"
 #~ msgid "ALP Pre-Test"
 #~ msgstr "ALP Pre-test"
 
-#~| msgid "Change password"
 #~ msgid "Change password?"
 #~ msgstr "تعديل كلمة السر"
 
 #~ msgid "Follow us"
 #~ msgstr "المتابعة"
 
-#~| msgid "General Information"
 #~ msgid "General Questionnaire"
 #~ msgstr "معلومات عامة عن الدورة"
 
-#~| msgid "Disability"
 #~ msgid "Disability specialized"
 #~ msgstr "احتياجات خاصة"
 
@@ -13458,15 +13441,12 @@ msgstr "المستخدم"
 #~ msgid "List of available documents"
 #~ msgstr "لائحة بمستندات التلاميذ"
 
-#~| msgid "Arabic"
 #~ msgid "Pre-arabic"
 #~ msgstr "اللغة العربية"
 
-#~| msgid "Chemistry"
 #~ msgid "Pre-chemistry"
 #~ msgstr "كيمياء"
 
-#~| msgid "Chemistry"
 #~ msgid "Post-chemistry"
 #~ msgstr "كيمياء"
 
@@ -13515,19 +13495,15 @@ msgstr "المستخدم"
 #~ msgid "Add New"
 #~ msgstr "أضف طفل"
 
-#~| msgid "Change password"
 #~ msgid "Change password "
 #~ msgstr "تعديل كلمة السر"
 
-#~| msgid "Partner"
 #~ msgid "Partner: "
 #~ msgstr "الجمعية"
 
-#~| msgid "Change password"
 #~ msgid "staff password"
 #~ msgstr "تعديل كلمة السر"
 
-#~| msgid "Outreach barcode"
 #~ msgid "AOutreach"
 #~ msgstr "رقم الباركود"
 
@@ -13537,9 +13513,6 @@ msgstr "المستخدم"
 #~ msgid "Covid-19 PSS/ Wellbeing"
 #~ msgstr "الدّعم النّفسيّ الاجتماعي / الرّفاه المتعلّق بكوفيد 19"
 
-#~| msgid ""
-#~| "Did you share the expectations with their caregiver for the weekly "
-#~| "engagement in learning?"
 #~ msgid ""
 #~ "Did you share with the child caregiver the expectations for weekly "
 #~ "engagement in learning? "
@@ -13579,13 +13552,11 @@ msgstr "المستخدم"
 #~ "الدّرس عبر الإنترنت؟"
 
 #~ msgid ""
-#~ "How do you follow up if the child does not join / engage in online "
-#~ "learning?"
+#~ "How do you follow up if the child does not join / engage in online learning?"
 #~ msgstr "كيف تتابع إذا لم ينضمّ الطّفل /يشارك في التّعليم عن بُعد؟\t"
 
 #~ msgid ""
-#~ "How many times do you have voice contact with the child/caregiver per "
-#~ "week?"
+#~ "How many times do you have voice contact with the child/caregiver per week?"
 #~ msgstr "كم مرّةً يتمّ الاتّصال صوتيًّا بالطّفل / بالأهل خلال أسبوع؟ "
 
 #~ msgid "What challenges does this child face? child/caregiver?"
@@ -13599,8 +13570,8 @@ msgstr "المستخدم"
 #~ "واستطاعوا الوصول إلى الهاتف / الجهاز؟"
 
 #~ msgid ""
-#~ "How often do you keep in touch with parents /caregivers of this child "
-#~ "since the learning center closed?"
+#~ "How often do you keep in touch with parents /caregivers of this child since "
+#~ "the learning center closed?"
 #~ msgstr ""
 #~ "كم مرّة في الغالب يتمّ المحافظة على التّواصل مع أهل هذا الطّفل لتقديم "
 #~ "التّوعية / الدّعم النّفسيّ الاجتماعيّ / إلخ"
@@ -13627,17 +13598,16 @@ msgstr "المستخدم"
 #~ msgid "Weekly lesson"
 #~ msgstr "الدّرس الأسبوعيّ"
 
-#~ msgid ""
-#~ "Feedback about home-based/distance learning from this child/caregiver"
+#~ msgid "Feedback about home-based/distance learning from this child/caregiver"
 #~ msgstr ""
-#~ "التّغذية الرّاجعة حول التّعلّم المنزلي / التّعلّم عن بُعد من هذا الطّفل / الأهل"
+#~ "التّغذية الرّاجعة حول التّعلّم المنزلي / التّعلّم عن بُعد من هذا الطّفل / "
+#~ "الأهل"
 
 #~ msgid "Materials needed for the lesson (teaching/ learning)"
 #~ msgstr ""
-#~ "الموادّ المطلوبة للدّرس (التّعليم / التّعلّم): هل توفّرت هذه الموادّ للطّفل لحصول "
-#~ "التّعلّم؟"
+#~ "الموادّ المطلوبة للدّرس (التّعليم / التّعلّم): هل توفّرت هذه الموادّ للطّفل "
+#~ "لحصول التّعلّم؟"
 
-#~| msgid "Are you sure you want to cancel this registration?"
 #~ msgid "Are you sure you want to cancel this fc?"
 #~ msgstr "هل متأكد انك تريد إلغاء هذا التسجيل؟"
 
@@ -13647,11 +13617,10 @@ msgstr "المستخدم"
 #~ msgid "The school where the child is registered"
 #~ msgstr "المدرسة المسجل فيها الطفل"
 
-#~ msgid ""
-#~ "RS: Based on the overall score, what is the recommended learning path?"
+#~ msgid "RS: Based on the overall score, what is the recommended learning path?"
 #~ msgstr ""
-#~ "استنادا إلى نتائج التقاييم عند آخر البرنامج، هل التلميذ بحاجة الى دورة "
-#~ "دعم مدرسي إضافية؟ "
+#~ "استنادا إلى نتائج التقاييم عند آخر البرنامج، هل التلميذ بحاجة الى دورة دعم "
+#~ "مدرسي إضافية؟ "
 
 #~ msgid "Academic data when entering the program"
 #~ msgstr "البيانات الأكاديمية عند الدخول الى البرنامج"
@@ -13665,7 +13634,6 @@ msgstr "المستخدم"
 #~ msgid "RS Learning result"
 #~ msgstr " نتيجة التعلم"
 
-#~| msgid "Refer"
 #~ msgid "refer"
 #~ msgstr "الإحالة "
 
@@ -13694,12 +13662,12 @@ msgstr "المستخدم"
 #~ "Export started successfully. Please check the recent exports menu for the "
 #~ "download link."
 #~ msgstr ""
-#~ "تم بدء التصدير بنجاح. يرجى التحقق من قائمة عمليات التصدير الأخيرة للحصول "
-#~ "على رابط التنزيل."
+#~ "تم بدء التصدير بنجاح. يرجى التحقق من قائمة عمليات التصدير الأخيرة للحصول على"
+#~ " رابط التنزيل."
 
 #~ msgid ""
-#~ "Export successful. Your download should start automatically. If it does "
-#~ "not, please use the recent exports menu."
+#~ "Export successful. Your download should start automatically. If it does not,"
+#~ " please use the recent exports menu."
 #~ msgstr ""
 #~ "تم التصدير بنجاح. يجب أن يبدأ التنزيل تلقائياً. إذا لم يبدأ، يرجى استخدام "
 #~ "قائمة عمليات التصدير الأخيرة."
@@ -13715,8 +13683,8 @@ msgstr "المستخدم"
 #~ "للحصول على رابط التنزيل."
 
 #~ msgid ""
-#~ "Export started, but the download status could not be checked. Please "
-#~ "check the recent exports menu."
+#~ "Export started, but the download status could not be checked. Please check "
+#~ "the recent exports menu."
 #~ msgstr ""
 #~ "بدأ التصدير، لكن تعذر التحقق من حالة التنزيل. يرجى التحقق من قائمة عمليات "
 #~ "التصدير الأخيرة."
@@ -13729,10 +13697,9 @@ msgstr "المستخدم"
 #~ msgstr "تم بدء التصدير بنجاح. سيتم إشعارك عندما يصبح الملف جاهزاً."
 
 #~ msgid ""
-#~ "Export started successfully. Processing may take a few minutes depending "
-#~ "on the data size."
-#~ msgstr ""
-#~ "تم بدء التصدير بنجاح. قد تستغرق المعالجة بضع دقائق حسب حجم البيانات."
+#~ "Export started successfully. Processing may take a few minutes depending on "
+#~ "the data size."
+#~ msgstr "تم بدء التصدير بنجاح. قد تستغرق المعالجة بضع دقائق حسب حجم البيانات."
 
 #~ msgid "Failed to start export. Please try again later."
 #~ msgstr "فشل بدء التصدير. يرجى المحاولة لاحقاً."

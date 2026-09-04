@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.urls import reverse
 from datetime import date
@@ -292,7 +292,7 @@ class TeacherForm(forms.ModelForm):
         super(TeacherForm, self).__init__(*args, **kwargs)
         is_Kayany = False
         if self.request.user.partner:
-            is_Kayany = self.request.user.partner.is_Kayany
+            is_Kayany = getattr(self.request.user.partner, 'is_Kayany', False)
         choices = list()
         subject_choices = list()
         if not is_Kayany:
@@ -462,7 +462,7 @@ class TeacherForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-2'
             )

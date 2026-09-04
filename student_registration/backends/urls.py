@@ -13,4 +13,10 @@ urlpatterns = [
         view=views.export_history_list,
         name='export_history_list'
     ),
+
+    re_path(
+        r'^export-history/$',
+        view=views.export_history_page,
+        name='export_history'
+    ),
 ]

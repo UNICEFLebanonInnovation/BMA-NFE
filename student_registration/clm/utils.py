@@ -758,7 +758,7 @@ def create_attendance(data):
                 update_total_attendance(registration_id, student_id, round_id, school_id, registration.student.first_name,
                                            registration.student.father_name, registration.student.last_name,)
 
-                if child['attended'] == 'No':
+                if (child['attended'] or '').lower() == 'no':
                     update_consecutive_absence(registration_id, student_id, registration.student.first_name,
                                                registration.student.father_name, registration.student.last_name,
                                                attendance_date, round_id, school_id, registration)
@@ -856,12 +856,12 @@ def update_total_attendance(registration_id, student_id, round_id, school_id, fi
     """
 
     total_absence_days = CLMAttendanceStudent.objects.filter(
-        attended='No',
+        attended__iexact='No',
         attendance_day__round_id=round_id,
         student_id=student_id
     ).count()
     total_attendance_days = CLMAttendanceStudent.objects.filter(
-        attended='Yes',
+        attended__iexact='Yes',
         attendance_day__round_id=round_id,
         student_id=student_id
     ).count()

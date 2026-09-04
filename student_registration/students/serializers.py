@@ -77,7 +77,6 @@ class StudentSerializer(serializers.ModelSerializer):
             'family_status',
             'address',
             'number',
-            'hh_barcode',
             'have_children',
             'p_code',
         )

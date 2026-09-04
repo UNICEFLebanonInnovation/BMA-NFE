@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.forms import modelformset_factory
 from django.urls import reverse
@@ -397,7 +397,7 @@ class SchoolForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-4'
             )
@@ -555,7 +555,7 @@ class ClubForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1'
             )
@@ -640,7 +640,7 @@ class MeetingForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1'
             )
@@ -715,7 +715,7 @@ class CommunityInitiativeForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1'
             )
@@ -813,7 +813,7 @@ class HealthVisitForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1'
             )

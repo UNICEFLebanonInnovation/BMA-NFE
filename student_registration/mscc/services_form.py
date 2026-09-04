@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.urls import reverse
 from django.contrib import messages
@@ -150,7 +150,7 @@ class PSSServiceForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-2'
             )
@@ -251,7 +251,7 @@ class InclusionServiceForm(forms.ModelForm):
                 Submit('save', 'Save',
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                 Reset('reset', 'Reset',
-                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                      css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
             )
         )
 
@@ -428,7 +428,7 @@ class DigitalServiceForm(forms.ModelForm):
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                         Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                              css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                     ),
                     css_id='step-1'
                 )
@@ -875,7 +875,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                         Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                              css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                     ),
                     css_id='step-2',
                 )
@@ -989,7 +989,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                         Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                              css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                     ),
                     css_id='step-2',
                 )
@@ -1281,7 +1281,7 @@ class HealthNutritionReferralForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1'
             )
@@ -1579,7 +1579,7 @@ class YouthKitServiceForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-2',
             )
@@ -1767,7 +1767,7 @@ class YouthServiceMaharatiForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1'
             ),
@@ -1918,7 +1918,7 @@ class YouthServiceGilForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1'
             ),
@@ -2090,7 +2090,7 @@ class FollowUpServiceForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-2',
             )
@@ -2316,7 +2316,7 @@ class YouthAssessmentForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1',
             )
@@ -2429,7 +2429,7 @@ class YouthReferralForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1',
             )
@@ -2546,7 +2546,7 @@ class RecreationalForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-1'
             ),
@@ -2643,7 +2643,7 @@ class LegoServiceForm(forms.ModelForm):
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                         Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                              css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                     ),
                     css_id='step-1'
                 )
@@ -2674,7 +2674,7 @@ class LegoServiceForm(forms.ModelForm):
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                         Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                              css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                     ),
                     css_id='step-1'
                 )

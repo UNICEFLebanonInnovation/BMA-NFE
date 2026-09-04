@@ -1,0 +1,191 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: BMA-NFE\n"
+"POT-Creation-Date: 2026-09-04 06:15+0000\n"
+"PO-Revision-Date: 2026-09-04 06:15+0000\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: student_registration/static/js/mscc/mscc.js:871 student_registration/static/js/alp/alp.js:840
+msgid "Birth date cannot be after today."
+msgstr ""
+
+#: student_registration/static/js/bridging/attendance.js:85
+msgid "Cannot save attendance: no children attendance was provided."
+msgstr ""
+
+#: student_registration/static/js/bridging/attendance.js:42
+msgid "Close reason is mandatory."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:69 student_registration/static/js/alp/list.js:69
+msgid "Export failed. Please try again later or contact support."
+msgstr ""
+
+#: student_registration/static/js/firebase-messaging.js:75
+msgid "Export failed: "
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:80 student_registration/static/js/alp/list.js:80
+msgid "Export is still processing. Please check the recent exports menu for the download link."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:53 student_registration/static/js/alp/list.js:53
+msgid "Export started successfully. Please check the recent exports menu for the download link."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:121 student_registration/static/js/alp/list.js:121
+msgid "Export started successfully. Processing may take a few minutes depending on the data size."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:118 student_registration/static/js/alp/list.js:118
+msgid "Export started successfully. You will be notified when the file is ready."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:83 student_registration/static/js/alp/list.js:83
+msgid "Export started, but the download status could not be checked. Please check the recent exports menu."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:116 student_registration/static/js/alp/list.js:116
+msgid "Export successful. Your download should start automatically."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:64 student_registration/static/js/alp/list.js:64
+msgid "Export successful. Your download should start automatically. If it does not, please use the recent exports menu."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:169 student_registration/static/js/alp/list.js:169
+msgid "Failed to export teacher data. Please try again later."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:126 student_registration/static/js/alp/list.js:126
+msgid "Failed to start export. Please try again later."
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:152 student_registration/static/js/alp/alp.js:142
+msgid "Loading..."
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:448 student_registration/static/js/alp/alp.js:417
+msgid "No matches found"
+msgstr ""
+
+#: student_registration/static/js/attendance/attendance-absence.js:29
+msgid "Number Of Absences is mandatory"
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:1243 student_registration/static/js/alp/alp.js:1212
+msgid "Please check the form mandatory fields."
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:795 student_registration/static/js/mscc/mscc.js:1047 student_registration/static/js/alp/alp.js:764 student_registration/static/js/alp/alp.js:1016
+msgid "Please enter a valid phone number (XX-XXXXXX)"
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:793 student_registration/static/js/mscc/mscc.js:1045 student_registration/static/js/alp/alp.js:762 student_registration/static/js/alp/alp.js:1014
+msgid "Please enter a valid value"
+msgstr ""
+
+#: student_registration/static/js/bridging/attendance.js:37
+msgid "Please fill all mandatory fields: Attendance Date, Attendance Day Off, Round, School, and Registration Level."
+msgstr ""
+
+#: student_registration/static/js/bridging/attendance.js:132 student_registration/static/js/mscc/attendance.js:119
+msgid "Please fill: Attendance Date, Round, School, and Registration Level."
+msgstr ""
+
+#: student_registration/static/js/alp/attendance.js:119
+msgid "Please fill: Attendance Date, Round, and Programme."
+msgstr ""
+
+#: student_registration/static/js/alp/teacher_attendance.js:75
+msgid "Please fill: Attendance Date."
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:797 student_registration/static/js/mscc/mscc.js:1049 student_registration/static/js/alp/alp.js:766 student_registration/static/js/alp/alp.js:1018
+msgid "Please follow the format "
+msgstr ""
+
+#: student_registration/static/js/attendance/main-attendance.js:67
+msgid "Please specify the reason for day off"
+msgstr ""
+
+#: student_registration/static/js/validator.js:16
+msgid "Please use Arabic letters only."
+msgstr ""
+
+#: student_registration/static/js/validator.js:28
+msgid "Please use English letters only."
+msgstr ""
+
+#: student_registration/static/js/validator.js:40
+msgid "Please use digits only."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:103 student_registration/static/js/mscc/list.js:151 student_registration/static/js/alp/list.js:103 student_registration/static/js/alp/list.js:151
+msgid "Processing..."
+msgstr ""
+
+#: student_registration/static/js/attendance/main-attendance.js:82
+msgid "School and Registration Level are mandatory"
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:165 student_registration/static/js/alp/list.js:165
+msgid "Teacher export completed, but no file was returned."
+msgstr ""
+
+#: student_registration/static/js/mscc/list.js:163 student_registration/static/js/alp/list.js:163
+msgid "Teacher export completed. Your download should start automatically."
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:1162 student_registration/static/js/mscc/mscc.js:1166 student_registration/static/js/alp/alp.js:1131 student_registration/static/js/alp/alp.js:1135
+msgid "The ID numbers are not matched"
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:1172 student_registration/static/js/alp/alp.js:1141
+msgid "The Parent Extract Record are not matched"
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:1084 student_registration/static/js/alp/alp.js:1053
+msgid "The case numbers are not matched"
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:863 student_registration/static/js/alp/alp.js:832
+msgid "The date is not valid."
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:428
+msgid "The duplicate check could not be completed. Please try again."
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:1088 student_registration/static/js/mscc/mscc.js:1092 student_registration/static/js/alp/alp.js:1057 student_registration/static/js/alp/alp.js:1061
+msgid "The individual case numbers are not matched"
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:1116 student_registration/static/js/mscc/mscc.js:1120 student_registration/static/js/mscc/mscc.js:1134 student_registration/static/js/mscc/mscc.js:1138 student_registration/static/js/mscc/mscc.js:1144 student_registration/static/js/mscc/mscc.js:1148 student_registration/static/js/alp/alp.js:1085 student_registration/static/js/alp/alp.js:1089 student_registration/static/js/alp/alp.js:1103 student_registration/static/js/alp/alp.js:1107 student_registration/static/js/alp/alp.js:1113 student_registration/static/js/alp/alp.js:1117
+msgid "The national numbers are not matched"
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:943 student_registration/static/js/mscc/mscc.js:949 student_registration/static/js/alp/alp.js:912 student_registration/static/js/alp/alp.js:918
+msgid "The phone numbers are not matched"
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:1102 student_registration/static/js/alp/alp.js:1071
+msgid "The recorded numbers are not matched"
+msgstr ""
+
+#: student_registration/static/js/mscc/mscc.js:785 student_registration/static/js/mscc/mscc.js:849 student_registration/static/js/mscc/mscc.js:876 student_registration/static/js/mscc/mscc.js:877 student_registration/static/js/mscc/mscc.js:878 student_registration/static/js/mscc/mscc.js:884 student_registration/static/js/mscc/mscc.js:891 student_registration/static/js/mscc/mscc.js:897 student_registration/static/js/mscc/mscc.js:903 student_registration/static/js/mscc/mscc.js:909 student_registration/static/js/mscc/mscc.js:917 student_registration/static/js/mscc/mscc.js:921 student_registration/static/js/mscc/mscc.js:925 student_registration/static/js/mscc/mscc.js:931 student_registration/static/js/mscc/mscc.js:935 student_registration/static/js/mscc/mscc.js:939 student_registration/static/js/mscc/mscc.js:954 student_registration/static/js/mscc/mscc.js:958 student_registration/static/js/mscc/mscc.js:962 student_registration/static/js/mscc/mscc.js:966 student_registration/static/js/mscc/mscc.js:970 student_registration/static/js/mscc/mscc.js:974 student_registration/static/js/mscc/mscc.js:978 student_registration/static/js/mscc/mscc.js:982 student_registration/static/js/mscc/mscc.js:987 student_registration/static/js/mscc/mscc.js:992 student_registration/static/js/mscc/mscc.js:995 student_registration/static/js/mscc/mscc.js:999 student_registration/static/js/mscc/mscc.js:1003 student_registration/static/js/mscc/mscc.js:1007 student_registration/static/js/mscc/mscc.js:1080 student_registration/static/js/mscc/mscc.js:1098 student_registration/static/js/mscc/mscc.js:1108 student_registration/static/js/mscc/mscc.js:1112 student_registration/static/js/mscc/mscc.js:1126 student_registration/static/js/mscc/mscc.js:1130 student_registration/static/js/mscc/mscc.js:1154 student_registration/static/js/mscc/mscc.js:1158 student_registration/static/js/mscc/mscc.js:1178 student_registration/static/js/mscc/mscc.js:1182 student_registration/static/js/alp/alp.js:754 student_registration/static/js/alp/alp.js:818 student_registration/static/js/alp/alp.js:845 student_registration/static/js/alp/alp.js:846 student_registration/static/js/alp/alp.js:847 student_registration/static/js/alp/alp.js:853 student_registration/static/js/alp/alp.js:860 student_registration/static/js/alp/alp.js:866 student_registration/static/js/alp/alp.js:872 student_registration/static/js/alp/alp.js:878 student_registration/static/js/alp/alp.js:886 student_registration/static/js/alp/alp.js:890 student_registration/static/js/alp/alp.js:894 student_registration/static/js/alp/alp.js:900 student_registration/static/js/alp/alp.js:904 student_registration/static/js/alp/alp.js:908 student_registration/static/js/alp/alp.js:923 student_registration/static/js/alp/alp.js:927 student_registration/static/js/alp/alp.js:931 student_registration/static/js/alp/alp.js:935 student_registration/static/js/alp/alp.js:939 student_registration/static/js/alp/alp.js:943 student_registration/static/js/alp/alp.js:947 student_registration/static/js/alp/alp.js:951 student_registration/static/js/alp/alp.js:956 student_registration/static/js/alp/alp.js:961 student_registration/static/js/alp/alp.js:964 student_registration/static/js/alp/alp.js:968 student_registration/static/js/alp/alp.js:972 student_registration/static/js/alp/alp.js:976 student_registration/static/js/alp/alp.js:1049 student_registration/static/js/alp/alp.js:1067 student_registration/static/js/alp/alp.js:1077 student_registration/static/js/alp/alp.js:1081 student_registration/static/js/alp/alp.js:1095 student_registration/static/js/alp/alp.js:1099 student_registration/static/js/alp/alp.js:1123 student_registration/static/js/alp/alp.js:1127 student_registration/static/js/alp/alp.js:1147 student_registration/static/js/alp/alp.js:1151
+msgid "This field is required"
+msgstr ""
+
+#: student_registration/static/js/validator.js:87
+msgid "This value contains characters that are not allowed."
+msgstr ""
+
+#: student_registration/static/js/firebase-messaging.js:74
+msgid "Unknown error"
+msgstr ""

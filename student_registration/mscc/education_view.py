@@ -3,7 +3,8 @@ from __future__ import absolute_import, unicode_literals
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from dal import autocomplete
@@ -48,7 +49,7 @@ class EducationAssessmentFormView(LoginRequiredMixin,
                                            request=self.request)
         else:
             if instance:
-                data = to_array(EducationAssessmentForm.Meta.fields, EducationAssessment.objects.get(id=instance))
+                data = to_array(EducationAssessmentForm.Meta.fields, get_object_or_404(EducationAssessment, pk=instance))
                 if data['post_test_done']:
                     return EducationAssessmentForm(data, registry=registry, instance=instance, request=self.request)
             return EducationAssessmentForm(registry=registry, instance=instance, request=self.request)
@@ -87,7 +88,7 @@ class DiagnosticAssessmentFormView(LoginRequiredMixin,
                                            request=self.request)
         else:
             if instance:
-                data = to_array(DiagnosticAssessmentForm.Meta.fields, EducationAssessment.objects.get(id=instance))
+                data = to_array(DiagnosticAssessmentForm.Meta.fields, get_object_or_404(EducationAssessment, pk=instance))
                 return DiagnosticAssessmentForm(data, registry=registry, instance=instance, request=self.request)
             return DiagnosticAssessmentForm(registry=registry, instance=instance, request=self.request)
 
@@ -125,7 +126,7 @@ class EducationServiceFormView(LoginRequiredMixin,
                                         request=self.request)
         else:
             if instance:
-                data = to_array(EducationServiceForm.Meta.fields, EducationService.objects.get(id=instance))
+                data = to_array(EducationServiceForm.Meta.fields, get_object_or_404(EducationService, pk=instance))
                 return EducationServiceForm(data, registry=registry, instance=instance, request=self.request)
             return EducationServiceForm(registry=registry, instance=instance, request=self.request)
 
@@ -162,7 +163,7 @@ class EducationRSServiceFormView(LoginRequiredMixin,
             return EducationRSServiceForm(self.request.POST, pk=pk, registry=registry, request=self.request)
         else:
             if pk:
-                instance = EducationRSService.objects.get(id=pk)
+                instance = get_object_or_404(EducationRSService, pk=pk)
                 return EducationRSServiceForm(instance=instance, registry=registry, pk=pk, request=self.request)
             return EducationRSServiceForm(registry=registry, pk=pk, request=self.request)
 
@@ -204,7 +205,7 @@ class EducationGradingFormView(LoginRequiredMixin,
                                         programme_type=programme_type,pre_post=pre_post, request=self.request)
         else:
             if instance:
-                grade_data = EducationProgrammeAssessment.objects.get(id=instance)
+                grade_data = get_object_or_404(EducationProgrammeAssessment, pk=instance)
                 if pre_post == 'pre':
                     data = grade_data.pre_test
                 if pre_post == 'post':
@@ -253,7 +254,7 @@ class YouthScoringFormView(LoginRequiredMixin,
                                     programme_type=programme_type, pre_post=pre_post, request=self.request)
         else:
             if instance:
-                grade_data = EducationProgrammeAssessment.objects.get(id=instance)
+                grade_data = get_object_or_404(EducationProgrammeAssessment, pk=instance)
                 if pre_post == 'pre':
                     data = grade_data.pre_test
                 if pre_post == 'post':
@@ -300,7 +301,9 @@ class EducationSchoolGradingFormView(LoginRequiredMixin,
             return EducationSchoolGradingForm(self.request.POST, instance=instance, registry=registry,
                                               programme_type=programme_type, request=self.request)
         else:
-            grade_data = EducationProgrammeAssessment.objects.get(id=instance)
+            # A missing assessment must be a 404, not an unhandled DoesNotExist
+            # bubbling up as a server error page.
+            grade_data = get_object_or_404(EducationProgrammeAssessment, id=instance)
             data = grade_data.school_test
             return EducationSchoolGradingForm(data, registry=registry, programme_type=programme_type, instance=instance, request=self.request)
 

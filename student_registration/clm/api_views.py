@@ -19,7 +19,7 @@ from django.shortcuts import render
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin
 
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 

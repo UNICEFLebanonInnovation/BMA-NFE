@@ -33,10 +33,17 @@ def is_allowed_create(programme):
         current_round = CLMRound.objects.all()
 
         if programme == 'Bridging':
-            current_round = current_round.get(current_round_bridging=True)
-            if current_round.start_date_bridging < current < current_round.end_date_bridging:
-                return True
-            return False
+            # first(), not get(): with no round flagged current - which is the
+            # normal state between rounds - get() raised DoesNotExist and every
+            # page that asks this question logged a full traceback.
+            current_round = current_round.filter(current_round_bridging=True).first()
+            if not current_round:
+                return False
+            if not (current_round.start_date_bridging and current_round.end_date_bridging):
+                return False
+            return current_round.start_date_bridging < current < current_round.end_date_bridging
+
+        return False
 
     except Exception as ex:
         logger.exception(ex)
@@ -59,10 +66,16 @@ def is_allowed_edit(programme):
         current_round = CLMRound.objects.all()
 
         if programme == 'Bridging':
-            current_round = current_round.get(current_round_bridging=True)
-            if current_round.start_date_bridging_edit < current < current_round.end_date_bridging_edit:
-                return True
-            return False
+            # See is_allowed_create: no current round is an ordinary state, not
+            # an error worth a traceback per request.
+            current_round = current_round.filter(current_round_bridging=True).first()
+            if not current_round:
+                return False
+            if not (current_round.start_date_bridging_edit and current_round.end_date_bridging_edit):
+                return False
+            return current_round.start_date_bridging_edit < current < current_round.end_date_bridging_edit
+
+        return False
 
     except Exception as ex:
         logger.exception(ex)

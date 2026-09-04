@@ -123,6 +123,17 @@ MIDDLEWARE = [
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
+# Django's default ERROR tag is "error", which produces .alert-error — a class
+# Bootstrap 5 does not define, so error messages rendered unstyled.
+from django.contrib.messages import constants as message_constants  # noqa: E402
+MESSAGE_TAGS = {
+    message_constants.DEBUG: 'secondary',
+    message_constants.INFO: 'info',
+    message_constants.SUCCESS: 'success',
+    message_constants.WARNING: 'warning',
+    message_constants.ERROR: 'danger',
+}
+
 # MIGRATIONS CONFIGURATION
 # ------------------------------------------------------------------------------
 MIGRATION_MODULES = {
@@ -162,9 +173,10 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
-    'default': env.db('DATABASE_URL',
-    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-tst-flex-14.postgres.database.azure.com:5432/bma_sector'),
+    # No default: a deployment must supply DATABASE_URL. Committing a fallback
+    # here previously exposed live database credentials in the repository, and
+    # let a misconfigured environment silently connect to the wrong server.
+    'default': env.db('DATABASE_URL'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -231,6 +243,7 @@ TEMPLATES = [
                 # 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 # Your stuff: custom template context processors go here
+                'student_registration.users.context_processors.site_settings',
             ],
         },
     },
@@ -330,7 +343,9 @@ ACCOUNT_PASSWORD_RESET_BY_CODE_ENABLED = False
 ACCOUNT_SIGNUP_FIELDS = ['email', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', True)
+# Accounts are created by administrators. Public self-signup previously gave
+# unvetted accounts an instant, logged-in view of sector-wide figures.
+ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', default=False)
 ACCOUNT_ADAPTER = 'student_registration.users.adapters.AccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'student_registration.users.adapters.SocialAccountAdapter'
 
@@ -363,6 +378,10 @@ CELERY_TASK_ROUTES = {
 ########## END CELERY
 
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
+# Web analytics is opt-in per deployment (see users.context_processors).
+GOOGLE_ANALYTICS_ID = env('GOOGLE_ANALYTICS_ID', default='')
+APP_VERSION = env('APP_VERSION', default='2.35')
+
 ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings

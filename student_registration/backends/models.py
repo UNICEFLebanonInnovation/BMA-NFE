@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.conf import settings
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.db.models import JSONField
 from model_utils.models import TimeStampedModel

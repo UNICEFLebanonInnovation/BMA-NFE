@@ -5,7 +5,8 @@ import json
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from student_registration.users.templatetags.custom_tags import has_group
-from braces.views import GroupRequiredMixin
+from django.views.decorators.http import require_POST
+from student_registration.users.mixins import GroupRequiredMixin, group_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance
@@ -93,6 +94,8 @@ class AttendanceView(LoginRequiredMixin,
         }
 
 
+@require_POST
+@group_required("CLM_ATTENDANCE")
 def save_attendance_children(request):
     """Persist attendance submissions coming from the client UI.
 
@@ -188,7 +191,8 @@ class LoadAttendanceChild(LoginRequiredMixin,
 
         return {
             'instances': instances,
-            'nbr_attended': instances.filter(attended='Yes').count(),
-            'nbr_absent': instances.filter(attended='No').count(),
+            # __iexact so rows saved under either casing are counted.
+            'nbr_attended': instances.filter(attended__iexact='Yes').count(),
+            'nbr_absent': instances.filter(attended__iexact='No').count(),
             'attendance_month': calendar.month_name[month]
         }

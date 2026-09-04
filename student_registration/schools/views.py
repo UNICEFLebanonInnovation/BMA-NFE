@@ -5,11 +5,12 @@ from django.db.models import Q
 from django.views.generic import DetailView, ListView, RedirectView, CreateView, FormView, TemplateView, UpdateView
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.http import require_POST
 from django.urls import reverse_lazy
 from dal import autocomplete
 from rest_framework import viewsets, mixins, permissions
 from drf_spectacular.openapi import AutoSchema
-from braces.views import GroupRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, group_required
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
@@ -27,7 +28,7 @@ from storages.backends.azure_storage import AzureStorage
 
 from django.core.files.base import ContentFile
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from student_registration.users.templatetags.custom_tags import has_group
@@ -346,12 +347,15 @@ class SchoolEditView(LoginRequiredMixin,
         Returns:
             SchoolForm: Form populated with existing instance data.
         """
-        instance = School.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(School, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return SchoolForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = SchoolSerializer(instance).data
-            return SchoolForm(data, instance=instance, request=self.request)
+            # `initial=`, not positional: passing the serialized record as `data`
+            # bound the form, so opening a saved record for editing ran validation
+            # and showed errors before the user had typed anything.
+            return SchoolForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         """Persist school edits then proceed with default processing.
@@ -362,7 +366,7 @@ class SchoolEditView(LoginRequiredMixin,
         Returns:
             HttpResponse: Redirect response from the parent handler.
         """
-        instance = School.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(School, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(SchoolEditView, self).form_valid(form)
 
@@ -417,7 +421,7 @@ class ClubFormView(LoginRequiredMixin,
             return ClubForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
         else:
             if pk:
-                instance = Club.objects.get(id=pk)
+                instance = get_object_or_404(Club, pk=pk)
 
                 return ClubForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
             return ClubForm(school_id=school_id, pk=pk, request=self.request)
@@ -429,6 +433,11 @@ class ClubFormView(LoginRequiredMixin,
         return super(ClubFormView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def club_delete(request, pk):
     if request.user.is_authenticated:
         try:
@@ -492,7 +501,7 @@ class MeetingFormView(LoginRequiredMixin,
             return MeetingForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
         else:
             if pk:
-                instance = Meeting.objects.get(id=pk)
+                instance = get_object_or_404(Meeting, pk=pk)
 
                 return MeetingForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
             return MeetingForm(school_id=school_id, pk=pk, request=self.request)
@@ -504,6 +513,11 @@ class MeetingFormView(LoginRequiredMixin,
         return super(MeetingFormView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def meeting_delete(request, school_id, pk):
     redirect_url = reverse('schools:meeting_list', kwargs={'school_id': school_id})
 
@@ -577,7 +591,7 @@ class CommunityInitiativeFormView(LoginRequiredMixin,
             return CommunityInitiativeForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
         else:
             if pk:
-                instance = CommunityInitiative.objects.get(id=pk)
+                instance = get_object_or_404(CommunityInitiative, pk=pk)
 
                 return CommunityInitiativeForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
             return CommunityInitiativeForm(school_id=school_id, pk=pk, request=self.request)
@@ -589,6 +603,11 @@ class CommunityInitiativeFormView(LoginRequiredMixin,
         return super(CommunityInitiativeFormView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def community_initiative_delete(request, pk):
     if request.user.is_authenticated:
         try:
@@ -652,7 +671,7 @@ class HealthVisitFormView(LoginRequiredMixin,
             return HealthVisitForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
         else:
             if pk:
-                instance = HealthVisit.objects.get(id=pk)
+                instance = get_object_or_404(HealthVisit, pk=pk)
 
                 return HealthVisitForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
             return HealthVisitForm(school_id=school_id, pk=pk, request=self.request)
@@ -664,6 +683,11 @@ class HealthVisitFormView(LoginRequiredMixin,
         return super(HealthVisitFormView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def health_visit_delete(request, pk):
     if request.user.is_authenticated:
         try:

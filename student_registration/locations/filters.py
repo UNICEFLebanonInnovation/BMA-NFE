@@ -86,6 +86,10 @@ class CenterFilter(RedesignFilterSet):
 
         self.filters.pop('partner', None)
         self.form.fields.pop('partner', None)
+        # The crispy layout is snapshotted in the base __init__, so without this
+        # it still names `partner` and crispy logs "Could not resolve form
+        # field" on every centre-list request for a non-partner user.
+        self.build_helper()
 
     def filter_is_active(self, queryset, name, value):
         if value == 'True':

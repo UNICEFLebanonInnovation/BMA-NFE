@@ -8,7 +8,11 @@
   const config = window.alpDashboardConfig;
 
   function getFilters() {
-    const ids = ['center_filter', 'round_filter', 'governorate_filter', 'partner_filter'];
+    // This page's filter panel offers governorate/partner/school/round. It used
+    // to read `center_filter`, which belongs to the MSCC dashboard this script
+    // was copied from and does not exist here, and ignored the school filter
+    // entirely - so choosing a school changed nothing.
+    const ids = ['governorate_filter', 'partner_filter', 'school_filter', 'round_filter', 'programme_filter'];
     ids.forEach((id) => {
       const element = el(id);
       if (element) {
@@ -377,7 +381,7 @@ function renderHorizontalBarChart(selector, items) {
     .text(d => `${d.name}: ${d.y}`);
 }
   function wireEvents() {
-    ['center_filter', 'round_filter', 'governorate_filter', 'partner_filter'].forEach((id) => {
+    ['governorate_filter', 'partner_filter', 'school_filter', 'round_filter', 'programme_filter'].forEach((id) => {
       const element = el(id);
       if (element) {
         element.addEventListener('change', refresh);

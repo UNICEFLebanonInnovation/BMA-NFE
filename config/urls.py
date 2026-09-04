@@ -13,6 +13,7 @@ admin.site.index_title = "BMA"
 admin.site.site_url = "/"
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
+from django.views.i18n import JavaScriptCatalog
 
 from rest_framework_nested import routers
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
@@ -48,7 +49,8 @@ api.register(r'locations', LocationViewSet, basename='locations')
 urlpatterns = [
     re_path(r'^$', home, name="home"),
     # re_path(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
-    re_path(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
+    # No ^about/$ route: pages/about.html was never written, nothing links to it,
+    # and the route could only ever raise TemplateDoesNotExist.
     re_path(r'^login-success/$', login_success, name='login_success'),
     re_path(r'^landing-page/$', LandingPage.as_view(), name='landing_page'),
     # re_path(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
@@ -83,6 +85,10 @@ urlpatterns = [
     re_path(r'^api/', include(api.urls)),
     re_path(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file"),
     re_path(r"^i18n/", include("django.conf.urls.i18n")),
+    # Serves the djangojs catalogue that the scripts' translateMessage() reads.
+    # Without it window.gettext was undefined and every message the JS inserts
+    # stayed in English no matter which language was selected.
+    re_path(r"^jsi18n/$", JavaScriptCatalog.as_view(), name="javascript-catalog"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
