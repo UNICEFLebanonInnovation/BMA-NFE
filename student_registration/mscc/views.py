@@ -38,7 +38,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 import uuid
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
@@ -210,7 +210,7 @@ class ProfileView(LoginRequiredMixin,
             dict: Context containing the registration, service metadata and
             whether the child can be enrolled in a new round.
         """
-        instance = Registration.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Registration, pk=self.kwargs['pk'])
         current_tab = self.request.GET.get('current_tab', 'info')
 
         rounds_registered = EducationService.objects.filter(
@@ -564,7 +564,7 @@ class MainEditView(LoginRequiredMixin,
         return super(MainEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Registration.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Registration, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return MainForm(self.request.POST, instance=instance, request=self.request)
         else:
@@ -582,7 +582,7 @@ class MainEditView(LoginRequiredMixin,
             return MainForm(initial=data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Registration.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Registration, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(MainEditView, self).form_valid(form)
 
@@ -627,7 +627,7 @@ class NewRoundView(LoginRequiredMixin,
 def main_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
-            registration = Registration.objects.get(id=pk)
+            registration = Registration.objects.get(pk=pk)
             registration.deleted = True
             registration.deleted_by = request.user
             registration.save()
@@ -772,7 +772,7 @@ class MainViewSet(mixins.RetrieveModelMixin,
 def main_registration_cancel_view(request, pk):
     if request.user.is_authenticated:
         try:
-            registration = Registration.objects.get(id=pk)
+            registration = get_object_or_404(Registration, pk=pk)
             registration.save()
             return redirect('mscc:list')
         except Registration.DoesNotExist:
@@ -809,7 +809,7 @@ class ReferralFormView(LoginRequiredMixin,
             return ReferralForm(self.request.POST, pk=pk, registry=registry, request=self.request)
         else:
             if pk:
-                instance = Referral.objects.get(id=pk)
+                instance = get_object_or_404(Referral, pk=pk)
 
                 return ReferralForm(instance=instance, registry=registry, pk=pk, request=self.request)
             return ReferralForm(registry=registry, pk=pk, request=self.request)
@@ -887,8 +887,10 @@ def quick_search(request):
     from django.db.models.functions import Concat
     from django.db.models import Value
 
-    term = request.GET.get('term', 0).strip()
-    terms = request.GET.get('term', 0).strip()
+    # The default was the integer 0, so .strip() raised AttributeError and the
+    # endpoint returned 500 whenever it was called without a term.
+    term = (request.GET.get('term') or '').strip()
+    terms = term
     qs = {}
 
     if terms:
@@ -1019,7 +1021,7 @@ class TeacherEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_form(self, form_class=None):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Teacher, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return TeacherForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         data = TeacherSerializer(instance).data
@@ -1029,7 +1031,7 @@ class TeacherEditView(LoginRequiredMixin,
         return TeacherForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Teacher, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(TeacherEditView, self).form_valid(form)
 

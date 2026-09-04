@@ -28,7 +28,7 @@ from storages.backends.azure_storage import AzureStorage
 
 from django.core.files.base import ContentFile
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from student_registration.users.templatetags.custom_tags import has_group
@@ -347,7 +347,7 @@ class SchoolEditView(LoginRequiredMixin,
         Returns:
             SchoolForm: Form populated with existing instance data.
         """
-        instance = School.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(School, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return SchoolForm(self.request.POST, instance=instance, request=self.request)
         else:
@@ -366,7 +366,7 @@ class SchoolEditView(LoginRequiredMixin,
         Returns:
             HttpResponse: Redirect response from the parent handler.
         """
-        instance = School.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(School, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(SchoolEditView, self).form_valid(form)
 
@@ -421,7 +421,7 @@ class ClubFormView(LoginRequiredMixin,
             return ClubForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
         else:
             if pk:
-                instance = Club.objects.get(id=pk)
+                instance = get_object_or_404(Club, pk=pk)
 
                 return ClubForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
             return ClubForm(school_id=school_id, pk=pk, request=self.request)
@@ -501,7 +501,7 @@ class MeetingFormView(LoginRequiredMixin,
             return MeetingForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
         else:
             if pk:
-                instance = Meeting.objects.get(id=pk)
+                instance = get_object_or_404(Meeting, pk=pk)
 
                 return MeetingForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
             return MeetingForm(school_id=school_id, pk=pk, request=self.request)
@@ -591,7 +591,7 @@ class CommunityInitiativeFormView(LoginRequiredMixin,
             return CommunityInitiativeForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
         else:
             if pk:
-                instance = CommunityInitiative.objects.get(id=pk)
+                instance = get_object_or_404(CommunityInitiative, pk=pk)
 
                 return CommunityInitiativeForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
             return CommunityInitiativeForm(school_id=school_id, pk=pk, request=self.request)
@@ -671,7 +671,7 @@ class HealthVisitFormView(LoginRequiredMixin,
             return HealthVisitForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
         else:
             if pk:
-                instance = HealthVisit.objects.get(id=pk)
+                instance = get_object_or_404(HealthVisit, pk=pk)
 
                 return HealthVisitForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
             return HealthVisitForm(school_id=school_id, pk=pk, request=self.request)

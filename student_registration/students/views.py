@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+from django.shortcuts import get_object_or_404
 import datetime
 from django.contrib.auth.decorators import login_required
 import io
@@ -276,7 +277,7 @@ class TeacherEditView(LoginRequiredMixin,
         return super(TeacherEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Teacher, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return TeacherForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         else:
@@ -287,7 +288,7 @@ class TeacherEditView(LoginRequiredMixin,
             return TeacherForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Teacher, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(TeacherEditView, self).form_valid(form)
 
@@ -298,7 +299,6 @@ class TeacherDeleteView(LoginRequiredMixin, GroupRequiredMixin, DeleteView):
     group_required = [u"CLM_TEACHER"]
 
     def get_object(self):
-        from django.shortcuts import get_object_or_404
         return get_object_or_404(Teacher, pk=self.kwargs['pk'])
 
     def get(self, request, *args, **kwargs):

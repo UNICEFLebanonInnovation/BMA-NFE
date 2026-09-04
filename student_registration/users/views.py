@@ -44,7 +44,12 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
 
-    fields = ['name', ]
+    # `name` is not a field on this User model, so the view raised FieldError
+    # for anyone who reached it - which is why users/user_detail.html's
+    # "Edit My Info" button had no route behind it. These are the details a user
+    # may reasonably maintain about themselves; role, centre, partner and school
+    # stay with the administrators.
+    fields = ['first_name', 'last_name', 'email', 'phone_number']
 
     # we already imported User in the view code above, remember?
     model = User

@@ -28,7 +28,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
 from django.views.decorators.http import require_POST
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -217,7 +217,7 @@ class BridgingEditView(LoginRequiredMixin,
         return super(BridgingEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         if self.request.method == "POST":
             return BridgingForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         else:
@@ -261,7 +261,7 @@ class BridgingEditView(LoginRequiredMixin,
             return BridgingForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingEditView, self).form_valid(form)
 
@@ -499,7 +499,7 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
 
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
@@ -550,7 +550,7 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
             return form_class(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingPostAssessmentView, self).form_valid(form)
 
@@ -572,7 +572,7 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         number = int(self.kwargs.get('number', 1))
 
         if self.request.method == "POST":
@@ -625,7 +625,7 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
             return form_class(instance=instance, number=number, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         number = self.kwargs['number'] if 'number' in self.kwargs else None
         form.save(request=self.request, number=number, instance=instance)
         return super(BridgingMidAssessmentView, self).form_valid(form)
@@ -647,7 +647,7 @@ class BridgingFollowupView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
 
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
@@ -660,7 +660,7 @@ class BridgingFollowupView(LoginRequiredMixin,
             return form_class(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingFollowupView, self).form_valid(form)
 
@@ -681,7 +681,7 @@ class BridgingServiceView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
 
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
@@ -694,7 +694,7 @@ class BridgingServiceView(LoginRequiredMixin,
             return form_class(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(Bridging, pk=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingServiceView, self).form_valid(form)
 
@@ -734,7 +734,7 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
 # def BridgingDeleteView(request, pk):
 #     if request.user.is_authenticated:
 #         try:
-#             registration =  Bridging.objects.get(pk=pk)
+#             registration =  get_object_or_404(Bridging, pk=pk)
 #             registration.delete()
 #             result = {"isSuccessful": True}
 #         except Bridging.DoesNotExist:
@@ -761,7 +761,7 @@ def bridging_mark_delete_view(request, pk):
     """
     if request.user.is_authenticated:
         try:
-            registration = Bridging.objects.get(id=pk)
+            registration = Bridging.objects.get(pk=pk)
             registration.deleted = True
             registration.save()
             result = {"isSuccessful": True}

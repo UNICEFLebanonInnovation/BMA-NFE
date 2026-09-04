@@ -49,7 +49,8 @@ api.register(r'locations', LocationViewSet, basename='locations')
 urlpatterns = [
     re_path(r'^$', home, name="home"),
     # re_path(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
-    re_path(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
+    # No ^about/$ route: pages/about.html was never written, nothing links to it,
+    # and the route could only ever raise TemplateDoesNotExist.
     re_path(r'^login-success/$', login_success, name='login_success'),
     re_path(r'^landing-page/$', LandingPage.as_view(), name='landing_page'),
     # re_path(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
