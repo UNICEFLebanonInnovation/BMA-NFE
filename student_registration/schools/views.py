@@ -5,11 +5,12 @@ from django.db.models import Q
 from django.views.generic import DetailView, ListView, RedirectView, CreateView, FormView, TemplateView, UpdateView
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.http import require_POST
 from django.urls import reverse_lazy
 from dal import autocomplete
 from rest_framework import viewsets, mixins, permissions
 from drf_spectacular.openapi import AutoSchema
-from student_registration.users.mixins import GroupRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, group_required
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
@@ -432,6 +433,11 @@ class ClubFormView(LoginRequiredMixin,
         return super(ClubFormView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def club_delete(request, pk):
     if request.user.is_authenticated:
         try:
@@ -507,6 +513,11 @@ class MeetingFormView(LoginRequiredMixin,
         return super(MeetingFormView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def meeting_delete(request, school_id, pk):
     redirect_url = reverse('schools:meeting_list', kwargs={'school_id': school_id})
 
@@ -592,6 +603,11 @@ class CommunityInitiativeFormView(LoginRequiredMixin,
         return super(CommunityInitiativeFormView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def community_initiative_delete(request, pk):
     if request.user.is_authenticated:
         try:
@@ -667,6 +683,11 @@ class HealthVisitFormView(LoginRequiredMixin,
         return super(HealthVisitFormView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def health_visit_delete(request, pk):
     if request.user.is_authenticated:
         try:

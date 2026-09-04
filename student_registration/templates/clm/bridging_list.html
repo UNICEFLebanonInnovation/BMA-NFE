@@ -160,7 +160,7 @@
                 if (confirmed) {
                     $.ajax({
                         url: "/clm/bridging-delete/" + registrationId + "/",
-                        type: "GET",
+                        type: "POST",
                         headers: requestHeaders,
                         success: function(data) {
                             console.log(parentTR.html());

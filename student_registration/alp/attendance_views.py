@@ -7,7 +7,8 @@ from django_tables2.export.views import ExportMixin
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
 from django import forms
-from student_registration.users.mixins import GroupRequiredMixin
+from django.views.decorators.http import require_POST
+from student_registration.users.mixins import GroupRequiredMixin, group_required
 from datetime import datetime
 
 from .models import ALPAttendance, ALPTeacherAttendance, ALPRound, ALPProgram
@@ -83,9 +84,9 @@ class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
 
         return data
 
+@require_POST
+@group_required("ALP_SCHOOL")
 def save_attendance_children(request):
-    if not request.user.is_authenticated or not request.user.groups.filter(name='ALP_SCHOOL').exists():
-        return HttpResponseBadRequest("Unauthorized")
     if request.user.school_id is None:
         return HttpResponseBadRequest("No school assigned")
 
@@ -150,9 +151,9 @@ class LoadAttendanceTeachers(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
 
         return data
 
+@require_POST
+@group_required("ALP_SCHOOL")
 def save_attendance_teachers(request):
-    if not request.user.is_authenticated or not request.user.groups.filter(name='ALP_SCHOOL').exists():
-        return HttpResponseBadRequest("Unauthorized")
     if request.user.school_id is None:
         return HttpResponseBadRequest("No school assigned")
 

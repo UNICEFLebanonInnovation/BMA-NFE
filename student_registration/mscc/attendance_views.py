@@ -6,7 +6,8 @@ import json
 from collections import OrderedDict
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from student_registration.users.mixins import GroupRequiredMixin
+from django.views.decorators.http import require_POST
+from student_registration.users.mixins import GroupRequiredMixin, group_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, Q
 from django.utils import timezone
@@ -157,6 +158,8 @@ class AttendanceView(LoginRequiredMixin,
         }
 
 
+@require_POST
+@group_required("MSCC", "MSCC_UNICEF", "MSCC_CENTER", "MSCC_PARTNER")
 def save_attendance_children(request):
     """Persist attendance for MSCC children.
 

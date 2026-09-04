@@ -15,8 +15,11 @@ permission get a 403 rendered from ``templates/403.html``.
 """
 from __future__ import absolute_import, unicode_literals
 
+from functools import wraps
+
 from django.contrib.auth.mixins import AccessMixin
 from django.core.exceptions import ImproperlyConfigured
+from django.http import JsonResponse
 
 
 class GroupRequiredMixin(AccessMixin):
@@ -57,6 +60,27 @@ class GroupRequiredMixin(AccessMixin):
             self.raise_exception = True
             return self.handle_no_permission()
         return super(GroupRequiredMixin, self).dispatch(request, *args, **kwargs)
+
+
+def group_required(*groups):
+    """Restrict a plain function view to members of ``groups``.
+
+    The JSON-posting attendance endpoints are function views, so they cannot use
+    the mixin above. Several of them had no access check whatsoever, which left
+    anyone able to POST attendance records for any centre. Replies are JSON
+    because every caller is an XHR.
+    """
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            user = request.user
+            if not user.is_authenticated:
+                return JsonResponse({'error': 'Authentication required.'}, status=401)
+            if not user.is_superuser and not user.groups.filter(name__in=groups).exists():
+                return JsonResponse({'error': 'You are not allowed to do this.'}, status=403)
+            return view_func(request, *args, **kwargs)
+        return wrapper
+    return decorator
 
 
 class SuperuserRequiredMixin(AccessMixin):

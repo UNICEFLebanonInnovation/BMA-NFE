@@ -26,12 +26,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
+from django.views.decorators.http import require_POST
 from django.urls import reverse
 from django.shortcuts import render
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
-from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin, group_required
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -743,6 +744,11 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
 #     return JsonResponse(result)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("CLM_Bridging")
 def bridging_mark_delete_view(request, pk):
     """Mark a Bridging enrollment as deleted and return the result as JSON.
 

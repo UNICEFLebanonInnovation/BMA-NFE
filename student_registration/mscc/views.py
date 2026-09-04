@@ -29,9 +29,10 @@ import traceback
 from rest_framework import status
 from django.db.models import F, Q, OuterRef, Exists, Subquery, IntegerField, Avg, FloatField
 from django.db.models.functions import Coalesce, NullIf, Cast
+from django.views.decorators.http import require_POST
 from django.urls import reverse, reverse_lazy
 from rest_framework import viewsets, mixins, permissions
-from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin
+from student_registration.users.mixins import GroupRequiredMixin, SuperuserRequiredMixin, group_required
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -610,6 +611,11 @@ class NewRoundView(LoginRequiredMixin,
         return super(NewRoundView, self).form_valid(form)
 
 
+# POST-only and group-checked: this accepted GET from any signed-in user, so a
+# bare <img src="..."> was enough to delete a record, and an account from an
+# unrelated module could delete this one's data.
+@require_POST
+@group_required("MSCC")
 def main_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:

@@ -16,7 +16,7 @@ $(document).ready(function() {
         if (confirmed) {
             $.ajax({
                 url: "/schools/community-initiative-delete/" + initiativeId + "/",
-                type: "GET",
+                type: "POST",
                 headers: requestHeaders,
                 success: function(data) {
                     console.log(parentTR.html());
