@@ -55,6 +55,11 @@ body {
 
 .sidebar {
     width: var(--sidebar-width);
+    /* A flex item shrinks by default, so on any page whose content is wider than
+       the viewport - most of the dashboards and every wide table - the sidebar
+       was squeezed down to about 50px and its labels wrapped a letter at a time.
+       Pin the width and let the main column absorb the overflow instead. */
+    flex: 0 0 var(--sidebar-width);
     background: #ffffff;
     border-inline-end: 1px solid #dee2e6;
     height: 100vh;
@@ -71,6 +76,7 @@ body {
 
 .sidebar.collapsed {
     width: var(--sidebar-collapsed-width);
+    flex-basis: var(--sidebar-collapsed-width);
 }
 
 .sidebar.collapsed .nav-link span,
@@ -96,6 +102,10 @@ body {
 
 .main-content {
     flex-grow: 1;
+    /* min-width:0 lets this column be narrower than its widest child, which is
+       what allows wide tables to scroll inside their own container instead of
+       pushing the whole layout out. */
+    min-width: 0;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;

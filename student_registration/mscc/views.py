@@ -96,6 +96,14 @@ from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
 
 
+# Thresholds for the attendance-based dropout indicator. A child is only judged
+# once their centre has recorded at least this many sessions for them, and counts
+# as dropped out when they were present for less than this share of those
+# sessions. Kept here so the programme team can tune them in one place.
+DROPOUT_MIN_RECORDED_SESSIONS = 10
+DROPOUT_ATTENDANCE_THRESHOLD = 0.5
+
+
 def chart_data(request):
     """Return aggregated MSCC registration data for charts.
 
@@ -1567,30 +1575,46 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             for item in nfe_transitions
         ]
 
-        # NEW INDICATOR: Dropout rate based on attendance (< 45 days average per round)
-        # We define a dropped out child as one whose average attended days per round is < 45.
-        child_rounds = qs.values('child_id').annotate(
-            total_rounds=Count('id', distinct=True)
+        # INDICATOR: Dropout rate based on attendance.
+        #
+        # This used to compare a child's attended days against a flat 45 - a full
+        # round's worth - over every registration, whether or not that round had
+        # finished. Early in a round nobody has 45 days yet, so the dashboard
+        # reported a 100% dropout rate for most of the year. Round carries no end
+        # date, so instead measure each child against the sessions actually
+        # recorded for them: a child who was marked absent for most of the
+        # sessions their centre registered has dropped out, and a child whose
+        # round has barely started simply has too little data to judge.
+        attendance_by_child = (
+            MSCCAttendanceChild.objects
+            .filter(registration__in=qs)
+            .exclude(attended='')
+            .values('registration__child_id')
+            .annotate(
+                recorded=Count('id'),
+                attended_days=Count('id', filter=Q(attended__iexact='Yes')),
+            )
         )
-        child_to_rounds = {item['child_id']: item['total_rounds'] for item in child_rounds if item['child_id']}
-
-        child_attended = MSCCAttendanceChild.objects.filter(registration__in=qs, attended='Yes').values('registration__child_id').annotate(
-            total_attended=Count('id')
-        )
-        child_to_attended = {item['registration__child_id']: item['total_attended'] for item in child_attended if item['registration__child_id']}
 
         all_dropped_out_children = set()
-        for child_id, total_rounds in child_to_rounds.items():
-            total_attended = child_to_attended.get(child_id, 0)
-            if total_rounds > 0 and (total_attended / total_rounds) < 45:
+        judged_children = set()
+        for row in attendance_by_child:
+            child_id = row['registration__child_id']
+            if not child_id or row['recorded'] < DROPOUT_MIN_RECORDED_SESSIONS:
+                continue
+            judged_children.add(child_id)
+            if (row['attended_days'] / row['recorded']) < DROPOUT_ATTENDANCE_THRESHOLD:
                 all_dropped_out_children.add(child_id)
 
-        total_children = len(child_to_rounds)
+        total_children = len(judged_children)
         total_dropouts = len(all_dropped_out_children)
 
-        avg_dropout_rate = 0
+        # None, not 0, when no child has enough recorded attendance to judge:
+        # "0% dropout" and "we cannot tell yet" are very different messages to
+        # put in front of a programme manager.
+        avg_dropout_rate = None
         if total_children > 0:
-            avg_dropout_rate = (total_dropouts / total_children) * 100
+            avg_dropout_rate = round((total_dropouts / total_children) * 100, 1)
 
         # NEW INDICATOR: Dropout rate by program
         dropout_by_program = []
@@ -1602,6 +1626,11 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             program_dropouts = {}
 
             for reg in qs_with_edu.values('child_id', 'latest_program'):
+                # Same denominator as the headline rate: only children with
+                # enough recorded sessions to judge, or the per-programme rates
+                # would be diluted by children nobody has assessed yet.
+                if reg['child_id'] not in judged_children:
+                    continue
                 prog = reg['latest_program'] or 'Unknown'
                 program_totals[prog] = program_totals.get(prog, 0) + 1
                 if reg['child_id'] in all_dropped_out_children:
@@ -1654,7 +1683,8 @@ class WellbeingDashboardDataView(LoginRequiredMixin, View):
             'transitions': {
                 'nfe_to_fe': nfe_to_fe_count,
                 'nfe_platforms': nfe_transitions,
-                'dropout_rate': round(avg_dropout_rate, 1),
+                'dropout_rate': avg_dropout_rate,
+                'dropout_assessed_children': total_children,
                 'dropout_by_program': dropout_by_program,
                 'avg_nfe_grade': round(avg_nfe_grade, 1),
                 'eligible_for_fe_count': len(eligible_for_fe_list),

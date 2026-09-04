@@ -191,7 +191,8 @@ class LoadAttendanceChild(LoginRequiredMixin,
 
         return {
             'instances': instances,
-            'nbr_attended': instances.filter(attended='Yes').count(),
-            'nbr_absent': instances.filter(attended='No').count(),
+            # __iexact so rows saved under either casing are counted.
+            'nbr_attended': instances.filter(attended__iexact='Yes').count(),
+            'nbr_absent': instances.filter(attended__iexact='No').count(),
             'attendance_month': calendar.month_name[month]
         }

@@ -2016,8 +2016,11 @@ class Bridging(CLM):
         """
         from student_registration.attendances.models import CLMAttendanceStudent
         if student_id and start_date and end_date:
+            # __iexact: the model's choices say 'yes'/'no' but every writer -
+            # clm.utils and bridging/attendance.js - stores 'Yes'/'No', so an
+            # exact lowercase match returned 0 attended days for every student.
             return CLMAttendanceStudent.objects.filter(student=student_id,
-                                                       attended='yes',
+                                                       attended__iexact='yes',
                                                        attendance_day__attendance_date__range=(start_date, end_date)
                                                        ).count()
         return 0

@@ -30,13 +30,25 @@
                         <div>
                             <h2 class="fw-bold mb-1 text-dark">{{ instance.child.full_name }}</h2>
                             <div class="d-flex flex-wrap gap-3 text-muted">
-                                <span><i class="bi bi-fingerprint me-1"></i> <span class="fw-bold text-dark">{{ instance.child.id }}</span></span>
-                                <span><i class="bi bi-calendar3 me-1"></i> {{ instance.child.birthday }} ({{ instance.child.age }}{% trans "y)" %}</span>
-                                <span><i class="bi bi-geo-alt me-1"></i> {{ instance.child.governorate }} / {{ instance.child.cadaster }}</span>
+                                {% comment %}
+                                Show the UNICEF ID staff actually work with, falling back to the
+                                row id - the raw primary key on its own means nothing to them.
+                                The location line printed a bare "/" when neither part was
+                                recorded, and `type` is usually unset, printing "None".
+                                {% endcomment %}
+                                <span><i class="bi bi-fingerprint me-1"></i> <span class="fw-bold text-dark">{{ instance.child.unicef_id|default:instance.child.id }}</span></span>
+                                <span><i class="bi bi-calendar3 me-1"></i> {{ instance.child.birthday|default:"—" }}{% if instance.child.age %} ({{ instance.child.age }}{% trans "y)" %}{% endif %}</span>
+                                {% if instance.child.governorate or instance.child.cadaster %}
+                                <span><i class="bi bi-geo-alt me-1"></i>
+                                    {{ instance.child.governorate|default:"—" }}{% if instance.child.governorate and instance.child.cadaster %} / {% endif %}{% if instance.child.cadaster %}{{ instance.child.cadaster }}{% endif %}
+                                </span>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="text-end">
+                            {% if instance.type %}
                             <div class="text-primary fw-bold small text-uppercase tracking-wider mb-2">{{ instance.type }}</div>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="border-top pt-3 d-flex justify-content-between align-items-center">

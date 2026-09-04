@@ -48,15 +48,19 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Family Status" %}</div>
-                                <div>{{ instance.child.marital_status }}</div>
+                                <div>{{ instance.child.marital_status|default:"—" }}</div>
                                 {% if instance.child.have_children == 'Yes' %}
                                     <div class="badge bg-info-subtle text-info mt-1">{{ instance.child.children_number }} {% trans "Children" %}</div>
                                 {% endif %}
                             </div>
                             <div class="col-6">
                                 <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Disability" %}</div>
-                                <div class="{% if instance.child.disability != 'No' %}text-danger fw-bold{% endif %}">
-                                    {{ instance.child.disability }}
+                                {% comment %}
+                                A child with no disability recorded is not a child with a
+                                disability: without the guard this printed "None" in red.
+                                {% endcomment %}
+                                <div class="{% if instance.child.disability and instance.child.disability|stringformat:'s' != 'No' %}text-danger fw-bold{% endif %}">
+                                    {{ instance.child.disability|default:"—" }}
                                 </div>
                             </div>
                         </div>
@@ -86,8 +90,8 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Parents Education" %}</div>
-                                <div class="small"><span class="text-muted">{% trans "F:" %}</span> {{ instance.child.father_educational_level }}</div>
-                                <div class="small"><span class="text-muted">{% trans "M:" %}</span> {{ instance.child.mother_educational_level }}</div>
+                                <div class="small"><span class="text-muted">{% trans "F:" %}</span> {{ instance.child.father_educational_level|default:"—" }}</div>
+                                <div class="small"><span class="text-muted">{% trans "M:" %}</span> {{ instance.child.mother_educational_level|default:"—" }}</div>
                             </div>
                             <div class="col-6">
                                 <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Primary Phone" %}</div>

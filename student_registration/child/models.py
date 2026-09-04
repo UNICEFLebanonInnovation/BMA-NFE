@@ -14,6 +14,15 @@ from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.students.utils import generate_id, generate_one_unique_id
 
 
+def _join_name(*parts):
+    """Join name parts, skipping the ones that are not set.
+
+    "{} {} {}".format(...) turns a missing middle name into the literal string
+    "None", which is what the profile pages were showing ("Amal None Mansour").
+    """
+    return ' '.join(str(part).strip() for part in parts if part and str(part).strip())
+
+
 class Child(TimeStampedModel):
 
     CURRENT_YEAR = datetime.datetime.now().year
@@ -501,7 +510,7 @@ class Child(TimeStampedModel):
         if not self.first_name:
             return 'No name'
 
-        return u'{} {} {}'.format(
+        return _join_name(
             self.first_name,
             self.father_name,
             self.last_name,
@@ -511,7 +520,7 @@ class Child(TimeStampedModel):
         if not self.first_name:
             return 'No name'
 
-        return u'{} {} {}'.format(
+        return _join_name(
             self.first_name,
             self.father_name,
             self.last_name,
@@ -519,7 +528,7 @@ class Child(TimeStampedModel):
 
     @property
     def full_name(self):
-        return u'{} {} {}'.format(
+        return _join_name(
             self.first_name,
             self.father_name,
             self.last_name,
@@ -527,7 +536,7 @@ class Child(TimeStampedModel):
 
     @property
     def caregiver_full_name(self):
-        return u'{} {} {}'.format(
+        return _join_name(
             self.caregiver_first_name,
             self.caregiver_middle_name,
             self.caregiver_last_name,

@@ -241,45 +241,68 @@ class Center(TimeStampedModel):
         verbose_name=_('Nearby PHCC name')
     )
 
+    def _registrations(self):
+        """Live registrations at this centre.
+
+        Every total below went through Registration.objects directly, which
+        includes soft-deleted rows, so the centre profile counted children whose
+        registration had been deleted.
+        """
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(center=self.id, deleted=False)
+
+    def _with_disability(self):
+        """Children recorded as having a disability.
+
+        `exclude(name_en='No')` on its own also keeps every child whose
+        disability was never recorded, because a NULL does not match the
+        exclusion - so an unanswered question counted as a disability and the
+        figure was close to the total number of children.
+        """
+        return (
+            self._registrations()
+            .filter(child__disability__isnull=False)
+            .exclude(child__disability__name_en='No')
+        )
+
     @property
     def total_children(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id).count()
+        return self._registrations().count()
 
     @property
     def total_male(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id, child__gender='Male').count()
+        return self._registrations().filter(child__gender='Male').count()
 
     @property
     def total_female(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id, child__gender='Female').count()
+        return self._registrations().filter(child__gender='Female').count()
 
     @property
     def total_disability(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id).exclude(child__disability__name_en='No').count()
+        return self._with_disability().count()
 
     @property
     def total_disability_male(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id, child__gender='Male').exclude(child__disability__name_en='No').count()
+        return self._with_disability().filter(child__gender='Male').count()
 
     @property
     def total_disability_female(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id, child__gender='Female').exclude(child__disability__name_en='No').count()
+        return self._with_disability().filter(child__gender='Female').count()
 
     @property
     def total_lebanese(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id,child__nationality__code='LEB').count()
+        return self._registrations().filter(child__nationality__code='LEB').count()
 
     @property
     def total_non_lebanese(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id).exclude(child__nationality__code='LEB').count()
+        # Children with no nationality recorded are not "non-Lebanese"; they are
+        # unknown, and exclude() alone would have counted them here.
+        return (
+            self._registrations()
+            .filter(child__nationality__isnull=False)
+            .exclude(child__nationality__code='LEB')
+            .count()
+        )
 
     @property
     def total_admin_staff(self):

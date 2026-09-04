@@ -497,7 +497,10 @@ class Registration(TimeStampedModel):
             ('Other Sources', _('Other Sources')),
     )
     CASH_SUPPORT_PROGRAMMES = Choices(
-            ('None', _('None')),
+            # The stored value stays 'None' - only the label changes, because a
+            # profile reading "Active Cash Support: None" was indistinguishable
+            # from a field that had simply never been filled in.
+            ('None', _('No cash support')),
             ('Haddi', _('Haddi')),
             ('Education Cash assistance', _('Education Cash assistance')),
             ('UNHCR cash assistance', _('UNHCR cash assistance')),

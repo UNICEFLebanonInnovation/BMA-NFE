@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, timedelta
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView, FormView
 from django.urls import reverse_lazy
@@ -13,7 +13,7 @@ from django.conf import settings
 from django.db.models import Count, Q
 from django.utils import timezone
 import json
-from collections import OrderedDict
+from collections import Counter, OrderedDict
 
 from .models import (
     ALPAttendanceChild, ALPRegistration, ALPTeacher, ALPGrading,
@@ -450,7 +450,7 @@ class ALPRegistrationDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Tem
     template_name = 'alp/dashboard_registration.html'
 
     def get_context_data(self, **kwargs):
-        from student_registration.schools.models import School
+        from student_registration.schools.models import School, PartnerOrganization
         from .models import ALPRound, ALPProgram, ALPRegistration
 
         user = self.request.user
@@ -465,11 +465,26 @@ class ALPRegistrationDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Tem
         if not _is_dashboard_admin(user):
             schools = schools.filter(id=user.school_id)
 
+        # The template has always had a Partners KPI and a partner filter, but
+        # nothing ever put `partners` in the context, so the count rendered blank
+        # and the dropdown was empty. Scope it to the schools in view.
+        partners = PartnerOrganization.objects.filter(
+            schools__in=schools
+        ).distinct().order_by('name')
+
+        # Same for the Governorates dropdown, which rendered with no options.
+        from student_registration.locations.models import Location
+        governorates = Location.objects.filter(
+            id__in=schools.exclude(governorate__isnull=True).values('governorate_id')
+        ).order_by('name')
+
         return {
             'total': instances.count(),
             'schools': schools,
             'rounds': rounds,
             'programmes': programmes,
+            'partners': partners,
+            'governorates': governorates,
         }
 
 class ALPDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
@@ -493,6 +508,16 @@ class ALPDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
         if programmes:
             qs = qs.filter(programme_id__in=programmes)
 
+        # The dashboard's partner dropdown had no counterpart here, so choosing a
+        # partner changed nothing.
+        partners = request.GET.getlist('partners')
+        if partners:
+            qs = qs.filter(school__partner_schools__id__in=partners).distinct()
+
+        governorates = request.GET.getlist('governorates')
+        if governorates:
+            qs = qs.filter(school__governorate_id__in=governorates)
+
         def aggregate(queryset, field):
             results = queryset.values(field).annotate(total=Count('id')).order_by(field)
             data = []
@@ -501,10 +526,64 @@ class ALPDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
                 data.append({'name': name, 'y': row['total']})
             return data
 
-        nationality_data = aggregate(qs, 'child__nationality__name_en')
-        gender_data = aggregate(qs, 'child__gender')
-        round_data = aggregate(qs, 'round__name')
-        programme_data = aggregate(qs, 'programme__name')
+        # The chart containers on dashboard_registration.html and the script that
+        # fills them (alp/alp_dashboard_d3.js) both expect the `children_*` keys
+        # below. This endpoint used to answer with `nationality`/`gender`/`round`
+        # /`programme` instead, so every chart on the page drew nothing even once
+        # the script was loading from the right path.
+        current_year = date.today().year
+
+        gender_age_counts = {}
+        for row in qs.values('child__gender', 'child__birthday_year').annotate(total=Count('id')):
+            gender = row['child__gender'] or 'Unknown'
+            try:
+                age = current_year - int(row['child__birthday_year'])
+                if age < 5:
+                    age_group = '< 5'
+                elif age < 10:
+                    age_group = '5-9'
+                elif age < 15:
+                    age_group = '10-14'
+                elif age < 18:
+                    age_group = '15-17'
+                else:
+                    age_group = '18+'
+            except (ValueError, TypeError):
+                age_group = 'Unknown'
+            label = '{} - {}'.format(gender, age_group)
+            gender_age_counts[label] = gender_age_counts.get(label, 0) + row['total']
+
+        programme_counts = Counter()
+        for programmes_value in qs.values_list('cash_support_programmes', flat=True):
+            if programmes_value:
+                programme_counts.update(programmes_value)
+        cash_support = [
+            {'name': label, 'y': programme_counts.get(value, 0)}
+            for value, label in ALPRegistration.CASH_SUPPORT_PROGRAMMES
+            if value
+        ]
+
+        per_round = (
+            qs.values('round__name')
+            .annotate(total=Count('child', distinct=True))
+            .order_by('round__name')
+        )
+        round_names = [row.get('round__name') or 'N/A' for row in per_round]
+        per_round_dict = {name: row['total'] for name, row in zip(round_names, per_round)}
+
+        multi_round_children = list(
+            qs.values('child')
+            .annotate(round_count=Count('round', distinct=True))
+            .filter(round_count__gt=1)
+            .values_list('child', flat=True)
+        )
+        moved_per_round = (
+            qs.filter(child__in=multi_round_children)
+            .values('round__name')
+            .annotate(total=Count('child', distinct=True))
+            .order_by('round__name')
+        )
+        moved_dict = {row.get('round__name') or 'N/A': row['total'] for row in moved_per_round}
 
         gradings = ALPGrading.objects.filter(
             registration_id__in=qs.values('id')
@@ -514,10 +593,23 @@ class ALPDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
         )
 
         response_data = {
-            'nationality': nationality_data,
-            'gender': gender_data,
-            'round': round_data,
-            'programme': programme_data,
+            'children_per_gender': aggregate(qs, 'child__gender'),
+            'children_per_status': aggregate(qs, 'child__marital_status'),
+            'children_per_nationality': aggregate(qs, 'child__nationality__name'),
+            'children_per_disability': aggregate(qs, 'child__disability__name'),
+            'children_per_source': aggregate(qs, 'source_of_identification'),
+            'children_gender_age': [
+                {'name': name, 'y': count} for name, count in sorted(gender_age_counts.items())
+            ],
+            'children_cash_support': cash_support,
+            'children_per_round': [
+                {'name': name, 'y': per_round_dict[name]} for name in round_names
+            ],
+            'children_moved_rounds': {
+                'categories': round_names,
+                'moved': [moved_dict.get(name, 0) for name in round_names],
+                'new': [per_round_dict[name] - moved_dict.get(name, 0) for name in round_names],
+            },
             'learning_outcomes': learning_outcomes,
         }
 
