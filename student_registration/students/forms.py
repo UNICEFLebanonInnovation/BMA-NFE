@@ -462,7 +462,7 @@ class TeacherForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-left btn-pill mr-3 btn-hover-shine btn btn-outline-secondary'),
                 ),
                 css_id='step-2'
             )

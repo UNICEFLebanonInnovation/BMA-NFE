@@ -270,6 +270,11 @@ urlpatterns = [
         name='load_attendance_children'
     ),
     re_path(
+        r'^attendance-day-status/$',
+        view=attendance_views.attendance_day_status,
+        name='attendance_day_status'
+    ),
+    re_path(
         'save-attendance-children/$',
         view=attendance_views.save_attendance_children,
         name='save_attendance_children'

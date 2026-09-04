@@ -2,6 +2,12 @@ function translateMessage(message) {
     return window.gettext ? window.gettext(message) : message;
 }
 
+/* mscc.js is not loaded on this page, and Bootstrap 5 has no jQuery plugin. */
+function showModalById(modalId) {
+    var el = document.getElementById(modalId);
+    if (!el || typeof bootstrap === 'undefined' || !bootstrap.Modal) { return; }
+    bootstrap.Modal.getOrCreateInstance(el).show();
+}
 
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
@@ -90,16 +96,26 @@ $(document).ready(function() {
         data: JSON.stringify(attendance_information),
         async: true,
         dataType: 'json',
+        // A failed save used to only reach the console: the spinner vanished and
+        // the user was left believing a day's attendance had been recorded.
         success: function (response) {
-            if (response.result) {
-                $('.app-drawer-overlay').addClass('d-none');
-                $('#formSuccessModal').modal('show');
+            $('.app-drawer-overlay').addClass('d-none');
+            if (response && response.result) {
+                showModalById('formSuccessModal');
+            } else {
+                showModal(translateMessage('The attendance could not be saved. Please try again.'));
             }
-            console.log(response);
         },
         error: function(response) {
             console.log(response);
             $('.app-drawer-overlay').addClass('d-none');
+            var message = translateMessage('The attendance could not be saved. Please try again.');
+            if (response && response.status === 403) {
+                message = translateMessage('You are not allowed to save attendance for this centre.');
+            } else if (response && response.status === 401) {
+                message = translateMessage('Your session has expired. Please sign in again.');
+            }
+            showModal(message);
         },
         complete: function() {
             $('#save_attendance_children').removeClass('disabled');
@@ -179,6 +195,29 @@ $(document).ready(function() {
         $('#children_count').text(0);
         $('#save_attendance_children').addClass('disabled');
         $('#load_attendance_children').removeClass('disabled');
+
+        // The day-off flag and closing reason are rendered server-side for the
+        // date the page loaded with. Without this they kept showing that day's
+        // answer after the user picked another date - and saving would have
+        // written it onto the new date.
+        var selectedDate = $(this).val();
+        if (!selectedDate) { return; }
+        $.ajax({
+            type: 'GET',
+            url: '/mscc/attendance-day-status/',
+            cache: false,
+            data: { attendance_date: selectedDate, center_id: $('#center_id').val() },
+            dataType: 'json',
+            success: function (status) {
+                $("input[name='attendance_day_off'][value='" + status.day_off + "']")
+                    .prop('checked', true);
+                $('#close_reason').val(status.close_reason || '');
+                $('#close_reason').toggleClass('hidden', status.day_off !== 'Yes');
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
     });
 
 

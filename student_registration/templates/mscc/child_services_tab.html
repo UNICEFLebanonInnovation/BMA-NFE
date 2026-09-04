@@ -120,13 +120,22 @@
 
                     <!-- Post Test -->
                     <div class="tab-pane fade p-3" id="tab-animated-12" role="tabpanel" tabindex="0">
-                        {% if result %}
+                        {% comment %}
+                        Pre and post grades share one assessment record, and grading_add is
+                        what creates it. Without the else branch this tab offered no way in
+                        at all until a pre-test happened to exist.
+                        {% endcomment %}
                         <div class="d-flex justify-content-end mb-3">
-                            <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'post' result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Education Post Grades">
+                            {% if result %}
+                            <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'post' result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Edit Education Post Grades' %}">
                                 <i class="bi bi-pencil"></i> {% trans "Edit" %}
                             </a>
+                            {% else %}
+                            <a href="{% url 'mscc:service_education_grading_add' instance.id result1.education_program %}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Add Education Post Grades' %}">
+                                <i class="bi bi-plus"></i> {% trans "Add" %}
+                            </a>
+                            {% endif %}
                         </div>
-                        {% endif %}
 
                         <div class="overflow-auto pe-2" style="max-height: 250px;">
                             <div class="vertical-timeline">
@@ -214,13 +223,17 @@
 
                     {% if result1.education_program in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
                     <div class="tab-pane fade p-3" id="tab-animated-16" role="tabpanel" tabindex="0">
-                        {% if result %}
                         <div class="d-flex justify-content-end mb-3">
-                            <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Education School Grades">
+                            {% if result %}
+                            <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Edit Education School Grades' %}">
                                 <i class="bi bi-pencil"></i> {% trans "Edit" %}
                             </a>
+                            {% else %}
+                            <a href="{% url 'mscc:service_education_grading_add' instance.id result1.education_program %}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Add Education School Grades' %}">
+                                <i class="bi bi-plus"></i> {% trans "Add" %}
+                            </a>
+                            {% endif %}
                         </div>
-                        {% endif %}
                         <div class="overflow-auto pe-2" style="max-height: 250px;">
                             <div class="vertical-timeline">
                                 {% for assessment in assessments %}
@@ -245,13 +258,17 @@
 
                     {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
                     <div class="tab-pane fade p-3" id="tab-animated-17" role="tabpanel" tabindex="0">
-                        {% if result %}
                         <div class="d-flex justify-content-end mb-3">
-                            <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Education School Grades">
+                            {% if result %}
+                            <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Edit Education School Grades' %}">
                                 <i class="bi bi-pencil"></i> {% trans "Edit" %}
                             </a>
+                            {% else %}
+                            <a href="{% url 'mscc:service_education_grading_add' instance.id result1.education_program %}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Add Education School Grades' %}">
+                                <i class="bi bi-plus"></i> {% trans "Add" %}
+                            </a>
+                            {% endif %}
                         </div>
-                        {% endif %}
                         <div class="overflow-auto pe-2" style="max-height: 250px;">
                             <div class="vertical-timeline">
                                 {% for assessment in assessments %}
