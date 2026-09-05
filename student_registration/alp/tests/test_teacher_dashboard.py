@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
@@ -20,6 +22,8 @@ class ALPTeacherDashboardTests(TestCase):
         )
         self.user.groups.add(group)
         self.client.force_login(self.user)
+        # Views build the form with ``request=self.request``; mirror that.
+        self.request = SimpleNamespace(user=self.user)
 
     def test_dashboard_includes_available_rounds(self):
         alp_round = ALPRound.objects.create(name='Round 1', current_year=True)
@@ -30,7 +34,7 @@ class ALPTeacherDashboardTests(TestCase):
         self.assertQuerySetEqual(response.context['rounds'], [alp_round])
 
     def test_teacher_grade_levels_only_include_levels_one_to_four(self):
-        form = ALPTeacherForm(user=self.user)
+        form = ALPTeacherForm(request=self.request)
 
         self.assertEqual(
             list(form.fields['registration_level'].choices),
@@ -43,7 +47,7 @@ class ALPTeacherDashboardTests(TestCase):
         )
 
     def test_teacher_assignment_options_match_alp_programme(self):
-        form = ALPTeacherForm(user=self.user)
+        form = ALPTeacherForm(request=self.request)
 
         self.assertEqual(
             list(form.fields['teacher_assignment'].choices),
@@ -58,7 +62,7 @@ class ALPTeacherDashboardTests(TestCase):
     def test_other_teacher_assignment_requires_details(self):
         form = ALPTeacherForm(
             data={'teacher_assignment': 'other'},
-            user=self.user,
+            request=self.request,
         )
 
         form.is_valid()
