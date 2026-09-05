@@ -1,7 +1,7 @@
 import pytest
 from django.template.loader import get_template
 
-from alp.tables import (
+from student_registration.alp.tables import (
     ALPAttendanceTable,
     ALPRegistrationTable,
     ALPTeacherAttendanceTable,
