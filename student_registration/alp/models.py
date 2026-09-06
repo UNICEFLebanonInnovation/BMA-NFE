@@ -577,7 +577,9 @@ class ALPAttendanceChild(TimeStampedModel):
 
     @property
     def attendance_date(self):
-        return self.attendance_day.attendance_date.strftime("%d/%m/%Y")
+        if self.attendance_day and self.attendance_day.attendance_date:
+            return self.attendance_day.attendance_date.strftime("%d/%m/%Y")
+        return ''
 
     @property
     def child_name(self):

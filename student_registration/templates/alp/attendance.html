@@ -115,14 +115,13 @@
                                                   </div>
                                                   <div class="col-md-6" id="close_reason_container">
                                                        <label for="close_reason" class="form-label">{% trans "Closing Reason" %}</label>
-                                                       <select id="close_reason" class="form-select {% if close_reason == '' %}hidden{% endif %}">
+                                                       <select id="close_reason" class="form-select {% if not close_reason %}hidden{% endif %}">
                                                           <option value="">{% trans "Select Reason" %}</option>
                                                           <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>{% trans "Public Holiday" %}</option>
                                                           <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>{% trans "School Holiday" %}</option>
                                                           <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>{% trans "Strike" %}</option>
                                                           <option value="Weekly Holiday" {% if close_reason == 'Weekly Holiday' %}selected{% endif %}>{% trans "Weekly Holiday" %}</option>
                                                           <option value="Roads Closed" {% if close_reason == 'Roads Closed' %}selected{% endif %}>{% trans "Roads Closed" %}</option>
-                                                          <option value="Other" {% if close_reason == 'Other' %}selected{% endif %}>{% trans "Other" %}</option>
                                                        </select>
                                                   </div>
                                               </div>

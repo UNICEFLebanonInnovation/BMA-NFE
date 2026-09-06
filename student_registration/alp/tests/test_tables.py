@@ -2,9 +2,7 @@ import pytest
 from django.template.loader import get_template
 
 from student_registration.alp.tables import (
-    ALPAttendanceTable,
     ALPRegistrationTable,
-    ALPTeacherAttendanceTable,
     ALPTeacherTable,
 )
 
@@ -14,8 +12,6 @@ from student_registration.alp.tables import (
     (
         ALPRegistrationTable,
         ALPTeacherTable,
-        ALPAttendanceTable,
-        ALPTeacherAttendanceTable,
     ),
 )
 def test_actions_template_loads_its_template_tag_libraries(table_class):

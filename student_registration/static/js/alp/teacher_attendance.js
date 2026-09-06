@@ -49,15 +49,20 @@ $(document).ready(function() {
             async: true,
             dataType: 'json',
             success: function (response) {
+                $('.app-drawer-overlay').addClass('d-none');
                 if (response.result) {
-                    $('.app-drawer-overlay').addClass('d-none');
                     $('#formSuccessModal').modal('show');
+                } else {
+                    showModal(translateMessage(response.error || 'Teacher attendance could not be saved.'));
                 }
                 console.log(response);
             },
             error: function(response) {
                 console.log(response);
                 $('.app-drawer-overlay').addClass('d-none');
+                var message = (response.responseJSON && response.responseJSON.error) ||
+                    'Teacher attendance could not be saved. Please reload the page and try again.';
+                showModal(translateMessage(message));
             },
             complete: function() {
                 $('#save_attendance_teachers').removeClass('disabled');

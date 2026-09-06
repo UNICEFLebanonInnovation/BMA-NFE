@@ -135,8 +135,8 @@
                         <div class="col-md-3">
                             <div class="card border-0 shadow-sm metric-card h-100">
                                 <div class="card-body text-center">
-                                    <div class="text-muted small text-uppercase fw-bold mb-1">{% trans "Partners" %}</div>
-                                    <div class="h2 fw-bold text-info mb-0">{{ partners.count }}</div>
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">{% trans "Programmes" %}</div>
+                                    <div class="h2 fw-bold text-info mb-0">{{ programmes.count }}</div>
                                 </div>
                             </div>
                         </div>
@@ -278,22 +278,6 @@
     </div>
     <div class="offcanvas-body">
         <div class="mb-4">
-            <label class="form-label fw-bold">{% trans "Governorates" %}</label>
-            <select id="governorate_filter" class="selectpicker form-control" multiple data-live-search="true" data-actions-box="true" title="{% trans 'Select Governorates' %}">
-                {% for item in governorates %}
-                <option value="{{ item.id }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="mb-4">
-            <label class="form-label fw-bold">{% trans "Partners" %}</label>
-            <select id="partner_filter" class="selectpicker form-control" multiple data-live-search="true" data-actions-box="true" title="{% trans 'Select Partners' %}">
-                {% for item in partners %}
-                <option value="{{ item.id }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="mb-4">
             <label class="form-label fw-bold">{% trans "Schools" %}</label>
             <select id="school_filter" class="selectpicker form-control" multiple data-live-search="true" data-actions-box="true" title="{% trans 'Select Schools' %}">
                 {% for item in schools %}
@@ -305,6 +289,14 @@
             <label class="form-label fw-bold">{% trans "Rounds" %}</label>
             <select id="round_filter" class="selectpicker form-control" multiple data-live-search="true" data-actions-box="true" title="{% trans 'Select Rounds' %}">
                 {% for item in rounds %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold">{% trans "Programmes" %}</label>
+            <select id="programme_filter" class="selectpicker form-control" multiple data-live-search="true" data-actions-box="true" title="{% trans 'Select Programmes' %}">
+                {% for item in programmes %}
                 <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
@@ -336,10 +328,10 @@ $(function() {
         $('.selectpicker').selectpicker('deselectAll');
         $('.selectpicker').selectpicker('refresh');
         // Trigger change to refresh data
-        $('#governorate_filter').trigger('change');
+        $('#school_filter').trigger('change');
     });
 });
 </script>
-<script src="{% static 'js/mscc/alp_dashboard_d3.js' %}?v=2021"></script>
+<script src="{% static 'js/alp/alp_dashboard_d3.js' %}?v=2026"></script>
 <script src="{% static 'js/alp/learning_outcomes_dashboard.js' %}?v=1"></script>
 {% endblock %}
