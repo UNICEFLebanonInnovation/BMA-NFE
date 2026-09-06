@@ -397,7 +397,9 @@ class ChildProfileView(LoginRequiredMixin, ALPUserRequiredMixin, DetailView):
     context_object_name = 'registration'
 
     def get_queryset(self):
-        return _active_registrations(self.request.user).select_related('child', 'school', 'round', 'programme')
+        return _active_registrations(self.request.user).filter(
+            child__isnull=False,
+        ).select_related('child', 'school', 'round', 'programme')
 
 
 class GradingAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, CreateView):

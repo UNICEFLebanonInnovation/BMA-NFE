@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
@@ -88,7 +89,10 @@ def _as_date(value):
 
 
 def _today():
-    return timezone.localdate()
+    """Today's date; ``localdate`` cannot be used when USE_TZ is off."""
+    if settings.USE_TZ:
+        return timezone.localdate()
+    return timezone.now().date()
 
 
 def _choice_or_none(value, choices):
