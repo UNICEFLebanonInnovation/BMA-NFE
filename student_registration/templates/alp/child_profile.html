@@ -24,7 +24,7 @@
                         <div>
                             <h2 class="fw-bold mb-1 text-dark">{{ registration.child.full_name }}</h2>
                             <div class="d-flex flex-wrap gap-3 text-muted">
-                                <span><i class="bi bi-fingerprint me-1"></i> <span class="fw-bold text-dark">{{ registration.child.unicef_id|default:registration.child.id }}</span></span>
+                                <span><i class="bi bi-fingerprint me-1"></i> <span class="fw-bold text-dark">{{ registration.child.unicef_id|default:registration.child_id }}</span></span>
                                 <span><i class="bi bi-calendar3 me-1"></i> {{ registration.child.birthday|default:"—" }}{% if registration.child.age %} ({{ registration.child.age }}{% trans "y)" %}{% endif %}</span>
                                 <span><i class="bi bi-person me-1"></i> {{ registration.child.gender|default:"—" }}</span>
                             </div>

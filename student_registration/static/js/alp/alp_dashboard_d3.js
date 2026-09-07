@@ -7,8 +7,13 @@
   const el = (id) => document.getElementById(id);
   const config = window.alpDashboardConfig;
 
+  // Filter selects rendered by templates/alp/dashboard_registration.html; the
+  // ALPDashboardDataView reads the matching `schools`, `rounds` and
+  // `programmes` query parameters.
+  const FILTER_IDS = ['school_filter', 'round_filter', 'programme_filter'];
+
   function getFilters() {
-    const ids = ['center_filter', 'round_filter', 'governorate_filter', 'partner_filter'];
+    const ids = FILTER_IDS;
     ids.forEach((id) => {
       const element = el(id);
       if (element) {
@@ -377,7 +382,7 @@ function renderHorizontalBarChart(selector, items) {
     .text(d => `${d.name}: ${d.y}`);
 }
   function wireEvents() {
-    ['center_filter', 'round_filter', 'governorate_filter', 'partner_filter'].forEach((id) => {
+    FILTER_IDS.forEach((id) => {
       const element = el(id);
       if (element) {
         element.addEventListener('change', refresh);

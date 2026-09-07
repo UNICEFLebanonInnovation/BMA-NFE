@@ -44,7 +44,9 @@ class SchoolProfileViewTests(TestCase):
         self.assertNotContains(response, 'School Capacity')
         self.assertNotContains(response, 'name="registration_level"')
         self.assertNotContains(response, 'name="school_capacity"')
-        self.assertContains(response, 'Provided Services &amp; Programs')
+        self.assertContains(
+            response, '<legend>Provided Services &amp; Programs</legend>', html=True
+        )
         self.assertContains(response, 'name="provided_packages"')
         self.assertContains(response, 'name="programs"')
         self.assertNotContains(response, 'value="ALP"')

@@ -1,9 +1,13 @@
+import logging
+
 from django import forms
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, Submit, Reset
 from crispy_forms.bootstrap import FormActions
 from django.urls import reverse
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from .models import ALPRegistration, ALPTeacher, ALPGrading, ALPRound
 from .mixins import ALPSchoolFilterMixin
@@ -15,6 +19,8 @@ from student_registration.mscc.forms import MainForm
 from student_registration.students.utils import generate_one_unique_id
 from django.contrib import messages
 from .serializers import ALPRegistrationSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class ALPSchoolProfileForm(forms.ModelForm):
@@ -154,16 +160,43 @@ class ALPRegistrationForm(MainForm):
         self.helper.form_action = reverse(route, kwargs=route_kwargs)
         self.fields.pop('school', None)
 
+    # Fields the client must never control: the linked child, ownership and
+    # the soft-delete state are decided server side.
+    PROTECTED_FIELDS = ('child_id', 'owner', 'modified_by', 'deleted', 'deleted_by')
+
     @staticmethod
     def _registration_data(request):
         """Return submitted data scoped to the school assigned to the user."""
         data = request.POST.copy()
+        for field in ALPRegistrationForm.PROTECTED_FIELDS:
+            data.pop(field, None)
         if not request.user.is_superuser:
             if request.user.school_id:
-                data['school'] = request.user.school_id
+                data['school'] = str(request.user.school_id)
             else:
                 data.pop('school', None)
         return data
+
+    def _add_serializer_errors(self, errors):
+        """Surface serializer/child validation errors on this form."""
+        if isinstance(errors, dict):
+            items = errors.items()
+        elif isinstance(errors, (list, tuple)):
+            items = [(None, error) for error in errors]
+        else:
+            items = [(None, errors)]
+        for field, error in items:
+            messages_list = error if isinstance(error, (list, tuple)) else [error]
+            form_field = None
+            for candidate in (field, 'child_{0}'.format(field)):
+                if candidate in self.fields:
+                    form_field = candidate
+                    break
+            for message in messages_list:
+                text = str(message)
+                if form_field is None and field:
+                    text = '{0}: {1}'.format(field, text)
+                self.add_error(form_field, text)
 
     def save(self, request=None, instance=None):
         data = self._registration_data(request)
@@ -171,10 +204,17 @@ class ALPRegistrationForm(MainForm):
             instance, data=data
         ) if instance else ALPRegistrationSerializer(data=data)
         if not serializer.is_valid():
-            messages.warning(request, serializer.errors)
+            self._add_serializer_errors(serializer.errors)
+            messages.warning(request, _('The registration could not be saved. Please correct the errors below.'))
             return None
-        registration = serializer.save()
-        registration.owner = registration.owner or request.user
+        try:
+            registration = serializer.save()
+        except DRFValidationError as exc:
+            self._add_serializer_errors(exc.detail)
+            messages.warning(request, _('The registration could not be saved. Please correct the errors below.'))
+            return None
+        if not registration.owner_id:
+            registration.owner = request.user
         registration.modified_by = request.user
         if not registration.school_id and request.user.school_id:
             registration.school_id = request.user.school_id
@@ -182,11 +222,16 @@ class ALPRegistrationForm(MainForm):
         if request.FILES.get('child_photo'):
             child.photo = request.FILES['child_photo']
         child.disability_other = request.POST.get('child_disability_other', '')
-        child.unicef_id = generate_one_unique_id(
+        unicef_id = generate_one_unique_id(
             str(child.pk), child.first_name, child.father_name, child.last_name,
             child.mother_fullname, child.birthdate, child.nationality_name_en,
             child.gender,
         )
+        if unicef_id:
+            child.unicef_id = unicef_id
+        else:
+            # Keep any previous id: a failed lookup must not overwrite it with 0.
+            logger.warning('Unique id lookup failed for child %s', child.pk)
         child.save()
         registration.save()
         request.session['instance_id'] = registration.id
@@ -410,6 +455,13 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         # that the mixin never saw the user and exposed every school in the
         # ALP teacher form.
         super(ALPTeacherForm, self).__init__(*args, **kwargs)
+
+        # Only current rounds can be picked, but a teacher recorded under a
+        # past round must still validate when other details are corrected.
+        round_filter = Q(current_year=True)
+        if self.instance.pk and self.instance.round_id:
+            round_filter |= Q(pk=self.instance.round_id)
+        self.fields['round'].queryset = ALPRound.objects.filter(round_filter)
 
         self.helper = FormHelper()
         self.helper.form_tag = False
