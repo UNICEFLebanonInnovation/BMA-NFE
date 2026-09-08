@@ -1,7 +1,9 @@
 from django.contrib.auth.models import Group
+from django.forms import NumberInput
 from django.test import TestCase
 from django.urls import reverse
 
+from student_registration.alp.forms import ALPSchoolProfileForm
 from student_registration.schools.models import School
 from student_registration.locations.models import Location, LocationType
 from student_registration.users.models import User
@@ -52,6 +54,13 @@ class SchoolProfileViewTests(TestCase):
         self.assertContains(response, 'name="have_digital_hub"')
         self.assertContains(response, 'name="admin_staff_number"')
         self.assertContains(response, 'name="neaby_phcc"')
+
+    def test_cerd_number_uses_a_non_negative_number_input(self):
+        field = ALPSchoolProfileForm(instance=self.school).fields['number']
+
+        self.assertIsInstance(field.widget, NumberInput)
+        self.assertEqual(field.min_value, 0)
+        self.assertEqual(field.widget.attrs['step'], 1)
 
     def test_focal_point_can_only_update_assigned_school(self):
         other_school = School.objects.create(number='200', name='Other school')

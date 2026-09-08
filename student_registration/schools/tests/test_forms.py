@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.forms import NumberInput
 
 from student_registration.schools.forms import SchoolForm
 
@@ -28,3 +29,10 @@ class SchoolFormAdditionalFieldsTests(TestCase):
 
         self.assertFalse(field.required)
         self.assertEqual(field.label, 'Nearby PHCC name')
+
+    def test_cerd_number_uses_a_non_negative_number_input(self):
+        field = self.form.fields['number']
+
+        self.assertIsInstance(field.widget, NumberInput)
+        self.assertEqual(field.min_value, 0)
+        self.assertEqual(field.widget.attrs['step'], 1)

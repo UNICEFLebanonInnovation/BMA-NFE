@@ -28,7 +28,13 @@ class SchoolForm(forms.ModelForm):
     )
     number = forms.IntegerField(
         label=_('School CERD Number'),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. 1234')}), required=False
+        min_value=0,
+        widget=forms.NumberInput(attrs={
+            'min': 0,
+            'step': 1,
+            'placeholder': _('e.g. 1234'),
+        }),
+        required=False,
     )
     name = forms.CharField(
         label=_("School name"),

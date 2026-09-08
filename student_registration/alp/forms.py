@@ -20,6 +20,17 @@ from .serializers import ALPRegistrationSerializer
 class ALPSchoolProfileForm(forms.ModelForm):
     """School details that an ALP school focal point may maintain."""
 
+    number = forms.IntegerField(
+        label=_('School CERD Number'),
+        min_value=0,
+        widget=forms.NumberInput(attrs={
+            'min': 0,
+            'step': 1,
+            'placeholder': _('e.g. 1234'),
+        }),
+        required=False,
+    )
+
     provided_packages = forms.MultipleChoiceField(
         label=_('Provided Services'),
         choices=School.PROVIDED_PACKAGES,
@@ -147,6 +158,19 @@ class ALPSchoolProfileForm(forms.ModelForm):
 class ALPRegistrationForm(MainForm):
     """ALP registration with the MSCC child, caregiver and ID workflow."""
 
+    round = forms.ModelChoiceField(
+        queryset=ALPRound.objects.all(),
+        label=_('Round'),
+        empty_label=_('-------'),
+        required=True,
+    )
+    programme = forms.ModelChoiceField(
+        queryset=ALPProgram.objects.all(),
+        label=_('Program'),
+        empty_label=_('-------'),
+        required=True,
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         route = 'alp:registration_edit' if self.instance.pk else 'alp:registration_add'
@@ -202,7 +226,7 @@ class ALPRegistrationForm(MainForm):
 
 class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
     round = forms.ModelChoiceField(
-        queryset=ALPRound.objects.filter(current_year=True), widget=forms.Select,
+        queryset=ALPRound.objects.all(), widget=forms.Select,
         label=_('Academic year'),
         empty_label='-------',
         required=True, to_field_name='id',
