@@ -7,6 +7,19 @@ logger = logging.getLogger(__name__)
 register = template.Library()
 
 
+@register.simple_tag
+def active_route(request, namespace, *url_names):
+    """Return the active navigation class for an exact named route match."""
+    resolver_match = getattr(request, "resolver_match", None)
+    if (
+        resolver_match
+        and resolver_match.app_name == namespace
+        and resolver_match.url_name in url_names
+    ):
+        return "active"
+    return ""
+
+
 def _get_user_group_names(user):
     """Return a cached set of group names for ``user``.
 
