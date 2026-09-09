@@ -20,6 +20,13 @@ class ALPRegistrationFormSchoolTests(TestCase):
 
         self.assertNotIn('school', form.fields)
 
+    def test_child_work_participation_is_marked_required(self):
+        request = SimpleNamespace(user=self.user)
+
+        form = ALPRegistrationForm(request=request)
+
+        self.assertTrue(form.fields['have_labour'].required)
+
     def test_submitted_school_is_replaced_with_users_school(self):
         request = SimpleNamespace(
             user=self.user,

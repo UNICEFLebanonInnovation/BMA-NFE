@@ -63,6 +63,23 @@ function downloadAttendanceCsv() {
 $(document).ready(function() {
 
     $(document).on('click', '#download_attendance', downloadAttendanceCsv);
+        e.preventDefault();
+        var programme = $('#programme').val();
+        var roundId = $('#round').val();
+        var attendanceDate = $('#attendance_date').val();
+
+        if (!attendanceDate || !programme || !roundId) {
+            showModal(translateMessage('Please fill: Attendance Date, Round, and Programme.'));
+            return;
+        }
+
+        var query = $.param({
+            attendance_date: attendanceDate,
+            round_id: roundId,
+            programme: programme
+        });
+        window.location.assign($(this).attr('href') + '?' + query);
+    });
 
     $('.attendance_day_off input').on('change', function() {
         var attendance_day_off = $(this).val();
