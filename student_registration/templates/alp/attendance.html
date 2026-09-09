@@ -129,7 +129,7 @@
                                           </div>
 
                                         <div class="d-block text-right card-footer">
-                                            <a href="#" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary"><i class="pe-7s-cloud-download btn-icon-wrapper"></i>{% trans "Download" %}</a>
+                                            <button type="button" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary disabled" id="download_attendance" disabled><i class="pe-7s-cloud-download btn-icon-wrapper"></i>{% trans "Download" %}</button>
                                             <a href="{% url 'alp:load_attendance_children' %}?school_id={{ request.user.school_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>{% trans "Load" %}</a>
 {% if request.user|has_group:"ALP_SCHOOL" and request.user.school.id %}
                                             <a href="{% url 'alp:save_attendance_children' %}?school_id={{ request.user.school_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>{% trans "Save" %}</a>
