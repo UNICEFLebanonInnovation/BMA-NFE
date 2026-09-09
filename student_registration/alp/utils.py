@@ -68,7 +68,10 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
 
     try:
         if attendance:
-            attendances = ALPAttendanceChild.objects.filter(attendance_day=attendance)
+            attendances = ALPAttendanceChild.objects.filter(
+                attendance_day=attendance,
+                registration__registration_date__lte=attendance_day,
+            )
 
             existing_ids = []
             for attendance_child in attendances:
@@ -94,6 +97,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     deleted=False,
                     round_id=round_id,
                     programme_id=programme_id,
+                    registration_date__lte=attendance_day,
                 )
                 .exclude(id__in=existing_ids)
             )
@@ -119,6 +123,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     deleted=False,
                     round_id=round_id,
                     programme_id=programme_id,
+                    registration_date__lte=attendance_day,
                 )
             )
 
@@ -151,6 +156,8 @@ def create_attendance(data, school_id):
         logger.error(f"Invalid date format: {data['attendance_date']}")
         return False
 
+    attendance_day = attendance_date.date()
+
     try:
         attendance, created = ALPAttendance.objects.get_or_create(
             round_id=round_id,
@@ -170,10 +177,29 @@ def create_attendance(data, school_id):
                 logger.warning(f"Missing child_id or registration_id for child: {child}")
                 continue
 
+            # Never trust IDs submitted by the browser. Besides preventing
+            # cross-school attendance, this ensures attendance cannot predate
+            # the child's registration in this round.
+            registration = ALPRegistration.objects.filter(
+                id=registration_id,
+                child_id=child_id,
+                school_id=school_id,
+                round_id=round_id,
+                programme_id=programme_id,
+                deleted=False,
+                registration_date__lte=attendance_day,
+            ).first()
+            if registration is None:
+                logger.warning(
+                    "Ignoring ineligible ALP attendance registration %s",
+                    registration_id,
+                )
+                continue
+
             attendance_child, child_created = ALPAttendanceChild.objects.get_or_create(
                 attendance_day=attendance,
-                child_id=child_id,
-                registration_id=registration_id
+                child_id=registration.child_id,
+                registration=registration,
             )
 
             attendance_child.attended = child.get('attended')
