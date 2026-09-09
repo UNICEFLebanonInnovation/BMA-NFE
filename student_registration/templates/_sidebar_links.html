@@ -7,27 +7,27 @@
     <i class="bi bi-house-door"></i> <span>{% trans "Home" %}</span>
 </a>
 
-<a href="{% url 'mscc:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+<a href="{% url 'mscc:dashboard' %}" class="nav-link {% active_route request 'mscc' 'dashboard' %}">
     <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
 </a>
 
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Operations" %}</div>
 
-<a href="{% url 'mscc:list' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'list' or request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'child_add' or request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'child_edit' or request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'child_profile' %}active{% endif %}">
+<a href="{% url 'mscc:list' %}" class="nav-link {% active_route request 'mscc' 'list' 'child_add' 'child_edit' 'child_profile' 'new_round' 'child_mark_deleted' 'child_registration_cancel' %}">
     <i class="bi bi-person-plus"></i> <span>{% trans "Registration" %}</span>
 </a>
-<a href="{% url 'mscc:attendance' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and 'attendance' in request.resolver_match.url_name %}active{% endif %}">
+<a href="{% url 'mscc:attendance' %}" class="nav-link {% active_route request 'mscc' 'attendance' 'load_attendance_children' 'save_attendance_children' 'attendance_child' 'attendance_report' %}">
     <i class="bi bi-calendar-check"></i> <span>{% trans "Attendance" %}</span>
 </a>
 <a href="{% url 'locations:center_list' %}" class="nav-link {% if request.resolver_match.app_name == 'locations' %}active{% endif %}">
     <i class="bi bi-building"></i> <span>{% trans "Centers" %}</span>
 </a>
-<a href="{% url 'mscc:teacher_list' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and 'teacher' in request.resolver_match.url_name %}active{% endif %}">
+<a href="{% url 'mscc:teacher_list' %}" class="nav-link {% active_route request 'mscc' 'teacher_list' 'teacher_add' 'teacher_edit' 'teacher_delete' %}">
     <i class="bi bi-people"></i> <span>{% trans "Teachers" %}</span>
 </a>
 
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Analytics" %}</div>
-<a href="{% url 'dashboard:pivot_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'pivot_dashboard' %}active{% endif %}">
+<a href="{% url 'dashboard:pivot_dashboard' %}" class="nav-link {% active_route request 'dashboard' 'pivot_dashboard' %}">
     <i class="bi bi-graph-up"></i> <span>{% trans "Pivot Builder" %}</span>
 </a>
 <!--<a href="{% url 'dashboard:advanced_analytics' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'advanced_analytics' %}active{% endif %}">-->
@@ -36,16 +36,16 @@
 <!--<a href="{% url 'dashboard:advanced_exporter' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'advanced_exporter' %}active{% endif %}">-->
     <!--<i class="bi bi-cloud-download"></i> <span>{% trans "Advanced Exporter" %}</span>-->
 <!--</a>-->
-<a href="{% url 'mscc:wellbeing_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'wellbeing_dashboard' %}active{% endif %}">
+<a href="{% url 'mscc:wellbeing_dashboard' %}" class="nav-link {% active_route request 'mscc' 'wellbeing_dashboard' %}">
     <i class="bi bi-heart-pulse"></i> <span>{% trans "Learning Outcome" %}</span>
 </a>
-<a href="{% url 'mscc:teacher_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}">
+<a href="{% url 'mscc:teacher_dashboard' %}" class="nav-link {% active_route request 'mscc' 'teacher_dashboard' %}">
     <i class="bi bi-person-video3"></i> <span>{% trans "Teacher Dashboard" %}</span>
 </a>
-<a href="{% url 'mscc:attendance_heatmap' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'attendance_heatmap' %}active{% endif %}">
+<a href="{% url 'mscc:attendance_heatmap' %}" class="nav-link {% active_route request 'mscc' 'attendance_heatmap' %}">
     <i class="bi bi-calendar3"></i> <span>{% trans "Attendance Heatmap" %}</span>
 </a>
-<a href="{% url 'dashboard:centers_map' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'centers_map' %}active{% endif %}">
+<a href="{% url 'dashboard:centers_map' %}" class="nav-link {% active_route request 'dashboard' 'centers_map' %}">
     <i class="bi bi-geo-alt"></i> <span>{% trans "Centers Map" %}</span>
 </a>
 
@@ -59,48 +59,48 @@
 {% endif %}
 
 {% if request.user|has_group:"ALP_SCHOOL" %}
-<a href="{% url 'alp:landing_page' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'landing_page' %}active{% endif %}">
+<a href="{% url 'alp:landing_page' %}" class="nav-link {% active_route request 'alp' 'landing_page' %}">
     <i class="bi bi-house-door"></i> <span>{% trans "Home" %}</span>
 </a>
 
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Operations" %}</div>
-<a href="{% url 'alp:registration_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'registration' in request.resolver_match.url_name and 'dashboard' not in request.resolver_match.url_name %}active{% endif %}">
+<a href="{% url 'alp:registration_list' %}" class="nav-link {% active_route request 'alp' 'registration_list' 'registration_add' 'registration_edit' 'registration_delete' 'child_profile' 'grading_add' 'grading_edit' %}">
     <i class="bi bi-person-plus"></i> <span>{% trans "ALP Registrations" %}</span>
 </a>
-<a href="{% url 'alp:attendance_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'attendance' in request.resolver_match.url_name %}active{% endif %}">
+<a href="{% url 'alp:attendance_list' %}" class="nav-link {% active_route request 'alp' 'attendance_list' 'load_attendance_children' 'save_attendance_children' %}">
     <i class="bi bi-calendar-check"></i> <span>{% trans "ALP Attendance" %}</span>
 </a>
-<a href="{% url 'alp:teacher_attendance_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'teacher_attendance' in request.resolver_match.url_name %}active{% endif %}">
+<a href="{% url 'alp:teacher_attendance_list' %}" class="nav-link {% active_route request 'alp' 'teacher_attendance_list' 'load_attendance_teachers' 'save_attendance_teachers' %}">
     <i class="bi bi-calendar-check-fill"></i> <span>{% trans "ALP Teacher Attendance" %}</span>
 </a>
-<a href="{% url 'alp:school_profile' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'school' in request.resolver_match.url_name %}active{% endif %}">
+<a href="{% url 'alp:school_profile' %}" class="nav-link {% active_route request 'alp' 'school_profile' %}">
     <i class="bi bi-building"></i> <span>{% trans "School Profile" %}</span>
 </a>
-<a href="{% url 'alp:teacher_list' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and 'teacher' in request.resolver_match.url_name %}active{% endif %}">
+<a href="{% url 'alp:teacher_list' %}" class="nav-link {% active_route request 'alp' 'teacher_list' 'teacher_add' 'teacher_edit' 'teacher_delete' %}">
     <i class="bi bi-people"></i> <span>{% trans "ALP Teachers" %}</span>
 </a>
 
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Analytics" %}</div>
-<a href="{% url 'alp:dashboard_registration' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'dashboard_registration' %}active{% endif %}">
+<a href="{% url 'alp:dashboard_registration' %}" class="nav-link {% active_route request 'alp' 'dashboard_registration' %}">
     <i class="bi bi-speedometer2"></i> <span>{% trans "Registration Dashboard" %}</span>
 </a>
-<a href="{% url 'alp:dashboard_teacher' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'dashboard_teacher' %}active{% endif %}">
+<a href="{% url 'alp:dashboard_teacher' %}" class="nav-link {% active_route request 'alp' 'dashboard_teacher' %}">
     <i class="bi bi-person-video3"></i> <span>{% trans "Teacher Dashboard" %}</span>
 </a>
-<a href="{% url 'alp:dashboard_attendance' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'dashboard_attendance' %}active{% endif %}">
+<a href="{% url 'alp:dashboard_attendance' %}" class="nav-link {% active_route request 'alp' 'dashboard_attendance' %}">
     <i class="bi bi-calendar-check"></i> <span>{% trans "Attendance Dashboard" %}</span>
 </a>
-<a href="{% url 'alp:dashboard_school' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'dashboard_school' %}active{% endif %}">
+<a href="{% url 'alp:dashboard_school' %}" class="nav-link {% active_route request 'alp' 'dashboard_school' %}">
     <i class="bi bi-building"></i> <span>{% trans "School Dashboard" %}</span>
 </a>
-<a href="{% url 'alp:pivot_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'pivot_dashboard' %}active{% endif %}">
+<a href="{% url 'alp:pivot_dashboard' %}" class="nav-link {% active_route request 'alp' 'pivot_dashboard' %}">
     <i class="bi bi-graph-up"></i> <span>{% trans "ALP Pivot Builder" %}</span>
 </a>
 {% endif %}
 
 {% if request.user.is_staff and not request.user|has_group:"ALP_SCHOOL" %}
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "ALP Analytics" %}</div>
-<a href="{% url 'alp:pivot_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'alp' and request.resolver_match.url_name == 'pivot_dashboard' %}active{% endif %}">
+<a href="{% url 'alp:pivot_dashboard' %}" class="nav-link {% active_route request 'alp' 'pivot_dashboard' %}">
     <i class="bi bi-graph-up"></i> <span>{% trans "ALP Pivot Builder" %}</span>
 </a>
 {% endif %}
