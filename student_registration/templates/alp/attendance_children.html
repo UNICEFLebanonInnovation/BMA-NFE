@@ -4,7 +4,11 @@
 
 <div class="attendance-list">
     {% for item in instances %}
-    <div class="card border shadow-none mb-3 list-group-item p-0 overflow-hidden">
+    <div class="card border shadow-none mb-3 list-group-item p-0 overflow-hidden"
+         data-child-name="{{ item.child_fullname }}"
+         data-mother-name="{{ item.child_mother_fullname }}"
+         data-birthday="{{ item.child_birthday }}"
+         data-nationality="{{ item.child_nationality }}">
         <div class="card-body p-3">
             <div class="d-flex align-items-center flex-wrap gap-3">
                 <!-- Avatar & Status Indicator -->
@@ -100,7 +104,11 @@
     </div>
     <div class="attendance-list">
         {% for item in new_instances %}
-        <div class="card border shadow-none mb-3 list-group-item p-0 overflow-hidden border-start border-info border-4">
+        <div class="card border shadow-none mb-3 list-group-item p-0 overflow-hidden border-start border-info border-4"
+             data-child-name="{{ item.child_fullname }}"
+             data-mother-name="{{ item.child_mother_fullname }}"
+             data-birthday="{{ item.child_birthday }}"
+             data-nationality="{{ item.child_nationality }}">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center flex-wrap gap-3">
                     <div class="position-relative">

@@ -6,9 +6,63 @@ function translateMessage(message) {
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 
+function csvCell(value) {
+    var text = String(value == null ? '' : value);
+
+    // Prevent spreadsheet applications from interpreting user-entered text
+    // as a formula when the CSV is opened.
+    if (/^[=+\-@]/.test(text)) {
+        text = "'" + text;
+    }
+
+    return '"' + text.replace(/"/g, '""') + '"';
+}
+
+function downloadAttendanceCsv() {
+    var rows = [[
+        'Child', 'Mother', 'Date of birth', 'Nationality',
+        'Attendance date', 'Programme', 'Round', 'Status', 'Absence reason', 'Other details'
+    ]];
+
+    $('#attendance_children .list-group-item').each(function () {
+        var $item = $(this);
+        var status = $item.find('input.status:checked').val() || '';
+
+        rows.push([
+            $item.data('child-name'),
+            $item.data('mother-name'),
+            $item.data('birthday'),
+            $item.data('nationality'),
+            $('#attendance_date').val(),
+            $('#programme option:selected').text().trim(),
+            $('#round option:selected').text().trim(),
+            status === 'Yes' ? 'Attended' : 'Absent',
+            status === 'No' ? $item.find('.absence_reason').val() : '',
+            status === 'No' ? $item.find('.absence_reason_other').val() : ''
+        ]);
+    });
+
+    if (rows.length === 1) {
+        showModal(translateMessage('Load attendance before downloading.'));
+        return;
+    }
+
+    var csv = '\uFEFF' + rows.map(function (row) {
+        return row.map(csvCell).join(',');
+    }).join('\r\n');
+    var url = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'alp_attendance_' + $('#attendance_date').val() + '.csv';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+}
+
 $(document).ready(function() {
 
-    $(document).on('click', '#download_attendance', function(e) {
+    $(document).on('click', '#download_attendance', downloadAttendanceCsv);
         e.preventDefault();
         var programme = $('#programme').val();
         var roundId = $('#round').val();
@@ -34,6 +88,7 @@ $(document).ready(function() {
             $('#close_reason').removeClass('hidden');
             $('#load_attendance_children').addClass('disabled');
             $('#save_attendance_children').removeClass('disabled');
+            $('#download_attendance').addClass('disabled').prop('disabled', true);
             $('#attendance_children').empty("");
         } else {
             $('#close_reason').addClass('hidden');
@@ -161,6 +216,9 @@ $(document).ready(function() {
                 $('#children_count').text(childrenCount);
 
                 $('#save_attendance_children').removeClass('disabled');
+                $('#download_attendance')
+                    .toggleClass('disabled', childrenCount === 0)
+                    .prop('disabled', childrenCount === 0);
                 $('.app-drawer-overlay').addClass('d-none');
             },
             error: function(response) {
@@ -197,6 +255,7 @@ $(document).ready(function() {
         $('#attendance_children').empty("");
         $('#children_count').text(0);
         $('#save_attendance_children').addClass('disabled');
+        $('#download_attendance').addClass('disabled').prop('disabled', true);
         $('#load_attendance_children').removeClass('disabled');
     });
 
@@ -205,6 +264,7 @@ $(document).ready(function() {
             $('#attendance_children').empty("");
             $('#children_count').text(0);
             $('#save_attendance_children').addClass('disabled');
+            $('#download_attendance').addClass('disabled').prop('disabled', true);
             $('#load_attendance_children').removeClass('disabled');
         }
 
