@@ -16,10 +16,9 @@
             $('#id_teacher_assignment_other').val('');
         }
 
-        $('#div_id_teaching_hours_private_school, #div_id_teaching_hours_mscc')
-            .toggleClass('d-none', !hasPrivateAssignment);
-        $('#id_teaching_hours_private_school, #id_teaching_hours_mscc')
-            .prop('required', hasPrivateAssignment);
+        $('#div_id_teaching_hours_private_school').toggleClass('d-none', !hasPrivateAssignment);
+        $('#id_teaching_hours_private_school').prop('required', hasPrivateAssignment);
+        $('#id_teaching_hours_mscc').prop('required', hasPrivateAssignment);
     }
 
     $(function () {

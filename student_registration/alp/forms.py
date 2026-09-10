@@ -238,15 +238,6 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         )
     )
     birthdate = forms.DateField(label=_('Birth date'), widget=forms.TextInput(attrs={'type': 'date'}), required=False)
-    id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.all(),
-        widget=forms.Select,
-        label=_('ID type'),
-        empty_label=_('-------'),
-        required=False,
-        to_field_name='id',
-    )
-    id_number = forms.CharField(label=_('ID number'), widget=forms.TextInput, required=False)
     nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(),
         widget=forms.Select,
@@ -296,7 +287,7 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     teaching_hours_mscc = forms.IntegerField(
-        label=_('Number of teaching hours'),
+        label=_('Number of teaching hours per week under ALP'),
         widget=forms.TextInput, required=False
     )
     trainings = forms.ModelMultipleChoiceField(
@@ -436,8 +427,6 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
                 ),
                 Div(
                     Div('nationality', css_class='col-md-4'),
-                    Div('id_type', css_class='col-md-4'),
-                    Div('id_number', css_class='col-md-4'),
                     css_class='row mb-3'
                 ),
                 Div(
@@ -456,6 +445,9 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
                     Div('teacher_assignment', css_class='col-md-4'),
                     Div('teacher_assignment_other', css_class='col-md-4'),
                     Div('teaching_hours_private_school', css_class='col-md-4'),
+                    css_class='row mb-3'
+                ),
+                Div(
                     Div('teaching_hours_mscc', css_class='col-md-4'),
                     css_class='row mb-3'
                 ),
@@ -552,8 +544,6 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
             'mother_fullname',
             'sex',
             'birthdate',
-            'id_type',
-            'id_number',
             'nationality',
             'phone_number',
             'email',

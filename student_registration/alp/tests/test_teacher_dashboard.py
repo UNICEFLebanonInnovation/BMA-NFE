@@ -55,6 +55,20 @@ class ALPTeacherDashboardTests(TestCase):
             ],
         )
 
+    def test_teacher_form_omits_identification_fields(self):
+        form = ALPTeacherForm(user=self.user)
+
+        self.assertNotIn('id_type', form.fields)
+        self.assertNotIn('id_number', form.fields)
+
+    def test_teacher_form_asks_for_weekly_alp_teaching_hours(self):
+        form = ALPTeacherForm(user=self.user)
+
+        self.assertEqual(
+            form.fields['teaching_hours_mscc'].label,
+            'Number of teaching hours per week under ALP',
+        )
+
     def test_other_teacher_assignment_requires_details(self):
         form = ALPTeacherForm(
             data={'teacher_assignment': 'other'},
