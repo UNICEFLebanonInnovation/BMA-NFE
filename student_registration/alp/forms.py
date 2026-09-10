@@ -26,24 +26,21 @@ class ALPSchoolProfileForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=True,
     )
-    programs = forms.MultipleChoiceField(
-        label=_('Education Program'),
-        choices=tuple(choice for choice in School.PROGRAM if choice[0] != 'ALP'),
-        widget=forms.CheckboxSelectMultiple,
-        required=False,
-    )
     offer_digital_learning = forms.ChoiceField(
-        label=_('Does the center offer digital learning services?'),
+        label=_('Does the school offer digital learning services?'),
         choices=School.YES_NO,
         required=False,
     )
     have_digital_hub = forms.ChoiceField(
-        label=_('Does the center have a digital hub?'),
+        label=_('Does the school have a digital hub?'),
         choices=School.YES_NO,
         required=False,
     )
     admin_staff_number = forms.IntegerField(
-        label=_('Number of Admin staff in the center'),
+        label=_(
+            '# of staff assigned under the ALP programme within the school, '
+            'including teaching and admin staff'
+        ),
         min_value=0,
         required=True,
     )
@@ -113,10 +110,9 @@ class ALPSchoolProfileForm(forms.ModelForm):
                 ),
             ),
             Fieldset(
-                _('Provided Services & Programs'),
+                _('Provided Services'),
                 Div(
-                    Div('provided_packages', css_class='col-md-6 multiple-choice'),
-                    Div('programs', css_class='col-md-6 multiple-choice'),
+                    Div('provided_packages', css_class='col-md-12 multiple-choice'),
                     css_class='row',
                 ),
                 Div(
@@ -141,9 +137,11 @@ class ALPSchoolProfileForm(forms.ModelForm):
             'number', 'name', 'type', 'operating_shift', 'director_name',
             'land_phone_number', 'email', 'governorate', 'district', 'cadaster',
             'longitude', 'latitude',
-            'provided_packages', 'programs', 'offer_digital_learning',
+            'provided_packages', 'offer_digital_learning',
             'have_digital_hub', 'admin_staff_number', 'neaby_phcc',
         )
+
+
 class ALPRegistrationForm(MainForm):
     """ALP registration with the MSCC child, caregiver and ID workflow."""
 
