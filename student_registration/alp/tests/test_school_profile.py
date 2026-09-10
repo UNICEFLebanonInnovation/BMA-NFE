@@ -9,7 +9,9 @@ from student_registration.users.models import User
 
 class SchoolProfileViewTests(TestCase):
     def setUp(self):
-        self.school = School.objects.create(number='100', name='Old name')
+        self.school = School.objects.create(
+            number='100', name='Old name', programs=['ALP']
+        )
         group = Group.objects.create(name='ALP_SCHOOL')
         self.user = User.objects.create_user(
             username='focal-point', password='password', school=self.school
@@ -22,7 +24,6 @@ class SchoolProfileViewTests(TestCase):
             'number': self.school.number,
             'name': self.school.name,
             'provided_packages': ['Education'],
-            'programs': ['BLN'],
             'offer_digital_learning': 'yes',
             'have_digital_hub': 'no',
             'admin_staff_number': 2,
@@ -44,13 +45,21 @@ class SchoolProfileViewTests(TestCase):
         self.assertNotContains(response, 'School Capacity')
         self.assertNotContains(response, 'name="registration_level"')
         self.assertNotContains(response, 'name="school_capacity"')
-        self.assertContains(response, 'Provided Services &amp; Programs')
+        self.assertContains(response, 'Provided Services')
         self.assertContains(response, 'name="provided_packages"')
-        self.assertContains(response, 'name="programs"')
-        self.assertNotContains(response, 'value="ALP"')
+        self.assertNotContains(response, 'name="programs"')
         self.assertContains(response, 'name="offer_digital_learning"')
+        self.assertContains(
+            response, 'Does the school offer digital learning services?'
+        )
         self.assertContains(response, 'name="have_digital_hub"')
+        self.assertContains(response, 'Does the school have a digital hub?')
         self.assertContains(response, 'name="admin_staff_number"')
+        self.assertContains(
+            response,
+            '# of staff assigned under the ALP programme within the school, '
+            'including teaching and admin staff',
+        )
         self.assertContains(response, 'name="neaby_phcc"')
 
     def test_focal_point_can_only_update_assigned_school(self):
@@ -69,7 +78,7 @@ class SchoolProfileViewTests(TestCase):
         self.assertEqual(self.school.type, 'Public School')
         self.assertEqual(self.school.operating_shift, 'afternoon shift')
         self.assertEqual(self.school.provided_packages, ['Education'])
-        self.assertEqual(self.school.programs, ['BLN'])
+        self.assertEqual(self.school.programs, ['ALP'])
         self.assertEqual(self.school.offer_digital_learning, 'yes')
         self.assertEqual(self.school.have_digital_hub, 'no')
         self.assertEqual(self.school.admin_staff_number, 2)
