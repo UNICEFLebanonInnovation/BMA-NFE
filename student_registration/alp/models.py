@@ -147,7 +147,8 @@ class ALPTeacher(TimeStampedModel):
         blank=True, null=True, verbose_name=_('Number of teaching hours in private school')
     )
     teaching_hours_mscc = models.IntegerField(
-        blank=True, null=True, verbose_name=_('Number of teaching hours')
+        blank=True, null=True,
+        verbose_name=_('Number of teaching hours per week under ALP')
     )
     years_of_experience = models.IntegerField(
         blank=True, null=True, verbose_name=_('Years of experience in NFE/FE')
