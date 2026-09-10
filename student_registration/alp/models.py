@@ -301,6 +301,8 @@ class ALPRegistration(TimeStampedModel):
             ('From Other NGO', _('From Other NGO')),
             ('From Displaced Community', _('From Displaced Community')),
             ('Referred by the municipality/Other formal sources', _('Referred by the municipality/Other formal sources')),
+            ('BLN programme', _('BLN programme')),
+            ('Transitioned from National NFE assessment', _('Transitioned from National NFE assessment')),
             ('Other Sources', _('Other Sources')),
     )
     CASH_SUPPORT_PROGRAMMES = Choices(
