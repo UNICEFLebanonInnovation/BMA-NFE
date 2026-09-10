@@ -27,6 +27,15 @@ class ALPRegistrationFormSchoolTests(TestCase):
 
         self.assertTrue(form.fields['have_labour'].required)
 
+    def test_alp_referral_sources_include_bln_and_national_nfe_assessment(self):
+        request = SimpleNamespace(user=self.user)
+
+        form = ALPRegistrationForm(request=request)
+
+        choices = dict(form.fields['source_of_identification'].choices)
+        self.assertIn('BLN programme', choices)
+        self.assertIn('Transitioned from National NFE assessment', choices)
+
     def test_submitted_school_is_replaced_with_users_school(self):
         request = SimpleNamespace(
             user=self.user,
