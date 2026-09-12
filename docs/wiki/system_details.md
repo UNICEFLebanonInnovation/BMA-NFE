@@ -7,7 +7,7 @@ This document automatically generates a snapshot of the technical codebase and i
 ### Backend Core Packages (Django & Requirements)
 ```
 wheel==0.45.1
-django==5.2.7
+django==5.2.8
 django-environ==0.4.3
 whitenoise==6.9.0
 django-braces==1.17.0
@@ -15,7 +15,7 @@ django-crispy-forms==2.4
 crispy-bootstrap5==2025.6
 crispy-bootstrap3==2024.1
 django-model-utils==5.0.0
-Pillow==11.3.0
+Pillow==12.0.0
 argon2-cffi==21.3.0
 django-allauth==65.9.0
 psycopg==3.2.9
@@ -47,7 +47,7 @@ django-admin-rangefilter==0.3.0
 django-bootstrap5==25.1
 bootstrap3-datetime==2.4
 django-tables2==2.7.5
-azure-core==1.34.0
+azure-core==1.36.0
 azure-storage-blob==12.25.1
 openpyxl==2.4.9
 django-prettyjson==0.4.1
