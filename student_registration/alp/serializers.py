@@ -10,4 +10,5 @@ class ALPRegistrationSerializer(MainSerializer):
         model = ALPRegistration
         fields = MainSerializer.Meta.fields + (
             'school', 'round', 'programme', 'registration_date', 'student_old',
+            'consent_form',
         )

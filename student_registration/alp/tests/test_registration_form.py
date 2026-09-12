@@ -27,6 +27,18 @@ class ALPRegistrationFormSchoolTests(TestCase):
 
         self.assertTrue(form.fields['have_labour'].required)
 
+    def test_consent_form_accepts_document_or_photo_upload(self):
+        request = SimpleNamespace(user=self.user)
+
+        form = ALPRegistrationForm(request=request)
+
+        consent_form = form.fields['consent_form']
+        self.assertFalse(consent_form.required)
+        self.assertEqual(
+            consent_form.widget.attrs['accept'],
+            'application/pdf,image/*',
+        )
+
     def test_alp_referral_sources_include_bln_and_national_nfe_assessment(self):
         request = SimpleNamespace(user=self.user)
 

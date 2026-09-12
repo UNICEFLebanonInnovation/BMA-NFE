@@ -145,6 +145,15 @@ class ALPSchoolProfileForm(forms.ModelForm):
 class ALPRegistrationForm(MainForm):
     """ALP registration with the MSCC child, caregiver and ID workflow."""
 
+    consent_form = forms.FileField(
+        label=_('Consent form copy/photo'),
+        required=False,
+        help_text=_('Upload a scanned copy or clear photo of the signed consent form.'),
+        widget=forms.ClearableFileInput(attrs={
+            'accept': 'application/pdf,image/*',
+        }),
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         route = 'alp:registration_edit' if self.instance.pk else 'alp:registration_add'
@@ -186,6 +195,8 @@ class ALPRegistrationForm(MainForm):
         child = registration.child
         if request.FILES.get('child_photo'):
             child.photo = request.FILES['child_photo']
+        if request.FILES.get('consent_form'):
+            registration.consent_form = request.FILES['consent_form']
         child.disability_other = request.POST.get('child_disability_other', '')
         child.unicef_id = generate_one_unique_id(
             str(child.pk), child.first_name, child.father_name, child.last_name,
@@ -201,7 +212,7 @@ class ALPRegistrationForm(MainForm):
     class Meta:
         model = ALPRegistration
         fields = MainForm.Meta.fields + (
-            'school', 'round', 'programme', 'registration_date',
+            'school', 'round', 'programme', 'registration_date', 'consent_form',
         )
         widgets = {'registration_date': forms.DateInput(attrs={'type': 'date'})}
 
