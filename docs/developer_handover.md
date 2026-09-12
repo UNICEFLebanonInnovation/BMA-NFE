@@ -19,6 +19,21 @@ For a detailed guide on setting up a local development environment, please refer
 - **MSCC exports**: `student_registration/mscc/tasks.py` contains threaded exporters that read from database views (`vw_mscc_child`, `vw_mscc_data`, `mscc_followupservice`), write CSV/XLSX output into a ZIP file, and persist it via `ExportStorage`. A push notification is sent via Firebase when a file is ready or if the export fails. Long exports should use the `mscc_export` queue to avoid contention with other tasks.
 - **Queue selection**: Configure queue names and worker counts via `CELERY_` settings. To throttle heavy export jobs, run `celery -A student_registration.taskapp worker -Q mscc_export --concurrency=1 -l info`.
 
+## Mobile synchronisation API (`mobile_api`)
+- `student_registration/mobile_api/` exposes `/api/mobile/v1/` for the BMA-App
+  Flutter application (offline registration, services and attendance). The
+  contract is documented in `docs/mobile_sync_protocol.md`.
+- `registry.py` lists every entity the app can sync and the **web form** that
+  backs it; `schema.py` turns those forms into JSON schemas for the app;
+  `engine.py` applies pushed records through the same forms (`MainForm`,
+  service forms, `create_attendance` helpers) so behaviour matches the website;
+  `dedup.py` verifies identities (UNICEF unique id + local identity key + ID
+  numbers); `models.py` stores every batch/item for audit (Django admin →
+  *Mobile sync batches*).
+- Settings: `MOBILE_API_USE_UNIQUE_ID_SERVICE` (default true) and
+  `MOBILE_API_UNIQUE_ID_TIMEOUT` (seconds, default 8).
+- Tests: `pytest student_registration/mobile_api`.
+
 ## Troubleshooting tips
 - **Database connections in threads**: Tasks that spawn threads call `close_old_connections()` before and after execution to avoid stale DB connections.
 - **Push notifications**: Export tasks call `send_push_to_web` with Firebase settings. Missing `FCM_SERVER_KEY` will surface as runtime errors during export completion.

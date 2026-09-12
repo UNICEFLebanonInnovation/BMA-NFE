@@ -27,6 +27,15 @@ For Ministry operations teams, two documents provide explicit deployment and sup
 
 A third document, ``docs/deployment.md``, has been added to provide a more detailed guide for deploying and maintaining the project. This includes comprehensive instructions on environment setup, database configuration, and running the application in a production environment. This new document consolidates and clarifies the deployment process, making it easier for new developers to get started.
 
+Mobile application
+------------------
+
+The ``BMA-App`` repository contains the Flutter tablet/phone application that
+mirrors this platform for offline field work. It talks to the
+``student_registration.mobile_api`` app (``/api/mobile/v1/``); the protocol,
+including server-side duplicate verification and the push report, is described
+in ``docs/mobile_sync_protocol.md``.
+
 Settings
 --------
 
