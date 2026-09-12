@@ -2,10 +2,10 @@
 # like Pillow and psycopg2
 # See http://bitly.com/wheel-building-fails-CPython-35
 # Verified bug on Python 3.5.1
-wheel==0.45.1
+wheel==0.46.2
 
 # Bleeding edge Django
-django==5.2.7
+django==5.2.8
 
 # Configuration
 django-environ==0.4.3
@@ -22,7 +22,7 @@ crispy-bootstrap3==2024.1
 django-model-utils==5.0.0
 
 # Images
-Pillow==11.3.0
+Pillow==12.1.1
 
 # Password storage
 argon2-cffi==21.3.0
