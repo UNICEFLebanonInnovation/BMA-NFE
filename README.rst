@@ -105,37 +105,25 @@ parallel:
 Push Notifications
 ^^^^^^^^^^^^^^^^^^
 
-Export completion messages are sent via Firebase Cloud Messaging (FCM). Provide your Firebase server key in the ``FCM_SERVER_KEY`` environment variable so that ``student_registration.mscc.tasks`` can deliver notifications. This value is read from ``config/settings/base.py`` and is required for the server to push notifications.
+Export completion messages are sent via Firebase Cloud Messaging (FCM). The server side
+uses the ``firebase-admin`` SDK, which authenticates with a Google service-account JSON
+file rather than a legacy server key.
 
-To receive notifications on the client, initialize Firebase with your project's web configuration values and reference them in your frontend code.
+That file contains a private key and is **not** kept in version control. Supply it at
+deploy time -- mount it into the container or write it out from a secret store -- and
+point the application at it::
 
-Required variables:
+    FIREBASE_CREDENTIALS_FILE=/run/secrets/firebase-creds.json
 
-- ``FIREBASE_API_KEY``
-- ``FIREBASE_AUTH_DOMAIN``
-- ``FIREBASE_PROJECT_ID``
-- ``FIREBASE_STORAGE_BUCKET``
-- ``FIREBASE_MESSAGING_SENDER_ID``
-- ``FIREBASE_APP_ID``
-- ``FIREBASE_MEASUREMENT_ID``
+When ``FIREBASE_CREDENTIALS_FILE`` is unset, the application falls back to
+``utility/firebase-creds.json`` relative to the project root. If the file is missing or
+unreadable, push notifications are skipped and a warning is logged rather than raising.
 
-Example initialization snippet::
-
-    import { initializeApp } from "firebase/app";
-    import { getAnalytics } from "firebase/analytics";
-
-    const firebaseConfig = {
-        apiKey: "<YOUR_FIREBASE_API_KEY>",
-        authDomain: "<YOUR_FIREBASE_AUTH_DOMAIN>",
-        projectId: "<YOUR_FIREBASE_PROJECT_ID>",
-        storageBucket: "<YOUR_FIREBASE_STORAGE_BUCKET>",
-        messagingSenderId: "<YOUR_FIREBASE_MESSAGING_SENDER_ID>",
-        appId: "<YOUR_FIREBASE_APP_ID>",
-        measurementId: "<YOUR_FIREBASE_MEASUREMENT_ID>",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    getAnalytics(app);
+The client-side Firebase web configuration (API key, sender ID, app ID and so on) is not
+read from the environment. It lives in ``student_registration/static/js/firebase-messaging.js``
+and ``student_registration/static/firebase-messaging-sw.js``. These values are public
+identifiers by design; access is controlled by Firebase Security Rules, not by keeping
+them secret. Edit those two files to point the frontend at a different Firebase project.
 
 
 

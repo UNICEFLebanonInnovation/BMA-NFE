@@ -8,7 +8,6 @@ import logging
 import base64
 import binascii
 
-from pathlib import Path
 from time import mktime
 
 from django.core.files.storage import FileSystemStorage
@@ -92,6 +91,49 @@ def is_valid_filename(filename, extension):
     return re.match(pattern, filename) is not None
 
 
+def _init_firebase_app():
+    """Initialise the ``firebase_admin`` default app, once per process.
+
+    The service-account JSON is not in version control. Its location comes from
+    the ``FIREBASE_CREDENTIALS_FILE`` setting (see ``config/settings/base.py``),
+    which deployments point at a mounted file or one pulled from a secret store.
+
+    Returns ``True`` when the default app is ready to use, ``False`` when the
+    credentials are missing or unreadable, so callers can skip sending instead
+    of raising.
+    """
+
+    import firebase_admin
+    from firebase_admin import credentials
+
+    if firebase_admin._apps:
+        return True
+
+    cred_path = getattr(settings, 'FIREBASE_CREDENTIALS_FILE', None)
+    if not cred_path:
+        logger.warning(
+            "FIREBASE_CREDENTIALS_FILE is not configured; skipping push notification."
+        )
+        return False
+
+    if not os.path.exists(cred_path):
+        logger.warning(
+            "Firebase credentials file %s not found; skipping push notification.",
+            cred_path,
+        )
+        return False
+
+    try:
+        firebase_admin.initialize_app(credentials.Certificate(cred_path))
+    except Exception as exc:  # pragma: no cover - depends on the mounted file
+        logger.warning(
+            "Unable to initialise Firebase from %s: %s", cred_path, exc
+        )
+        return False
+
+    return True
+
+
 def send_push_to_web_0(user, title, body, data=None):
     """Send a web push notification via Firebase Cloud Messaging.
 
@@ -116,10 +158,7 @@ def send_push_to_web_0(user, title, body, data=None):
     """
 
     # Import locally to avoid loading heavy dependencies when unused.
-    from pathlib import Path
-
-    import firebase_admin
-    from firebase_admin import credentials, messaging
+    from firebase_admin import messaging
 
     from student_registration.users.models import WebPushToken
 
@@ -130,14 +169,8 @@ def send_push_to_web_0(user, title, body, data=None):
     if not tokens:
         return False
 
-    # Initialise the Firebase app if this hasn't happened yet.  The
-    # credentials file lives in ``utility/firebase-creds.json`` relative to the
-    # project root.
-    if not firebase_admin._apps:  # pragma: no cover - simple initialisation
-        project_root = Path(__file__).resolve().parents[2]
-        cred_path = project_root / "utility" / "firebase-creds.json"
-        cred = credentials.Certificate(str(cred_path))
-        firebase_admin.initialize_app(cred)
+    if not _init_firebase_app():
+        return False
 
     # FCM requires payload data values to be strings.
     payload_data = {k: str(v) for k, v in (data or {}).items()}
@@ -154,11 +187,13 @@ def send_push_to_web_0(user, title, body, data=None):
 
 
 def send_push_to_web(user, title, body, data=None):
-    import firebase_admin
-    from firebase_admin import credentials, messaging
+    from firebase_admin import messaging
 
     from student_registration.users.models import WebPushToken
 
+    # Tokens are registered from the client via the save_fcm_token view
+    # (``/api/save-fcm-token/``).  If a user has never visited the app with
+    # notifications enabled there will be no token to use here.
     token_obj = (
         WebPushToken.objects.filter(user=user)
         .order_by("-pk")
@@ -171,18 +206,10 @@ def send_push_to_web(user, title, body, data=None):
         )
         return False
 
+    if not _init_firebase_app():
+        return False
+
     try:
-        # Tokens are registered from the client via the save_fcm_token view
-        # (``/api/save-fcm-token/``).  If a user has never visited the app with
-        # notifications enabled there will be no token to use here.
-        root_dirt = Path(__file__).parents[2]
-        FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
-        cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
-        # firebase_app = firebase_admin.initialize_app(cred)
-
-        if not firebase_admin._apps:
-            firebase_admin.initialize_app(cred)
-
         message = messaging.Message(
             notification=messaging.Notification(
                 title=title,

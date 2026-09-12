@@ -162,9 +162,9 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
-    'default': env.db('DATABASE_URL',
-    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-tst-flex-14.postgres.database.azure.com:5432/bma_sector'),
+    # DATABASE_URL is required. There is deliberately no default so that no
+    # environment can silently fall back to a hardcoded connection string.
+    'default': env.db('DATABASE_URL'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -476,12 +476,16 @@ UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://le
 UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='unicefict')
 UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='!ct-ph0n3t!cs-24')
 
-# import firebase_admin
-# from firebase_admin import credentials
-# from pathlib import Path
-#
-# root_dirt = Path(__file__).parents[2]
-# FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
-# cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
-# firebase_app = firebase_admin.initialize_app(cred)
+# FIREBASE CONFIGURATION
+# ------------------------------------------------------------------------------
+# Path to the Google service-account JSON that firebase-admin uses to send push
+# notifications. The file holds a private key and is never committed: mount it
+# at deploy time or pull it from a secret store, then point this variable at it.
+# The default keeps the conventional location working for deployments that only
+# mount the file.
+FIREBASE_CREDENTIALS_FILE = env(
+    'FIREBASE_CREDENTIALS_FILE',
+    default=str(ROOT_DIR.path('utility')('firebase-creds.json')),
+)
+
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"

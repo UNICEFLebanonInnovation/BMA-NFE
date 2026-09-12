@@ -14,11 +14,27 @@ The project is configured to use a PostgreSQL database. The connection details s
 DATABASE_URL=postgres://<user>:<password>@<host>:<port>/<database_name>
 ```
 
-**Important:** The hardcoded database URL in `config/settings/base.py` has been removed to improve security and align with best practices. All database configurations should be managed through the `.env` file.
+**Important:** `DATABASE_URL` is **required**. The hardcoded fallback connection string that used to live in `config/settings/base.py` has been removed, and `env.db('DATABASE_URL')` is now called without a default, so Django will refuse to start if the variable is not set. Any environment that previously relied on the fallback must set `DATABASE_URL` explicitly. The credentials that were embedded in that fallback are considered compromised (they were committed to git history) and must be rotated on the database server.
 
-### 1.2. Other Configurations
+### 1.2. Firebase Credentials
+
+Push notifications use `firebase-admin` with a Google service-account JSON file. That file contains a private key and is **not** in version control (`utility/firebase-creds.json` is listed in `.gitignore`).
+
+Provide it at deploy time, either by mounting the file into the container or by writing it out from a secret store, then point the application at it:
+
+```
+FIREBASE_CREDENTIALS_FILE=/run/secrets/firebase-creds.json
+```
+
+If `FIREBASE_CREDENTIALS_FILE` is unset, the application falls back to the conventional location `utility/firebase-creds.json`. When the file is missing or unreadable, push notifications are skipped and a warning is logged; nothing else in the application fails.
+
+A service-account key for project `leb-bma` was previously committed to this repository. It must be revoked in the Firebase console and replaced with a freshly issued key.
+
+### 1.3. Other Configurations
 
 The `.env` file should also contain other sensitive information, such as the `DJANGO_SECRET_KEY`, email server settings, and any other environment-specific variables. Refer to `env.example` for a complete list of required variables.
+
+**Secrets must never be committed.** `dev.env` and `env.example` ship with empty placeholders only. A literal `DJANGO_SECRET_KEY` was previously committed in `dev.env`; that key must be treated as compromised and rotated in every environment where it was used.
 
 ## 2. Running the Application
 

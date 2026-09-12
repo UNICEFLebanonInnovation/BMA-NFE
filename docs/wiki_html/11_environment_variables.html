@@ -358,7 +358,7 @@ body {
 <tr>
 <td><code>DATABASE_URL</code></td>
 <td><code>postgres://user:pass@host:5432/dbname</code></td>
-<td>Full database connection string</td>
+<td>Full database connection string. <strong>Required</strong> &mdash; there is no fallback in <code>config/settings/base.py</code>, so the application will not start without it.</td>
 </tr>
 <tr>
 <td><code>POSTGRES_HOST</code></td>
@@ -509,36 +509,8 @@ body {
 </thead>
 <tbody>
 <tr>
-<td><code>FCM_SERVER_KEY</code></td>
-<td>Firebase server key for push notifications</td>
-</tr>
-<tr>
-<td><code>FIREBASE_API_KEY</code></td>
-<td>Firebase Web API key</td>
-</tr>
-<tr>
-<td><code>FIREBASE_AUTH_DOMAIN</code></td>
-<td>Firebase auth domain</td>
-</tr>
-<tr>
-<td><code>FIREBASE_PROJECT_ID</code></td>
-<td>Firebase project ID</td>
-</tr>
-<tr>
-<td><code>FIREBASE_STORAGE_BUCKET</code></td>
-<td>Firebase storage bucket</td>
-</tr>
-<tr>
-<td><code>FIREBASE_MESSAGING_SENDER_ID</code></td>
-<td>Firebase messaging sender ID</td>
-</tr>
-<tr>
-<td><code>FIREBASE_APP_ID</code></td>
-<td>Firebase app ID</td>
-</tr>
-<tr>
-<td><code>FIREBASE_MEASUREMENT_ID</code></td>
-<td>Firebase measurement ID (analytics)</td>
+<td><code>FIREBASE_CREDENTIALS_FILE</code></td>
+<td>Path to the Google service-account JSON used by <code>firebase-admin</code>. Not in version control: mount it at deploy time or pull it from a secret store. Defaults to <code>utility/firebase-creds.json</code> when unset.</td>
 </tr>
 </tbody>
 </table>
