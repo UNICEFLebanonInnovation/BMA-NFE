@@ -17,7 +17,8 @@ The platform uses Docker and Docker Compose to containerize its components, ensu
 
 **Deployment Reference**:
 *   Detailed setup instructions can be found in `docs/deployment.md` and `docs/ministry_handover.md`.
-*   The `.env` file must be securely configured with `DATABASE_URL`, `DJANGO_SECRET_KEY`, `FCM_SERVER_KEY`, and Sentry DSN.
+*   The `.env` file must be securely configured with `DATABASE_URL`, `DJANGO_SECRET_KEY`, `FIREBASE_CREDENTIALS_FILE`, and Sentry DSN.
+*   `DATABASE_URL` is required — `config/settings/base.py` provides no fallback, so the application will not start without it.
 
 ---
 
@@ -56,7 +57,8 @@ The platform leverages Celery to offload resource-intensive operations, primaril
 
 When background tasks (like exports) complete, the system notifies the requesting user in real-time via **Firebase Cloud Messaging**.
 
-*   **Configuration**: The `FCM_SERVER_KEY` must be set in the `.env` file.
+*   **Configuration**: Server-side sending uses `firebase-admin` with a Google service-account JSON file. The file holds a private key, is not kept in version control, and is supplied at deploy time (mounted or pulled from a secret store). Point `FIREBASE_CREDENTIALS_FILE` at its location; when unset the application looks for `utility/firebase-creds.json`. If the file is absent, push notifications are skipped with a logged warning rather than failing the request.
+*   **Key rotation**: A service-account key for project `leb-bma` was previously committed to the repository and must be revoked in the Firebase console and reissued.
 *   **Frontend Integration**: The client uses a Service Worker (`firebase-messaging-sw.js`) to listen for incoming push events.
 *   **Export Notification Flow**: Once Celery finishes building a ZIP/CSV file, it triggers a push message. The frontend displays a "Download Ready" modal, allowing the user to retrieve the file immediately.
 

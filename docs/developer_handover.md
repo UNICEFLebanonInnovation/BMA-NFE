@@ -21,7 +21,7 @@ For a detailed guide on setting up a local development environment, please refer
 
 ## Troubleshooting tips
 - **Database connections in threads**: Tasks that spawn threads call `close_old_connections()` before and after execution to avoid stale DB connections.
-- **Push notifications**: Export tasks call `send_push_to_web` with Firebase settings. Missing `FCM_SERVER_KEY` will surface as runtime errors during export completion.
+- **Push notifications**: Export tasks call `send_push_to_web`, which authenticates with the Firebase service-account file named by `FIREBASE_CREDENTIALS_FILE` (default `utility/firebase-creds.json`). If that file is missing or unreadable the send is skipped and a warning is logged, so silently absent notifications usually mean the credentials file was not mounted.
 - **Session enforcement**: If users report being logged out unexpectedly, review `student_registration/one_session.py` to confirm session records are cleaned up correctly.
 - **Error tracking**: Sentry is enabled when `DJANGO_SENTRY_DSN` is present. Check environment variables before debugging missing alerts.
 

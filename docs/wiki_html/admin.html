@@ -318,7 +318,8 @@ body {
 </ul>
 <p><strong>Deployment Reference</strong>:<br />
 *   Detailed setup instructions can be found in <code>docs/deployment.md</code> and <code>docs/ministry_handover.md</code>.<br />
-*   The <code>.env</code> file must be securely configured with <code>DATABASE_URL</code>, <code>DJANGO_SECRET_KEY</code>, <code>FCM_SERVER_KEY</code>, and Sentry DSN.</p>
+*   The <code>.env</code> file must be securely configured with <code>DATABASE_URL</code>, <code>DJANGO_SECRET_KEY</code>, <code>FIREBASE_CREDENTIALS_FILE</code>, and Sentry DSN.
+*   <code>DATABASE_URL</code> is required &mdash; <code>config/settings/base.py</code> provides no fallback, so the application will not start without it.</p>
 <hr />
 <h2 id="2-role-based-access-control-rbac">2. Role-Based Access Control (RBAC)</h2>
 <p>The system enforces strict data isolation based on user roles and associations.</p>
@@ -349,7 +350,8 @@ body {
 <h2 id="4-notifications-firebase-fcm">4. Notifications &amp; Firebase (FCM)</h2>
 <p>When background tasks (like exports) complete, the system notifies the requesting user in real-time via <strong>Firebase Cloud Messaging</strong>.</p>
 <ul>
-<li><strong>Configuration</strong>: The <code>FCM_SERVER_KEY</code> must be set in the <code>.env</code> file.</li>
+<li><strong>Configuration</strong>: Server-side sending uses <code>firebase-admin</code> with a Google service-account JSON file. The file holds a private key, is not kept in version control, and is supplied at deploy time (mounted or pulled from a secret store). Point <code>FIREBASE_CREDENTIALS_FILE</code> at its location; when unset the application looks for <code>utility/firebase-creds.json</code>. If the file is absent, push notifications are skipped with a logged warning rather than failing the request.</li>
+<li><strong>Key rotation</strong>: A service-account key for project <code>leb-bma</code> was previously committed to the repository and must be revoked in the Firebase console and reissued.</li>
 <li><strong>Frontend Integration</strong>: The client uses a Service Worker (<code>firebase-messaging-sw.js</code>) to listen for incoming push events.</li>
 <li><strong>Export Notification Flow</strong>: Once Celery finishes building a ZIP/CSV file, it triggers a push message. The frontend displays a "Download Ready" modal, allowing the user to retrieve the file immediately.</li>
 </ul>

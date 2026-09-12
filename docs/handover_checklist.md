@@ -3,10 +3,21 @@
 Use this checklist to verify the platform is production-ready and clearly owned by the Ministry team before the handover.
 
 ## Environment and access
-- [ ] Production `.env` file completed with real secrets, database credentials, allowed hosts, email, Sentry, and Firebase values.
+- [ ] Production `.env` file completed with real secrets, database credentials, allowed hosts, email, and Sentry values.
+- [ ] `DATABASE_URL` set explicitly — it is required and has no fallback, so the application will not start without it.
+- [ ] Firebase service-account JSON provisioned outside version control and `FIREBASE_CREDENTIALS_FILE` pointed at it (or the file mounted at `utility/firebase-creds.json`).
 - [ ] Administrative access to DNS records confirmed and domain updated to point at the production host.
 - [ ] At least two Ministry administrators have SSH access to the server and permissions to run Docker.
 - [ ] Repository cloned on the production host; `.env` stored securely with restricted permissions.
+
+## Credential rotation
+
+Three credentials were committed to this repository's git history and must be treated as compromised. Removing them from the working tree does not remove them from history, so each one has to be rotated at its source.
+
+- [ ] **Database password** rotated on the Azure PostgreSQL server for the `lebclmprod` account, and `DATABASE_URL` updated in every environment.
+- [ ] **Firebase service-account key** for project `leb-bma` revoked in the Firebase console (IAM & Admin → Service Accounts → Keys), a replacement key issued, and the new file distributed to each deployment.
+- [ ] **`DJANGO_SECRET_KEY`** regenerated and updated everywhere the committed value was in use. Note that rotating it invalidates existing sessions and password-reset links.
+- [ ] Confirmed no other secrets remain in tracked files (`git grep` for connection strings, `BEGIN PRIVATE KEY`, and API tokens).
 
 ## Deployment validation
 - [ ] `docker compose -f production.yml up --build -d` completes without errors.
