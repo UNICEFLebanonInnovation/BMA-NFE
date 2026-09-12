@@ -418,6 +418,12 @@ class ALPRegistration(TimeStampedModel):
         null=True,
         verbose_name=_('Registration date')
     )
+    consent_form = models.FileField(
+        upload_to='uploads/alp_registration/consent_forms',
+        blank=True,
+        null=True,
+        verbose_name=_('Consent form copy/photo'),
+    )
     partner_unique_number = models.CharField(
         max_length=50,
         blank=True,
