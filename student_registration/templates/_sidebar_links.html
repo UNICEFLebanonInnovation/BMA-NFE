@@ -53,9 +53,11 @@
 <a href="{% url 'dashboard:wiki_guide' 'end_user' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_guide_index' or request.resolver_match.url_name == 'wiki_guide' %}active{% endif %}">
     <i class="bi bi-book-half"></i> <span>{% trans "User Guide" %}</span>
 </a>
+{% if request.user.is_superuser %}
 <a href="{% url 'dashboard:wiki_index' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_index' or request.resolver_match.url_name == 'wiki_page' %}active{% endif %}">
     <i class="bi bi-book"></i> <span>{% trans "Wiki" %}</span>
 </a>
+{% endif %}
 {% endif %}
 
 {% if request.user|has_group:"ALP_SCHOOL" %}

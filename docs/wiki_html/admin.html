@@ -334,6 +334,14 @@ body {
 <li><strong>Template Filtering</strong>: UI components hide unauthorized actions (e.g., "Add New Student" buttons are hidden from <code>MSCC_PARTNER</code> users).</li>
 </ul>
 <p>Administrators must configure user accounts via the <strong>Django Admin Panel</strong>, assigning the correct <code>Group</code> and associating the user with a specific <code>Center</code> or <code>Partner</code> instance.</p>
+<h3 id="in-app-documentation-access">In-App Documentation Access</h3>
+<p>The documentation bundled into the application is served over two routes, and both apply the same rule:</p>
+<ul>
+<li><code>/dashboard/guide/&lt;page&gt;/</code> renders the HTML guide from <code>docs/wiki_html/</code>.</li>
+<li><code>/dashboard/wiki/&lt;page&gt;/</code> renders the Markdown wiki from <code>docs/wiki/</code>.</li>
+</ul>
+<p>Any signed-in user may read the <strong>End User Manual</strong> (and the wiki index). Every other page &mdash; this Administration Guide, the Developer Guide and the System Overview, which describe deployment details and the role/permission model &mdash; returns <strong>HTTP 404</strong> for non-superusers on <em>both</em> routes. The rule lives in a single helper (<code>_require_wiki_access</code> in <code>student_registration/dashboard/views.py</code>) so the two routes cannot drift apart. The sidebar &quot;Wiki&quot; link is shown to superusers only; standard users see just &quot;User Guide&quot;.</p>
+<p>When adding a documentation page, remember that <code>docs/wiki/</code> and <code>docs/wiki_html/</code> are maintained as mirrors of each other &mdash; a page added to one should be added to the other, and any page that is not the end user manual is superuser-only by default.</p>
 <hr />
 <h2 id="3-managing-background-tasks-celery">3. Managing Background Tasks (Celery)</h2>
 <p>The platform leverages Celery to offload resource-intensive operations, primarily data exports.</p>
