@@ -29,5 +29,15 @@ For a detailed guide on setting up a local development environment, please refer
 - **API/UI changes**: Extend the relevant domain app (`students`, `attendances`, `mscc`, `clm`, `schools`) and update templates under `student_registration/templates/`.
 - **Background tasks**: Add Celery tasks inside the corresponding app’s `tasks.py`. Ensure workers are subscribed to any new queues you introduce.
 - **Deploy artifacts**: Update `requirements/` sets and `production.yml`/`local.yml` when new services or dependencies are required.
+- **Documentation pages**: The in-app docs are served from `docs/wiki/` (Markdown, `/dashboard/wiki/<page>/`) and `docs/wiki_html/` (HTML, `/dashboard/guide/<page>/`). The two trees are mirrors and are updated by hand — there is no build step, so a page added to one should be added to the other.
+
+## In-app documentation access control
+Both documentation routes share one rule, implemented by `_require_wiki_access` in `student_registration/dashboard/views.py`:
+
+- Any signed-in user may read the end user manual (`end_user`), plus the wiki index on the Markdown route.
+- Every other page — the administration guide, developer guide and system overview, which describe deployment details and the role/permission model — returns HTTP 404 for non-superusers.
+- The sidebar "Wiki" entry is rendered for superusers only; standard users see only "User Guide".
+
+Because the Markdown and HTML trees carry the same content, a restriction added to one route must be added to the other. Keep the rule in the shared helper rather than duplicating it per view, and extend `student_registration/dashboard/tests/test_wiki_access.py` when adding pages.
 
 Keep this guide with the repository so future maintainers have a concise starting point.

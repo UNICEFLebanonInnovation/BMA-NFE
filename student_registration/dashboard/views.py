@@ -623,6 +623,20 @@ WIKI_HTML_PAGES = [
     ('13_testing', '13. Testing Guide', 'Developer'),
 ]
 
+# Documentation pages a standard (non-superuser) account may read. Everything
+# else -- the administration, developer and system internals pages -- is
+# restricted to superusers. The Markdown route (docs/wiki) and the HTML guide
+# route (docs/wiki_html) serve mirrored content, so both consult this rule;
+# keep them together so the two routes cannot drift apart again.
+PUBLIC_GUIDE_PAGES = frozenset({'end_user'})
+PUBLIC_WIKI_PAGES = frozenset({'index', 'end_user'})
+
+
+def _require_wiki_access(user, page_name, public_pages):
+    """Raise Http404 unless this user may read this documentation page."""
+    if not user.is_superuser and page_name not in public_pages:
+        raise Http404('Documentation page not found')
+
 
 def _extract_wiki_content(html_text):
     """Extract inner HTML of <div id="content"> from a wiki HTML file."""
@@ -667,8 +681,7 @@ class WikiGuidePageView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         page_name = self.kwargs.get('page_name', 'index')
 
-        if not self.request.user.is_superuser and page_name != 'end_user':
-            raise Http404('Guide page not found')
+        _require_wiki_access(self.request.user, page_name, PUBLIC_GUIDE_PAGES)
 
         if page_name not in self.VALID_PAGES:
             raise Http404('Guide page not found')
@@ -720,6 +733,8 @@ class WikiPageView(LoginRequiredMixin, TemplateView):
         # Ensure only allowed characters in page name to prevent path traversal
         if not page_name.replace('_', '').replace('-', '').isalnum():
             raise Http404('Invalid page name')
+
+        _require_wiki_access(self.request.user, page_name, PUBLIC_WIKI_PAGES)
 
         file_path = os.path.join(str(settings.ROOT_DIR.path('docs').path('wiki')), f'{page_name}.md')
 

@@ -36,6 +36,17 @@ The system enforces strict data isolation based on user roles and associations.
 
 Administrators must configure user accounts via the **Django Admin Panel**, assigning the correct `Group` and associating the user with a specific `Center` or `Partner` instance.
 
+### In-App Documentation Access
+
+The documentation bundled into the application is served over two routes, and both apply the same rule:
+
+*   `/dashboard/guide/<page>/` renders the HTML guide from `docs/wiki_html/`.
+*   `/dashboard/wiki/<page>/` renders the Markdown wiki from `docs/wiki/`.
+
+Any signed-in user may read the **End User Manual** (and the wiki index). Every other page -- this Administration Guide, the Developer Guide and the System Overview, which describe deployment details and the role/permission model -- returns **HTTP 404** for non-superusers on *both* routes. The rule lives in a single helper (`_require_wiki_access` in `student_registration/dashboard/views.py`) so the two routes cannot drift apart. The sidebar "Wiki" link is shown to superusers only; standard users see just "User Guide".
+
+When adding a documentation page, remember that `docs/wiki/` and `docs/wiki_html/` are maintained as mirrors of each other -- a page added to one should be added to the other, and any page that is not the end user manual is superuser-only by default.
+
 ---
 
 ## 3. Managing Background Tasks (Celery)
