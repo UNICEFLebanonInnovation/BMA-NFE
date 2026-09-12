@@ -172,10 +172,31 @@ The documentation in this repository is served to users from inside the applicat
 
 | Route | Source | Access |
 |---|---|---|
-| `/dashboard/wiki/<page>/` | `docs/wiki/<page>.md`, rendered with `markdown` and sanitized with `bleach` | Any authenticated user |
-| `/dashboard/guide/<page>/` | `docs/wiki_html/<page>.html`, inner `<div id="content">` extracted and sanitized | Superusers only — except `end_user`, which every authenticated user may read |
+| `/dashboard/wiki/<page>/` | `docs/wiki/<page>.md`, rendered with `markdown` and sanitized with `bleach` | `end_user` for any authenticated user; everything else superusers only |
+| `/dashboard/guide/<page>/` | `docs/wiki_html/<page>.html`, inner `<div id="content">` extracted and sanitized | Same rule |
 
-The list of guide pages is `WIKI_HTML_PAGES` in the same module. If you add a page to `docs/wiki_html/`, add it there too, and add the matching Markdown source under `docs/wiki/`.
+There are two kinds of documentation and the split is enforced in code: the **user guidelines** (the End
+User Manual) are for everyone, and the **technical documentation** is for superusers. Both views call the
+same predicate so they cannot drift apart:
+
+```python
+PUBLIC_WIKI_PAGES = frozenset({'end_user'})
+
+def wiki_page_is_visible_to(user, page_name):
+    return page_name in PUBLIC_WIKI_PAGES or user.is_superuser
+```
+
+A page the account may not read raises `Http404` rather than `PermissionDenied`, so the technical
+documentation is not advertised to users who cannot open it. Navigation follows the same rule:
+`templates/_sidebar_links.html` shows **User Guide** to every authenticated user (in any module) and
+**Technical Wiki** only to superusers, and the documentation dropdown in `templates/base.html` is
+superuser-gated.
+
+If you add a documentation page, add it to `WIKI_HTML_PAGES`, add the Markdown source under `docs/wiki/`,
+and decide deliberately whether it belongs in `PUBLIC_WIKI_PAGES`. The default — and the right answer for
+anything describing infrastructure, permissions or deployment — is to leave it out.
+`student_registration/dashboard/tests/test_documentation_access.py` asserts the rule for both routes and
+will fail if a new technical page becomes publicly readable.
 
 `docs/wiki_html/` is generated from `docs/wiki/` — run:
 

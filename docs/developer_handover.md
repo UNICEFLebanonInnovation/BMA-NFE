@@ -47,7 +47,8 @@ For a detailed guide on setting up a local development environment, please refer
 - `config/settings/base.py` carries a hardcoded `DATABASE_URL` default containing credentials.
 - A Firebase service-account private key is committed at `utility/firebase-creds.json`.
 - `dev.env` contains a committed `DJANGO_SECRET_KEY`.
-- `WikiPageView` (`/dashboard/wiki/`) has no superuser check, while `WikiGuidePageView` (`/dashboard/guide/`) does — technical pages are therefore readable by any signed-in user through the Markdown route.
 - `student_registration/templates/alp/attendance_list.html` is unreferenced by any view and reverses a URL name (`alp:attendance_add`) that does not exist.
+- `student_registration/alp/tests/test_tables.py` imports `from alp.tables import ...` instead of `from student_registration.alp.tables import ...`, so the whole module fails collection and its tests never run.
+- Nine tests in `student_registration/alp/tests/` fail on the default branch (`test_registration_form.py`, `test_teacher_dashboard.py`, `test_pivot_dashboard.py`). They assert behaviour the code no longer has; either the tests or the code need updating.
 
 Keep this guide with the repository so future maintainers have a concise starting point.

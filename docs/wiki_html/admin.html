@@ -514,34 +514,58 @@ celery -A student_registration.taskapp worker -Q mscc_export --concurrency=1 -l 
 </blockquote>
 <hr />
 <h2 id="6-documentation-access-inside-the-application">6. Documentation Access Inside the Application</h2>
-<p>The docs in this repository are served to signed-in users:</p>
+<p>The documentation in this repository comes in two kinds, and the application enforces the split:</p>
 <table>
 <thead>
 <tr>
-<th>Route</th>
-<th>Source</th>
+<th>Kind</th>
+<th>Pages</th>
 <th>Who can read it</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>/dashboard/guide/end_user/</code></td>
-<td><code>docs/wiki_html/end_user.html</code></td>
-<td>Any authenticated user</td>
+<td><strong>User guidelines</strong></td>
+<td>The End User Manual</td>
+<td>Every authenticated user</td>
 </tr>
 <tr>
-<td><code>/dashboard/guide/&lt;page&gt;/</code> (all other pages)</td>
-<td><code>docs/wiki_html/*.html</code></td>
+<td><strong>Technical documentation</strong></td>
+<td>Administration Guide, Developer Guide, System Overview, and the numbered developer guides</td>
 <td>Superusers only</td>
+</tr>
+</tbody>
+</table>
+<p>Both documentation routes apply the same rule, so the two cannot diverge:</p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Source</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/dashboard/guide/&lt;page&gt;/</code></td>
+<td><code>docs/wiki_html/*.html</code></td>
+<td><code>end_user</code> for everyone, everything else superuser-only</td>
 </tr>
 <tr>
 <td><code>/dashboard/wiki/&lt;page&gt;/</code></td>
 <td><code>docs/wiki/*.md</code></td>
-<td>Any authenticated user</td>
+<td>Same — identical check</td>
 </tr>
 </tbody>
 </table>
-<p>Note the asymmetry: the HTML guide route restricts technical pages to superusers, but the Markdown route does <strong>not</strong>. If technical documentation must be superuser-only, <code>WikiPageView</code> needs the same check as <code>WikiGuidePageView</code>.</p>
+<p>The rule lives in one place: <code>wiki_page_is_visible_to()</code> in <code>student_registration/dashboard/views.py</code>,
+driven by the <code>PUBLIC_WIKI_PAGES</code> set. A page an account may not read returns <strong>404</strong>, not 403, so the
+existence of the technical documentation is not advertised. <code>student_registration/dashboard/tests/test_documentation_access.py</code>
+covers both routes for both kinds of account.</p>
+<p>In the interface, every signed-in user sees <strong>Documentation → User Guide</strong> in the sidebar. Superusers
+additionally see <strong>Documentation → Technical Wiki</strong> and the technical dropdown in the top bar. To grant
+someone access to the technical documentation, make their account a superuser — there is no separate
+documentation permission.</p>
 <p>After editing any file in <code>docs/wiki/</code>, regenerate the HTML mirror so both routes agree:</p>
 <pre><code class="language-bash">python docs/build_wiki_html.py
 </code></pre>

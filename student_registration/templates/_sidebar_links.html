@@ -49,13 +49,6 @@
     <i class="bi bi-geo-alt"></i> <span>{% trans "Centers Map" %}</span>
 </a>
 
-<div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Documentation" %}</div>
-<a href="{% url 'dashboard:wiki_guide' 'end_user' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_guide_index' or request.resolver_match.url_name == 'wiki_guide' %}active{% endif %}">
-    <i class="bi bi-book-half"></i> <span>{% trans "User Guide" %}</span>
-</a>
-<a href="{% url 'dashboard:wiki_index' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_index' or request.resolver_match.url_name == 'wiki_page' %}active{% endif %}">
-    <i class="bi bi-book"></i> <span>{% trans "Wiki" %}</span>
-</a>
 {% endif %}
 
 {% if request.user|has_group:"ALP_SCHOOL" %}
@@ -102,6 +95,19 @@
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "ALP Analytics" %}</div>
 <a href="{% url 'alp:pivot_dashboard' %}" class="nav-link {% active_route request 'alp' 'pivot_dashboard' %}">
     <i class="bi bi-graph-up"></i> <span>{% trans "ALP Pivot Builder" %}</span>
+</a>
+{% endif %}
+
+{# The user guidelines are available to every signed-in user, whichever module #}
+{# they work in. The technical wiki is superuser-only, matching the access     #}
+{# check in dashboard.views.wiki_page_is_visible_to.                           #}
+<div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Documentation" %}</div>
+<a href="{% url 'dashboard:wiki_guide' 'end_user' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_guide_index' or request.resolver_match.url_name == 'wiki_guide' %}active{% endif %}">
+    <i class="bi bi-book-half"></i> <span>{% trans "User Guide" %}</span>
+</a>
+{% if request.user.is_superuser %}
+<a href="{% url 'dashboard:wiki_index' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_index' or request.resolver_match.url_name == 'wiki_page' %}active{% endif %}">
+    <i class="bi bi-book"></i> <span>{% trans "Technical Wiki" %}</span>
 </a>
 {% endif %}
 

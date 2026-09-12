@@ -88,7 +88,7 @@ After logging in you will see a top bar and a left sidebar. The exact entries de
 | **CLM** | Bridging registrations, assessments, clubs, meetings, follow-ups |
 | **Attendance** | Record and view daily attendance |
 | **Reports / Dashboards** | Charts, analytics, pivot tables, maps, downloads |
-| **Documentation** | This manual, plus technical guides for administrators |
+| **Documentation** | This manual (**User Guide**). Administrators also see the technical guides here |
 | **Username (top right)** | Change language, change password, view profile, log out |
 
 ### Switching Language
@@ -97,7 +97,12 @@ Click your **username** in the top-right corner → select **English** or **ال
 
 ### Finding This Manual Inside the System
 
-This manual is available from the sidebar under **Documentation → End User Manual**. Administrators (superusers) also see additional technical guides in the same menu; standard users only see this manual.
+This manual is always available from the sidebar under **Documentation → User Guide**, whichever module
+you work in. It is the documentation written for you, and every signed-in user can open it.
+
+The system also contains **technical documentation** — deployment, database and permission references
+written for the Ministry IT team. Those pages are restricted to system administrators and will not appear
+in your menu. That is expected, not a fault with your account.
 
 ---
 
@@ -1034,7 +1039,8 @@ Administrators manage:
 
 Administrators are also the only users who can read the technical guides inside the application.
 
-> The exact group names used by the system and the views each one unlocks are listed in the [Access Control Matrix](../ACCESS_CONTROL.md).
+> Your own groups and assignments are shown on your profile page. If you need different access, ask your
+> system administrator — roles are configured centrally, not by request in the interface.
 
 ---
 

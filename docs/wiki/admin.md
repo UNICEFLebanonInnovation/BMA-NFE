@@ -120,15 +120,29 @@ When a background export completes, the system notifies the requesting user in r
 
 ## 6. Documentation Access Inside the Application
 
-The docs in this repository are served to signed-in users:
+The documentation in this repository comes in two kinds, and the application enforces the split:
 
-| Route | Source | Who can read it |
+| Kind | Pages | Who can read it |
 |---|---|---|
-| `/dashboard/guide/end_user/` | `docs/wiki_html/end_user.html` | Any authenticated user |
-| `/dashboard/guide/<page>/` (all other pages) | `docs/wiki_html/*.html` | Superusers only |
-| `/dashboard/wiki/<page>/` | `docs/wiki/*.md` | Any authenticated user |
+| **User guidelines** | The End User Manual | Every authenticated user |
+| **Technical documentation** | Administration Guide, Developer Guide, System Overview, and the numbered developer guides | Superusers only |
 
-Note the asymmetry: the HTML guide route restricts technical pages to superusers, but the Markdown route does **not**. If technical documentation must be superuser-only, `WikiPageView` needs the same check as `WikiGuidePageView`.
+Both documentation routes apply the same rule, so the two cannot diverge:
+
+| Route | Source | Rule |
+|---|---|---|
+| `/dashboard/guide/<page>/` | `docs/wiki_html/*.html` | `end_user` for everyone, everything else superuser-only |
+| `/dashboard/wiki/<page>/` | `docs/wiki/*.md` | Same — identical check |
+
+The rule lives in one place: `wiki_page_is_visible_to()` in `student_registration/dashboard/views.py`,
+driven by the `PUBLIC_WIKI_PAGES` set. A page an account may not read returns **404**, not 403, so the
+existence of the technical documentation is not advertised. `student_registration/dashboard/tests/test_documentation_access.py`
+covers both routes for both kinds of account.
+
+In the interface, every signed-in user sees **Documentation → User Guide** in the sidebar. Superusers
+additionally see **Documentation → Technical Wiki** and the technical dropdown in the top bar. To grant
+someone access to the technical documentation, make their account a superuser — there is no separate
+documentation permission.
 
 After editing any file in `docs/wiki/`, regenerate the HTML mirror so both routes agree:
 

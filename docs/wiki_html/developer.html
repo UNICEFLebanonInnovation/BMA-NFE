@@ -631,16 +631,33 @@ CELERY_RESULT_BACKEND = django-db
 <tr>
 <td><code>/dashboard/wiki/&lt;page&gt;/</code></td>
 <td><code>docs/wiki/&lt;page&gt;.md</code>, rendered with <code>markdown</code> and sanitized with <code>bleach</code></td>
-<td>Any authenticated user</td>
+<td><code>end_user</code> for any authenticated user; everything else superusers only</td>
 </tr>
 <tr>
 <td><code>/dashboard/guide/&lt;page&gt;/</code></td>
 <td><code>docs/wiki_html/&lt;page&gt;.html</code>, inner <code>&lt;div id="content"&gt;</code> extracted and sanitized</td>
-<td>Superusers only — except <code>end_user</code>, which every authenticated user may read</td>
+<td>Same rule</td>
 </tr>
 </tbody>
 </table>
-<p>The list of guide pages is <code>WIKI_HTML_PAGES</code> in the same module. If you add a page to <code>docs/wiki_html/</code>, add it there too, and add the matching Markdown source under <code>docs/wiki/</code>.</p>
+<p>There are two kinds of documentation and the split is enforced in code: the <strong>user guidelines</strong> (the End
+User Manual) are for everyone, and the <strong>technical documentation</strong> is for superusers. Both views call the
+same predicate so they cannot drift apart:</p>
+<pre><code class="language-python">PUBLIC_WIKI_PAGES = frozenset({'end_user'})
+
+def wiki_page_is_visible_to(user, page_name):
+    return page_name in PUBLIC_WIKI_PAGES or user.is_superuser
+</code></pre>
+<p>A page the account may not read raises <code>Http404</code> rather than <code>PermissionDenied</code>, so the technical
+documentation is not advertised to users who cannot open it. Navigation follows the same rule:
+<code>templates/_sidebar_links.html</code> shows <strong>User Guide</strong> to every authenticated user (in any module) and
+<strong>Technical Wiki</strong> only to superusers, and the documentation dropdown in <code>templates/base.html</code> is
+superuser-gated.</p>
+<p>If you add a documentation page, add it to <code>WIKI_HTML_PAGES</code>, add the Markdown source under <code>docs/wiki/</code>,
+and decide deliberately whether it belongs in <code>PUBLIC_WIKI_PAGES</code>. The default — and the right answer for
+anything describing infrastructure, permissions or deployment — is to leave it out.
+<code>student_registration/dashboard/tests/test_documentation_access.py</code> asserts the rule for both routes and
+will fail if a new technical page becomes publicly readable.</p>
 <p><code>docs/wiki_html/</code> is generated from <code>docs/wiki/</code> — run:</p>
 <pre><code class="language-bash">python docs/build_wiki_html.py
 </code></pre>
