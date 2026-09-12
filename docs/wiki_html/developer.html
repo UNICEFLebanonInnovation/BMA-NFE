@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Developer Guide: Student Registration Compiler — BMA Wiki</title>
+  <title>Developer Guide: BMA — NFE Sector Platform — BMA Wiki</title>
   <style>
 :root {
   --primary: #1a6faf;
@@ -275,20 +275,24 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html" class="active">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
-    <a href="02_setup.html">2. Setup & Installation</a>
-    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
-    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="02_setup.html">2. Setup &amp; Installation</a>
+    <a href="03_architecture.html">3. Architecture &amp; Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema &amp; Models</a>
     <a href="05_django_apps.html">5. Django Apps Reference</a>
-    <a href="06_api_urls.html">6. API & URL Reference</a>
-    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="06_api_urls.html">6. API &amp; URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication &amp; Permissions</a>
     <a href="08_admin_portal.html">8. Admin Portal Guide</a>
     <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
     <a href="10_frontend.html">10. Frontend Guide</a>
@@ -300,110 +304,376 @@ body {
 
 <div id="main">
   <div id="topbar">
-    <span class="breadcrumb">BMA Wiki &rsaquo; <span>Developer Guide: Student Registration Compiler</span></span>
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>Developer Guide: BMA — NFE Sector Platform</span></span>
   </div>
   <div id="content">
-    <h1 id="developer-guide-student-registration-compiler">Developer Guide: Student Registration Compiler</h1>
+<h1 id="developer-guide-bma-nfe-sector-platform">Developer Guide: BMA — NFE Sector Platform</h1>
+<p><strong>Revision: September 2026</strong></p>
 <p>Welcome to the <strong>Developer Guide</strong>. This document details the technical architecture, core Django applications, and the frontend ecosystem, providing context for maintaining and extending the platform.</p>
 <hr />
 <h2 id="1-codebase-architecture-overview">1. Codebase Architecture Overview</h2>
 <p>The system is a monolithic Django application designed for high operational data throughput.</p>
-<ul>
-<li><strong>Django Backend (<code>student_registration/</code>)</strong>: The core application logic, relying on PostgreSQL for persistence and Redis for caching/brokering.</li>
-<li><strong>Frontend Redesign</strong>: Modernized with Bootstrap 5.3 and Vanilla JS. It utilizes a custom theme based on UNICEF guidelines.</li>
-<li><strong>Asynchronous Processing</strong>: Celery handles background exports, and <code>django-celery-beat</code> manages periodic scheduling.</li>
-<li><strong>Tooling</strong>: Managed via <code>manage.py</code>, configured using environment variables (<code>.env</code>), and deployed via Docker Compose.</li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Framework</td>
+<td>Django 5.2 (<code>django==5.2.7</code>), Python 3.11+</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>PostgreSQL, accessed through <code>psycopg</code> 3</td>
+</tr>
+<tr>
+<td>Cache / broker</td>
+<td>Redis (<code>django-redis</code>, Celery broker)</td>
+</tr>
+<tr>
+<td>API</td>
+<td>Django REST Framework with <code>drf-spectacular</code> schema generation</td>
+</tr>
+<tr>
+<td>Async</td>
+<td>Celery 5.5 with <code>django-celery-beat</code> (schedules) and <code>django-celery-results</code> (result backend)</td>
+</tr>
+<tr>
+<td>UI</td>
+<td>Server-rendered Django templates, Bootstrap 5.3, vanilla JS, <code>django-tables2</code>, <code>django-filter</code>, <code>django-crispy-forms</code></td>
+</tr>
+<tr>
+<td>Admin</td>
+<td><code>django-jazzmin</code> skin over Django admin</td>
+</tr>
+<tr>
+<td>Object storage</td>
+<td>Azure Blob Storage via <code>django-storages</code> / <code>azure-storage-blob</code></td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>Docker Compose (<code>local.yml</code>, <code>production.yml</code>), Gunicorn behind Nginx</td>
+</tr>
+</tbody>
+</table>
+<p>Settings live in <code>config/settings/</code> and are split into <code>base.py</code>, <code>local.py</code>, <code>test.py</code> and <code>production.py</code>. Configuration is read from the environment with <code>django-environ</code>; <code>DJANGO_SETTINGS_MODULE</code> selects the module.</p>
 <hr />
 <h2 id="2-core-django-apps">2. Core Django Apps</h2>
-<p>The codebase is organized into domain-specific applications:</p>
-<ol>
-<li><strong><code>users/</code> &amp; <code>accounts/</code></strong>:<ul>
-<li><strong>Responsibilities</strong>: Authentication, RBAC (Role-Based Access Control), profile management.</li>
-<li><strong>Key Components</strong>: Custom User models, <code>MSCCAccessMixin</code> for CBVs, and <code>mscc_access_required</code> decorators for FBVs.</li>
-</ul>
-</li>
-<li><strong><code>students/</code> &amp; <code>mscc/</code></strong>:<ul>
-<li><strong>Responsibilities</strong>: The core Non-Formal Education (NFE) logic.</li>
-<li><strong>Key Components</strong>: Registration workflows (multi-step wizard), <code>Teacher</code> models, <code>School</code> records, and related services (PSS, Education).</li>
-<li><strong>Background Jobs</strong>: <code>mscc.tasks</code> contains Celery tasks for heavy CSV/XLSX generation.</li>
-</ul>
-</li>
-<li><strong><code>attendances/</code></strong>:<ul>
-<li><strong>Responsibilities</strong>: Tracking student presence.</li>
-<li><strong>Key Components</strong>: Bulk attendance entry, heatmaps, and absence logging.</li>
-</ul>
-</li>
-<li><strong><code>locations/</code> &amp; <code>schools/</code></strong>:<ul>
-<li><strong>Responsibilities</strong>: Reference data for physical sites and infrastructure.</li>
-<li><strong>Key Components</strong>: Autocomplete views, maps, and geolocation data.</li>
-</ul>
-</li>
-<li><strong><code>taskapp/</code></strong>:<ul>
-<li><strong>Responsibilities</strong>: Centralized configuration and autodiscovery for Celery tasks.</li>
-</ul>
-</li>
-</ol>
+<p><code>LOCAL_APPS</code> in <code>config/settings/base.py</code> is the authoritative list. Domain code is organized as:</p>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>users/</code></td>
+<td>Custom <code>User</code> model, group helpers (<code>has_group</code>), login routing, FCM token registration, web push tokens</td>
+</tr>
+<tr>
+<td><code>accounts/</code></td>
+<td>Account signal handlers — <strong>added to <code>INSTALLED_APPS</code> only in <code>production.py</code></strong></td>
+</tr>
+<tr>
+<td><code>child/</code></td>
+<td>The shared <code>Child</code> record (identity, caregivers, ID documents) reused by MSCC and ALP</td>
+</tr>
+<tr>
+<td><code>mscc/</code></td>
+<td>Makani (MSCC) registrations, service delivery forms, attendance, dashboards, background exports</td>
+</tr>
+<tr>
+<td><code>alp/</code></td>
+<td>Accelerated Learning Programme — school-scoped registrations, teachers, attendance, grading, dashboards</td>
+</tr>
+<tr>
+<td><code>clm/</code></td>
+<td>Bridging / Community Learning programme workflows</td>
+</tr>
+<tr>
+<td><code>students/</code></td>
+<td>Legacy student and <code>Teacher</code> models plus shared file-serving helpers</td>
+</tr>
+<tr>
+<td><code>attendances/</code></td>
+<td>Shared attendance models and views</td>
+</tr>
+<tr>
+<td><code>schools/</code></td>
+<td>School records, sections, autocomplete and school API viewsets</td>
+</tr>
+<tr>
+<td><code>locations/</code></td>
+<td><code>Location</code>, <code>LocationType</code>, <code>Center</code> reference data and autocompletes</td>
+</tr>
+<tr>
+<td><code>dashboard/</code></td>
+<td>Cross-module analytics endpoints, pivot tables, chart builder, maps, the advanced exporter, and the in-app documentation views</td>
+</tr>
+<tr>
+<td><code>backends/</code></td>
+<td>Storage backends and integration helpers, including the Firebase push helpers</td>
+</tr>
+<tr>
+<td><code>taskapp/</code></td>
+<td>Celery app configuration and task autodiscovery (registered as <code>student_registration.taskapp.celery.CeleryConfig</code>)</td>
+</tr>
+<tr>
+<td><code>contrib/</code></td>
+<td>Holds relocated <code>sites</code> migrations (<code>MIGRATION_MODULES</code>); not an installed app</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cross-cutting-middleware">Cross-cutting middleware</h3>
+<p><code>MIDDLEWARE</code> in <code>base.py</code> is deliberately small. Production adds more in <code>production.py</code> through <code>EXTRA_MIDDLEWARE</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Middleware</th>
+<th>Where it is enabled</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user_activity.UserActivityMiddleware</code></td>
+<td>all environments</td>
+<td>Records last-seen activity per user</td>
+</tr>
+<tr>
+<td><code>whitenoise.middleware.WhiteNoiseMiddleware</code></td>
+<td>production</td>
+<td>Static file serving</td>
+</tr>
+<tr>
+<td><code>middleware.AutoLogout</code></td>
+<td>production</td>
+<td>Logs users out after <code>AUTO_LOGOUT_DELAY</code> (30 minutes)</td>
+</tr>
+<tr>
+<td><code>cache_control_middleware.CacheControlMiddleware</code></td>
+<td>production</td>
+<td>No-store headers on authenticated pages</td>
+</tr>
+<tr>
+<td><code>hsts_middleware.HSTSMiddleware</code></td>
+<td>production</td>
+<td>HSTS header</td>
+</tr>
+<tr>
+<td><code>xframe_middleware.XFrameMiddleware</code></td>
+<td>production</td>
+<td>Frame-ancestors protection</td>
+</tr>
+<tr>
+<td><code>one_session.OneSessionPerUserMiddleware</code></td>
+<td><strong>currently commented out</strong></td>
+<td>Would enforce one active session per user</td>
+</tr>
+<tr>
+<td><code>lockout_middleware.StudentLockoutMiddleware</code></td>
+<td><strong>not registered</strong></td>
+<td>Legacy <code>django-lockout</code> hook; the dependency is commented out of <code>requirements/base.txt</code>. Failed-login throttling is handled by allauth's <code>ACCOUNT_RATE_LIMITS</code> instead</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>When you document or rely on one of these, check the settings module first — several exist in the tree but are not wired up.</p>
+</blockquote>
 <hr />
 <h2 id="3-database-schema-postgresql-optimizations">3. Database Schema &amp; PostgreSQL Optimizations</h2>
-<p>The system leverages PostgreSQL-specific features heavily, meaning <strong>SQLite is not supported for development or testing</strong>.</p>
-<h3 id="key-optimizations">Key Optimizations</h3>
+<p>The system leverages PostgreSQL-specific features heavily (<code>ArrayField</code>, <code>JSONField</code>), meaning <strong>SQLite is not supported for development or testing</strong>.</p>
+<h3 id="key-patterns">Key patterns</h3>
 <ul>
-<li><strong>ArrayField &amp; JSONField</strong>: Used extensively in <code>Registration</code>, <code>Assessment</code>, and <code>School</code> models to handle variable data structures without excessive join tables.</li>
-<li><strong>Analytics Indexing</strong>: Complex queries (like the Wellbeing Dashboard) rely on specific indexes (<code>CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_mscc_registration_created</code>).</li>
+<li><strong>ArrayField &amp; JSONField</strong>: Used in <code>Registration</code>, <code>Assessment</code>, <code>School</code>, <code>ALPRegistration</code> and <code>ALPGrading</code> to handle variable data structures without excessive join tables. <code>ALPGrading.grading_data</code> in particular stores a subject → score map keyed by <code>ALPGradingDefinition</code> id, so subjects can change without a migration.</li>
+<li><strong>Analytics Indexing</strong>: Complex queries (like the Wellbeing Dashboard) rely on specific indexes — see <code>docs/analytics_dashboard.md</code> <span class="muted">(../analytics_dashboard.md)</span> for the recommended <code>CREATE INDEX CONCURRENTLY</code> statements.</li>
 <li><strong>Aggregations</strong>: Use Django's <code>NullIf</code> to safely handle potential division-by-zero errors when calculating educational improvements.</li>
 <li><strong>Age Bucketing</strong>: Advanced ORM usage (<code>Case/When</code> + <code>ExtractYear(Now())</code>) groups beneficiaries into analytical cohorts dynamically.</li>
+<li><strong>Soft deletes</strong>: <code>Registration</code> and <code>ALPRegistration</code> carry <code>deleted</code> / <code>deleted_by</code>; always filter <code>deleted=False</code> in reporting queries.</li>
 </ul>
+<p>An ER diagram of the schema is committed as <code>schema.png</code> at the repository root.</p>
 <hr />
-<h2 id="4-frontend-ecosystem-redesign">4. Frontend Ecosystem (Redesign)</h2>
-<p>The platform was recently modernized from an older jQuery/ArchitectUI stack to a lighter, more performant Bootstrap 5 architecture.</p>
-<h3 id="key-implementation-patterns">Key Implementation Patterns</h3>
-<ul>
-<li><strong>Entry Points</strong>: <code>student_registration/static/css/redesign.css</code> and <code>student_registration/static/js/mscc/mscc.js</code>.</li>
-<li><strong>Layout Engine</strong>: Flexbox-based sidebar and main content areas (<code>base.html</code>), eliminating nested structural complexity.</li>
-<li><strong>Registration Wizard (<code>mscc.js</code>)</strong>: Implements client-side validation using Bootstrap 5 states (<code>.has-error</code>, <code>.is-invalid</code>), preventing server roundtrips for basic errors.</li>
-<li><strong>Data Visualization</strong>: Uses <strong>D3.js</strong> for the "Wellbeing Analysis" dashboard (<code>wellbeing_dashboard.js</code>) and attendance heatmaps.</li>
-<li><strong>Mapping</strong>: Uses <strong>Leaflet.js</strong> for interactive center/school geographic mapping, fed by a JSON API endpoint.</li>
-<li><strong>Notifications</strong>: Uses <strong>Firebase Cloud Messaging (FCM)</strong>. The <code>firebase-messaging-sw.js</code> service worker handles background pushes, displaying an "Export Ready" modal when Celery tasks complete.</li>
-</ul>
-<hr />
-<h2 id="5-background-processing-celery">5. Background Processing (Celery)</h2>
-<p>Long-running operations, specifically data exports, must not block the main WSGI server.</p>
-<h3 id="export-workflow">Export Workflow</h3>
+<h2 id="4-access-control">4. Access Control</h2>
+<p>Authorization is group-based and layered:</p>
 <ol>
-<li><strong>Request</strong>: User triggers an export in the UI (e.g., standard reports, or pivot data).</li>
-<li><strong>Task Enqueue</strong>: A Celery task (<code>student_registration/mscc/tasks.py</code>) is dispatched to the <code>mscc_export</code> queue.</li>
-<li><strong>Processing</strong>: The worker iterates over optimized database views (<code>vw_mscc_child</code>, etc.), writing chunks to a CSV/XLSX file within an <code>ExportStorage</code> model.</li>
-<li><strong>Completion</strong>: Upon success (or failure), the worker fires an FCM push notification to the user's browser.</li>
-<li><strong>Retrieval</strong>: The user clicks the notification to download the generated file from the <code>/media/</code> directory.</li>
+<li><strong>Group membership</strong> — <code>braces.views.GroupRequiredMixin</code> (<code>group_required = [...]</code>) on class-based views, and the <code>has_group(user, name)</code> helper in <code>student_registration/users/templatetags/custom_tags.py</code> for views and templates.</li>
+<li><strong>Queryset scoping</strong> — views narrow their querysets to the user's <code>center</code>, <code>partner</code> or <code>school</code>. In ALP this is centralized in <code>alp/utils.filter_by_school()</code>, which returns an empty queryset when the user has no school and deliberately does <strong>not</strong> exempt privileged users.</li>
+<li><strong>Edit gating</strong> — <code>alp/views.ALPEditPermissionMixin</code> raises <code>PermissionDenied</code> for superusers so that site administrators keep read-only access to school-owned data.</li>
+<li><strong>Template filtering</strong> — action buttons are hidden with <code>{% if request.user|has_group:"…" %}</code>.</li>
 </ol>
+<p>The full role → view matrix is maintained in <code>docs/ACCESS_CONTROL.md</code> <span class="muted">(../ACCESS_CONTROL.md)</span>. Keep it in sync when you add a view.</p>
 <hr />
-<h2 id="6-testing-development-guidelines">6. Testing &amp; Development Guidelines</h2>
+<h2 id="5-api-url-surface">5. API &amp; URL Surface</h2>
+<p>Routes are declared in <code>config/urls.py</code> and per-app <code>urls.py</code> modules.</p>
+<table>
+<thead>
+<tr>
+<th>Prefix</th>
+<th>App</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/mscc/</code></td>
+<td><code>mscc</code></td>
+<td>Registrations, services, attendance, exports, dashboards</td>
+</tr>
+<tr>
+<td><code>/alp/</code></td>
+<td><code>alp</code></td>
+<td>ALP registrations, teachers, attendance, grading, school profile, dashboards</td>
+</tr>
+<tr>
+<td><code>/clm/</code></td>
+<td><code>clm</code></td>
+<td>Bridging programme</td>
+</tr>
+<tr>
+<td><code>/students/</code>, <code>/attendances/</code>, <code>/schools/</code>, <code>/locations/</code></td>
+<td>respective apps</td>
+<td>Reference data and legacy flows</td>
+</tr>
+<tr>
+<td><code>/dashboard/</code></td>
+<td><code>dashboard</code></td>
+<td>Analytics JSON endpoints, pivot data, maps, advanced exporter, in-app documentation</td>
+</tr>
+<tr>
+<td><code>/api/</code></td>
+<td>DRF router</td>
+<td><code>schools</code>, <code>sections</code>, <code>teacher</code>, <code>locations</code>, <code>attendance-heatmap-data</code> viewsets</td>
+</tr>
+<tr>
+<td><code>/accounts/</code></td>
+<td><code>allauth</code></td>
+<td>Login, logout, password change</td>
+</tr>
+</tbody>
+</table>
+<h3 id="machine-readable-api-schema">Machine-readable API schema</h3>
+<p><code>drf-spectacular</code> is wired up, so the API documents itself:</p>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api/schema/</code></td>
+<td>OpenAPI 3 schema (YAML)</td>
+</tr>
+<tr>
+<td><code>/api/docs/</code></td>
+<td>Swagger UI</td>
+</tr>
+<tr>
+<td><code>/api/schema/redoc/</code></td>
+<td>ReDoc UI</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-frontend-ecosystem">6. Frontend Ecosystem</h2>
+<p>The platform was modernized from an older jQuery/ArchitectUI stack to a lighter Bootstrap 5 architecture. The design rules and rationale are captured in <code>DOCS_REDESIGN.md</code> <span class="muted">(../../DOCS_REDESIGN.md)</span> and <code>docs/ui_ux_redesign_proposal.md</code> <span class="muted">(../ui_ux_redesign_proposal.md)</span>.</p>
+<h3 id="key-implementation-patterns">Key implementation patterns</h3>
+<ul>
+<li><strong>Entry points</strong>: <code>student_registration/static/css/redesign.css</code> and <code>student_registration/static/js/mscc/mscc.js</code>.</li>
+<li><strong>Base templates</strong>: <code>student_registration/templates/base.html</code> (global shell), <code>templates/_sidebar_links.html</code> (navigation), <code>templates/mscc/base.html</code> (module shell reused by ALP), <code>templates/django_tables2/bootstrap5.html</code> (table rendering).</li>
+<li><strong>Registration wizard (<code>mscc.js</code>)</strong>: client-side validation using Bootstrap 5 states (<code>.is-invalid</code>), plus the AJAX duplicate check, avoiding server round-trips for basic errors.</li>
+<li><strong>Data visualization</strong>: <strong>D3.js</strong> for the Wellbeing Analysis dashboard (<code>wellbeing_dashboard.js</code>) and the attendance heatmaps.</li>
+<li><strong>Mapping</strong>: <strong>Leaflet.js</strong> for center and school maps, fed by the <code>centers_geo_data</code> and <code>alp:school_geo_data</code> JSON endpoints.</li>
+<li><strong>Notifications</strong>: <strong>Firebase Cloud Messaging</strong>. <code>static/firebase-messaging-sw.js</code> is the service worker; <code>static/js/firebase-messaging.js</code> registers the browser token against <code>save_fcm_token</code>.</li>
+<li><strong>Node tooling</strong>: <code>package.json</code> still pins a legacy gulp 3 pipeline. It is not required to run or build the application — static assets are committed and served directly.</li>
+</ul>
+<hr />
+<h2 id="7-background-processing-celery">7. Background Processing (Celery)</h2>
+<p>Long-running operations, specifically data exports, must not block the main WSGI server.</p>
+<pre><code>CELERY_TASK_QUEUES  = default, mscc_export
+CELERY_TASK_ROUTES  = student_registration.mscc.tasks.generate_mscc_export → mscc_export
+CELERY_RESULT_BACKEND = django-db
+</code></pre>
+<h3 id="export-workflow">Export workflow</h3>
+<ol>
+<li><strong>Request</strong>: user triggers an export in the UI (standard reports, or the advanced exporter).</li>
+<li><strong>Task enqueue</strong>: a Celery task in <code>student_registration/mscc/tasks.py</code> is dispatched to the <code>mscc_export</code> queue.</li>
+<li><strong>Processing</strong>: the worker iterates over optimized database views (<code>vw_mscc_child</code>, <code>vw_mscc_data</code>, <code>mscc_followupservice</code>), writing chunks into CSV/XLSX files inside a ZIP, persisted through the <code>ExportStorage</code> model.</li>
+<li><strong>Completion</strong>: on success or failure the worker calls <code>send_push_to_web</code>, which delivers an FCM message to the requesting user's browser.</li>
+<li><strong>Retrieval</strong>: the user downloads the generated file from the export list.</li>
+</ol>
+<p>Run the dedicated worker with limited concurrency so a heavy export cannot starve the default queue:</p>
+<pre><code class="language-bash">celery -A student_registration.taskapp worker -Q mscc_export --concurrency=1 -l info
+</code></pre>
+<h3 id="push-notification-credentials">Push notification credentials</h3>
+<p><code>student_registration/backends/utils.py</code> initialises <code>firebase-admin</code> from a <strong>service-account JSON file at <code>utility/firebase-creds.json</code></strong>. The legacy <code>FCM_SERVER_KEY</code> environment variable is no longer read anywhere in the codebase — do not rely on it. The browser-side Firebase web config is currently hardcoded in <code>static/js/firebase-messaging.js</code> and <code>static/firebase-messaging-sw.js</code>.</p>
+<blockquote>
+<p><strong>Security note:</strong> a real service-account key is currently committed at <code>utility/firebase-creds.json</code>, and <code>config/settings/base.py</code> still carries a hardcoded <code>DATABASE_URL</code> default containing credentials. Both should be moved to environment configuration and the credentials rotated.</p>
+</blockquote>
+<hr />
+<h2 id="8-in-app-documentation">8. In-App Documentation</h2>
+<p>The documentation in this repository is served to users from inside the application by <code>student_registration/dashboard/views.py</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Source</th>
+<th>Access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/dashboard/wiki/&lt;page&gt;/</code></td>
+<td><code>docs/wiki/&lt;page&gt;.md</code>, rendered with <code>markdown</code> and sanitized with <code>bleach</code></td>
+<td>Any authenticated user</td>
+</tr>
+<tr>
+<td><code>/dashboard/guide/&lt;page&gt;/</code></td>
+<td><code>docs/wiki_html/&lt;page&gt;.html</code>, inner <code>&lt;div id="content"&gt;</code> extracted and sanitized</td>
+<td>Superusers only — except <code>end_user</code>, which every authenticated user may read</td>
+</tr>
+</tbody>
+</table>
+<p>The list of guide pages is <code>WIKI_HTML_PAGES</code> in the same module. If you add a page to <code>docs/wiki_html/</code>, add it there too, and add the matching Markdown source under <code>docs/wiki/</code>.</p>
+<p><code>docs/wiki_html/</code> is generated from <code>docs/wiki/</code> — run:</p>
+<pre><code class="language-bash">python docs/build_wiki_html.py
+</code></pre>
+<p>after editing any Markdown page so the two stay in sync. The numbered developer pages (<code>01_project_overview</code> … <code>13_testing</code>) are hand-maintained HTML and are left untouched by the generator.</p>
+<hr />
+<h2 id="9-testing-development-guidelines">9. Testing &amp; Development Guidelines</h2>
 <h3 id="setup-docker-based">Setup (Docker-based)</h3>
 <ol>
-<li>Copy <code>env.example</code> to <code>.env</code>.</li>
+<li>Copy <code>env.example</code> to <code>.env</code> and fill in at least <code>DATABASE_URL</code> and <code>DJANGO_SECRET_KEY</code>.</li>
 <li>Start the stack: <code>docker compose -f local.yml up --build</code>.</li>
 <li>Run migrations: <code>docker compose -f local.yml exec django python manage.py migrate</code>.</li>
 <li>Create superuser: <code>docker compose -f local.yml exec django python manage.py createsuperuser</code>.</li>
 </ol>
 <h3 id="testing">Testing</h3>
 <ul>
-<li><strong>Unit/Integration Tests</strong>: The system uses <code>pytest</code>. Run tests via <code>pytest.ini</code> or <code>coverage run manage.py test</code>.</li>
-<li><strong>Frontend End-to-End (E2E)</strong>: The registration flow is verified using <strong>Playwright</strong>.<ul>
-<li>Ensure Chromium dependencies are installed: <code>playwright install chromium --with-deps</code>.</li>
-<li>Target local login endpoints (<code>/accounts/login/</code>) accurately.</li>
-</ul>
-</li>
+<li>Test settings live in <code>config/settings/test.py</code>; <code>pytest.ini</code> sets <code>DJANGO_SETTINGS_MODULE=config.settings.test</code>.</li>
+<li>Run the suite with <code>pytest</code>, or a subset with <code>pytest student_registration/alp/tests</code>.</li>
+<li><code>coverage run manage.py test</code> + <code>coverage html</code> produces an HTML coverage report.</li>
+<li>Test dependencies (<code>pytest-django</code>, <code>factory-boy</code>, <code>django-test-plus</code>, <code>coverage</code>, <code>flake8</code>) live in <code>requirements/test.txt</code>.</li>
+<li>A PostgreSQL database is required — the models use PostgreSQL-only fields.</li>
+<li>The ALP module has the densest test coverage in the tree (<code>student_registration/alp/tests/</code>) and is a good template for new tests.</li>
 </ul>
 <h3 id="contributing">Contributing</h3>
 <ul>
-<li>Prioritize modular JavaScript over monolithic jQuery files.</li>
-<li>Ensure RBAC checks (<code>mscc_access_required</code>) are applied to any new API endpoints or views.</li>
-<li>Follow PEP8 guidelines for Python code and run <code>flake8</code> or <code>black</code> before committing.</li>
+<li>Prefer modular JavaScript over monolithic jQuery files.</li>
+<li>Apply the appropriate group check and queryset scoping to <strong>every</strong> new view or API endpoint, and update <code>docs/ACCESS_CONTROL.md</code>.</li>
+<li>Follow PEP8; <code>setup.cfg</code> configures <code>flake8</code>/<code>pycodestyle</code> with a 120-character line limit.</li>
+<li>Do not commit compiled translation binaries (<code>*.mo</code>) — they are gitignored deliberately. Run <code>./manage.py compilemessages</code> at deploy time.</li>
+<li>Update the documentation under <code>docs/</code> in the same change as the feature; it is user-visible inside the app.</li>
 </ul>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 

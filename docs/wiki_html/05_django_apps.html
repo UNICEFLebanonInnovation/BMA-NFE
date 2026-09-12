@@ -275,12 +275,16 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
     <a href="02_setup.html">2. Setup & Installation</a>
@@ -308,7 +312,8 @@ body {
 <hr />
 <h2 id="app-directory">App Directory</h2>
 <pre class="highlight"><code>student_registration/
-├── accounts/          Thin wrapper — account-related views/templates
+├── accounts/          Account signals (installed in production settings only)
+├── alp/               Accelerated Learning Programme (school-scoped)
 ├── attendances/       MSCCAttendance and CLMAttendance tracking
 ├── backends/          Async export jobs, user activity logging
 ├── child/             Child demographic profile model
@@ -346,6 +351,25 @@ body {
 - <code>forms.py</code> — Registration and service delivery forms<br />
 - <code>resources.py</code> — django-import-export resource definitions</p>
 <hr />
+<h2 id="alp"><code>alp</code></h2>
+<p><strong>Owns:</strong> The Accelerated Learning Programme — school-scoped registrations, ALP teachers, child and teacher attendance, dynamic grading, the school profile form, and five dashboards.</p>
+<p>Introduced in August 2026 and the most actively developed module in the tree. It reuses the shared <code>child.Child</code> record and the MSCC registration form base (<code>MainForm</code>), but its data belongs to a <strong>school</strong> rather than a center or partner.</p>
+<p>Key files:<br />
+- <code>models.py</code> — <code>ALPRound</code>, <code>ALPProgram</code>, <code>ALPTeacher</code>, <code>ALPRegistration</code>, <code>ALPGrading</code>, <code>ALPGradingDefinition</code>, <code>ALPAttendance</code>, <code>ALPAttendanceChild</code>, <code>ALPTeacherAttendance</code><br />
+- <code>views.py</code> — registration/teacher/grading CRUD, child profile, school profile, dashboards<br />
+- <code>attendance_views.py</code> — child and teacher attendance entry, bulk save, CSV download<br />
+- <code>urls.py</code> — all <code>/alp/</code> routes<br />
+- <code>forms.py</code> — <code>ALPRegistrationForm</code>, <code>ALPTeacherForm</code>, <code>ALPSchoolProfileForm</code>, <code>ALPGradingDynamicForm</code><br />
+- <code>utils.py</code> — <code>user_has_alp_permission()</code> and <code>filter_by_school()</code><br />
+- <code>mixins.py</code> — <code>ALPSchoolFilterMixin</code> scopes form dropdowns to the user's school<br />
+- <code>tables.py</code> / <code>filters.py</code> — django-tables2 and django-filter definitions<br />
+- <code>tests/</code> — the densest test coverage in the project</p>
+<p>Three behaviours are specific to this app and easy to trip over:</p>
+<p>1. <strong>Every</strong> <code>/alp/</code> view requires the <code>ALP_SCHOOL</code> group (<code>ALPUserRequiredMixin</code>); there is no superuser bypass.<br />
+2. <code>ALPEditPermissionMixin</code> raises <code>PermissionDenied</code> for superusers, so administrators get read-only access.<br />
+3. <code>filter_by_school()</code> returns an empty queryset when <code>user.school_id</code> is <code>None</code> — a user with the group but no school assignment sees nothing.</p>
+<p><code>ALPGrading.grading_data</code> is a <code>JSONField</code> keyed by <code>ALPGradingDefinition.id</code>, so the grading form's subjects are configuration, not code — adding a definition in the admin changes the form immediately.</p>
+<hr />
 <h2 id="clm"><code>clm</code></h2>
 <p><strong>Owns:</strong> Community Learning Management — bridging program enrollment, CLM attendance, CLM teacher management, assessments.</p>
 <p>Structure mirrors <code>mscc</code> but for the CLM program type. CLM-specific models include <code>CLM</code>, <code>Bridging</code>, <code>BridgingService</code>, and cycle-based attendance.</p>
@@ -358,7 +382,7 @@ body {
 <p>The attendance heatmap endpoint is also exposed via the DRF API (<code>AttendanceHeatmapViewSet</code>).</p>
 <hr />
 <h2 id="child"><code>child</code></h2>
-<p><strong>Owns:</strong> The <code>Child</code> model — the shared demographic record used by both MSCC registrations.</p>
+<p><strong>Owns:</strong> The <code>Child</code> model — the shared demographic record used by both MSCC and ALP registrations.</p>
 <p>The <code>Child</code> model is intentionally kept separate from program-specific data so that a child can be registered across multiple programs without duplicating demographics.</p>
 <hr />
 <h2 id="students"><code>students</code></h2>
@@ -421,7 +445,7 @@ urlpatterns += [path('my-app/', include('student_registration.my_new_app.urls'))
 </code></pre>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 

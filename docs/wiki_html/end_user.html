@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>End User Manual — BMA Student Registration Compiler — BMA Wiki</title>
+  <title>End User Manual — BMA NFE Sector Platform — BMA Wiki</title>
   <style>
 :root {
   --primary: #1a6faf;
@@ -275,20 +275,24 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html" class="active">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
-    <a href="02_setup.html">2. Setup & Installation</a>
-    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
-    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="02_setup.html">2. Setup &amp; Installation</a>
+    <a href="03_architecture.html">3. Architecture &amp; Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema &amp; Models</a>
     <a href="05_django_apps.html">5. Django Apps Reference</a>
-    <a href="06_api_urls.html">6. API & URL Reference</a>
-    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="06_api_urls.html">6. API &amp; URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication &amp; Permissions</a>
     <a href="08_admin_portal.html">8. Admin Portal Guide</a>
     <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
     <a href="10_frontend.html">10. Frontend Guide</a>
@@ -300,12 +304,44 @@ body {
 
 <div id="main">
   <div id="topbar">
-    <span class="breadcrumb">BMA Wiki &rsaquo; <span>End User Manual — BMA Student Registration Compiler</span></span>
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>End User Manual — BMA NFE Sector Platform</span></span>
   </div>
   <div id="content">
-    <h1 id="end-user-manual-bma-student-registration-compiler">End User Manual — BMA Student Registration Compiler</h1>
-<p><strong>Version 2.35 | UNICEF Lebanon NFE Sector</strong></p>
-<p>This manual is written for field staff, center coordinators, teachers, and partner organization staff who use the system day-to-day. No technical knowledge is required. Read each section that matches your role and refer back whenever needed.</p>
+<h1 id="end-user-manual-bma-nfe-sector-platform">End User Manual — BMA NFE Sector Platform</h1>
+<p><strong>Revision: September 2026 | UNICEF Lebanon NFE Sector</strong></p>
+<p>This manual is written for field staff, center coordinators, school focal points, teachers, and partner organization staff who use the system day-to-day. No technical knowledge is required. Read each section that matches your role and refer back whenever needed.</p>
+<p>The platform covers four operational modules. You will only see the ones your account is entitled to:</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Who uses it</th>
+<th>What it covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MSCC (Makani)</strong></td>
+<td>Center staff, partners, UNICEF</td>
+<td>Child registration, service delivery, attendance, dashboards</td>
+</tr>
+<tr>
+<td><strong>ALP</strong></td>
+<td>Public school focal points</td>
+<td>Accelerated Learning Programme registration, teachers, attendance, grading</td>
+</tr>
+<tr>
+<td><strong>CLM</strong></td>
+<td>Bridging programme staff</td>
+<td>Community Learning / bridging classes, assessments, follow-ups</td>
+</tr>
+<tr>
+<td><strong>Reports &amp; Analytics</strong></td>
+<td>Coordinators and management</td>
+<td>Dashboards, pivot tables, maps, exports</td>
+</tr>
+</tbody>
+</table>
 <hr />
 <h2 id="table-of-contents">Table of Contents</h2>
 <ol>
@@ -320,97 +356,148 @@ body {
 <li><a href="#9-exporting-data">Exporting Data</a></li>
 <li><a href="#10-dashboards-reports">Dashboards &amp; Reports</a></li>
 <li><a href="#11-clm-bridging-program">CLM Bridging Program</a></li>
-<li><a href="#12-managing-your-account">Managing Your Account</a></li>
-<li><a href="#13-frequently-asked-questions-faq">Frequently Asked Questions (FAQ)</a></li>
-<li><a href="#14-troubleshooting-common-problems">Troubleshooting Common Problems</a></li>
-<li><a href="#system-purpose">System Purpose</a></li>
-<li><a href="#user-roles-access-levels">User Roles and Access Levels</a></li>
-<li><a href="#grading-assessment-module">Grading and Assessment Module</a></li>
-<li><a href="#headcount-emergency-features">Headcount and Emergency Features</a></li>
-<li><a href="#validation-rules">Validation Rules and Restrictions</a></li>
-<li><a href="#best-practices">Best Practices for Users</a></li>
-<li><a href="#security-data-protection">Security and Data Protection</a></li>
-<li><a href="#glossary">Glossary of Common Terms</a></li>
-<li><a href="#support-escalation">Support and Escalation</a></li>
-<li><a href="#getting-help">Getting Help</a></li>
+<li><a href="#12-alp-accelerated-learning-programme">ALP — Accelerated Learning Programme</a></li>
+<li><a href="#13-managing-your-account">Managing Your Account</a></li>
+<li><a href="#14-frequently-asked-questions-faq">Frequently Asked Questions (FAQ)</a></li>
+<li><a href="#15-troubleshooting-common-problems">Troubleshooting Common Problems</a></li>
+<li><a href="#16-system-purpose">System Purpose</a></li>
+<li><a href="#17-user-roles-and-access-levels">User Roles and Access Levels</a></li>
+<li><a href="#18-grading-and-assessment-module">Grading and Assessment Module</a></li>
+<li><a href="#19-headcount-and-emergency-features">Headcount and Emergency Features</a></li>
+<li><a href="#20-validation-rules-and-common-restrictions">Validation Rules and Common Restrictions</a></li>
+<li><a href="#21-best-practices-for-users">Best Practices for Users</a></li>
+<li><a href="#22-security-and-data-protection-guidelines">Security and Data Protection Guidelines</a></li>
+<li><a href="#23-glossary-of-common-terms">Glossary of Common Terms</a></li>
+<li><a href="#24-support-and-escalation-process">Support and Escalation Process</a></li>
+<li><a href="#25-getting-help">Getting Help</a></li>
 </ol>
 <hr />
 <h2 id="1-getting-started-login-navigation">1. Getting Started — Login &amp; Navigation</h2>
 <h3 id="how-to-log-in">How to Log In</h3>
-<ol>
+<ul>
 <li>Open your web browser (Chrome or Firefox recommended).</li>
 <li>Go to the system URL provided by your coordinator.</li>
 <li>Enter your <strong>Username</strong> and <strong>Password</strong>.</li>
 <li>Click <strong>Sign In</strong>.</li>
-</ol>
+</ul>
 <blockquote>
-<p>If you forget your password, contact your system administrator — there is no self-service password reset.</p>
+<p>Accounts are created for you by an administrator. There is no self-service password reset — if you forget your password, contact your system administrator.</p>
 </blockquote>
 <h3 id="your-first-login">Your First Login</h3>
-<p>On your first login you may be asked to change your password. Your password must:<br />
-- Be at least <strong>8 characters</strong> long<br />
-- Contain at least <strong>3 numbers</strong><br />
-- Contain at least one <strong>uppercase letter</strong> (A–Z)<br />
-- Contain at least one <strong>lowercase letter</strong> (a–z)<br />
-- Contain at least one <strong>special character</strong> (e.g., <code>@</code>, <code>#</code>, <code>!</code>, <code>$</code>)</p>
-<h3 id="automatic-logout">Automatic Logout</h3>
-<p>For security, the system will <strong>automatically log you out after 30 minutes of inactivity</strong>. Always save your work before stepping away.</p>
-<h3 id="the-navigation-bar">The Navigation Bar</h3>
-<p>After logging in you will see:</p>
-<pre class="highlight"><code>[ BMA Logo ]  [ MSCC ]  [ Attendance ]  [ Reports ]  [ Username ▼ ]
-</code></pre>
-
+<p>On your first login you may be asked to change your password. Your password must:</p>
 <table>
 <thead>
 <tr>
-<th>Menu Item</th>
-<th>What it does</th>
+<th>Rule</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Length</td>
+<td>At least <strong>8 characters</strong></td>
+</tr>
+<tr>
+<td>Digits</td>
+<td>At least <strong>3 numbers</strong> (0–9)</td>
+</tr>
+<tr>
+<td>Uppercase</td>
+<td>At least one letter <strong>A–Z</strong></td>
+</tr>
+<tr>
+<td>Lowercase</td>
+<td>At least one letter <strong>a–z</strong></td>
+</tr>
+<tr>
+<td>Symbol</td>
+<td>At least one of <code>( ) [ ] { } \| \</code> ~ ! @ # $ % ^ &amp; * _ - + = ; : ' " , &lt; &gt; . / ?`</td>
+</tr>
+<tr>
+<td>Not common</td>
+<td>The password must not be a commonly used or all-numeric password, and must not look like your username</td>
+</tr>
+</tbody>
+</table>
+<h3 id="automatic-logout">Automatic Logout</h3>
+<p>For security, the system <strong>automatically logs you out after 30 minutes of inactivity</strong>. Always save your work before stepping away.</p>
+<h3 id="failed-login-attempts">Failed Login Attempts</h3>
+<p>To protect accounts, repeated failed logins are rate limited. After <strong>5 failed attempts within 5 minutes</strong> the system stops accepting further attempts from that account for a short period. Wait a few minutes and try again, or ask your administrator to reset your password.</p>
+<h3 id="the-navigation-bar-and-sidebar">The Navigation Bar and Sidebar</h3>
+<p>After logging in you will see a top bar and a left sidebar. The exact entries depend on your role:</p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>What it gives you</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>MSCC</strong></td>
-<td>Access child registrations, service delivery, teachers</td>
+<td>Child registrations, service delivery, teachers, MSCC attendance</td>
+</tr>
+<tr>
+<td><strong>ALP</strong></td>
+<td>ALP registrations, teachers, attendance, grading, school profile (ALP school users only)</td>
+</tr>
+<tr>
+<td><strong>CLM</strong></td>
+<td>Bridging registrations, assessments, clubs, meetings, follow-ups</td>
 </tr>
 <tr>
 <td><strong>Attendance</strong></td>
 <td>Record and view daily attendance</td>
 </tr>
 <tr>
-<td><strong>Reports / Dashboard</strong></td>
-<td>View charts, analytics, and download data</td>
+<td><strong>Reports / Dashboards</strong></td>
+<td>Charts, analytics, pivot tables, maps, downloads</td>
+</tr>
+<tr>
+<td><strong>Documentation</strong></td>
+<td>This manual, plus technical guides for administrators</td>
 </tr>
 <tr>
 <td><strong>Username (top right)</strong></td>
-<td>Change language, view profile, log out</td>
+<td>Change language, change password, view profile, log out</td>
 </tr>
 </tbody>
 </table>
 <h3 id="switching-language">Switching Language</h3>
-<p>Click your <strong>username</strong> in the top-right corner → Select <strong>English</strong> or <strong>العربية</strong> (Arabic). The page will reload in the selected language with full right-to-left (RTL) layout for Arabic.</p>
+<p>Click your <strong>username</strong> in the top-right corner → select <strong>English</strong> or <strong>العربية</strong> (Arabic). The page reloads in the selected language, with a full right-to-left (RTL) layout for Arabic.</p>
+<h3 id="finding-this-manual-inside-the-system">Finding This Manual Inside the System</h3>
+<p>This manual is available from the sidebar under <strong>Documentation → End User Manual</strong>. Administrators (superusers) also see additional technical guides in the same menu; standard users only see this manual.</p>
 <hr />
 <h2 id="2-your-dashboard">2. Your Dashboard</h2>
-<p>When you log in, you land on the <strong>Dashboard</strong> — your home screen.</p>
+<p>When you log in, you land on the <strong>Landing Page</strong> — your home screen. ALP school users land on the ALP overview instead (see <a href="#12-alp-accelerated-learning-programme">Section 12</a>).</p>
 <h3 id="what-you-see">What You See</h3>
 <table>
 <thead>
 <tr>
-<th>Section</th>
+<th>Card</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Total Registrations</strong></td>
-<td>Number of active children registered at your center/partner</td>
+<td><strong>Today</strong></td>
+<td>Registrations created today</td>
 </tr>
 <tr>
-<td><strong>This Month's Attendance</strong></td>
-<td>Attendance rate for the current month</td>
+<td><strong>This Week</strong></td>
+<td>New registrations over the last 7 days</td>
 </tr>
 <tr>
-<td><strong>Pending Follow-ups</strong></td>
-<td>Children flagged for follow-up</td>
+<td><strong>Centers / Schools reporting</strong></td>
+<td>Sites that submitted data in the last 30 days</td>
+</tr>
+<tr>
+<td><strong>Attendance</strong></td>
+<td>Average attendance rate for the current month</td>
+</tr>
+<tr>
+<td><strong>Registrations Trend</strong></td>
+<td>Chart of new registrations over the last 14 days</td>
 </tr>
 <tr>
 <td><strong>Recent Activity</strong></td>
@@ -428,16 +515,16 @@ body {
 </thead>
 <tbody>
 <tr>
-<td><strong>Register New Child</strong></td>
-<td>Opens the child registration form</td>
+<td><strong>New Registration</strong></td>
+<td>Opens the registration form for your module</td>
 </tr>
 <tr>
-<td><strong>Record Attendance</strong></td>
-<td>Opens today's attendance entry page</td>
+<td><strong>Beneficiary List</strong></td>
+<td>Opens the searchable list of registered children</td>
 </tr>
 <tr>
-<td><strong>Search Child</strong></td>
-<td>Quick search by name or ID</td>
+<td><strong>Track Attendance</strong></td>
+<td>Opens the attendance entry page</td>
 </tr>
 <tr>
 <td><strong>Export Data</strong></td>
@@ -446,60 +533,62 @@ body {
 </tbody>
 </table>
 <blockquote>
-<p><strong>Tip:</strong> The dashboard only shows data that belongs to your assigned center or partner. You will not see records from other organizations.</p>
+<p><strong>Tip:</strong> The dashboard only shows data that belongs to your assigned center, partner, or school. You will not see records from other organizations.</p>
 </blockquote>
 <hr />
 <h2 id="3-registering-a-new-child-mscc">3. Registering a New Child (MSCC)</h2>
 <p>Registration is done through a <strong>3-step wizard</strong>. You must complete all steps before the record is saved.</p>
 <h3 id="before-you-start">Before You Start</h3>
-<p>Check if the child is <strong>already registered</strong> to avoid duplicates:<br />
-1. Use the <strong>Quick Search</strong> bar at the top of the registration list.<br />
-2. Search by first name + last name, or by ID number.<br />
-3. If the child is found → open their existing profile instead of creating a new one.</p>
+<p>Check if the child is <strong>already registered</strong> to avoid duplicates:</p>
+<ol>
+<li>Use the <strong>Quick Search</strong> bar at the top of the registration list.</li>
+<li>Search by first name + last name, or by ID number.</li>
+<li>If the child is found → open their existing profile instead of creating a new one.</li>
+</ol>
 <h3 id="step-1-child-identity">Step 1 — Child Identity</h3>
 <p>Fill in the child's personal information:</p>
 <table>
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Guidance</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>First Name</strong></td>
+<td>First Name</td>
 <td>As written on the official document</td>
 </tr>
 <tr>
-<td><strong>Father's Name</strong></td>
+<td>Father's Name</td>
 <td>Required</td>
 </tr>
 <tr>
-<td><strong>Last Name (Family Name)</strong></td>
+<td>Last Name (Family Name)</td>
 <td>Required</td>
 </tr>
 <tr>
-<td><strong>Mother's Full Name</strong></td>
+<td>Mother's Full Name</td>
 <td>Required</td>
 </tr>
 <tr>
-<td><strong>Gender</strong></td>
+<td>Gender</td>
 <td>Select Male or Female</td>
 </tr>
 <tr>
-<td><strong>Date of Birth</strong></td>
+<td>Date of Birth</td>
 <td>Enter year, month, and day separately</td>
 </tr>
 <tr>
-<td><strong>Nationality</strong></td>
+<td>Nationality</td>
 <td>Select from the dropdown list</td>
 </tr>
 <tr>
-<td><strong>ID Type</strong></td>
+<td>ID Type</td>
 <td>UNHCR card, Lebanese ID, passport, birth certificate, etc.</td>
 </tr>
 <tr>
-<td><strong>ID Number</strong></td>
+<td>ID Number</td>
 <td>The number on the selected document</td>
 </tr>
 </tbody>
@@ -511,66 +600,68 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Guidance</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Caregiver</strong></td>
+<td>Caregiver</td>
 <td>Who the child lives with (father, mother, relative, etc.)</td>
 </tr>
 <tr>
-<td><strong>Marital Status</strong></td>
+<td>Marital Status</td>
 <td>For youth participants</td>
 </tr>
 <tr>
-<td><strong>Living Arrangement</strong></td>
+<td>Living Arrangement</td>
 <td>Type of shelter/housing</td>
 </tr>
 <tr>
-<td><strong>Phone Number</strong></td>
+<td>Phone Number</td>
 <td>Contact number for the family</td>
 </tr>
 <tr>
-<td><strong>Phone Owner</strong></td>
+<td>Phone Owner</td>
 <td>Who owns the phone (caregiver, child, other)</td>
 </tr>
 <tr>
-<td><strong>Disability</strong></td>
+<td>Disability</td>
 <td>Yes/No — if yes, select the type</td>
 </tr>
 <tr>
-<td><strong>P-Code</strong></td>
+<td>P-Code</td>
 <td>Geographic code for the area (ask your coordinator if unsure)</td>
 </tr>
 <tr>
-<td><strong>Programme Type</strong></td>
+<td>Programme Type</td>
 <td>Which MSCC program stream this child is enrolling in</td>
 </tr>
 <tr>
-<td><strong>Center</strong></td>
+<td>Center</td>
 <td>Your assigned center (usually pre-filled)</td>
 </tr>
 <tr>
-<td><strong>Partner</strong></td>
+<td>Partner</td>
 <td>Your organization (usually pre-filled)</td>
 </tr>
 <tr>
-<td><strong>Round</strong></td>
+<td>Round</td>
 <td>The current program round (usually pre-filled)</td>
 </tr>
 <tr>
-<td><strong>Packages</strong></td>
+<td>Packages</td>
 <td>Tick which service packages this child will receive (Education, Youth, Health &amp; Nutrition, Child Protection, Social Protection)</td>
 </tr>
 </tbody>
 </table>
 <p>Click <strong>Next</strong> to proceed to Step 3.</p>
 <h3 id="step-3-review-submit">Step 3 — Review &amp; Submit</h3>
-<p>Review all the information you entered:<br />
-- Check names are spelled correctly.<br />
-- Verify the date of birth.<br />
-- Confirm the ID number matches the physical document.</p>
+<p>Review all the information you entered:</p>
+<ul>
+<li>Check names are spelled correctly.</li>
+<li>Verify the date of birth.</li>
+<li>Confirm the ID number matches the physical document.</li>
+</ul>
 <p>If anything is wrong, click <strong>Back</strong> to correct it.</p>
 <p>When everything is correct, click <strong>Submit Registration</strong>.</p>
 <p>A confirmation message appears and you are taken to the child's <strong>Profile Page</strong>.</p>
@@ -585,75 +676,79 @@ body {
 <table>
 <thead>
 <tr>
-<th>Element</th>
+<th>Item</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Full Name</strong></td>
+<td>Full Name</td>
 <td>Child's registered name</td>
 </tr>
 <tr>
-<td><strong>ID</strong></td>
+<td>ID</td>
 <td>Document type and number</td>
 </tr>
 <tr>
-<td><strong>Status</strong></td>
+<td>Status</td>
 <td>Active / Inactive</td>
 </tr>
 <tr>
-<td><strong>Center</strong></td>
+<td>Center</td>
 <td>Where the child is registered</td>
 </tr>
 <tr>
-<td><strong>Partner</strong></td>
+<td>Partner</td>
 <td>The organization responsible</td>
 </tr>
 <tr>
-<td><strong>Round</strong></td>
+<td>Round</td>
 <td>Current program round</td>
 </tr>
 <tr>
-<td><strong>Registered On</strong></td>
+<td>Registered On</td>
 <td>Date of registration</td>
 </tr>
 </tbody>
 </table>
-<p>Action buttons in the header:<br />
-- <strong>Edit</strong> — Modify the child's demographic information<br />
-- <strong>Cancel Registration</strong> — Mark the registration as cancelled (use with care)<br />
-- <strong>Mark as Deleted</strong> — Soft-delete the record (it is not permanently removed)</p>
+<p>Action buttons in the header:</p>
+<ul>
+<li><strong>Edit Profile</strong> — Modify the child's demographic and household information.</li>
+<li><strong>New Round</strong> — Register the same child into another programme round. A dialog shows the child's
+  registration history and the rounds still available; if the child is already registered in every
+  round, the dialog says so instead.</li>
+</ul>
+<blockquote>
+<p>Cancelling or deleting a registration is not exposed as a button in the interface. Ask your system
+administrator if a record has to be cancelled or removed.</p>
+</blockquote>
 <h3 id="profile-tabs">Profile Tabs</h3>
 <table>
 <thead>
 <tr>
 <th>Tab</th>
-<th>What it contains</th>
+<th>Contents</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Overview</strong></td>
-<td>Full demographic and household information</td>
+<td>Personal Info</td>
+<td>Full demographic, identity and household information</td>
 </tr>
 <tr>
-<td><strong>Services</strong></td>
-<td>All service delivery records (education, health, youth, PSS, etc.)</td>
+<td>Education situation</td>
+<td>Education history and every service delivery record (education, health, youth, PSS, inclusion, digital, recreational, LEGO, referrals, follow-ups)</td>
 </tr>
 <tr>
-<td><strong>Attendance</strong></td>
-<td>Attendance history with calendar view</td>
-</tr>
-<tr>
-<td><strong>Packages</strong></td>
-<td>Which service packages are assigned</td>
+<td>Attendances</td>
+<td>Attendance history with a month-by-month calendar view</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h2 id="5-recording-service-delivery">5. Recording Service Delivery</h2>
-<p>Service delivery is recorded from the child's <strong>Profile Page → Services Tab</strong>.</p>
+<p>Service delivery is recorded from the child's <strong>Profile Page → Education situation tab</strong>, where the
+services table sits under the education history.</p>
 <p>Each service type has its own form. Click the <strong>+ Add</strong> button next to the relevant service.</p>
 <h3 id="education-services">Education Services</h3>
 <h4 id="education-assessment-baseline">Education Assessment (Baseline)</h4>
@@ -662,24 +757,24 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Assessment Date</strong></td>
+<td>Assessment Date</td>
 <td>Date the assessment was conducted</td>
 </tr>
 <tr>
-<td><strong>Reading Level</strong></td>
+<td>Reading Level</td>
 <td>Select from the scale</td>
 </tr>
 <tr>
-<td><strong>Numeracy Level</strong></td>
+<td>Numeracy Level</td>
 <td>Select from the scale</td>
 </tr>
 <tr>
-<td><strong>Grade Level</strong></td>
+<td>Grade Level</td>
 <td>Child's current or equivalent grade</td>
 </tr>
 </tbody>
@@ -692,26 +787,32 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Session Date</strong></td>
+<td>Session Date</td>
 <td>Date of the session</td>
 </tr>
 <tr>
-<td><strong>Number of Sessions</strong></td>
+<td>Number of Sessions</td>
 <td>How many sessions in this entry</td>
 </tr>
 <tr>
-<td><strong>Programme Type</strong></td>
+<td>Programme Type</td>
 <td>Which education programme</td>
+</tr>
+<tr>
+<td>Enrollment Count</td>
+<td>Number of children enrolled for the entry</td>
 </tr>
 </tbody>
 </table>
 <h4 id="education-grading">Education Grading</h4>
 <p>End-of-cycle grades/results.</p>
+<h4 id="school-grading">School Grading</h4>
+<p>Grades reported by the formal school the child attends.</p>
 <h4 id="remedial-support-rs">Remedial Support (RS)</h4>
 <p>Additional tutoring or support sessions provided.</p>
 <hr />
@@ -722,32 +823,32 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Date</strong></td>
+<td>Date</td>
 <td>Date of the check</td>
 </tr>
 <tr>
-<td><strong>Weight (kg)</strong></td>
+<td>Weight (kg)</td>
 <td>Child's weight</td>
 </tr>
 <tr>
-<td><strong>Height (cm)</strong></td>
+<td>Height (cm)</td>
 <td>Child's height</td>
 </tr>
 <tr>
-<td><strong>MUAC</strong></td>
+<td>MUAC</td>
 <td>Mid-upper arm circumference (for under-5 children)</td>
 </tr>
 <tr>
-<td><strong>Vaccination Status</strong></td>
+<td>Vaccination Status</td>
 <td>Up to date / Not up to date</td>
 </tr>
 <tr>
-<td><strong>Referral Needed</strong></td>
+<td>Referral Needed</td>
 <td>Yes/No</td>
 </tr>
 </tbody>
@@ -758,20 +859,20 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Referral Date</strong></td>
-<td></td>
+<td>Referral Date</td>
+<td>Date the referral was made</td>
 </tr>
 <tr>
-<td><strong>Referred To</strong></td>
+<td>Referred To</td>
 <td>Organization or clinic</td>
 </tr>
 <tr>
-<td><strong>Reason</strong></td>
+<td>Reason</td>
 <td>Brief description</td>
 </tr>
 </tbody>
@@ -788,24 +889,28 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Session Date</strong></td>
-<td></td>
+<td>Session Date</td>
+<td>Date of the session</td>
 </tr>
 <tr>
-<td><strong>Module</strong></td>
+<td>Module</td>
 <td>Which Maharati module</td>
 </tr>
 <tr>
-<td><strong>Sessions Completed</strong></td>
+<td>Sessions Completed</td>
 <td>Number</td>
 </tr>
 </tbody>
 </table>
+<h4 id="gil-girls-improved-learning">GIL (Girls' Improved Learning)</h4>
+<p>Records GIL sessions delivered to youth participants.</p>
+<h4 id="youth-referral">Youth Referral</h4>
+<p>Records a referral of a youth participant to another service or programme.</p>
 <h4 id="youth-scoring">Youth Scoring</h4>
 <p>End-of-cycle outcome scoring for youth participants.</p>
 <hr />
@@ -815,24 +920,24 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Session Date</strong></td>
-<td></td>
+<td>Session Date</td>
+<td>Date of the session</td>
 </tr>
 <tr>
-<td><strong>Session Type</strong></td>
+<td>Session Type</td>
 <td>Group / Individual</td>
 </tr>
 <tr>
-<td><strong>Number of Sessions</strong></td>
-<td></td>
+<td>Number of Sessions</td>
+<td>Count for this entry</td>
 </tr>
 <tr>
-<td><strong>Facilitator</strong></td>
+<td>Facilitator</td>
 <td>Staff name</td>
 </tr>
 </tbody>
@@ -847,21 +952,21 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Session Date</strong></td>
-<td></td>
+<td>Session Date</td>
+<td>Date of the session</td>
 </tr>
 <tr>
-<td><strong>Module</strong></td>
+<td>Module</td>
 <td>Topic covered</td>
 </tr>
 <tr>
-<td><strong>Sessions Completed</strong></td>
-<td></td>
+<td>Sessions Completed</td>
+<td>Count for this entry</td>
 </tr>
 </tbody>
 </table>
@@ -875,20 +980,20 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Session Date</strong></td>
-<td></td>
+<td>Session Date</td>
+<td>Date of the session</td>
 </tr>
 <tr>
-<td><strong>Age Group</strong></td>
+<td>Age Group</td>
 <td>Selected automatically based on child's age</td>
 </tr>
 <tr>
-<td><strong>Sessions</strong></td>
+<td>Sessions</td>
 <td>Number of sessions</td>
 </tr>
 </tbody>
@@ -901,25 +1006,25 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Referral Date</strong></td>
-<td></td>
+<td>Referral Date</td>
+<td>Date the referral was made</td>
 </tr>
 <tr>
-<td><strong>Referred To</strong></td>
+<td>Referred To</td>
 <td>Program or organization</td>
 </tr>
 <tr>
-<td><strong>Type</strong></td>
+<td>Type</td>
 <td>Internal / External</td>
 </tr>
 <tr>
-<td><strong>Reason</strong></td>
-<td></td>
+<td>Reason</td>
+<td>Why the child was referred</td>
 </tr>
 </tbody>
 </table>
@@ -929,135 +1034,169 @@ body {
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Follow-up Date</strong></td>
-<td></td>
+<td>Follow-up Date</td>
+<td>Date of the follow-up</td>
 </tr>
 <tr>
-<td><strong>Method</strong></td>
+<td>Method</td>
 <td>Visit / Phone call</td>
 </tr>
 <tr>
-<td><strong>Notes</strong></td>
+<td>Notes</td>
 <td>What was discussed or observed</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h3 id="saving-service-records">Saving Service Records</h3>
-<p>All service forms are submitted directly from the child profile page. After clicking <strong>Save</strong>:<br />
-- The form closes automatically.<br />
-- The new record appears in the services table immediately.<br />
-- You do <strong>not</strong> need to reload the page.</p>
+<p>All service forms are submitted directly from the child profile page. After clicking <strong>Save</strong>:</p>
+<ul>
+<li>The form closes automatically.</li>
+<li>The new record appears in the services table immediately.</li>
+<li>You do <strong>not</strong> need to reload the page.</li>
+</ul>
 <p>If there is an error (e.g., a required field is missing), a red error message appears on the field that needs to be fixed.</p>
 <hr />
 <h2 id="6-attendance-recording-viewing">6. Attendance — Recording &amp; Viewing</h2>
 <h3 id="recording-daily-attendance">Recording Daily Attendance</h3>
-<ol>
-<li>Click <strong>Attendance</strong> in the top navigation bar, or go to <strong>MSCC → Attendance</strong>.</li>
+<ul>
+<li>Click <strong>Attendance</strong> in the navigation, or go to <strong>MSCC → Attendance</strong>.</li>
 <li>The system defaults to <strong>today's date</strong> and your assigned center.</li>
 <li>The list of all active children registered at your center appears.</li>
 <li>For each child, tick ✓ <strong>Present</strong> or leave blank for <strong>Absent</strong>.</li>
 <li>You can also use <strong>Select All Present</strong> for a quick full-class entry.</li>
+<li>If the center did not open that day, mark it as a <strong>day off</strong> and give the reason instead of marking children individually.</li>
 <li>Click <strong>Save Attendance</strong> when done.</li>
-</ol>
+</ul>
 <blockquote>
 <p><strong>Important:</strong> You can only record attendance for the <strong>current day</strong> or days in the past. Future dates are not allowed.</p>
-<p><strong>Tip:</strong> If a child is not appearing in the attendance list, check that their registration is <strong>Active</strong> in their profile.</p>
 </blockquote>
+<p><strong>Tip:</strong> If a child is not appearing in the attendance list, check that their registration is <strong>Active</strong> in their profile.</p>
 <h3 id="viewing-a-childs-attendance">Viewing a Child's Attendance</h3>
-<p>From the child's <strong>Profile Page → Attendance Tab</strong>:<br />
-- A calendar shows green (present) and red/empty (absent) days.<br />
-- Below the calendar is a full list of attendance records.<br />
-- The attendance percentage is shown at the top.</p>
+<p>From the child's <strong>Profile Page → Attendances tab</strong>:</p>
+<ul>
+<li>A calendar shows green (present) and red/empty (absent) days.</li>
+<li>Below the calendar is a full list of attendance records.</li>
+<li>The attendance percentage is shown at the top.</li>
+</ul>
 <h3 id="attendance-heatmap">Attendance Heatmap</h3>
-<p>Go to <strong>Attendance → Heatmap</strong> to see a visual grid of attendance across all children and all days in the program round. This helps identify:<br />
-- Children with consistently low attendance (possible dropout risk)<br />
-- Days with unusually low overall attendance</p>
-<p>Colors in the heatmap:<br />
-- <strong>Dark green</strong> — High attendance rate<br />
-- <strong>Light green / Yellow</strong> — Moderate attendance<br />
-- <strong>Red / Empty</strong> — Low or no attendance</p>
+<p>Go to <strong>Attendance → Heatmap</strong> to see a visual grid of attendance across all children and all days in the program round. This helps identify:</p>
+<ul>
+<li>Children with consistently low attendance (possible dropout risk)</li>
+<li>Days with unusually low overall attendance</li>
+</ul>
+<p>Colors in the heatmap:</p>
+<table>
+<thead>
+<tr>
+<th>Color</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dark green</td>
+<td>High attendance rate</td>
+</tr>
+<tr>
+<td>Light green / Yellow</td>
+<td>Moderate attendance</td>
+</tr>
+<tr>
+<td>Red / Empty</td>
+<td>Low or no attendance</td>
+</tr>
+</tbody>
+</table>
 <h3 id="attendance-report">Attendance Report</h3>
-<p>Go to <strong>Attendance → Report</strong> for a summary table showing:<br />
-- Total days per child<br />
-- Days present<br />
-- Days absent<br />
-- Attendance percentage</p>
+<p>Go to <strong>Attendance → Report</strong> for a summary table showing:</p>
+<ul>
+<li>Total days per child</li>
+<li>Days present</li>
+<li>Days absent</li>
+<li>Attendance percentage</li>
+</ul>
 <p>This report can be exported to Excel (see <a href="#9-exporting-data">Section 9</a>).</p>
 <hr />
 <h2 id="7-teachers-adding-managing">7. Teachers — Adding &amp; Managing</h2>
 <p>Teachers and facilitators working at your center must be registered in the system.</p>
 <h3 id="adding-a-teacher">Adding a Teacher</h3>
-<ol>
+<ul>
 <li>Go to <strong>MSCC → Teachers → Add Teacher</strong>.</li>
 <li>Fill in the form:</li>
-</ol>
+</ul>
 <table>
 <thead>
 <tr>
 <th>Field</th>
-<th>Notes</th>
+<th>Guidance</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>First Name</strong></td>
-<td></td>
+<td>First Name</td>
+<td>As written on the official document</td>
 </tr>
 <tr>
-<td><strong>Last Name</strong></td>
-<td></td>
+<td>Father's Name</td>
+<td>Required</td>
 </tr>
 <tr>
-<td><strong>Gender</strong></td>
-<td></td>
+<td>Last Name</td>
+<td>Required</td>
 </tr>
 <tr>
-<td><strong>Nationality</strong></td>
-<td></td>
+<td>Gender</td>
+<td>Male / Female</td>
 </tr>
 <tr>
-<td><strong>ID Type</strong></td>
-<td></td>
+<td>Nationality</td>
+<td>Select from the list</td>
 </tr>
 <tr>
-<td><strong>ID Number</strong></td>
-<td></td>
+<td>ID Type</td>
+<td>Type of identity document</td>
 </tr>
 <tr>
-<td><strong>Partner</strong></td>
+<td>ID Number</td>
+<td>Number on the document</td>
+</tr>
+<tr>
+<td>Partner</td>
 <td>Your organization (usually pre-filled)</td>
 </tr>
 <tr>
-<td><strong>Center</strong></td>
+<td>Center</td>
 <td>The center where this teacher works</td>
 </tr>
 </tbody>
 </table>
-<ol>
+<ul>
 <li>Click <strong>Save</strong>.</li>
-</ol>
+</ul>
 <h3 id="editing-a-teacher">Editing a Teacher</h3>
-<ol>
+<ul>
 <li>Go to <strong>MSCC → Teachers</strong>.</li>
 <li>Find the teacher in the list.</li>
 <li>Click <strong>Edit</strong> next to their name.</li>
 <li>Make changes and click <strong>Save</strong>.</li>
-</ol>
+</ul>
 <h3 id="removing-a-teacher">Removing a Teacher</h3>
 <p>Click <strong>Delete</strong> next to the teacher's name. You will be asked to confirm. Deleted teachers cannot be assigned to new attendance sessions.</p>
 <hr />
 <h2 id="8-searching-for-a-child">8. Searching for a Child</h2>
 <h3 id="quick-search-from-any-page">Quick Search (from any page)</h3>
-<p>A search bar is available in the navigation area. Type the child's:<br />
-- First name<br />
-- Last name<br />
-- ID number</p>
+<p>A search bar is available in the navigation area. Type the child's:</p>
+<ul>
+<li>First name</li>
+<li>Last name</li>
+<li>ID number</li>
+</ul>
 <p>Results appear as you type. Click on a result to go directly to the child's profile.</p>
 <h3 id="full-list-with-filters">Full List with Filters</h3>
 <p>Go to <strong>MSCC → Registrations List</strong>. You will see all children registered at your center/partner.</p>
@@ -1066,28 +1205,28 @@ body {
 <thead>
 <tr>
 <th>Filter</th>
-<th>Options</th>
+<th>What it does</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Status</strong></td>
+<td>Status</td>
 <td>Active / Inactive / Deleted</td>
 </tr>
 <tr>
-<td><strong>Centre</strong></td>
+<td>Centre</td>
 <td>Filter by center (for partner-level users)</td>
 </tr>
 <tr>
-<td><strong>Round</strong></td>
+<td>Round</td>
 <td>Filter by program round</td>
 </tr>
 <tr>
-<td><strong>Programme Type</strong></td>
+<td>Programme Type</td>
 <td>Filter by MSCC programme stream</td>
 </tr>
 <tr>
-<td><strong>Date Range</strong></td>
+<td>Date Range</td>
 <td>Registration date range</td>
 </tr>
 </tbody>
@@ -1098,27 +1237,30 @@ body {
 <hr />
 <h2 id="9-exporting-data">9. Exporting Data</h2>
 <h3 id="how-to-request-an-export">How to Request an Export</h3>
-<ol>
+<ul>
 <li>Go to <strong>MSCC → Registrations List</strong>.</li>
 <li>Apply any filters you want (date range, center, round, etc.).</li>
 <li>Click <strong>Export</strong> at the top of the list.</li>
 <li>A dialog box opens. Select the <strong>fields</strong> you want to include in the export (or leave all selected for full data).</li>
 <li>Choose the <strong>format</strong>: XLSX (Excel) or CSV.</li>
 <li>Click <strong>Generate Export</strong>.</li>
-</ol>
+</ul>
 <h3 id="what-happens-next">What Happens Next</h3>
 <p>Large exports are processed in the background. You will see:</p>
-<pre class="highlight"><code>Export requested. Processing... [spinner]
+<pre><code>Export requested. Processing... [spinner]
 </code></pre>
-
-<p>You can <strong>continue using the system</strong> while the export is being prepared. When it is ready:<br />
-- The button changes to <strong>Download</strong>.<br />
-- You will receive a <strong>push notification</strong> in your browser (if notifications are enabled) saying "Your export is ready."</p>
+<p>You can <strong>continue using the system</strong> while the export is being prepared. When it is ready:</p>
+<ul>
+<li>The button changes to <strong>Download</strong>.</li>
+<li>You will receive a <strong>push notification</strong> in your browser (if notifications are enabled) saying "Your export is ready."</li>
+</ul>
 <p>Click <strong>Download</strong> to save the file to your computer.</p>
 <h3 id="enabling-browser-notifications">Enabling Browser Notifications</h3>
-<p>To receive push notifications when exports are ready:<br />
-1. When the browser asks "Allow notifications from this site?" — click <strong>Allow</strong>.<br />
-2. If you missed this prompt, go to your browser settings → Notifications → find the site URL → set to <strong>Allow</strong>.</p>
+<p>To receive push notifications when exports are ready:</p>
+<ol>
+<li>When the browser asks "Allow notifications from this site?" — click <strong>Allow</strong>.</li>
+<li>If you missed this prompt, go to your browser settings → Notifications → find the site URL → set to <strong>Allow</strong>.</li>
+</ol>
 <h3 id="export-file-formats">Export File Formats</h3>
 <table>
 <thead>
@@ -1129,16 +1271,17 @@ body {
 </thead>
 <tbody>
 <tr>
-<td><strong>XLSX (Excel)</strong></td>
+<td>XLSX (Excel)</td>
 <td>Opening in Microsoft Excel or Google Sheets for analysis</td>
 </tr>
 <tr>
-<td><strong>CSV</strong></td>
+<td>CSV</td>
 <td>Importing into other databases or tools</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
+<p><strong>Arabic text in CSV:</strong> CSV exports are written in UTF-8 with a byte-order mark so that Arabic names display correctly when the file is opened directly in Excel.</p>
 <p><strong>Note:</strong> Export access may be restricted to users with the <strong>EXPORT</strong> role. If you do not see the Export button, contact your coordinator.</p>
 </blockquote>
 <hr />
@@ -1148,67 +1291,103 @@ body {
 <table>
 <thead>
 <tr>
-<th>Widget</th>
+<th>Indicator</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Total Registrations</strong></td>
+<td>Total Registrations</td>
 <td>Count of active registrations in the current round</td>
 </tr>
 <tr>
-<td><strong>By Gender</strong></td>
+<td>By Gender</td>
 <td>Pie chart — Male / Female breakdown</td>
 </tr>
 <tr>
-<td><strong>By Nationality</strong></td>
+<td>By Nationality</td>
 <td>Chart of nationalities represented</td>
 </tr>
 <tr>
-<td><strong>By Age Group</strong></td>
+<td>By Age Group</td>
 <td>Distribution of child ages</td>
 </tr>
 <tr>
-<td><strong>Monthly Registrations</strong></td>
+<td>Monthly Registrations</td>
 <td>Bar chart of new registrations per month</td>
 </tr>
 <tr>
-<td><strong>Services Delivered</strong></td>
+<td>Services Delivered</td>
 <td>Count of each service type delivered this round</td>
 </tr>
 <tr>
-<td><strong>Attendance Rate</strong></td>
+<td>Attendance Rate</td>
 <td>Average attendance rate across all children</td>
 </tr>
 </tbody>
 </table>
 <h3 id="filtering-the-dashboard">Filtering the Dashboard</h3>
-<p>Use the filter controls at the top of the dashboard to narrow the data by:<br />
-- <strong>Round</strong> (program year)<br />
-- <strong>Partner</strong> (your organization)<br />
-- <strong>Center</strong><br />
-- <strong>Date range</strong></p>
+<p>Use the filter controls at the top of the dashboard to narrow the data by:</p>
+<ul>
+<li><strong>Round</strong> (program year)</li>
+<li><strong>Partner</strong> (your organization)</li>
+<li><strong>Center</strong></li>
+<li><strong>Date range</strong></li>
+</ul>
 <h3 id="wellbeing-dashboard">Wellbeing Dashboard</h3>
-<p>Go to <strong>MSCC → Wellbeing Dashboard</strong> for wellbeing-specific indicators including PSS session counts, referral rates, and follow-up completion rates.</p>
+<p>Go to <strong>MSCC → Wellbeing Dashboard</strong> for wellbeing-specific indicators including PSS session counts, referral rates, and follow-up completion rates. Clicking an indicator drills down to the list of children behind the number.</p>
 <h3 id="teacher-dashboard">Teacher Dashboard</h3>
-<p>Go to <strong>MSCC → Teacher Dashboard</strong> to see:<br />
-- Number of sessions delivered per teacher<br />
-- Teacher attendance<br />
-- Session frequency by subject/activity</p>
+<p>Go to <strong>MSCC → Teacher Dashboard</strong> to see:</p>
+<ul>
+<li>Number of sessions delivered per teacher</li>
+<li>Teacher attendance</li>
+<li>Session frequency by subject/activity</li>
+</ul>
 <h3 id="custom-dashboard">Custom Dashboard</h3>
 <p>Go to <strong>MSCC → Custom Dashboard</strong> to build a view with your preferred indicators.</p>
+<h3 id="analytics-pivot-tables-and-maps">Analytics, Pivot Tables and Maps</h3>
+<p>Under <strong>Reports</strong> you will also find:</p>
+<table>
+<thead>
+<tr>
+<th>Report</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Advanced Analytics</td>
+<td>Trend, breakdown, and cross-tab views with filters for date, partner, center, programme, nationality, gender and age</td>
+</tr>
+<tr>
+<td>Pivot Dashboard</td>
+<td>Build your own cross-tabulations and drag dimensions into rows/columns</td>
+</tr>
+<tr>
+<td>Chart Builder</td>
+<td>Create a chart from selected indicators</td>
+</tr>
+<tr>
+<td>Centers Map</td>
+<td>Map of centers with registration counts per location</td>
+</tr>
+<tr>
+<td>Advanced Exporter</td>
+<td>Queue a large, fully customized export in the background</td>
+</tr>
+</tbody>
+</table>
 <hr />
 <h2 id="11-clm-bridging-program">11. CLM Bridging Program</h2>
 <p>The CLM module manages students enrolled in <strong>bridging / non-formal education</strong> classes.</p>
 <h3 id="enrolling-a-student-clm">Enrolling a Student (CLM)</h3>
-<ol>
+<ul>
 <li>Go to <strong>CLM → Students → Enroll New Student</strong>.</li>
 <li>Fill in the student's personal information (similar to MSCC registration).</li>
 <li>Select the <strong>Cycle</strong> (program term) and <strong>Center</strong>.</li>
 <li>Assign a <strong>Teacher</strong>.</li>
 <li>Click <strong>Save</strong>.</li>
-</ol>
+</ul>
 <h3 id="clm-student-status">CLM Student Status</h3>
 <p>Each CLM student moves through statuses:</p>
 <table>
@@ -1220,15 +1399,15 @@ body {
 </thead>
 <tbody>
 <tr>
-<td><strong>Enrolled</strong></td>
+<td>Enrolled</td>
 <td>Student is actively participating</td>
 </tr>
 <tr>
-<td><strong>Pre-Test</strong></td>
+<td>Pre-Test</td>
 <td>Initial assessment has been administered</td>
 </tr>
 <tr>
-<td><strong>Post-Test</strong></td>
+<td>Post-Test</td>
 <td>End-of-cycle assessment has been completed</td>
 </tr>
 </tbody>
@@ -1236,38 +1415,263 @@ body {
 <p>To update the status, open the student's profile and click the status button.</p>
 <h3 id="clm-attendance">CLM Attendance</h3>
 <p>CLM attendance is recorded per class/session, not per individual center day.</p>
-<ol>
+<ul>
 <li>Go to <strong>CLM → Attendance</strong>.</li>
 <li>Select the <strong>date</strong>, <strong>cycle</strong>, and <strong>class</strong>.</li>
 <li>Mark each student as present or absent.</li>
 <li>Click <strong>Save</strong>.</li>
-</ol>
+</ul>
 <h3 id="clm-assessments">CLM Assessments</h3>
 <p>Pre-test and post-test assessments are recorded from the student's profile page. Click <strong>Add Pre-Test</strong> or <strong>Add Post-Test</strong> and fill in the assessment scores.</p>
+<h3 id="other-clm-records">Other CLM Records</h3>
+<p>Depending on your role you may also have access to health visits, community initiatives, clubs, meetings, mid/post assessments and follow-up forms from the CLM menu.</p>
 <hr />
-<h2 id="12-managing-your-account">12. Managing Your Account</h2>
-<h3 id="changing-your-password">Changing Your Password</h3>
+<h2 id="12-alp-accelerated-learning-programme">12. ALP — Accelerated Learning Programme</h2>
+<p>The <strong>ALP</strong> module is used by public schools running the Accelerated Learning Programme. It is separate from MSCC: ALP records belong to a <strong>school</strong>, not to a center or partner.</p>
+<h3 id="who-can-use-it">Who Can Use It</h3>
+<ul>
+<li>Your account must be in the <strong>ALP_SCHOOL</strong> group and must be <strong>linked to one school</strong>.</li>
+<li>You can only see and edit data for <strong>your own school</strong>. Records from other schools are never shown.</li>
+<li>If your account has no school assigned, ALP pages will load but the lists stay empty and a warning is shown. Ask your administrator to link your account to a school.</li>
+<li>Site administrators (superusers) who are given ALP access can <strong>view</strong> ALP data, but the add/edit/delete screens are deliberately blocked for them — data entry is the school's responsibility.</li>
+</ul>
+<h3 id="the-alp-home-page">The ALP Home Page</h3>
+<p>ALP users are taken straight to the <strong>ALP overview</strong> after login (rather than the general landing page). It shows:</p>
+<table>
+<thead>
+<tr>
+<th>Card</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Today</td>
+<td>Registrations created today</td>
+</tr>
+<tr>
+<td>This Week</td>
+<td>New registrations over the last 7 days</td>
+</tr>
+<tr>
+<td>Schools</td>
+<td>Schools reporting data</td>
+</tr>
+<tr>
+<td>Attendance</td>
+<td>Average attendance for the current month</td>
+</tr>
+<tr>
+<td>Registrations Trend</td>
+<td>Chart of the last 14 days</td>
+</tr>
+</tbody>
+</table>
+<p>Quick actions take you to <strong>New Registration</strong>, <strong>Beneficiary List</strong>, and <strong>Track Attendance</strong>.</p>
+<h3 id="registering-a-student-alp">Registering a Student (ALP)</h3>
+<p>Go to <strong>ALP → Registrations → Add</strong>. The form follows the same child identity, caregiver and ID workflow as MSCC, plus ALP-specific fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Guidance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Academic year (Round)</td>
+<td>Only the current academic year is selectable</td>
+</tr>
+<tr>
+<td>Programme</td>
+<td>The ALP programme/level the student joins</td>
+</tr>
+<tr>
+<td>Registration date</td>
+<td>Date the student was registered</td>
+</tr>
+<tr>
+<td>Source of identification</td>
+<td>How the student was referred to ALP (ALP-specific list, including the BLN programme and NFE referrals)</td>
+</tr>
+<tr>
+<td>Child labour</td>
+<td>Whether the child works — <strong>required</strong>. Follow-up questions (type, hours, weekly income, working conditions) only appear when the answer is <em>Yes</em></td>
+</tr>
+<tr>
+<td>Cash support programmes</td>
+<td>Any cash assistance the household receives</td>
+</tr>
+<tr>
+<td>Packages</td>
+<td>Service packages the student will receive</td>
+</tr>
+<tr>
+<td>Consent form copy/photo</td>
+<td>Upload a scanned copy or clear photo of the signed consent form (PDF or image)</td>
+</tr>
+<tr>
+<td>Child photo</td>
+<td>Optional photo of the student</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The <strong>school</strong> is not shown on the form — it is set automatically from the school linked to your account.</p>
+</blockquote>
+<p><strong>Duplicate check:</strong> as with MSCC, the system checks for an existing child with a similar name and date of birth while you type. Review any match carefully before continuing.</p>
+<p>After saving, you are taken to the student's <strong>ALP child profile</strong>, which mirrors the MSCC profile layout.</p>
+<h3 id="managing-the-registration-list">Managing the Registration List</h3>
+<p>Go to <strong>ALP → Registrations</strong>. The list is filtered to your school and offers:</p>
+<ul>
+<li>Filters (academic year, programme, status, date range)</li>
+<li>Column sorting</li>
+<li><strong>Edit</strong> and <strong>Delete</strong> actions in the first column of each row</li>
+<li><strong>Export</strong> to Excel/CSV — CSV exports are UTF-8 with a byte-order mark so Arabic names open correctly in Excel</li>
+</ul>
+<h3 id="teachers-alp">Teachers (ALP)</h3>
+<p>Go to <strong>ALP → Teachers</strong>. Teacher records capture the profile needed for ALP reporting:</p>
+<table>
+<thead>
+<tr>
+<th>Field group</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identity</td>
+<td>First / father's / last name, mother's full name, sex, date of birth, nationality, ID type and number</td>
+</tr>
+<tr>
+<td>Assignment</td>
+<td>Academic year, school, teacher assignment (and "other" description), subjects provided, registration levels taught</td>
+</tr>
+<tr>
+<td>Workload</td>
+<td>Teaching hours in the private school, teaching hours in MSCC, years of experience</td>
+</tr>
+<tr>
+<td>Training</td>
+<td>Trainings attended, number of sessions, date of completion, extra coaching and details</td>
+</tr>
+<tr>
+<td>Attachments</td>
+<td>Up to five supporting documents, each with a short description and a document type</td>
+</tr>
+</tbody>
+</table>
+<p>The school field is restricted to your own school. Use <strong>Add</strong>, <strong>Edit</strong> and <strong>Delete</strong> in the teacher list to manage records.</p>
+<h3 id="student-attendance-alp">Student Attendance (ALP)</h3>
+<p>Go to <strong>ALP → Attendance</strong>.</p>
 <ol>
+<li>The <strong>date</strong> defaults to today. You can pick an earlier date; <strong>future dates are rejected</strong>.</li>
+<li>Select the <strong>academic year</strong> and the <strong>programme</strong>.</li>
+<li>The student list for your school loads automatically.</li>
+<li>Mark each student <strong>Attended / Not attended</strong>. For an absence, choose the <strong>absence reason</strong> (and describe it if you select <em>Other</em>).</li>
+<li>If the school was closed that day, set <strong>Day off</strong> to <em>Yes</em> and choose the <strong>reason for closing</strong> instead of marking students individually.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<p><strong>Downloading the day's attendance:</strong> click <strong>Download</strong> on the attendance page to get a CSV of exactly what is loaded on screen. The date, academic year and programme must all be selected first, otherwise the download is refused.</p>
+<h3 id="teacher-attendance-alp">Teacher Attendance (ALP)</h3>
+<p>Go to <strong>ALP → Teacher Attendance</strong> to record attendance for teachers in bulk:</p>
+<ul>
+<li>Pick the date, then mark each teacher's status.</li>
+<li>Save the whole list in one action.</li>
+<li>The list of past teacher attendance can be filtered and sorted.</li>
+</ul>
+<h3 id="grading-alp">Grading (ALP)</h3>
+<p>Go to <strong>ALP → Grading → Add</strong>.</p>
+<ul>
+<li>Choose the <strong>student registration</strong> (restricted to your school).</li>
+<li>The system builds the grade fields automatically from the grading definitions configured by the administrator. Each definition has a <strong>subject/material</strong> and a <strong>minimum and maximum grade</strong>.</li>
+<li>Enter a value for each subject. Values outside the allowed range are rejected with a validation error.</li>
+<li>Click <strong>Save</strong>. Grades are stored against the registration and can be edited later.</li>
+</ul>
+<blockquote>
+<p>Because the grade fields come from configuration, the subject list can change between academic years without a software update. If a subject is missing, ask your administrator to add its grading definition.</p>
+</blockquote>
+<h3 id="school-profile-alp">School Profile (ALP)</h3>
+<p>Go to <strong>ALP → School Profile</strong>. ALP focal points maintain their own school record:</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>School Information</td>
+<td>School number, name, type, operating shift, director name, land phone number, email</td>
+</tr>
+<tr>
+<td>Location</td>
+<td>Governorate, district, cadaster, longitude, latitude</td>
+</tr>
+<tr>
+<td>Provided Services</td>
+<td>Provided packages, digital learning offered, digital hub available, number of administrative staff, nearby PHCC</td>
+</tr>
+</tbody>
+</table>
+<p>Click <strong>Save changes</strong> when done. Keeping the location coordinates accurate matters — they drive the school map on the dashboards.</p>
+<h3 id="alp-dashboards">ALP Dashboards</h3>
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Registration</strong></td>
+<td>Registration counts and trends, broken down by programme, gender, nationality and age</td>
+</tr>
+<tr>
+<td><strong>Teacher</strong></td>
+<td>Teacher counts, assignments, qualifications, workload and learning-outcome insights</td>
+</tr>
+<tr>
+<td><strong>Attendance</strong></td>
+<td>Attendance rates over time, in the same heatmap style as MSCC</td>
+</tr>
+<tr>
+<td><strong>School</strong></td>
+<td>Map of ALP schools with their registration and attendance figures</td>
+</tr>
+<tr>
+<td><strong>Pivot</strong></td>
+<td>Build your own cross-tabulation of ALP data; also open to site administrators for cross-school reporting</td>
+</tr>
+</tbody>
+</table>
+<p>All dashboards except the pivot are limited to your own school's data.</p>
+<hr />
+<h2 id="13-managing-your-account">13. Managing Your Account</h2>
+<h3 id="changing-your-password">Changing Your Password</h3>
+<ul>
 <li>Click your <strong>username</strong> in the top-right corner.</li>
 <li>Select <strong>Change Password</strong>.</li>
 <li>Enter your current password, then your new password twice.</li>
 <li>Click <strong>Save</strong>.</li>
-</ol>
+</ul>
 <p>Your new password must meet the same requirements as your original password (see <a href="#1-getting-started-login-navigation">Section 1</a>).</p>
 <h3 id="switching-language_1">Switching Language</h3>
-<ol>
+<ul>
 <li>Click your <strong>username</strong> in the top-right corner.</li>
 <li>Select <strong>English</strong> or <strong>العربية</strong>.</li>
-</ol>
+</ul>
 <p>The interface will reload immediately in the selected language.</p>
 <h3 id="viewing-your-profile">Viewing Your Profile</h3>
-<ol>
+<ul>
 <li>Click your <strong>username</strong> → <strong>Profile</strong>.</li>
-<li>You can see your assigned partner, center, and role groups.</li>
+<li>You can see your assigned partner, center or school, and your role groups.</li>
 <li>Contact your system administrator to change any of these assignments.</li>
-</ol>
+</ul>
 <hr />
-<h2 id="13-frequently-asked-questions-faq">13. Frequently Asked Questions (FAQ)</h2>
+<h2 id="14-frequently-asked-questions-faq">14. Frequently Asked Questions (FAQ)</h2>
 <p><strong>Q: I can't find a child I registered last week. Where did they go?</strong></p>
 <blockquote>
 <p>Check the filter at the top of the Registrations List — it may be set to a different round or status. Set <strong>Status</strong> to "All" and clear any date filters, then search by name.</p>
@@ -1308,52 +1712,88 @@ body {
 <blockquote>
 <p>No. Each account should be used by one person only. Sharing accounts is against policy and makes the audit trail unreliable. Each staff member should have their own username.</p>
 </blockquote>
+<p><strong>Q: (ALP) My ALP lists are completely empty even though my school has students.</strong></p>
+<blockquote>
+<p>Your account is probably not linked to a school yet. ALP records are filtered strictly by the school on your user account. Ask your administrator to set your school.</p>
+</blockquote>
+<p><strong>Q: (ALP) I am an administrator and the ALP "Add" button gives me a permission error.</strong></p>
+<blockquote>
+<p>That is intentional. Site administrators have read-only access to ALP; only school accounts may create or change ALP records.</p>
+</blockquote>
+<p><strong>Q: (ALP) My Arabic names look like symbols when I open the attendance CSV in Excel.</strong></p>
+<blockquote>
+<p>Open the file directly from Excel's <em>File → Open</em> dialog rather than importing it as plain text. The export is UTF-8 with a byte-order mark, which Excel recognises automatically when the file is opened normally.</p>
+</blockquote>
 <hr />
-<h2 id="14-troubleshooting-common-problems">14. Troubleshooting Common Problems</h2>
+<h2 id="15-troubleshooting-common-problems">15. Troubleshooting Common Problems</h2>
 <h3 id="this-site-cant-be-reached-page-wont-load">"This site can't be reached" / Page won't load</h3>
-<ol>
+<ul>
 <li>Check your internet connection.</li>
 <li>Try refreshing the page (press <strong>F5</strong> or <strong>Ctrl+R</strong>).</li>
 <li>Try opening the URL in a different browser.</li>
 <li>If the problem persists, contact your coordinator — the server may be temporarily down.</li>
-</ol>
+</ul>
 <h3 id="page-loads-but-shows-a-blank-white-screen">Page loads but shows a blank white screen</h3>
-<ol>
+<ul>
 <li>Press <strong>Ctrl+Shift+R</strong> (hard refresh) to clear cached files.</li>
 <li>Try logging out and logging back in.</li>
 <li>Try a different browser.</li>
-</ol>
+</ul>
 <h3 id="login-fails-invalid-username-or-password">Login fails — "Invalid username or password"</h3>
-<ol>
+<ul>
 <li>Check that <strong>Caps Lock</strong> is not on.</li>
 <li>Make sure you are using your <strong>username</strong>, not your email address.</li>
-<li>If you have tried 5 incorrect passwords in 5 minutes, your account may be temporarily locked. Wait 5 minutes and try again.</li>
+<li>After 5 failed attempts in 5 minutes the system stops accepting further attempts for a short period. Wait a few minutes and try again.</li>
 <li>Contact your administrator to reset your password.</li>
-</ol>
+</ul>
 <h3 id="form-wont-submit-red-error-messages-appear">Form won't submit — red error messages appear</h3>
-<p>Red messages appear next to fields that have problems:<br />
-- <strong>"This field is required"</strong> — fill in the empty field.<br />
-- <strong>"Enter a valid date"</strong> — check the date format (day/month/year).<br />
-- <strong>"ID number already exists"</strong> — another record with this ID number already exists. Check for duplicates.</p>
+<p>Red messages appear next to fields that have problems:</p>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"This field is required"</td>
+<td>Fill in the empty field</td>
+</tr>
+<tr>
+<td>"Enter a valid date"</td>
+<td>Check the date format (day/month/year)</td>
+</tr>
+<tr>
+<td>"ID number already exists"</td>
+<td>Another record with this ID number already exists — check for duplicates</td>
+</tr>
+<tr>
+<td>"Ensure this value is less than or equal to …"</td>
+<td>The grade or number you entered is outside the allowed range</td>
+</tr>
+</tbody>
+</table>
 <h3 id="export-button-is-greyed-out-or-not-visible">Export button is greyed out or not visible</h3>
 <p>Your account may not have the EXPORT role. Contact your system administrator.</p>
 <h3 id="push-notifications-not-working">Push notifications not working</h3>
-<ol>
+<ul>
 <li>Check that your browser allows notifications for this site (browser settings → Notifications).</li>
 <li>Make sure you are not in private/incognito mode — notifications are disabled in private mode.</li>
 <li>Try refreshing the page after the export is submitted — the download button should appear even without a notification.</li>
-</ol>
+</ul>
 <h3 id="attendance-list-is-empty-no-children-showing">Attendance list is empty — no children showing</h3>
-<ol>
-<li>Confirm you are selecting the correct <strong>center</strong> and <strong>date</strong>.</li>
+<ul>
+<li>Confirm you are selecting the correct <strong>center/school</strong>, <strong>date</strong>, <strong>round</strong> and <strong>programme</strong>.</li>
 <li>Check that the children are registered as <strong>Active</strong> in the Registrations List.</li>
-<li>Make sure the current program <strong>Round</strong> is set as active. Contact your administrator if unsure.</li>
-</ol>
+<li>Make sure the current program <strong>Round / academic year</strong> is set as active. Contact your administrator if unsure.</li>
+<li>For ALP, confirm your account is linked to a school.</li>
+</ul>
 <h3 id="session-expired-redirected-to-login-page">Session expired — redirected to login page</h3>
 <p>The system logged you out after 30 minutes of inactivity. Log back in. If you were filling a long form, the data may have been saved as a draft in your browser — check if the fields are still populated when you return to the form.</p>
 <hr />
-<h2 id="system-purpose">15. System Purpose</h2>
-<p>The BMA-NFE platform is designed to support education and programme management operations. The system centralizes registration, attendance tracking, student monitoring, reporting, and educational workflows.</p>
+<h2 id="16-system-purpose">16. System Purpose</h2>
+<p>The BMA-NFE platform supports education and programme management operations for the Non-Formal Education sector. The system centralizes registration, attendance tracking, student monitoring, reporting, and educational workflows.</p>
 <p>The system allows organizations to:</p>
 <ul>
 <li>Maintain accurate beneficiary records</li>
@@ -1364,10 +1804,9 @@ body {
 <li>Export data for programme reporting</li>
 <li>Improve data quality and operational visibility</li>
 </ul>
-
 <hr />
-<h2 id="user-roles-access-levels">16. User Roles and Access Levels</h2>
-<p>Different users have different permissions depending on their role in the system.</p>
+<h2 id="17-user-roles-and-access-levels">17. User Roles and Access Levels</h2>
+<p>Access is driven by the <strong>groups</strong> assigned to your account, combined with the <strong>center</strong>, <strong>partner</strong> or <strong>school</strong> it is linked to. Different users have different permissions depending on their role.</p>
 <h3 id="registration-officer">Registration Officer</h3>
 <p>Registration Officers are responsible for:</p>
 <ul>
@@ -1377,7 +1816,7 @@ body {
 <li>Uploading attachments and documents</li>
 </ul>
 <p>Typical access includes: Registration pages, Child profiles, Family information, Registration editing.</p>
-<h3 id="teacher-role">Teacher</h3>
+<h3 id="teacher">Teacher</h3>
 <p>Teachers are responsible for:</p>
 <ul>
 <li>Taking attendance</li>
@@ -1386,6 +1825,8 @@ body {
 <li>Monitoring student progress</li>
 </ul>
 <p>Typical access includes: Attendance pages, Grading pages, Student lists, Teacher dashboards.</p>
+<h3 id="alp-school-focal-point">ALP School Focal Point</h3>
+<p>School-based users running the Accelerated Learning Programme. They register students, maintain teacher records, take student and teacher attendance, enter grades, and keep their school profile up to date — always limited to their own school.</p>
 <h3 id="programme-coordinator">Programme Coordinator</h3>
 <p>Programme Coordinators manage programme operations. Responsibilities include:</p>
 <ul>
@@ -1396,40 +1837,44 @@ body {
 </ul>
 <h3 id="management-users">Management Users</h3>
 <p>Management users usually have broader access to: Dashboards, Exports, Reports, Administrative modules.</p>
-<h3 id="system-administrators-role">System Administrators</h3>
+<h3 id="system-administrators">System Administrators</h3>
 <p>Administrators manage:</p>
 <ul>
-<li>User accounts and permissions</li>
-<li>System configurations</li>
+<li>User accounts, groups, and center/partner/school assignments</li>
+<li>System configurations, including programme rounds and grading definitions</li>
 <li>Data corrections</li>
 <li>Advanced troubleshooting</li>
 </ul>
-
+<p>Administrators are also the only users who can read the technical guides inside the application.</p>
+<blockquote>
+<p>The exact group names used by the system and the views each one unlocks are listed in the <code>../ACCESS_CONTROL.md</code>.</p>
+</blockquote>
 <hr />
-<h2 id="grading-assessment-module">17. Grading and Assessment Module</h2>
+<h2 id="18-grading-and-assessment-module">18. Grading and Assessment Module</h2>
 <p>The grading module allows educational performance tracking for enrolled students.</p>
 <h3 id="entering-grades">Entering Grades</h3>
-<ol>
-<li><strong>Select Student</strong> — Choose the Programme, Section, and then the Student.</li>
-<li><strong>Enter Scores</strong> — Assessment areas may include:
 <ul>
-<li>Arabic</li>
+<li><strong>Select Student</strong> — Choose the Programme, Section, and then the Student. In ALP, choose the student's registration.</li>
+<li>
+<p><strong>Enter Scores</strong> — Assessment areas may include:</p>
+</li>
+<li>
+<p>Arabic</p>
+</li>
 <li>English</li>
 <li>French</li>
 <li>Mathematics</li>
 <li>Social emotional learning</li>
 <li>Artistic performance</li>
 </ul>
-</li>
-</ol>
+<p>In ALP the list of subjects is not fixed in the software: it is generated from the grading definitions your administrator configures, each with its own minimum and maximum grade.</p>
 <h3 id="grade-validation">Grade Validation</h3>
 <p>The system enforces minimum and maximum values per programme-specific thresholds. Invalid grades trigger validation errors.</p>
-<div class="callout callout-warn">
-<strong>Important:</strong> Save entries carefully and double-check scores before submission. Invalid grades may be blocked automatically.
-</div>
-
+<blockquote>
+<p><strong>Important:</strong> Save entries carefully and double-check scores before submission. Invalid grades are blocked automatically.</p>
+</blockquote>
 <hr />
-<h2 id="headcount-emergency-features">18. Headcount and Emergency Features</h2>
+<h2 id="19-headcount-and-emergency-features">19. Headcount and Emergency Features</h2>
 <p>Some implementations include headcount and emergency response features for safety and accountability.</p>
 <h3 id="headcount-process">Headcount Process</h3>
 <p>Users can:</p>
@@ -1438,48 +1883,74 @@ body {
 <li>Record current location information</li>
 <li>Provide emergency details</li>
 </ul>
-<h3 id="headcount-fields">Common Headcount Fields</h3>
+<h3 id="common-headcount-fields">Common Headcount Fields</h3>
 <table>
-<thead><tr><th>Field</th><th>Description</th></tr></thead>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
 <tbody>
-<tr><td>Safety Status</td><td>Indicate whether the person is safe</td></tr>
-<tr><td>Current Location</td><td>Reported location at time of submission</td></tr>
-<tr><td>GPS Coordinates</td><td>Precise location if available</td></tr>
-<tr><td>Country</td><td>Country of current location</td></tr>
-<tr><td>Additional Notes</td><td>Any relevant context or details</td></tr>
+<tr>
+<td>Safety Status</td>
+<td>Indicate whether the person is safe</td>
+</tr>
+<tr>
+<td>Current Location</td>
+<td>Reported location at time of submission</td>
+</tr>
+<tr>
+<td>GPS Coordinates</td>
+<td>Precise location if available</td>
+</tr>
+<tr>
+<td>Country</td>
+<td>Country of current location</td>
+</tr>
+<tr>
+<td>Additional Notes</td>
+<td>Any relevant context or details</td>
+</tr>
 </tbody>
 </table>
-<div class="callout callout-info">
-<strong>Guideline:</strong> Provide accurate information. Verify GPS data before submitting. Emergency responses should be updated promptly.
-</div>
-
+<blockquote>
+<p><strong>Guideline:</strong> Provide accurate information. Verify GPS data before submitting. Emergency responses should be updated promptly.</p>
+</blockquote>
 <hr />
-<h2 id="validation-rules">19. Validation Rules and Common Restrictions</h2>
+<h2 id="20-validation-rules-and-common-restrictions">20. Validation Rules and Common Restrictions</h2>
 <p>The system includes multiple validation mechanisms to ensure data quality.</p>
-<h3 id="required-fields-validation">Required Fields</h3>
+<h3 id="required-fields">Required Fields</h3>
 <p>Mandatory fields cannot be left empty. They are marked with a red asterisk (*).</p>
 <h3 id="date-restrictions">Date Restrictions</h3>
 <ul>
 <li>Registration dates cannot be in the future</li>
+<li>Attendance cannot be recorded for a future date</li>
 <li>Attendance dates cannot precede registration dates</li>
 <li>Invalid date sequences are blocked automatically</li>
 </ul>
 <h3 id="duplicate-prevention">Duplicate Prevention</h3>
-<p>The system blocks:</p>
+<p>The system blocks or warns about:</p>
 <ul>
-<li>Duplicate registrations</li>
-<li>Duplicate attendance records</li>
+<li>Duplicate registrations (the duplicate check runs while you type the child's name and date of birth)</li>
+<li>Duplicate attendance records for the same day</li>
 <li>Duplicate programme assignments</li>
 </ul>
 <h3 id="conditional-fields">Conditional Fields</h3>
 <p>Some fields only appear when certain options are selected. Examples:</p>
 <ul>
 <li>Selecting <strong>"Other"</strong> may reveal an additional specification field.</li>
+<li>Child labour follow-up questions only appear when child labour is reported.</li>
+<li>Sibling disability questions only appear when the child has siblings.</li>
 <li>Certain education statuses (e.g., Dropout) require a dropout date to be entered.</li>
 </ul>
-
+<h3 id="file-uploads">File Uploads</h3>
+<ul>
+<li>Consent forms and supporting documents accept PDF files and images.</li>
+<li>Upload a clear, readable scan or photo — unreadable uploads have to be replaced later.</li>
+</ul>
 <hr />
-<h2 id="best-practices">20. Best Practices for Users</h2>
+<h2 id="21-best-practices-for-users">21. Best Practices for Users</h2>
 <p>Users are encouraged to follow these practices to maintain data quality and system integrity:</p>
 <ul>
 <li>Save work regularly throughout a session</li>
@@ -1492,9 +1963,8 @@ body {
 <li>Apply filters gradually and verify results before exporting</li>
 <li>Use smaller date ranges when generating exports when possible</li>
 </ul>
-
 <hr />
-<h2 id="security-data-protection">21. Security and Data Protection Guidelines</h2>
+<h2 id="22-security-and-data-protection-guidelines">22. Security and Data Protection Guidelines</h2>
 <p>Because the system contains sensitive beneficiary information, users must follow security practices at all times.</p>
 <h3 id="security-rules">Security Rules</h3>
 <ul>
@@ -1504,75 +1974,121 @@ body {
 <li>Use secure and trusted devices when possible</li>
 <li>Avoid downloading sensitive data unnecessarily</li>
 </ul>
-<h3 id="data-protection-rules">Data Protection</h3>
+<h3 id="data-protection">Data Protection</h3>
 <ul>
 <li>Access only the information you are authorized to view</li>
 <li>Avoid storing exports on unsecured or personal devices</li>
 <li>Follow your organization's data protection policies</li>
 </ul>
-<div class="callout callout-warn">
-<strong>Reminder:</strong> The system contains personal data of children and families. Any misuse or unauthorized sharing of this data is a serious breach of policy.
-</div>
-
+<blockquote>
+<p><strong>Reminder:</strong> The system contains personal data of children and families, including uploaded consent forms and identity documents. Any misuse or unauthorized sharing of this data is a serious breach of policy.</p>
+</blockquote>
 <hr />
-<h2 id="glossary">22. Glossary of Common Terms</h2>
+<h2 id="23-glossary-of-common-terms">23. Glossary of Common Terms</h2>
 <table>
-<thead><tr><th>Term</th><th>Definition</th></tr></thead>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
 <tbody>
-<tr><td><strong>BMA | Home</strong></td><td>Main landing page for the application</td></tr>
-<tr><td><strong>Beneficiary</strong></td><td>A registered individual receiving programme services</td></tr>
-<tr><td><strong>Round</strong></td><td>An operational or educational cycle (e.g., academic term or programme period)</td></tr>
-<tr><td><strong>Section</strong></td><td>A class grouping within a programme</td></tr>
-<tr><td><strong>Programme</strong></td><td>An educational or operational activity offered at a center</td></tr>
-<tr><td><strong>Attendance Record</strong></td><td>A stored attendance entry for a student on a specific date</td></tr>
-<tr><td><strong>Dashboard</strong></td><td>The main summary interface displaying statistics and navigation shortcuts</td></tr>
-<tr><td><strong>Registration Officer</strong></td><td>Staff responsible for creating and managing beneficiary profiles</td></tr>
-<tr><td><strong>Export</strong></td><td>A generated file (Excel, CSV, PDF) containing filtered system data</td></tr>
-<tr><td><strong>Center</strong></td><td>A physical location where programme activities are delivered</td></tr>
-<tr><td><strong>CLM</strong></td><td>Catch-up Learning Module — a bridging educational programme</td></tr>
+<tr>
+<td>ALP</td>
+<td>Accelerated Learning Programme — a school-based catch-up programme</td>
+</tr>
+<tr>
+<td>Attendance Record</td>
+<td>A stored attendance entry for a student on a specific date</td>
+</tr>
+<tr>
+<td>Beneficiary</td>
+<td>A registered individual receiving programme services</td>
+</tr>
+<tr>
+<td>Center</td>
+<td>A physical location where programme activities are delivered</td>
+</tr>
+<tr>
+<td>CLM</td>
+<td>Community Learning / bridging educational programme</td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td>The main summary interface displaying statistics and navigation shortcuts</td>
+</tr>
+<tr>
+<td>Export</td>
+<td>A generated file (Excel or CSV) containing filtered system data</td>
+</tr>
+<tr>
+<td>Focal point</td>
+<td>The person at a center or school responsible for data entry</td>
+</tr>
+<tr>
+<td>MSCC</td>
+<td>Makani Social and Community Centres programme</td>
+</tr>
+<tr>
+<td>P-Code</td>
+<td>Standard geographic code identifying a Lebanese locality</td>
+</tr>
+<tr>
+<td>Programme</td>
+<td>An educational or operational activity offered at a center or school</td>
+</tr>
+<tr>
+<td>Registration Officer</td>
+<td>Staff responsible for creating and managing beneficiary profiles</td>
+</tr>
+<tr>
+<td>Round</td>
+<td>An operational or educational cycle (e.g., academic year or programme period)</td>
+</tr>
+<tr>
+<td>Section</td>
+<td>A class grouping within a programme</td>
+</tr>
 </tbody>
 </table>
-
 <hr />
-<h2 id="support-escalation">23. Support and Escalation Process</h2>
+<h2 id="24-support-and-escalation-process">24. Support and Escalation Process</h2>
 <p>If you encounter issues that cannot be resolved locally, follow this escalation path:</p>
 <ol>
 <li><strong>Verify Inputs</strong> — Check required fields, applied filters, and your internet connection.</li>
 <li><strong>Retry</strong> — Refresh the page, log out and log back in, then retry the operation.</li>
-<li><strong>Contact Technical Team</strong> — Provide:
-<ul>
+<li><strong>Contact Technical Team</strong> — Provide:</li>
 <li>A screenshot of the issue</li>
 <li>Your user role</li>
 <li>Steps to reproduce the problem</li>
 <li>Date and time the issue occurred</li>
 <li>Browser name and version</li>
-</ul>
-</li>
 <li><strong>Escalate to Administrator</strong> — If the issue persists, escalate to the system administrator. Provide logs if requested and avoid repeated submissions during the investigation.</li>
 </ol>
-<div class="callout callout-tip">
-<strong>Tip:</strong> Always include a screenshot when reporting an issue — it significantly speeds up diagnosis.
-</div>
-
+<blockquote>
+<p><strong>Tip:</strong> Always include a screenshot when reporting an issue — it significantly speeds up diagnosis.</p>
+</blockquote>
 <hr />
-<h2 id="getting-help">24. Getting Help</h2>
+<h2 id="25-getting-help">25. Getting Help</h2>
 <p>If you encounter a problem not covered in this manual:</p>
-<ol>
-<li><strong>Contact your Center Coordinator</strong> for day-to-day operational questions.</li>
+<ul>
+<li><strong>Contact your Center Coordinator or School Focal Point</strong> for day-to-day operational questions.</li>
 <li><strong>Contact your Partner Admin</strong> for access and permission issues.</li>
 <li><strong>Contact the System Administrator (Ministry IT)</strong> for technical problems, account resets, or data corrections.</li>
-</ol>
-<p>Always include:<br />
-- Your <strong>username</strong><br />
-- The <strong>date and time</strong> of the problem<br />
-- What you were trying to do<br />
-- A <strong>screenshot</strong> if possible</p>
+</ul>
+<p>Always include:</p>
+<ul>
+<li>Your <strong>username</strong></li>
+<li>The <strong>date and time</strong> of the problem</li>
+<li>What you were trying to do</li>
+<li>A <strong>screenshot</strong> if possible</li>
+</ul>
 <hr />
-<p><em>BMA Student Registration Compiler — Version 2.35</em><br />
-<em>UNICEF Lebanon NFE Sector</em></p>
+<p>BMA — NFE Sector Platform · End User Manual · Revised September 2026</p>
+<p>UNICEF Lebanon NFE Sector</p>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 

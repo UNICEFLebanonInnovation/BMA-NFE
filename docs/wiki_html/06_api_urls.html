@@ -275,12 +275,16 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
     <a href="02_setup.html">2. Setup & Installation</a>
@@ -339,6 +343,26 @@ body {
 <td><code>/clm/</code></td>
 <td><code>clm</code> app</td>
 <td>All CLM program views</td>
+</tr>
+<tr>
+<td><code>/alp/</code></td>
+<td><code>alp</code> app</td>
+<td>All Accelerated Learning Programme views (requires the <code>ALP_SCHOOL</code> group)</td>
+</tr>
+<tr>
+<td><code>/attendances/</code></td>
+<td><code>attendances</code> app</td>
+<td>Shared attendance views</td>
+</tr>
+<tr>
+<td><code>/schools/</code>, <code>/locations/</code>, <code>/students/</code></td>
+<td>respective apps</td>
+<td>Reference data and legacy flows</td>
+</tr>
+<tr>
+<td><code>/dashboard/</code></td>
+<td><code>dashboard</code> app</td>
+<td>Analytics endpoints, pivot data, maps, advanced exporter, in-app documentation</td>
 </tr>
 <tr>
 <td><code>/api/</code></td>
@@ -842,9 +866,47 @@ url = reverse('mscc:child-add')
 <p>Each app's <code>urls.py</code> sets <code>app_name</code> to namespace the URLs:</p>
 <pre class="highlight"><code class="language-python">app_name = 'mscc'
 </code></pre>
+<hr />
+<h2 id="alp-routes">ALP Routes (<code>/alp/</code>)</h2>
+<p>Every route below is gated on the <code>ALP_SCHOOL</code> group and scoped to the school linked to the
+user account. Routes marked <em>write</em> additionally reject superusers.</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>URL name</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code>/alp/landing-page/</code></td><td><code>alp:landing_page</code></td><td>ALP overview dashboard (login redirect target for ALP users)</td></tr>
+<tr><td><code>/alp/registrations/</code></td><td><code>alp:registration_list</code></td><td>Filterable, exportable registration list</td></tr>
+<tr><td><code>/alp/registrations/add/</code></td><td><code>alp:registration_add</code></td><td><em>write</em> — registration form incl. consent-form upload</td></tr>
+<tr><td><code>/alp/registrations/edit/&lt;pk&gt;/</code></td><td><code>alp:registration_edit</code></td><td><em>write</em></td></tr>
+<tr><td><code>/alp/registrations/delete/&lt;pk&gt;/</code></td><td><code>alp:registration_delete</code></td><td><em>write</em></td></tr>
+<tr><td><code>/alp/child-duplication-check/</code></td><td><code>alp:child_duplication_check</code></td><td>AJAX duplicate lookup used by the registration form</td></tr>
+<tr><td><code>/alp/child-profile/&lt;pk&gt;/</code></td><td><code>alp:child_profile</code></td><td>Student profile page</td></tr>
+<tr><td><code>/alp/teachers/</code> (+ <code>add</code>/<code>edit</code>/<code>delete</code>)</td><td><code>alp:teacher_*</code></td><td>ALP teacher records</td></tr>
+<tr><td><code>/alp/attendance/</code></td><td><code>alp:attendance_list</code></td><td>Child attendance entry (date, round, programme)</td></tr>
+<tr><td><code>/alp/load-attendance-children/</code></td><td><code>alp:load_attendance_children</code></td><td>Partial that renders the student rows</td></tr>
+<tr><td><code>/alp/save-attendance-children/</code></td><td><code>alp:save_attendance_children</code></td><td><em>write</em> — bulk save</td></tr>
+<tr><td><code>/alp/export-attendance-children/</code></td><td><code>alp:export_attendance_children</code></td><td>CSV download (UTF-8 with BOM for Arabic)</td></tr>
+<tr><td><code>/alp/teacher-attendance/</code></td><td><code>alp:teacher_attendance_list</code></td><td>Teacher attendance entry</td></tr>
+<tr><td><code>/alp/load-attendance-teachers/</code></td><td><code>alp:load_attendance_teachers</code></td><td>Partial that renders the teacher rows</td></tr>
+<tr><td><code>/alp/save-attendance-teachers/</code></td><td><code>alp:save_attendance_teachers</code></td><td><em>write</em> — bulk save</td></tr>
+<tr><td><code>/alp/grading/add/</code>, <code>/alp/grading/edit/&lt;pk&gt;/</code></td><td><code>alp:grading_*</code></td><td><em>write</em> — dynamic grading form</td></tr>
+<tr><td><code>/alp/school-profile/</code></td><td><code>alp:school_profile</code></td><td><em>write</em> — the school's own profile record</td></tr>
+<tr><td><code>/alp/dashboard/registration/</code></td><td><code>alp:dashboard_registration</code></td><td>Registration analytics</td></tr>
+<tr><td><code>/alp/dashboard/teacher/</code> (+ <code>/data/</code>)</td><td><code>alp:dashboard_teacher</code></td><td>Teacher analytics and its JSON feed</td></tr>
+<tr><td><code>/alp/dashboard/attendance/</code></td><td><code>alp:dashboard_attendance</code></td><td>Attendance analytics</td></tr>
+<tr><td><code>/alp/dashboard/school/</code> (+ <code>/geo-data/</code>)</td><td><code>alp:dashboard_school</code></td><td>School map and its GeoJSON feed</td></tr>
+<tr><td><code>/alp/dashboard/pivot/</code> (+ <code>/data/</code>)</td><td><code>alp:pivot_dashboard</code></td><td>Pivot table; also open to <code>is_staff</code> users</td></tr>
+<tr><td><code>/alp/alp_dashboard_data/</code></td><td><code>alp:alp_dashboard_data</code></td><td>JSON feed for the ALP landing page</td></tr>
+</tbody>
+</table>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 

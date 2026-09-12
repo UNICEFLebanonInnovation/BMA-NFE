@@ -1,6 +1,14 @@
 # BMA – NFE Sector: UI/UX Redesign Technical Specifications
 
-This document outlines the design and architectural changes implemented during the system modernization. These patterns are designed to be reusable for any Django-based operational management system using Bootstrap 5.
+**Revision: September 2026**
+
+This document outlines the design and architectural changes implemented during the system modernization,
+and is the as-built reference for the design system. These patterns are reusable for any Django-based
+operational management system using Bootstrap 5.
+
+The original proposal that preceded this work is kept at `docs/ui_ux_redesign_proposal.md`. The ALP module
+added in August 2026 follows the same patterns and reuses the MSCC module shell
+(`templates/mscc/base.html`) rather than introducing a second design language.
 
 ---
 
@@ -44,7 +52,7 @@ This document outlines the design and architectural changes implemented during t
     *   **Sticky Headers:** Implemented `.sticky-top` on `<thead>` with high z-index to keep headers visible during long scrolls.
 *   **Responsive Containers:**
     *   Wrapped all tables in `.table-responsive` to handle overflow on 14-inch screens.
-    *   **Row Hover:** Sublte background change on hover for better row tracking in large datasets.
+    *   **Row Hover:** Subtle background change on hover for better row tracking in large datasets.
 
 ## 5. Beneficiary Profile & IA
 *   **Information Decoupling:**

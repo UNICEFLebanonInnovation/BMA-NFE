@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BMA Student Registration Compiler — Wiki — BMA Wiki</title>
+  <title>BMA — NFE Sector Platform: Interactive Code Wiki — BMA Wiki</title>
   <style>
 :root {
   --primary: #1a6faf;
@@ -275,20 +275,24 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html" class="active">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
-    <a href="02_setup.html">2. Setup & Installation</a>
-    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
-    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="02_setup.html">2. Setup &amp; Installation</a>
+    <a href="03_architecture.html">3. Architecture &amp; Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema &amp; Models</a>
     <a href="05_django_apps.html">5. Django Apps Reference</a>
-    <a href="06_api_urls.html">6. API & URL Reference</a>
-    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="06_api_urls.html">6. API &amp; URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication &amp; Permissions</a>
     <a href="08_admin_portal.html">8. Admin Portal Guide</a>
     <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
     <a href="10_frontend.html">10. Frontend Guide</a>
@@ -300,153 +304,129 @@ body {
 
 <div id="main">
   <div id="topbar">
-    <span class="breadcrumb">BMA Wiki &rsaquo; <span>BMA Student Registration Compiler — Wiki</span></span>
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>BMA — NFE Sector Platform: Interactive Code Wiki</span></span>
   </div>
   <div id="content">
-    <h1 id="bma-student-registration-compiler-wiki">BMA Student Registration Compiler — Wiki</h1>
-<p>Welcome to the knowledge base for the <strong>BMA Student Registration Compiler</strong> — a web platform used by UNICEF Lebanon and partner organizations to manage child/student registration, service delivery, attendance, and reporting across multiple programs.</p>
-<hr />
-<h2 id="for-field-staff-end-users">For Field Staff &amp; End Users</h2>
-<blockquote>
-<p><strong>Start here if you use the system day-to-day.</strong></p>
-</blockquote>
+<h1 id="bma-nfe-sector-platform-interactive-code-wiki">BMA — NFE Sector Platform: Interactive Code Wiki</h1>
+<p><strong>Revision: September 2026</strong></p>
+<p>Welcome to the <strong>BMA NFE Sector Platform</strong> wiki (the codebase is historically named <em>Student Registration Compiler</em>). This knowledge base explains the system architecture, user workflows, administration tasks, and codebase details.</p>
+<p>It is structured for three audiences:</p>
+<ol>
+<li><strong><a href="end_user.html">End User Guide</a></strong> — operators, teachers, school focal points and field staff who use the system daily to register beneficiaries, track attendance, and record services.</li>
+<li><strong><a href="admin.html">Administrator Guide</a></strong> — Ministry IT teams and system administrators responsible for deployment, role management, background exports, and monitoring.</li>
+<li><strong><a href="developer.html">Developer Guide</a></strong> — engineers maintaining or extending the codebase: Django architecture, database models, frontend, and async task processing.</li>
+</ol>
+<h2 id="modules-covered">Modules covered</h2>
 <table>
 <thead>
 <tr>
-<th>Guide</th>
-<th>Who it's for</th>
+<th>Module</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><a href="end_user.html"><strong>End User Manual</strong></a></td>
-<td>Field staff, center coordinators, teachers — how to use every feature of the system</td>
+<td><strong>MSCC (Makani)</strong></td>
+<td>Child registration, service delivery, attendance and dashboards for Makani centers</td>
+</tr>
+<tr>
+<td><strong>ALP</strong></td>
+<td>Accelerated Learning Programme run by public schools — registrations, teachers, attendance, grading, school profile</td>
+</tr>
+<tr>
+<td><strong>CLM</strong></td>
+<td>Bridging / Community Learning programme workflows</td>
+</tr>
+<tr>
+<td><strong>Reports &amp; Analytics</strong></td>
+<td>Cross-module dashboards, pivot tables, maps and background exports</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="for-developers">For Developers</h2>
-<blockquote>
-<p><strong>Start here if you are joining the technical team.</strong></p>
-</blockquote>
+<h2 id="quick-navigation">Quick Navigation</h2>
+<ul>
+<li><strong><a href="end_user.html">End User Interface &amp; Workflows</a></strong><ul>
+<li>Login, navigation and account management</li>
+<li>MSCC registration wizard and service delivery</li>
+<li>Attendance tracking and heatmaps</li>
+<li>The ALP module for schools</li>
+<li>Exports, dashboards and reports</li>
+</ul>
+</li>
+<li><strong><a href="admin.html">System Administration</a></strong><ul>
+<li>Deployment and environment configuration</li>
+<li>Role-based access control (RBAC) and the group list</li>
+<li>Background exports, Celery queues and Firebase notifications</li>
+<li>Backups, disaster recovery and monitoring</li>
+</ul>
+</li>
+<li><strong><a href="developer.html">Codebase &amp; Architecture</a></strong><ul>
+<li>Django app structure (<code>mscc</code>, <code>alp</code>, <code>clm</code>, <code>child</code>, <code>attendances</code>, …)</li>
+<li>Frontend stack (Bootstrap 5, vanilla JS, D3.js, Leaflet)</li>
+<li>Database schema and PostgreSQL optimizations</li>
+<li>Celery task definitions, queues and the export pipeline</li>
+</ul>
+</li>
+<li><strong><a href="system_details.html">System Overview &amp; Infrastructure</a></strong><ul>
+<li>Backend and frontend dependency snapshot</li>
+<li>Django applications and their models</li>
+<li>Deployment and Docker configuration</li>
+<li>Environment variables</li>
+</ul>
+</li>
+</ul>
+<h2 id="related-documents-in-the-repository">Related documents in the repository</h2>
 <table>
 <thead>
 <tr>
-<th>Guide</th>
-<th>Who it's for</th>
+<th>Document</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><a href="01_project_overview.html">1. Project Overview</a></td>
-<td>Everyone — what the system does and why</td>
+<td><code>docs/ACCESS_CONTROL.md</code> <span class="muted">(../ACCESS_CONTROL.md)</span></td>
+<td>Role → view permission matrix</td>
 </tr>
 <tr>
-<td><a href="02_setup.html">2. Setup &amp; Installation</a></td>
-<td>Developers — get the system running locally</td>
+<td><code>docs/project_overview.md</code> <span class="muted">(../project_overview.md)</span></td>
+<td>Repository layout and local setup</td>
 </tr>
 <tr>
-<td><a href="03_architecture.html">3. Architecture &amp; Tech Stack</a></td>
-<td>Developers — how the pieces fit together</td>
+<td><code>docs/deployment.md</code> <span class="muted">(../deployment.md)</span></td>
+<td>Deployment and maintenance guide</td>
 </tr>
 <tr>
-<td><a href="04_database_schema.html">4. Database Schema &amp; Models</a></td>
-<td>Developers — every model, field, and relationship</td>
+<td><code>docs/ministry_handover.md</code> <span class="muted">(../ministry_handover.md)</span></td>
+<td>Ministry operations runbook</td>
 </tr>
 <tr>
-<td><a href="05_django_apps.html">5. Django Apps Reference</a></td>
-<td>Developers — what each app owns</td>
+<td><code>docs/handover_checklist.md</code> <span class="muted">(../handover_checklist.md)</span></td>
+<td>Go-live checklist</td>
 </tr>
 <tr>
-<td><a href="06_api_urls.html">6. API &amp; URL Reference</a></td>
-<td>Developers — all endpoints and routes</td>
+<td><code>docs/developer_handover.md</code> <span class="muted">(../developer_handover.md)</span></td>
+<td>Concise orientation for new maintainers</td>
 </tr>
 <tr>
-<td><a href="07_auth_permissions.html">7. Authentication &amp; Permissions</a></td>
-<td>Developers &amp; Admins — roles, groups, security</td>
+<td><code>docs/analytics_dashboard.md</code> <span class="muted">(../analytics_dashboard.md)</span></td>
+<td>Analytics API design and recommended indexes</td>
 </tr>
 <tr>
-<td><a href="08_admin_portal.html">8. Admin Portal Guide</a></td>
-<td>Admins &amp; Developers — Jazzmin admin, custom actions</td>
+<td><code>docs/ui_ux_redesign_proposal.md</code> <span class="muted">(../ui_ux_redesign_proposal.md)</span></td>
+<td>UI/UX redesign rationale</td>
 </tr>
 <tr>
-<td><a href="09_celery_tasks.html">9. Background Tasks (Celery)</a></td>
-<td>Developers — async jobs, queues, exports</td>
-</tr>
-<tr>
-<td><a href="10_frontend.html">10. Frontend Guide</a></td>
-<td>Developers — templates, Bootstrap 5, AJAX patterns</td>
-</tr>
-<tr>
-<td><a href="11_environment_variables.html">11. Environment Variables</a></td>
-<td>Developers &amp; DevOps — every config flag</td>
-</tr>
-<tr>
-<td><a href="12_deployment.html">12. Deployment Guide</a></td>
-<td>DevOps — Docker, production, monitoring</td>
-</tr>
-<tr>
-<td><a href="13_testing.html">13. Testing Guide</a></td>
-<td>Developers — running and writing tests</td>
+<td><code>DOCS_REDESIGN.md</code> <span class="muted">(../../DOCS_REDESIGN.md)</span></td>
+<td>Implemented design system specification</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="quick-start-tldr">Quick Start (TL;DR)</h2>
-<pre class="highlight"><code class="language-bash"># 1. Clone and enter the repo
-git clone &lt;repo-url&gt; &amp;&amp; cd BMA-DOCS
-
-# 2. Copy and fill environment file
-cp env.example .env
-
-# 3. Start all services with Docker
-docker-compose -f local.yml up --build
-
-# 4. Run migrations and create superuser
-docker-compose -f local.yml run --rm django python manage.py migrate
-docker-compose -f local.yml run --rm django python manage.py createsuperuser
-
-# 5. Open the app
-open http://localhost:8000
-# Admin panel: http://localhost:8000/admin/
-</code></pre>
-
-<p>Full instructions → <a href="02_setup.html">Setup &amp; Installation</a></p>
-<hr />
-<h2 id="system-version">System Version</h2>
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Application version</td>
-<td><code>2.35</code></td>
-</tr>
-<tr>
-<td>Django</td>
-<td><code>5.2.7</code></td>
-</tr>
-<tr>
-<td>Python</td>
-<td><code>3.10+</code></td>
-</tr>
-<tr>
-<td>Database</td>
-<td>PostgreSQL</td>
-</tr>
-<tr>
-<td>Task queue</td>
-<td>Celery + Redis</td>
-</tr>
-</tbody>
-</table>
+<p><em>Maintained for the BMA NFE Sector system. Markdown under <code>docs/wiki/</code> is the source of truth; run <code>python docs/build_wiki_html.py</code> to refresh the HTML mirror in <code>docs/wiki_html/</code>.</em></p>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 

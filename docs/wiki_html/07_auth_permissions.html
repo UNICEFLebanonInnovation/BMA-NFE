@@ -275,12 +275,16 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
     <a href="02_setup.html">2. Setup & Installation</a>
@@ -407,6 +411,21 @@ User lands on their default dashboard
 <td>Full CLM bridging access across partners</td>
 </tr>
 <tr>
+<td><code>ALP_SCHOOL</code></td>
+<td>ALP, school-scoped</td>
+<td>Required for every <code>/alp/</code> view. Data is filtered to the school linked to the user account. Superusers are read-only in ALP.</td>
+</tr>
+<tr>
+<td><code>CLM_Inclusion</code></td>
+<td>CLM inclusion</td>
+<td>CLM inclusion workflows and navigation</td>
+</tr>
+<tr>
+<td><code>YOUTH</code></td>
+<td>Classification</td>
+<td>Marks youth-stream accounts; used by the Django admin user-type filter and for navigation branching</td>
+</tr>
+<tr>
 <td><code>CLM_TEACHER</code></td>
 <td>CLM teacher management</td>
 <td>Add/edit CLM teachers</td>
@@ -470,7 +489,26 @@ class MyView(GroupRequiredMixin, ListView):
 {% endif %}
 </code></pre>
 
-<p>The <code>has_group</code> template tag is defined in <code>student_registration/contrib/</code>.</p>
+<p>The <code>has_group</code> filter is defined in <code>student_registration/users/templatetags/custom_tags.py</code>, so templates load it with <code>{% load custom_tags %}</code>. The same function is importable in Python as <code>from student_registration.users.templatetags.custom_tags import has_group</code>.</p>
+<hr />
+<h2 id="alp-scoping">ALP Scoping</h2>
+<p>ALP applies a stricter pattern than the MSCC views above. Instead of each view writing its own filter, scoping is centralised in <code>student_registration/alp/utils.py</code>:</p>
+<pre class="highlight"><code>def filter_by_school(queryset, user):
+    if user.school_id is None:
+        return queryset.none()          # no school -&gt; no data, superuser or not
+    model_name = queryset.model.__name__
+    if model_name in ['ALPRegistration', 'ALPTeacher', 'ALPAttendance']:
+        return queryset.filter(school=user.school)
+    if model_name == 'ALPTeacherAttendance':
+        return queryset.filter(teacher__school=user.school)
+    if model_name == 'ALPGrading':
+        return queryset.filter(registration__school=user.school)
+</code></pre>
+<p>Three mixins complete the picture:</p>
+<p>- <code>ALPUserRequiredMixin</code> — requires the <code>ALP_SCHOOL</code> group on every ALP view.<br />
+- <code>ALPPivotUserRequiredMixin</code> — additionally admits <code>is_staff</code> users, so the pivot dashboard can report across schools.<br />
+- <code>ALPEditPermissionMixin</code> — raises <code>PermissionDenied</code> for superusers, keeping site administrators read-only on school-owned data.<br />
+- <code>ALPSchoolFilterMixin</code> (in <code>alp/mixins.py</code>) — narrows the <code>school</code>, <code>registration</code> and <code>teacher</code> dropdowns on ALP forms to the user's own school.</p>
 <hr />
 <h2 id="rest-api-authentication">REST API Authentication</h2>
 <p>DRF uses:<br />
@@ -563,7 +601,7 @@ user.groups.add(group)
 <p>SSL redirect is enforced in production (<code>SECURE_SSL_REDIRECT = True</code>).</p>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 
