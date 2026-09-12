@@ -1,6 +1,16 @@
 # System Overview & Infrastructure
 
-This document automatically generates a snapshot of the technical codebase and infrastructure used in the Student Registration Compiler system.
+**Snapshot taken: September 2026**
+
+This document is a point-in-time snapshot of the technical codebase and infrastructure of the BMA NFE Sector platform (the codebase is historically named *Student Registration Compiler*). It is **maintained by hand** — there is no generator that refreshes it, so re-check it against the sources below whenever dependencies or models change:
+
+| Section | Source of truth |
+|---|---|
+| Backend packages | `requirements/base.txt` (plus `local.txt`, `production.txt`, `test.txt`) |
+| Frontend packages | `package.json` |
+| Django applications and models | `LOCAL_APPS` in `config/settings/base.py` and each app's `models.py` |
+| Docker configuration | `compose/`, `local.yml`, `production.yml` |
+| Environment variables | `env.example` |
 
 ## Codebase and Structure
 
@@ -93,7 +103,10 @@ bleach==6.3.0
 ```
 
 ### Django Applications & Database Models
-The main Django project (`student_registration`) is divided into the following apps, containing the listed database models:
+The main Django project (`student_registration`) is divided into the following apps, containing the listed
+database models. `student_registration.accounts` is only added to `INSTALLED_APPS` by
+`config/settings/production.py`; `student_registration.contrib` is not an installed app and exists only to
+hold relocated `django.contrib.sites` migrations.
 
 #### `student_registration.locations`
 - **`LocationType`**
@@ -908,6 +921,99 @@ The main Django project (`student_registration`) is divided into the following a
   - `participating_education_sessions (CharField)`
   - `participating_lego_play_sessions (CharField)`
 
+#### `student_registration.alp`
+Accelerated Learning Programme. School-scoped registrations built on the shared `child.Child`
+record, with their own teachers, attendance, grading and reference data.
+
+- **`ALPRound`**
+  - `name (CharField)`
+  - `current_year (BooleanField)`
+- **`ALPProgram`**
+  - `name (CharField)`
+- **`ALPTeacher`**
+  - `first_name (CharField)`
+  - `father_name (CharField)`
+  - `last_name (CharField)`
+  - `mother_fullname (CharField)`
+  - `sex (CharField)`
+  - `birthdate (DateField)`
+  - `id_number (CharField)`
+  - `id_type (ForeignKey)`
+  - `nationality (ForeignKey)`
+  - `unicef_id (CharField)`
+  - `round (ForeignKey)`
+  - `school (ForeignKey)`
+  - `email (CharField)`
+  - `phone_number (CharField)`
+  - `subjects_provided (ArrayField)`
+  - `registration_level (ArrayField)`
+  - `teacher_assignment (CharField)`
+  - `teacher_assignment_other (CharField)`
+  - `teaching_hours_private_school (IntegerField)`
+  - `teaching_hours_mscc (IntegerField)`
+  - `years_of_experience (IntegerField)`
+  - `trainings (ManyToManyField)`
+  - `training_sessions_attended (IntegerField)`
+  - `training_date_of_completion (DateField)`
+  - `extra_coaching (CharField)`
+  - `extra_coaching_specify (TextField)`
+  - `attach_short_description_1..5 (CharField)`
+  - `attach_file_1..5 (FileField)`
+  - `attach_type_1..5 (ForeignKey)`
+  - `owner (ForeignKey)`
+  - `modified_by (ForeignKey)`
+- **`ALPRegistration`**
+  - `school (ForeignKey)`
+  - `child (ForeignKey)`
+  - `round (ForeignKey)`
+  - `programme (ForeignKey)`
+  - `student_old (IntegerField)`
+  - `have_labour (CharField)`
+  - `labour_type (CharField)`
+  - `labour_type_specify (CharField)`
+  - `labour_hours (IntegerField)`
+  - `labour_weekly_income (CharField)`
+  - `labour_condition (ArrayField)`
+  - `source_of_identification (CharField)`
+  - `source_of_identification_specify (TextField)`
+  - `cash_support_programmes (ArrayField)`
+  - `mscc_packages (ArrayField)`
+  - `type (CharField)`
+  - `registration_date (DateField)`
+  - `consent_form (FileField)`
+  - `partner_unique_number (CharField)`
+  - `owner (ForeignKey)`
+  - `modified_by (ForeignKey)`
+  - `deleted (BooleanField)`
+  - `deleted_by (ForeignKey)`
+- **`ALPGrading`**
+  - `registration (ForeignKey)`
+  - `grading_data (JSONField)` — subject id → score, keyed by `ALPGradingDefinition.id`
+  - `owner (ForeignKey)`
+- **`ALPGradingDefinition`**
+  - `material (CharField)`
+  - `min_grade (IntegerField)`
+  - `max_grade (IntegerField)`
+- **`ALPTeacherAttendance`**
+  - `teacher (ForeignKey)`
+  - `date (DateField)`
+  - `status (CharField)`
+  - `owner (ForeignKey)`
+- **`ALPAttendance`**
+  - `round (ForeignKey)`
+  - `school (ForeignKey)`
+  - `programme (ForeignKey)`
+  - `attendance_date (DateField)`
+  - `day_off (CharField)`
+  - `close_reason (CharField)`
+- **`ALPAttendanceChild`**
+  - `attendance_day (ForeignKey)`
+  - `registration (ForeignKey)`
+  - `child (ForeignKey)`
+  - `attended (CharField)`
+  - `absence_reason (CharField)`
+  - `absence_reason_other (CharField)`
+
 #### `student_registration.backends`
 - **`ExportHistory`**
   - `export_type (CharField)`
@@ -1024,6 +1130,19 @@ services:
 ```
 
 ### Environment Configurations
+
+`env.example` is reproduced below. Two entries in it are **obsolete** and are kept only for backwards
+compatibility:
+
+* `FCM_SERVER_KEY` and the `FIREBASE_*` web-config variables are no longer read by the application.
+  Server-side push uses the `firebase-admin` service account at `utility/firebase-creds.json`, and the
+  browser configuration is currently hardcoded in `static/js/firebase-messaging.js`.
+* `DJANGO_OPBEAT_*` refers to a monitoring service that is no longer wired up; the project now uses
+  Sentry (`DJANGO_SENTRY_DSN`) and `azure-monitor-opentelemetry` (`OTEL_*`).
+
+`DATABASE_URL` is not listed in `env.example` but **must** be set — `config/settings/base.py` otherwise
+falls back to a hardcoded default that contains credentials.
+
 ```bash
 
 # PostgreSQL
@@ -1076,4 +1195,10 @@ COMPRESS_ENABLED=
 ```
 
 ### Database Schema Graph
-An ER Diagram of the database schema is generated as `schema.png` at the root of the project.
+An ER diagram of the database schema is committed as `schema.png` at the root of the project. Regenerate it
+with `django-extensions` after model changes:
+
+```bash
+python manage.py graph_models -a -o schema.png
+```
+

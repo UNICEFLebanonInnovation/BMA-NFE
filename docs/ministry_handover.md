@@ -1,9 +1,12 @@
 # Ministry Handover Guide
 
-This document explains how to run, operate, and support the Student Registration Compiler when it is handed over to a Ministry IT operations team. It focuses on explicit, actionable steps so that administrators can deploy, monitor, and troubleshoot the platform without prior project context.
+**Revision: September 2026**
+
+This document explains how to run, operate, and support the BMA NFE Sector platform (repository name:
+*Student Registration Compiler*) when it is handed over to a Ministry IT operations team. It focuses on explicit, actionable steps so that administrators can deploy, monitor, and troubleshoot the platform without prior project context.
 
 ## 1. System overview
-- **Application**: Django 4.x project located in the `student_registration/` folder with multiple domain apps (accounts, students, attendances, mscc, clm, schools).
+- **Application**: Django 5.2 project located in the `student_registration/` folder with multiple domain apps — `mscc` (Makani), `alp` (Accelerated Learning Programme), `clm` (bridging), plus `child`, `students`, `attendances`, `schools`, `locations`, `dashboard` and `users`.
 - **Database**: PostgreSQL 12+ stores all persistent data (users, students, attendance records, schedules, Celery beat metadata).
 - **Cache/Broker**: Redis is used as the Celery broker and for Django caching.
 - **Background jobs**: Celery workers process exports and asynchronous tasks; Celery beat schedules recurring jobs.
@@ -40,14 +43,16 @@ The `docs/deployment.md` file contains a detailed, step-by-step guide for deploy
 - **SSL certificates**: Certbot inside `production.yml` auto-requests certificates. Update domain/email in `production.yml` before the first run and renew via the scheduled Certbot container.
 
 ## 6. Administrative usage
-- **User management**: Admins can add/edit users, reset passwords, and assign roles from the Django admin interface.
-- **School and student data**: Manage schools, students, attendance records, and MSCC workflows through their respective admin sections and UI flows.
-- **Rate limiting and security**: Middleware enforces session limits and lockout protection. Keep `DJANGO_SECURE_SSL_REDIRECT=True` and serve behind HTTPS.
+- **User management**: Admins can add/edit users, reset passwords, and assign roles from the Django admin interface. Every account needs both a **group** (for example `MSCC_CENTER`, `ALP_SCHOOL`, `CLM_Bridging`) and the matching **center, partner or school** assignment — a user with a group but no assignment sees empty lists. See `docs/ACCESS_CONTROL.md`.
+- **Reference data**: Programme rounds, programmes and ALP grading definitions (subject with minimum and maximum grade) are maintained in the Django admin. Adding a grading definition changes the ALP grading form immediately, with no deployment.
+- **School and student data**: Manage schools, students, attendance records, and MSCC/ALP workflows through their respective admin sections and UI flows.
+- **ALP is read-only for administrators**: superusers can review ALP data but cannot create or edit it — that is enforced in code so school-owned records stay the school's responsibility.
+- **Rate limiting and security**: Production enables auto-logout after 30 minutes of inactivity and throttles failed logins (5 per 5 minutes per account). Keep `DJANGO_SECURE_SSL_REDIRECT=True` and serve behind HTTPS.
 
 ## 7. Update procedure
 1. Pull the latest code from the repository branch intended for production.
 2. Rebuild and restart services: `docker compose -f production.yml up --build -d`.
-3. Apply migrations and collect static files (see section 4).
+3. Apply migrations, compile translations, and collect static files (see section 5).
 4. Verify critical flows (login, student search, export) after the deployment.
 
 ## 8. Disaster recovery

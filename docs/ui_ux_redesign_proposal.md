@@ -1,5 +1,12 @@
 # BMA – NFE Sector UI/UX Redesign Proposal
 
+> **Status: historical.** This is the *proposal* that preceded the redesign, kept for the reasoning
+> behind the decisions. It describes intent, not the shipped product, and it differs from the
+> implementation in places — the registration wizard shipped with **three** steps rather than four, for
+> example. For what was actually built, see [`DOCS_REDESIGN.md`](../DOCS_REDESIGN.md); for how the
+> interface behaves today, see [`docs/wiki/end_user.md`](./wiki/end_user.md).
+
+
 ## 1. Information Architecture (IA)
 
 The proposed architecture streamlines the user journey by grouping operational tasks into logical modules.

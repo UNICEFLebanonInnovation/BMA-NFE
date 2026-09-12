@@ -1,38 +1,82 @@
-Student Registration Compiler
-=============================
+BMA — NFE Sector Platform
+=========================
 
-Simple, interactive and online student registration.
+Case management and service-delivery tracking for UNICEF Lebanon's Non-Formal Education sector.
+The repository is historically named *Student Registration Compiler*; the deployed product is the
+**BMA NFE Sector platform**.
 
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
 
-.. image:: https://travis-ci.org/UNICEFLebanonInnovation/Compiler.svg?branch=develop
-    :target: https://travis-ci.org/UNICEFLebanonInnovation/Compiler
-    
-.. image:: https://coveralls.io/repos/github/UNICEFLebanonInnovation/Compiler/badge.svg?branch=develop
-    :target: https://coveralls.io/github/UNICEFLebanonInnovation/Compiler?branch=develop
-
 :License: GPLv3
 
+The platform covers three programme modules plus cross-cutting reporting:
 
-Handover documentation
------------------------
+=============== ==============================================================================
+Module          Scope
+=============== ==============================================================================
+``mscc``        Makani (MSCC) centers — child registration, service delivery, attendance,
+                exports
+``alp``         Accelerated Learning Programme — school-scoped registration, teachers,
+                attendance, grading, school profile, dashboards
+``clm``         Community Learning / bridging programme
+``dashboard``   Cross-module analytics, pivot tables, maps and the advanced exporter
+=============== ==============================================================================
 
-For Ministry operations teams, two documents provide explicit deployment and support steps:
 
-* ``docs/ministry_handover.md`` — end-to-end runbook covering prerequisites, configuration, production deployment, routine operations, backup/restore, and disaster recovery.
-* ``docs/handover_checklist.md`` — checklist to confirm the platform is production-ready (environment, monitoring, backups, and ownership).
-* ``docs/developer_handover.md`` — technical overview for maintainers that explains key Django apps, Celery usage, background exports, and how to set up a development environment.
+Documentation
+-------------
 
-A third document, ``docs/deployment.md``, has been added to provide a more detailed guide for deploying and maintaining the project. This includes comprehensive instructions on environment setup, database configuration, and running the application in a production environment. This new document consolidates and clarifies the deployment process, making it easier for new developers to get started.
+The Markdown under ``docs/wiki/`` is the source of truth and is also served inside the running
+application (``/dashboard/wiki/`` for every signed-in user, ``/dashboard/guide/`` for superusers,
+with the End User Manual open to everyone).
+
+Start here:
+
+* ``docs/wiki/index.md`` — documentation home.
+* ``docs/wiki/end_user.md`` — end user manual for field staff, coordinators and school focal points.
+* ``docs/wiki/admin.md`` — deployment, RBAC, configuration reference, backups, monitoring.
+* ``docs/wiki/developer.md`` — architecture, apps, access control, API surface, Celery, testing.
+* ``docs/wiki/system_details.md`` — dependency, model and infrastructure snapshot.
+
+Reference and handover material:
+
+* ``docs/ACCESS_CONTROL.md`` — role → view permission matrix.
+* ``docs/project_overview.md`` — repository layout, local setup, management commands.
+* ``docs/deployment.md`` — deployment and maintenance guide, environment variable reference.
+* ``docs/ministry_handover.md`` — end-to-end runbook for Ministry operations teams.
+* ``docs/handover_checklist.md`` — go-live checklist.
+* ``docs/developer_handover.md`` — concise orientation for new maintainers.
+* ``docs/analytics_dashboard.md`` — analytics API design and recommended PostgreSQL indexes.
+* ``DOCS_REDESIGN.md`` and ``docs/ui_ux_redesign_proposal.md`` — the UI design system.
+
+After editing any page under ``docs/wiki/``, regenerate the HTML mirror served to administrators::
+
+    $ python docs/build_wiki_html.py
+
+``python docs/build_wiki_html.py --check`` exits non-zero when the mirror is out of date, which makes
+it usable as a CI guard.
+
 
 Settings
 --------
 
-Moved to settings_.
+Settings live in ``config/settings/`` (``base.py``, ``local.py``, ``test.py``, ``production.py``) and
+read configuration from the environment with ``django-environ``. Copy ``env.example`` to ``.env`` as a
+starting point; the full variable reference is in ``docs/deployment.md``.
+
+Two variables deserve attention:
+
+* ``DJANGO_SETTINGS_MODULE`` selects the settings module (``config.settings.production`` in production).
+* ``DATABASE_URL`` **must** be set explicitly. It is not listed in ``env.example``, and
+  ``config/settings/base.py`` currently falls back to a hardcoded value that contains credentials — that
+  fallback should not be relied on and the credentials in it should be rotated.
+
+The cookiecutter-django settings background still applies: settings_.
 
 .. _settings: http://cookiecutter-django.readthedocs.io/en/latest/settings.html
+
 
 Basic Commands
 --------------
@@ -40,37 +84,42 @@ Basic Commands
 Setting Up Your Users
 ^^^^^^^^^^^^^^^^^^^^^
 
-* To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
-
-* To create an **superuser account**, use this command::
+Accounts are created by administrators, not by self-service sign-up. Create an **administrator
+account** with::
 
     $ python manage.py createsuperuser
 
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+Ordinary accounts are created from the Django admin. Every account needs both a **group**
+(for example ``MSCC_CENTER``, ``ALP_SCHOOL``, ``CLM_Bridging``) and the matching **center, partner or
+school** assignment — a user with a group but no assignment sees empty lists everywhere. See
+``docs/ACCESS_CONTROL.md`` for the full matrix.
 
 Test coverage
 ^^^^^^^^^^^^^
 
+Tests run against ``config.settings.test`` (set by ``pytest.ini``) and require PostgreSQL — the models
+use PostgreSQL-only field types, so SQLite will not work.
+
 To run the tests, check your test coverage, and generate an HTML coverage report::
 
+    $ pytest
+    $ pytest student_registration/alp/tests    # a single app
     $ coverage run manage.py test
     $ coverage html
     $ open htmlcov/index.html
 
-Running tests with py.test
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linting follows ``setup.cfg`` (``flake8``/``pycodestyle``, 120-character lines)::
 
-::
-
-  $ py.test
+    $ flake8 .
 
 Live reloading and Sass CSS compilation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Moved to `Live reloading and SASS compilation`_.
+``package.json`` still pins a legacy gulp 3 pipeline. It is not required to run or build the
+application — static assets are committed and served directly. See `Live reloading and SASS compilation`_
+for the original cookiecutter workflow.
 
 .. _`Live reloading and SASS compilation`: http://cookiecutter-django.readthedocs.io/en/latest/live-reloading-and-sass-compilation.html
-
 
 
 Celery
@@ -79,10 +128,8 @@ Celery
 This app comes with Celery.
 Periodic tasks are managed via ``django-celery-beat`` and stored in the
 database.  You can create schedules from the Django admin interface under
-``Periodic tasks`` and select any available Celery task by name.
-
-To view execution history, the project records each run in ``Task run logs``
-which is also accessible from the admin site.
+``Periodic tasks`` and select any available Celery task by name. Task results are
+stored via ``django-celery-results`` and are browsable in the admin.
 
 To run a celery worker (and the beat scheduler):
 
@@ -105,40 +152,24 @@ parallel:
 Push Notifications
 ^^^^^^^^^^^^^^^^^^
 
-Export completion messages are sent via Firebase Cloud Messaging (FCM). Provide your Firebase server key in the ``FCM_SERVER_KEY`` environment variable so that ``student_registration.mscc.tasks`` can deliver notifications. This value is read from ``config/settings/base.py`` and is required for the server to push notifications.
+Export completion messages are sent via Firebase Cloud Messaging (FCM).
 
-To receive notifications on the client, initialize Firebase with your project's web configuration values and reference them in your frontend code.
+Server side, ``student_registration/backends/utils.py`` initialises ``firebase-admin`` from a
+**service-account JSON file at** ``utility/firebase-creds.json``. The ``FCM_SERVER_KEY`` environment
+variable still listed in ``env.example`` is obsolete and is **not read anywhere in the codebase**.
 
-Required variables:
+.. warning::
 
-- ``FIREBASE_API_KEY``
-- ``FIREBASE_AUTH_DOMAIN``
-- ``FIREBASE_PROJECT_ID``
-- ``FIREBASE_STORAGE_BUCKET``
-- ``FIREBASE_MESSAGING_SENDER_ID``
-- ``FIREBASE_APP_ID``
-- ``FIREBASE_MEASUREMENT_ID``
+   A real service-account private key is currently committed at ``utility/firebase-creds.json``. It
+   should be rotated in the Firebase console and supplied at deploy time from a secret store or a
+   mounted file, not from version control.
 
-Example initialization snippet::
-
-    import { initializeApp } from "firebase/app";
-    import { getAnalytics } from "firebase/analytics";
-
-    const firebaseConfig = {
-        apiKey: "<YOUR_FIREBASE_API_KEY>",
-        authDomain: "<YOUR_FIREBASE_AUTH_DOMAIN>",
-        projectId: "<YOUR_FIREBASE_PROJECT_ID>",
-        storageBucket: "<YOUR_FIREBASE_STORAGE_BUCKET>",
-        messagingSenderId: "<YOUR_FIREBASE_MESSAGING_SENDER_ID>",
-        appId: "<YOUR_FIREBASE_APP_ID>",
-        measurementId: "<YOUR_FIREBASE_MEASUREMENT_ID>",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    getAnalytics(app);
-
-
-
+Browser side, the client registers a device token through the ``save_fcm_token`` endpoint; tokens are
+stored in the ``WebPushToken`` model. A user with no registered token simply receives no push — the
+export still completes and remains downloadable. The Firebase web configuration is currently hardcoded
+in ``student_registration/static/js/firebase-messaging.js`` and
+``student_registration/static/firebase-messaging-sw.js``; the service worker
+``firebase-messaging-sw.js`` handles background pushes.
 
 
 Sentry
@@ -147,15 +178,36 @@ Sentry
 Sentry is an error logging aggregator service. You can sign up for a free account at  https://sentry.io/signup/?code=cookiecutter  or download and host it yourself.
 The system is setup with reasonable defaults, including 404 logging and integration with the WSGI application.
 
-You must set the DSN url in production.
+You must set ``DJANGO_SENTRY_DSN`` in production. ``azure-monitor-opentelemetry`` is also available and
+is configured through the ``OTEL_*`` environment variables.
+
+
+API
+---
+
+The REST API is built with Django REST Framework and documents itself through ``drf-spectacular``:
+
+============================  ==========================
+URL                           Purpose
+============================  ==========================
+``/api/schema/``              OpenAPI 3 schema (YAML)
+``/api/docs/``                Swagger UI
+``/api/schema/redoc/``        ReDoc UI
+============================  ==========================
+
+All endpoints require an authenticated user.
 
 
 Deployment
 ----------
 
-The following details how to deploy this application.
+See ``docs/deployment.md`` for the full guide, and ``docs/ministry_handover.md`` for the operations
+runbook. In short::
 
-
+    $ docker compose -f production.yml up --build -d
+    $ docker compose -f production.yml exec django python manage.py migrate
+    $ docker compose -f production.yml exec django python manage.py collectstatic --noinput
+    $ docker compose -f production.yml exec django python manage.py compilemessages
 
 Docker
 ^^^^^^
@@ -165,8 +217,10 @@ See detailed `cookiecutter-django Docker documentation`_.
 .. _`cookiecutter-django Docker documentation`: http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html
 
 
-
 Translations
 ------------
 
-./manage.py compilemessages
+The interface ships in English and Arabic, with a right-to-left layout for Arabic. Compiled catalogues
+(``*.mo``) are deliberately not committed, so compile them as part of every deployment::
+
+    $ ./manage.py compilemessages

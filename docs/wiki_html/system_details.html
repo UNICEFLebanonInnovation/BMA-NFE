@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>System Overview & Infrastructure — BMA Wiki</title>
+  <title>System Overview &amp; Infrastructure — BMA Wiki</title>
   <style>
 :root {
   --primary: #1a6faf;
@@ -275,20 +275,24 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html" class="active">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
-    <a href="02_setup.html">2. Setup & Installation</a>
-    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
-    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="02_setup.html">2. Setup &amp; Installation</a>
+    <a href="03_architecture.html">3. Architecture &amp; Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema &amp; Models</a>
     <a href="05_django_apps.html">5. Django Apps Reference</a>
-    <a href="06_api_urls.html">6. API & URL Reference</a>
-    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="06_api_urls.html">6. API &amp; URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication &amp; Permissions</a>
     <a href="08_admin_portal.html">8. Admin Portal Guide</a>
     <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
     <a href="10_frontend.html">10. Frontend Guide</a>
@@ -300,14 +304,45 @@ body {
 
 <div id="main">
   <div id="topbar">
-    <span class="breadcrumb">BMA Wiki &rsaquo; <span>System Overview & Infrastructure</span></span>
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>System Overview &amp; Infrastructure</span></span>
   </div>
   <div id="content">
-    <h1 id="system-overview-infrastructure">System Overview &amp; Infrastructure</h1>
-<p>This document automatically generates a snapshot of the technical codebase and infrastructure used in the Student Registration Compiler system.</p>
+<h1 id="system-overview-infrastructure">System Overview &amp; Infrastructure</h1>
+<p><strong>Snapshot taken: September 2026</strong></p>
+<p>This document is a point-in-time snapshot of the technical codebase and infrastructure of the BMA NFE Sector platform (the codebase is historically named <em>Student Registration Compiler</em>). It is <strong>maintained by hand</strong> — there is no generator that refreshes it, so re-check it against the sources below whenever dependencies or models change:</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Source of truth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Backend packages</td>
+<td><code>requirements/base.txt</code> (plus <code>local.txt</code>, <code>production.txt</code>, <code>test.txt</code>)</td>
+</tr>
+<tr>
+<td>Frontend packages</td>
+<td><code>package.json</code></td>
+</tr>
+<tr>
+<td>Django applications and models</td>
+<td><code>LOCAL_APPS</code> in <code>config/settings/base.py</code> and each app's <code>models.py</code></td>
+</tr>
+<tr>
+<td>Docker configuration</td>
+<td><code>compose/</code>, <code>local.yml</code>, <code>production.yml</code></td>
+</tr>
+<tr>
+<td>Environment variables</td>
+<td><code>env.example</code></td>
+</tr>
+</tbody>
+</table>
 <h2 id="codebase-and-structure">Codebase and Structure</h2>
 <h3 id="backend-core-packages-django-requirements">Backend Core Packages (Django &amp; Requirements)</h3>
-<pre class="highlight"><code>wheel==0.45.1
+<pre><code>wheel==0.45.1
 django==5.2.7
 django-environ==0.4.3
 whitenoise==6.9.0
@@ -362,9 +397,8 @@ grpcio==1.65.5
 azure-monitor-opentelemetry==1.8.1
 bleach==6.3.0
 </code></pre>
-
 <h3 id="frontend-ecosystem">Frontend Ecosystem</h3>
-<pre class="highlight"><code class="language-json">{
+<pre><code class="language-json">{
   &quot;name&quot;: &quot;student_registration&quot;,
   &quot;version&quot;: &quot;2.0.0&quot;,
   &quot;dependencies&quot;: {},
@@ -389,10 +423,13 @@ bleach==6.3.0
     &quot;node&quot;: &quot;&gt;=0.8.0&quot;
   }
 }
-</code></pre>
 
+</code></pre>
 <h3 id="django-applications-database-models">Django Applications &amp; Database Models</h3>
-<p>The main Django project (<code>student_registration</code>) is divided into the following apps, containing the listed database models:</p>
+<p>The main Django project (<code>student_registration</code>) is divided into the following apps, containing the listed
+database models. <code>student_registration.accounts</code> is only added to <code>INSTALLED_APPS</code> by
+<code>config/settings/production.py</code>; <code>student_registration.contrib</code> is not an installed app and exists only to
+hold relocated <code>django.contrib.sites</code> migrations.</p>
 <h4 id="student_registrationlocations"><code>student_registration.locations</code></h4>
 <ul>
 <li><strong><code>LocationType</code></strong></li>
@@ -1218,6 +1255,99 @@ bleach==6.3.0
 <li><code>participating_education_sessions (CharField)</code></li>
 <li><code>participating_lego_play_sessions (CharField)</code></li>
 </ul>
+<h4 id="student_registrationalp"><code>student_registration.alp</code></h4>
+<p>Accelerated Learning Programme. School-scoped registrations built on the shared <code>child.Child</code>
+record, with their own teachers, attendance, grading and reference data.</p>
+<ul>
+<li><strong><code>ALPRound</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><code>current_year (BooleanField)</code></li>
+<li><strong><code>ALPProgram</code></strong></li>
+<li><code>name (CharField)</code></li>
+<li><strong><code>ALPTeacher</code></strong></li>
+<li><code>first_name (CharField)</code></li>
+<li><code>father_name (CharField)</code></li>
+<li><code>last_name (CharField)</code></li>
+<li><code>mother_fullname (CharField)</code></li>
+<li><code>sex (CharField)</code></li>
+<li><code>birthdate (DateField)</code></li>
+<li><code>id_number (CharField)</code></li>
+<li><code>id_type (ForeignKey)</code></li>
+<li><code>nationality (ForeignKey)</code></li>
+<li><code>unicef_id (CharField)</code></li>
+<li><code>round (ForeignKey)</code></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>email (CharField)</code></li>
+<li><code>phone_number (CharField)</code></li>
+<li><code>subjects_provided (ArrayField)</code></li>
+<li><code>registration_level (ArrayField)</code></li>
+<li><code>teacher_assignment (CharField)</code></li>
+<li><code>teacher_assignment_other (CharField)</code></li>
+<li><code>teaching_hours_private_school (IntegerField)</code></li>
+<li><code>teaching_hours_mscc (IntegerField)</code></li>
+<li><code>years_of_experience (IntegerField)</code></li>
+<li><code>trainings (ManyToManyField)</code></li>
+<li><code>training_sessions_attended (IntegerField)</code></li>
+<li><code>training_date_of_completion (DateField)</code></li>
+<li><code>extra_coaching (CharField)</code></li>
+<li><code>extra_coaching_specify (TextField)</code></li>
+<li><code>attach_short_description_1..5 (CharField)</code></li>
+<li><code>attach_file_1..5 (FileField)</code></li>
+<li><code>attach_type_1..5 (ForeignKey)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><strong><code>ALPRegistration</code></strong></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>child (ForeignKey)</code></li>
+<li><code>round (ForeignKey)</code></li>
+<li><code>programme (ForeignKey)</code></li>
+<li><code>student_old (IntegerField)</code></li>
+<li><code>have_labour (CharField)</code></li>
+<li><code>labour_type (CharField)</code></li>
+<li><code>labour_type_specify (CharField)</code></li>
+<li><code>labour_hours (IntegerField)</code></li>
+<li><code>labour_weekly_income (CharField)</code></li>
+<li><code>labour_condition (ArrayField)</code></li>
+<li><code>source_of_identification (CharField)</code></li>
+<li><code>source_of_identification_specify (TextField)</code></li>
+<li><code>cash_support_programmes (ArrayField)</code></li>
+<li><code>mscc_packages (ArrayField)</code></li>
+<li><code>type (CharField)</code></li>
+<li><code>registration_date (DateField)</code></li>
+<li><code>consent_form (FileField)</code></li>
+<li><code>partner_unique_number (CharField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><code>modified_by (ForeignKey)</code></li>
+<li><code>deleted (BooleanField)</code></li>
+<li><code>deleted_by (ForeignKey)</code></li>
+<li><strong><code>ALPGrading</code></strong></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>grading_data (JSONField)</code> — subject id → score, keyed by <code>ALPGradingDefinition.id</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><strong><code>ALPGradingDefinition</code></strong></li>
+<li><code>material (CharField)</code></li>
+<li><code>min_grade (IntegerField)</code></li>
+<li><code>max_grade (IntegerField)</code></li>
+<li><strong><code>ALPTeacherAttendance</code></strong></li>
+<li><code>teacher (ForeignKey)</code></li>
+<li><code>date (DateField)</code></li>
+<li><code>status (CharField)</code></li>
+<li><code>owner (ForeignKey)</code></li>
+<li><strong><code>ALPAttendance</code></strong></li>
+<li><code>round (ForeignKey)</code></li>
+<li><code>school (ForeignKey)</code></li>
+<li><code>programme (ForeignKey)</code></li>
+<li><code>attendance_date (DateField)</code></li>
+<li><code>day_off (CharField)</code></li>
+<li><code>close_reason (CharField)</code></li>
+<li><strong><code>ALPAttendanceChild</code></strong></li>
+<li><code>attendance_day (ForeignKey)</code></li>
+<li><code>registration (ForeignKey)</code></li>
+<li><code>child (ForeignKey)</code></li>
+<li><code>attended (CharField)</code></li>
+<li><code>absence_reason (CharField)</code></li>
+<li><code>absence_reason_other (CharField)</code></li>
+</ul>
 <h4 id="student_registrationbackends"><code>student_registration.backends</code></h4>
 <ul>
 <li><strong><code>ExportHistory</code></strong></li>
@@ -1236,7 +1366,7 @@ bleach==6.3.0
 </ul>
 <h3 id="deployment-and-docker-configuration">Deployment and Docker Configuration</h3>
 <h4 id="django-dockerfile">Django Dockerfile</h4>
-<pre class="highlight"><code class="language-dockerfile">FROM python:3.10-slim-bullseye
+<pre><code class="language-dockerfile">FROM python:3.10-slim-bullseye
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV SSH_PASSWD=&quot;root:Docker!&quot;
@@ -1272,10 +1402,10 @@ EXPOSE 2222 80
 
 ENTRYPOINT [&quot;/code/compose/django/entrypoint.sh&quot;]
 CMD [&quot;/code/compose/django/gunicorn.sh&quot;]
-</code></pre>
 
+</code></pre>
 <h4 id="localyml-docker-compose">local.yml (Docker Compose)</h4>
-<pre class="highlight"><code class="language-yaml">version: '2'
+<pre><code class="language-yaml">version: '2'
 
 volumes:
   postgres_data_dev: {}
@@ -1325,10 +1455,25 @@ services:
     volumes:
       - .:/code
       - .:/home/LogFiles
-</code></pre>
 
+
+
+
+</code></pre>
 <h3 id="environment-configurations">Environment Configurations</h3>
-<pre class="highlight"><code class="language-bash"># PostgreSQL
+<p><code>env.example</code> is reproduced below. Two entries in it are <strong>obsolete</strong> and are kept only for backwards
+compatibility:</p>
+<ul>
+<li><code>FCM_SERVER_KEY</code> and the <code>FIREBASE_*</code> web-config variables are no longer read by the application.
+  Server-side push uses the <code>firebase-admin</code> service account at <code>utility/firebase-creds.json</code>, and the
+  browser configuration is currently hardcoded in <code>static/js/firebase-messaging.js</code>.</li>
+<li><code>DJANGO_OPBEAT_*</code> refers to a monitoring service that is no longer wired up; the project now uses
+  Sentry (<code>DJANGO_SENTRY_DSN</code>) and <code>azure-monitor-opentelemetry</code> (<code>OTEL_*</code>).</li>
+</ul>
+<p><code>DATABASE_URL</code> is not listed in <code>env.example</code> but <strong>must</strong> be set — <code>config/settings/base.py</code> otherwise
+falls back to a hardcoded default that contains credentials.</p>
+<pre><code class="language-bash">
+# PostgreSQL
 POSTGRES_PASSWORD=mysecretpass
 POSTGRES_USER=postgresuser
 
@@ -1373,13 +1518,17 @@ DJANGO_OPBEAT_APP_ID
 DJANGO_OPBEAT_SECRET_TOKEN
 
 COMPRESS_ENABLED=
-</code></pre>
 
+
+</code></pre>
 <h3 id="database-schema-graph">Database Schema Graph</h3>
-<p>An ER Diagram of the database schema is generated as <code>schema.png</code> at the root of the project.</p>
+<p>An ER diagram of the database schema is committed as <code>schema.png</code> at the root of the project. Regenerate it
+with <code>django-extensions</code> after model changes:</p>
+<pre><code class="language-bash">python manage.py graph_models -a -o schema.png
+</code></pre>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>System Administration Guide: Student Registration Compiler — BMA Wiki</title>
+  <title>System Administration Guide: BMA — NFE Sector Platform — BMA Wiki</title>
   <style>
 :root {
   --primary: #1a6faf;
@@ -275,20 +275,24 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html" class="active">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
-    <a href="02_setup.html">2. Setup & Installation</a>
-    <a href="03_architecture.html">3. Architecture & Tech Stack</a>
-    <a href="04_database_schema.html">4. Database Schema & Models</a>
+    <a href="02_setup.html">2. Setup &amp; Installation</a>
+    <a href="03_architecture.html">3. Architecture &amp; Tech Stack</a>
+    <a href="04_database_schema.html">4. Database Schema &amp; Models</a>
     <a href="05_django_apps.html">5. Django Apps Reference</a>
-    <a href="06_api_urls.html">6. API & URL Reference</a>
-    <a href="07_auth_permissions.html">7. Authentication & Permissions</a>
+    <a href="06_api_urls.html">6. API &amp; URL Reference</a>
+    <a href="07_auth_permissions.html">7. Authentication &amp; Permissions</a>
     <a href="08_admin_portal.html">8. Admin Portal Guide</a>
     <a href="09_celery_tasks.html">9. Background Tasks (Celery)</a>
     <a href="10_frontend.html">10. Frontend Guide</a>
@@ -300,100 +304,284 @@ body {
 
 <div id="main">
   <div id="topbar">
-    <span class="breadcrumb">BMA Wiki &rsaquo; <span>System Administration Guide: Student Registration Compiler</span></span>
+    <span class="breadcrumb">BMA Wiki &rsaquo; <span>System Administration Guide: BMA — NFE Sector Platform</span></span>
   </div>
   <div id="content">
-    <h1 id="system-administration-guide-student-registration-compiler">System Administration Guide: Student Registration Compiler</h1>
-<p>This guide provides instructions for deploying, configuring, monitoring, and maintaining the <strong>Student Registration Compiler</strong>. It is intended for IT operations teams and system administrators.</p>
+<h1 id="system-administration-guide-bma-nfe-sector-platform">System Administration Guide: BMA — NFE Sector Platform</h1>
+<p><strong>Revision: September 2026</strong></p>
+<p>This guide provides instructions for deploying, configuring, monitoring, and maintaining the platform. It is intended for IT operations teams and system administrators.</p>
 <hr />
 <h2 id="1-system-deployment-overview">1. System Deployment Overview</h2>
 <p>The platform uses Docker and Docker Compose to containerize its components, ensuring consistent deployments across environments.</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>django</code> (Gunicorn)</td>
+<td>Main web server handling HTTP requests and application logic</td>
+</tr>
+<tr>
+<td><code>postgres</code></td>
+<td>Primary relational database for persistent data</td>
+</tr>
+<tr>
+<td><code>redis</code></td>
+<td>Cache backend and Celery message broker</td>
+</tr>
+<tr>
+<td><code>celery</code> / <code>celerybeat</code></td>
+<td>Background workers and the periodic-task scheduler</td>
+</tr>
+<tr>
+<td><code>nginx</code></td>
+<td>Reverse proxy, serving static and media files in production</td>
+</tr>
+<tr>
+<td><code>certbot</code></td>
+<td>Automated SSL/TLS certificate issuance and renewal</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Deployment reference</strong></p>
 <ul>
-<li><strong>Django Application (<code>gunicorn</code>)</strong>: The main web server handling HTTP requests and application logic.</li>
-<li><strong>PostgreSQL (<code>postgres</code>)</strong>: The primary relational database for persistent data storage.</li>
-<li><strong>Redis (<code>redis</code>)</strong>: The in-memory data store acting as a cache backend and Celery message broker.</li>
-<li><strong>Celery Workers &amp; Beat (<code>celery</code>, <code>celerybeat</code>)</strong>: Background processes for asynchronous tasks (e.g., data exports, scheduled jobs).</li>
-<li><strong>Nginx (<code>nginx</code>)</strong>: The reverse proxy and load balancer in production, serving static/media files.</li>
-<li><strong>Certbot</strong>: Handles automated SSL/TLS certificate issuance and renewal.</li>
+<li>Step-by-step instructions: <code>docs/deployment.md</code> <span class="muted">(../deployment.md)</span> and <code>docs/ministry_handover.md</code> <span class="muted">(../ministry_handover.md)</span>.</li>
+<li>Go-live verification: <code>docs/handover_checklist.md</code> <span class="muted">(../handover_checklist.md)</span>.</li>
+<li>The <code>.env</code> file must be configured with at least <code>DATABASE_URL</code>, <code>DJANGO_SECRET_KEY</code>, <code>DJANGO_ALLOWED_HOSTS</code>, <code>DJANGO_SETTINGS_MODULE=config.settings.production</code>, and <code>DJANGO_SENTRY_DSN</code>.</li>
 </ul>
-<p><strong>Deployment Reference</strong>:<br />
-*   Detailed setup instructions can be found in <code>docs/deployment.md</code> and <code>docs/ministry_handover.md</code>.<br />
-*   The <code>.env</code> file must be securely configured with <code>DATABASE_URL</code>, <code>DJANGO_SECRET_KEY</code>, <code>FCM_SERVER_KEY</code>, and Sentry DSN.</p>
+<blockquote>
+<p><strong>Do not rely on the built-in defaults.</strong> <code>config/settings/base.py</code> still ships a hardcoded <code>DATABASE_URL</code> default containing credentials. Always set <code>DATABASE_URL</code> explicitly in <code>.env</code>, and treat the committed default as a credential that needs rotating.</p>
+</blockquote>
 <hr />
 <h2 id="2-role-based-access-control-rbac">2. Role-Based Access Control (RBAC)</h2>
-<p>The system enforces strict data isolation based on user roles and associations.</p>
-<h3 id="core-roles">Core Roles</h3>
+<p>The system enforces data isolation based on group membership combined with the center, partner or school linked to the user account.</p>
+<h3 id="groups-in-use">Groups in use</h3>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MSCC</code></td>
+<td>Standard MSCC module access — registrations, services, assessments, grading, attendance</td>
+</tr>
+<tr>
+<td><code>MSCC_CENTER</code></td>
+<td>Same as <code>MSCC</code>, but lists are filtered to the user's assigned center</td>
+</tr>
+<tr>
+<td><code>MSCC_PARTNER</code></td>
+<td>View-oriented access across the centers of the user's partner organization; cannot add or edit registrations</td>
+</tr>
+<tr>
+<td><code>MSCC_FULL</code></td>
+<td>Bypasses the center/partner filter on the MSCC registration list</td>
+</tr>
+<tr>
+<td><code>MSCC_UNICEF</code></td>
+<td>Broad analytical and reporting visibility for UNICEF staff</td>
+</tr>
+<tr>
+<td><code>YOUTH</code></td>
+<td>Youth-stream users; surfaced as a distinct user type in the Django admin filters</td>
+</tr>
+<tr>
+<td><code>ALP_SCHOOL</code></td>
+<td>ALP school focal points. Required for every <code>/alp/</code> view; data is scoped to the user's school</td>
+</tr>
+<tr>
+<td><code>CLM_Bridging</code></td>
+<td>Core CLM bridging workflows — assessments, services, clubs, meetings, health visits, follow-ups</td>
+</tr>
+<tr>
+<td><code>CLM_BRIDGING_ALL</code></td>
+<td>Cross-cutting CLM access plus CLM export capabilities</td>
+</tr>
+<tr>
+<td><code>CLM_ATTENDANCE</code></td>
+<td>CLM attendance entry only</td>
+</tr>
+<tr>
+<td><code>CLM_TEACHER</code></td>
+<td>CLM teacher profile management</td>
+</tr>
+<tr>
+<td><code>CLM_Inclusion</code></td>
+<td>CLM inclusion workflows</td>
+</tr>
+<tr>
+<td><code>EXPORT</code></td>
+<td>Unlocks export actions on lists that gate them</td>
+</tr>
+</tbody>
+</table>
+<p>The authoritative role → view matrix lives in <code>docs/ACCESS_CONTROL.md</code> <span class="muted">(../ACCESS_CONTROL.md)</span>.</p>
+<h3 id="enforcement-mechanisms">Enforcement mechanisms</h3>
+<ul>
+<li><strong>Backend:</strong> <code>GroupRequiredMixin</code> (<code>group_required</code>) on class-based views and the <code>has_group()</code> helper in views and templates.</li>
+<li><strong>Queryset scoping:</strong> views filter by the user's <code>center</code>, <code>partner</code> or <code>school</code>. ALP centralizes this in <code>alp/utils.filter_by_school()</code>.</li>
+<li><strong>Template filtering:</strong> UI components hide unauthorized actions (for example, "Add New Student" is hidden from <code>MSCC_PARTNER</code> users).</li>
+</ul>
+<h3 id="two-alp-specifics-worth-knowing">Two ALP specifics worth knowing</h3>
 <ol>
-<li><strong>MSCC_CENTER (Center Staff)</strong>: Can view and manage data <em>only</em> for their assigned center.</li>
-<li><strong>MSCC_PARTNER (Partner Organization Staff)</strong>: Has view-only access across all centers associated with their partner organization. They cannot add or edit records.</li>
-<li><strong>Administrators (Superusers)</strong>: Full system access across all centers and partners.</li>
+<li>An <code>ALP_SCHOOL</code> user with <strong>no school assigned</strong> sees empty lists everywhere — assigning the school on the user record is part of account setup, not optional.</li>
+<li><strong>Superusers are intentionally read-only in ALP.</strong> <code>ALPEditPermissionMixin</code> denies add/edit/delete to superusers so school-owned data is only entered by the school. A superuser also needs the <code>ALP_SCHOOL</code> group to open ALP pages at all.</li>
 </ol>
-<h3 id="enforcement-mechanisms">Enforcement Mechanisms</h3>
-<ul>
-<li><strong>Backend Isolation</strong>: Implemented via Django view mixins (<code>MSCCAccessMixin</code>) and view decorators (<code>mscc_access_required</code>).</li>
-<li><strong>Template Filtering</strong>: UI components hide unauthorized actions (e.g., "Add New Student" buttons are hidden from <code>MSCC_PARTNER</code> users).</li>
-</ul>
-<p>Administrators must configure user accounts via the <strong>Django Admin Panel</strong>, assigning the correct <code>Group</code> and associating the user with a specific <code>Center</code> or <code>Partner</code> instance.</p>
+<p>Administrators configure accounts via the <strong>Django Admin Panel</strong>, assigning the correct <code>Group</code> and associating the user with a <code>Center</code>, <code>Partner</code> or <code>School</code>.</p>
 <hr />
-<h2 id="3-managing-background-tasks-celery">3. Managing Background Tasks (Celery)</h2>
-<p>The platform leverages Celery to offload resource-intensive operations, primarily data exports.</p>
-<ul>
-<li><strong>Dedicated Queues</strong>: Long-running MSCC exports are routed to the <code>mscc_export</code> queue to prevent blocking smaller, frequent tasks.</li>
-<li><strong>Concurrency</strong>: By default, the <code>mscc_export</code> worker is configured with limited concurrency (<code>--concurrency=1</code>) to manage server load during massive CSV/XLSX generation.</li>
-<li><strong>Monitoring</strong>: Use the Django Admin interface under "Periodic tasks" (<code>django-celery-beat</code>) to schedule recurring jobs and view execution histories.</li>
-</ul>
-<p><strong>Common Maintenance Tasks</strong>:<br />
-*   To check Celery worker status: <code>docker compose -f production.yml logs -f celery</code><br />
-*   To start a dedicated export worker: <code>celery -A student_registration.taskapp worker -Q mscc_export --concurrency=1 -l info</code></p>
+<h2 id="3-application-configuration-reference">3. Application Configuration Reference</h2>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Location</th>
+<th>Value / behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Auto logout</td>
+<td><code>production.py</code> → <code>AUTO_LOGOUT_DELAY</code></td>
+<td>30 minutes of inactivity (production only)</td>
+</tr>
+<tr>
+<td>Failed-login throttle</td>
+<td><code>production.py</code> → <code>ACCOUNT_RATE_LIMITS</code></td>
+<td><code>login_failed: 5/5m</code>, <code>login_user: 10/m</code>, <code>signup: 3/h</code></td>
+</tr>
+<tr>
+<td>Password policy</td>
+<td><code>base.py</code> → <code>AUTH_PASSWORD_VALIDATORS</code></td>
+<td>Minimum 8 characters, at least 3 digits, 1 uppercase, 1 lowercase, 1 symbol, plus Django's similarity/common/numeric checks</td>
+</tr>
+<tr>
+<td>Languages</td>
+<td><code>base.py</code> → <code>LANGUAGES</code></td>
+<td>Arabic and English, with RTL layout for Arabic</td>
+</tr>
+<tr>
+<td>Time zone</td>
+<td><code>base.py</code> → <code>TIME_ZONE</code></td>
+<td><code>Asia/Beirut</code></td>
+</tr>
+<tr>
+<td>Session hardening</td>
+<td><code>production.py</code></td>
+<td><code>SESSION_COOKIE_SECURE</code>, <code>SESSION_COOKIE_HTTPONLY</code>, <code>CSRF_COOKIE_SECURE</code>, <code>CSRF_USE_SESSIONS</code>, <code>X_FRAME_OPTIONS=DENY</code>, HSTS enabled</td>
+</tr>
+<tr>
+<td>Admin URL</td>
+<td><code>.env</code> → <code>DJANGO_ADMIN_URL</code></td>
+<td>Set a non-obvious path; the admin is mounted there</td>
+</tr>
+</tbody>
+</table>
+<p>Rounds, programmes and ALP grading definitions (subject, minimum grade, maximum grade) are reference data maintained through the Django admin. Adding a grading definition immediately changes the ALP grading form — no deployment is needed.</p>
 <hr />
-<h2 id="4-notifications-firebase-fcm">4. Notifications &amp; Firebase (FCM)</h2>
-<p>When background tasks (like exports) complete, the system notifies the requesting user in real-time via <strong>Firebase Cloud Messaging</strong>.</p>
+<h2 id="4-managing-background-tasks-celery">4. Managing Background Tasks (Celery)</h2>
+<p>The platform uses Celery to offload resource-intensive operations, primarily data exports.</p>
 <ul>
-<li><strong>Configuration</strong>: The <code>FCM_SERVER_KEY</code> must be set in the <code>.env</code> file.</li>
-<li><strong>Frontend Integration</strong>: The client uses a Service Worker (<code>firebase-messaging-sw.js</code>) to listen for incoming push events.</li>
-<li><strong>Export Notification Flow</strong>: Once Celery finishes building a ZIP/CSV file, it triggers a push message. The frontend displays a "Download Ready" modal, allowing the user to retrieve the file immediately.</li>
+<li><strong>Queues:</strong> <code>default</code> and <code>mscc_export</code>. <code>student_registration.mscc.tasks.generate_mscc_export</code> is routed to <code>mscc_export</code> so long exports cannot block smaller tasks.</li>
+<li><strong>Concurrency:</strong> run the <code>mscc_export</code> worker with <code>--concurrency=1</code> to bound memory use during large CSV/XLSX generation.</li>
+<li><strong>Results:</strong> stored in the database (<code>django-celery-results</code>); browse them in the admin under <em>Task results</em>.</li>
+<li><strong>Schedules:</strong> managed in the admin under <em>Periodic tasks</em> (<code>django-celery-beat</code>).</li>
 </ul>
+<p><strong>Common maintenance commands</strong></p>
+<pre><code class="language-bash"># Worker status
+docker compose -f production.yml logs -f celery
+
+# Dedicated export worker
+celery -A student_registration.taskapp worker -Q mscc_export --concurrency=1 -l info
+</code></pre>
 <hr />
-<h2 id="5-routine-operations-disaster-recovery">5. Routine Operations &amp; Disaster Recovery</h2>
-<h3 id="routine-maintenance">Routine Maintenance</h3>
+<h2 id="5-notifications-firebase-fcm">5. Notifications &amp; Firebase (FCM)</h2>
+<p>When a background export completes, the system notifies the requesting user in real time via <strong>Firebase Cloud Messaging</strong>.</p>
+<ul>
+<li><strong>Server credentials:</strong> <code>firebase-admin</code> is initialised from a service-account JSON file at <code>utility/firebase-creds.json</code>. The legacy <code>FCM_SERVER_KEY</code> environment variable is <strong>no longer read by the application</strong> — older documentation that told you to set it is out of date.</li>
+<li><strong>Browser tokens:</strong> the client registers a device token through the <code>save_fcm_token</code> endpoint; tokens are stored in the <code>WebPushToken</code> model. A user with no registered token simply receives no push (the export still completes and remains downloadable).</li>
+<li><strong>Frontend integration:</strong> <code>static/firebase-messaging-sw.js</code> is the service worker; the Firebase web config is currently hardcoded in <code>static/js/firebase-messaging.js</code>.</li>
+<li><strong>Flow:</strong> Celery finishes the export → <code>send_push_to_web</code> sends the message → the frontend shows a "Download Ready" prompt.</li>
+</ul>
+<blockquote>
+<p><strong>Security:</strong> the service-account private key is currently committed to the repository. Treat it as compromised, rotate it in the Firebase console, and load it from a secret store or a mounted file outside version control.</p>
+</blockquote>
+<hr />
+<h2 id="6-documentation-access-inside-the-application">6. Documentation Access Inside the Application</h2>
+<p>The docs in this repository are served to signed-in users:</p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Source</th>
+<th>Who can read it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/dashboard/guide/end_user/</code></td>
+<td><code>docs/wiki_html/end_user.html</code></td>
+<td>Any authenticated user</td>
+</tr>
+<tr>
+<td><code>/dashboard/guide/&lt;page&gt;/</code> (all other pages)</td>
+<td><code>docs/wiki_html/*.html</code></td>
+<td>Superusers only</td>
+</tr>
+<tr>
+<td><code>/dashboard/wiki/&lt;page&gt;/</code></td>
+<td><code>docs/wiki/*.md</code></td>
+<td>Any authenticated user</td>
+</tr>
+</tbody>
+</table>
+<p>Note the asymmetry: the HTML guide route restricts technical pages to superusers, but the Markdown route does <strong>not</strong>. If technical documentation must be superuser-only, <code>WikiPageView</code> needs the same check as <code>WikiGuidePageView</code>.</p>
+<p>After editing any file in <code>docs/wiki/</code>, regenerate the HTML mirror so both routes agree:</p>
+<pre><code class="language-bash">python docs/build_wiki_html.py
+</code></pre>
+<hr />
+<h2 id="7-routine-operations-disaster-recovery">7. Routine Operations &amp; Disaster Recovery</h2>
+<h3 id="routine-maintenance">Routine maintenance</h3>
 <ol>
-<li><strong>Database Migrations</strong>: Run after code updates.<ul>
-<li><code>docker compose -f production.yml exec django python manage.py migrate</code></li>
-</ul>
-</li>
-<li><strong>Static Files</strong>: Collect static assets after UI changes.<ul>
-<li><code>docker compose -f production.yml exec django python manage.py collectstatic --noinput</code></li>
-</ul>
-</li>
+<li><strong>Database migrations</strong> — run after code updates:
+    <code>docker compose -f production.yml exec django python manage.py migrate</code></li>
+<li><strong>Static files</strong> — collect after UI changes:
+    <code>docker compose -f production.yml exec django python manage.py collectstatic --noinput</code></li>
+<li><strong>Translations</strong> — compile after updating <code>.po</code> files (compiled <code>.mo</code> files are not committed):
+    <code>docker compose -f production.yml exec django python manage.py compilemessages</code></li>
 </ol>
 <h3 id="backups">Backups</h3>
 <ul>
-<li><strong>Automated Backups</strong>: Schedule <code>pg_dump</code> via cron.<ul>
-<li><code>docker compose -f production.yml exec postgres pg_dump -U $POSTGRES_USER -F c -f /backups/student_$(date +%F).dump $POSTGRES_DB</code></li>
-</ul>
-</li>
-<li><strong>Media Files</strong>: Ensure the <code>/media/</code> volume is backed up, as it contains user uploads and generated export files.</li>
+<li><strong>Database:</strong> schedule <code>pg_dump</code> via cron.
+    <code>docker compose -f production.yml exec postgres pg_dump -U $POSTGRES_USER -F c -f /backups/student_$(date +%F).dump $POSTGRES_DB</code></li>
+<li><strong>Media:</strong> back up the <code>/media/</code> volume — it holds uploaded consent forms, teacher attachments, child photos and generated export files.</li>
 </ul>
 <h3 id="restoration">Restoration</h3>
 <ul>
-<li>To restore a database dump:<ul>
 <li><code>docker compose -f production.yml exec postgres pg_restore -U $POSTGRES_USER -d $POSTGRES_DB /path/to/dump</code></li>
-</ul>
-</li>
+<li>Test the restore against a staging database before you need it.</li>
 </ul>
 <hr />
-<h2 id="6-system-monitoring-error-logging">6. System Monitoring &amp; Error Logging</h2>
+<h2 id="8-system-monitoring-error-logging">8. System Monitoring &amp; Error Logging</h2>
 <ul>
-<li><strong>Sentry</strong>: The application integrates with Sentry for real-time error tracking. Ensure the <code>DJANGO_SENTRY_DSN</code> is set in the <code>.env</code> file. Sentry automatically captures unhandled exceptions (e.g., HTTP 500s) and detailed stack traces.</li>
-<li><strong>Log Files</strong>: Docker service logs provide the primary insight into system health.<ul>
-<li><code>docker compose -f production.yml logs -f django</code></li>
-<li><code>docker compose -f production.yml logs -f nginx</code></li>
-</ul>
-</li>
+<li><strong>Sentry:</strong> set <code>DJANGO_SENTRY_DSN</code> in <code>.env</code>. Sentry captures unhandled exceptions and stack traces.</li>
+<li><strong>Azure Monitor / OpenTelemetry:</strong> <code>azure-monitor-opentelemetry</code> is available; <code>OTEL_SERVICE_NAME</code> and <code>OTEL_RESOURCE_ATTRIBUTES</code> identify the deployment.</li>
+<li><strong>Logs:</strong> Docker service logs are the primary insight into system health.
+    <code>bash
+    docker compose -f production.yml logs -f django
+    docker compose -f production.yml logs -f nginx
+    docker compose -f production.yml logs -f celery</code></li>
+<li><strong>Broken links:</strong> <code>BrokenLinkEmailsMiddleware</code> mails the addresses in <code>ADMINS</code> when a 404 is hit from an internal referrer.</li>
 </ul>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 
