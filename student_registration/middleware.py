@@ -15,8 +15,16 @@ class AutoLogout:
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Refresh or expire the session before handing off to the view."""
 
-        self._enforce_session_timeout(request)
+        if not self._is_exempt_path(request.path_info):
+            self._enforce_session_timeout(request)
         return self.get_response(request)
+
+    @staticmethod
+    def _is_exempt_path(path: str) -> bool:
+        """Return whether activity on ``path`` should leave the session alone."""
+
+        exempt_paths = getattr(settings, "AUTO_LOGOUT_EXEMPT_PATHS", ())
+        return any(path.startswith(prefix) for prefix in exempt_paths)
 
     def _enforce_session_timeout(self, request: HttpRequest) -> None:
         """Logout authenticated users whose session has exceeded the idle limit."""
