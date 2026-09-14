@@ -8,7 +8,11 @@
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb bg-transparent p-0 m-0">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'dashboard:wiki_page' 'index' %}">{% trans "Wiki" %}</a></li>
+            {% if request.user.is_superuser %}
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:wiki_index' %}">{% trans "Wiki" %}</a></li>
+            {% else %}
+                <li class="breadcrumb-item">{% trans "Documentation" %}</li>
+            {% endif %}
             {% if page_name != 'index' %}
                 <li class="breadcrumb-item active text-capitalize" aria-current="page">{{ page_name }}</li>
             {% endif %}
@@ -73,15 +77,24 @@
 
 {% block extra_js %}
 <script>
-    // Convert relative .md links to django URLs
+    // Convert links to sibling .md pages into their Django URLs. Links that
+    // point outside the wiki directory (for example ../ACCESS_CONTROL.md) have
+    // no page to resolve to, so they are rendered as plain text instead of as
+    // links that would 404.
     document.addEventListener("DOMContentLoaded", function() {
-        const links = document.querySelectorAll('.markdown-body a');
-        links.forEach(link => {
+        const siblingPage = /^([\w-]+)\.md(#.*)?$/;
+        document.querySelectorAll('.markdown-body a').forEach(link => {
             const href = link.getAttribute('href');
-            if (href && href.endsWith('.md')) {
-                const pageName = href.replace('.md', '');
-                // Basic URL replacement assuming they are siblings
-                link.setAttribute('href', `/dashboard/wiki/${pageName}/`);
+            if (!href || !href.includes('.md')) {
+                return;
+            }
+            const match = href.match(siblingPage);
+            if (match) {
+                link.setAttribute('href', `/dashboard/wiki/${match[1]}/${match[2] || ''}`);
+            } else {
+                const text = document.createElement('span');
+                text.textContent = link.textContent;
+                link.replaceWith(text);
             }
         });
     });

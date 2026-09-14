@@ -275,12 +275,16 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
     <a href="02_setup.html">2. Setup & Installation</a>
@@ -510,7 +514,7 @@ body {
 <tbody>
 <tr>
 <td><code>FCM_SERVER_KEY</code></td>
-<td>Firebase server key for push notifications</td>
+<td><strong>Obsolete.</strong> Still present in <code>env.example</code>, but no longer read anywhere in the codebase. Server-side push uses the <code>firebase-admin</code> service account at <code>utility/firebase-creds.json</code>.</td>
 </tr>
 <tr>
 <td><code>FIREBASE_API_KEY</code></td>
@@ -688,7 +692,7 @@ if READ_DOT_ENV_FILE:
 <p>Never commit the actual secret key to version control.</p>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 

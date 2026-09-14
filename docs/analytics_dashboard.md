@@ -1,5 +1,10 @@
 # Advanced Analytics API (MSCC) – ORM blueprint
 
+**Revision: September 2026**
+
+Implemented in `student_registration/dashboard/views.py` and routed from
+`student_registration/dashboard/urls.py`.
+
 ## Data assumptions
 Fact model: `Registration` (`student_registration.mscc.models.Registration`) with these joins:
 - `Registration.child` (gender, nationality, birthday fields)
@@ -14,12 +19,33 @@ Fact model: `Registration` (`student_registration.mscc.models.Registration`) wit
 - `age_min`, `age_max`
 
 ## Endpoints
-- `GET /dashboard/api/analytics/trend?days=30` → daily registration counts
-- `GET /dashboard/api/analytics/breakdown?dimension=gender`
-- `GET /dashboard/api/analytics/crosstab?x=partner&y=gender`
 
-Supported dimensions for breakdown/crosstab:
-`gender`, `nationality`, `partner`, `center`, `programme`, `age_group`
+| Endpoint | URL name | Returns |
+|---|---|---|
+| `GET /dashboard/api/analytics/summary/` | `dashboard:analytics_summary` | Headline totals for the current filter set |
+| `GET /dashboard/api/analytics/trend/?days=30` | `dashboard:analytics_trend` | Daily registration counts |
+| `GET /dashboard/api/analytics/breakdown/?dimension=gender` | `dashboard:analytics_breakdown` | Counts grouped by one registration dimension |
+| `GET /dashboard/api/analytics/teacher-breakdown/?dimension=sex` | `dashboard:analytics_teacher_breakdown` | Counts grouped by one teacher dimension |
+| `GET /dashboard/api/analytics/crosstab/?x=partner&y=gender` | `dashboard:analytics_crosstab` | Two-dimensional cross-tabulation |
+| `GET /dashboard/api/analytics/export.csv` | `dashboard:analytics_export_csv` | Streaming CSV of the filtered rows |
+
+The dashboard itself is at `/dashboard/advanced-analytics/`
+(`dashboard:advanced_analytics`). Related views in the same app: `/dashboard/pivot-dashboard/`,
+`/dashboard/chart-builder/`, `/dashboard/centers-map/` and `/dashboard/advanced-exporter/`.
+
+Supported dimensions for `breakdown` and `crosstab` (`DIMENSION_MAP`):
+`gender`, `nationality`, `partner`, `center`, `programme`, `age_group` (`age` is accepted as an alias).
+An unknown dimension returns `{"error": "Invalid dimension", "valid_dimensions": [...]}` rather than a
+500.
+
+Supported dimensions for `teacher-breakdown` (`TEACHER_DIMENSION_MAP`): `sex`, `nationality`, `center`.
+
+## Scoping
+
+`analytics_base_queryset()` filters `Registration.objects.filter(deleted=False)`. Users who are neither
+`is_superuser` nor `is_staff` are additionally restricted to their own `partner_id` and `center_id`, so
+the same endpoint returns a different slice per user — which is why the cache key below includes the
+user's scope.
 
 ## Age buckets in ORM
 Age is derived from birth year (from child birthday fields) and bucketed:

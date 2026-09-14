@@ -275,12 +275,16 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html" class="active">1. Project Overview</a>
     <a href="02_setup.html">2. Setup & Installation</a>
@@ -308,7 +312,7 @@ body {
 <p>The <strong>BMA Student Registration Compiler</strong> is a web-based case management and service-delivery tracking platform built for UNICEF Lebanon's Non-Formal Education (NFE) sector. It is used by NGO partner organizations, UNICEF staff, and Ministry of Education teams across Lebanon.</p>
 <p>The system manages:</p>
 <ul>
-<li><strong>Child and student registration</strong> across multiple programs</li>
+<li><strong>Child and student registration</strong> across multiple programs (MSCC, ALP, CLM)</li>
 <li><strong>Service delivery tracking</strong> (education, health &amp; nutrition, youth, PSS, inclusion, digital skills)</li>
 <li><strong>Attendance recording</strong> with heatmap visualization</li>
 <li><strong>Teacher management</strong></li>
@@ -317,7 +321,7 @@ body {
 <li><strong>Push notifications</strong> via Firebase Cloud Messaging</li>
 </ul>
 <hr />
-<h2 id="the-two-main-programs">The Two Main Programs</h2>
+<h2 id="the-three-main-programs">The Three Main Programs</h2>
 <h3 id="mscc-multi-service-community-centers">MSCC — Multi-Service Community Centers</h3>
 <p>The primary module. Partners operate community centers where children and youth receive bundled services. Every beneficiary goes through:</p>
 <ol>
@@ -326,6 +330,19 @@ body {
 <li><strong>Attendance tracking</strong> (daily, per-center)</li>
 <li><strong>Grading / outcome recording</strong></li>
 </ol>
+<h3 id="alp-accelerated-learning-programme">ALP — Accelerated Learning Programme</h3>
+<p>Added in August 2026 and the most actively developed module. Public schools run accelerated catch-up
+classes, and each participating school maintains its own data:</p>
+<ol>
+<li><strong>Student registration</strong> reusing the shared child record, with a consent-form upload</li>
+<li><strong>ALP teacher profiles</strong> (assignment, subjects, levels, workload, training, attachments)</li>
+<li><strong>Attendance</strong> — daily child attendance and bulk teacher attendance, with CSV download</li>
+<li><strong>Grading</strong> against configurable per-subject definitions</li>
+<li><strong>School profile and dashboards</strong> (registration, teacher, attendance, school map, pivot)</li>
+</ol>
+<p>ALP data is owned by the <strong>school</strong> rather than a center or partner. Every ALP view requires
+the <code>ALP_SCHOOL</code> group and is filtered to the school on the user account; site administrators have
+read-only access by design.</p>
 <h3 id="clm-community-learning-management">CLM — Community Learning Management</h3>
 <p>The secondary module for bridging programs and informal schools:</p>
 <ol>
@@ -371,6 +388,10 @@ body {
 <tr>
 <td><strong>CLM Bridging Staff</strong></td>
 <td>Manage student enrollment and assessments</td>
+</tr>
+<tr>
+<td><strong>ALP School Focal Points</strong></td>
+<td>Register ALP students, maintain teacher records, take attendance, enter grades, keep the school profile current</td>
 </tr>
 </tbody>
 </table>
@@ -448,7 +469,7 @@ Gunicorn / Django (WSGI)
 </code></pre>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 
