@@ -29,6 +29,13 @@ class ALPSchoolProfileForm(forms.ModelForm):
             'pattern': '[0-9]+',
         }),
     )
+    email = forms.EmailField(
+        label=_('School email'),
+        required=False,
+        widget=forms.EmailInput(attrs={
+            'placeholder': _('Format: school@email.com'),
+        }),
+    )
     provided_packages = forms.MultipleChoiceField(
         label=_('Provided Services'),
         choices=School.PROVIDED_PACKAGES,
