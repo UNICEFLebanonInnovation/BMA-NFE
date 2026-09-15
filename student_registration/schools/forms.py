@@ -58,7 +58,9 @@ class SchoolForm(forms.ModelForm):
     )
     email = forms.EmailField(
         label=_('School email'),
-        widget=forms.TextInput(attrs={'placeholder': 'Format: school@email.com'})
+        widget=forms.EmailInput(attrs={
+            'placeholder': _('Format: school@email.com'),
+        })
     )
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
