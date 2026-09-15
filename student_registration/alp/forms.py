@@ -20,6 +20,15 @@ from .serializers import ALPRegistrationSerializer
 class ALPSchoolProfileForm(forms.ModelForm):
     """School details that an ALP school focal point may maintain."""
 
+    land_phone_number = forms.RegexField(
+        label=_('Phone number'),
+        regex=r'^[0-9]+$',
+        required=False,
+        widget=forms.TextInput(attrs={
+            'inputmode': 'numeric',
+            'pattern': '[0-9]+',
+        }),
+    )
     provided_packages = forms.MultipleChoiceField(
         label=_('Provided Services'),
         choices=School.PROVIDED_PACKAGES,
