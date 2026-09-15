@@ -99,6 +99,7 @@ LOCAL_APPS = [
     'student_registration.child',
     'student_registration.mscc',
     'student_registration.alp',
+    'student_registration.mobile_api',  # offline mobile app sync API
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -485,3 +486,11 @@ UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='!ct-ph0n3t!cs-24
 # cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
 # firebase_app = firebase_admin.initialize_app(cred)
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+
+# MOBILE SYNC API
+# ------------------------------------------------------------------------------
+# Verify offline registrations against the UNICEF Unique-ID service (same
+# service used by the web duplicate check). The local identity check always runs.
+MOBILE_API_USE_UNIQUE_ID_SERVICE = env.bool('MOBILE_API_USE_UNIQUE_ID_SERVICE', default=True)
+MOBILE_API_UNIQUE_ID_TIMEOUT = env.int('MOBILE_API_UNIQUE_ID_TIMEOUT', default=8)
