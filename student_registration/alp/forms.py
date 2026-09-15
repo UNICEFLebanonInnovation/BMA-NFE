@@ -52,6 +52,13 @@ class ALPSchoolProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # These identifiers are managed centrally and must only be displayed to
+        # ALP school users.  ``disabled`` makes Django ignore forged POST values,
+        # while ``readonly`` communicates the restriction to supporting clients.
+        for field_name in ('number', 'name'):
+            self.fields[field_name].disabled = True
+            self.fields[field_name].widget.attrs['readonly'] = True
+
         self.fields['governorate'].queryset = Location.objects.filter(
             parent__isnull=True
         ).order_by('name')
