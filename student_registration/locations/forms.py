@@ -156,7 +156,10 @@ class CenterForm(forms.ModelForm):
         choices=Center.YES_NO,
     )
     admin_staff_number = forms.IntegerField(
-        label=_('Number of Admin staff in the center'),
+        label=_(
+            '# of staff assigned under the ALP programme within the school, '
+            'including teaching and admin staff'
+        ),
         widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=True,
         initial=0,
