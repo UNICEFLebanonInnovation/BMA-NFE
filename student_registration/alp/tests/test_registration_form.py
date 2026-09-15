@@ -27,6 +27,14 @@ class ALPRegistrationFormSchoolTests(TestCase):
 
         self.assertTrue(form.fields['have_labour'].required)
 
+    def test_section_is_required_for_enrolment(self):
+        request = SimpleNamespace(user=self.user)
+
+        form = ALPRegistrationForm(request=request)
+
+        self.assertIn('section', form.fields)
+        self.assertTrue(form.fields['section'].required)
+
     def test_consent_form_accepts_document_or_photo_upload(self):
         request = SimpleNamespace(user=self.user)
 

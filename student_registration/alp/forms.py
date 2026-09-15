@@ -212,7 +212,8 @@ class ALPRegistrationForm(MainForm):
     class Meta:
         model = ALPRegistration
         fields = MainForm.Meta.fields + (
-            'school', 'round', 'programme', 'registration_date', 'consent_form',
+            'school', 'round', 'programme', 'section', 'registration_date',
+            'consent_form',
         )
         widgets = {'registration_date': forms.DateInput(attrs={'type': 'date'})}
 

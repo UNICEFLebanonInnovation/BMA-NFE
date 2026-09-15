@@ -9,16 +9,18 @@ from crispy_forms.layout import Layout
 from django.utils.translation import gettext_lazy as _
 
 from .models import ALPRegistration, ALPTeacher, ALPRound, ALPProgram
+from student_registration.schools.models import Section
 
 class ALPRegistrationFilter(FilterSet):
     first_name = CharFilter(field_name='child__first_name', lookup_expr='icontains', label=_('Child First Name'))
     last_name = CharFilter(field_name='child__last_name', lookup_expr='icontains', label=_('Child Last Name'))
     round = ModelChoiceFilter(queryset=ALPRound.objects.all(), label=_('Round'))
     programme = ModelChoiceFilter(queryset=ALPProgram.objects.all(), label=_('Programme'))
+    section = ModelChoiceFilter(queryset=Section.objects.all(), label=_('Section'))
 
     class Meta:
         model = ALPRegistration
-        fields = ['first_name', 'last_name', 'round', 'programme']
+        fields = ['first_name', 'last_name', 'round', 'programme', 'section']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

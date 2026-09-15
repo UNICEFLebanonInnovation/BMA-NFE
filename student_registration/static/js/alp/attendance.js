@@ -21,7 +21,8 @@ function csvCell(value) {
 function downloadAttendanceCsv() {
     var rows = [[
         'Child', 'Mother', 'Date of birth', 'Nationality',
-        'Attendance date', 'Programme', 'Round', 'Status', 'Absence reason', 'Other details'
+        'Attendance date', 'Programme', 'Round', 'Section', 'Status',
+        'Absence reason', 'Other details'
     ]];
 
     $('#attendance_children .list-group-item').each(function () {
@@ -36,6 +37,7 @@ function downloadAttendanceCsv() {
             $('#attendance_date').val(),
             $('#programme option:selected').text().trim(),
             $('#round option:selected').text().trim(),
+            $('#section option:selected').text().trim(),
             status === 'Yes' ? 'Attended' : 'Absent',
             status === 'No' ? $item.find('.absence_reason').val() : '',
             status === 'No' ? $item.find('.absence_reason_other').val() : ''
@@ -88,6 +90,7 @@ $(document).ready(function() {
     var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
     var attendance_date = $("#attendance_date").val();
     var programme = $("#programme").val();
+    var section = $("#section").val();
 
     var close_reason = $("#close_reason").val();
     var round_id = $("#round").val();
@@ -134,6 +137,7 @@ $(document).ready(function() {
        "attendance_day_off": attendance_day_off,
        "close_reason": close_reason,
        "programme": programme,
+       "section": section,
 
        "round_id": round_id,
        "children_attendance": children_attendance
@@ -170,10 +174,11 @@ $(document).ready(function() {
 
         var programme = $('#programme').val();
         var round_id = $('#round').val();
+        var section = $('#section').val();
 
 
-        if (!programme || !round_id) {
-             showModal(translateMessage('Please fill: Attendance Date, Round, and Programme.'));
+        if (!programme || !round_id || !section) {
+             showModal(translateMessage('Please fill: Attendance Date, Round, Programme, and Section.'));
              return false;
         }
 
@@ -189,6 +194,7 @@ $(document).ready(function() {
                 'school_id': $('#school_id').val(),
                 'round_id': round_id,
                 'programme': programme,
+                'section': section,
 
             },
             dataType: 'html',
@@ -252,7 +258,7 @@ $(document).ready(function() {
         }
 
         // Trigger on all critical field changes
-        $('#round, #programme').on('change', function() {
+        $('#round, #programme, #section').on('change', function() {
             resetAttendanceUI();
         });
 

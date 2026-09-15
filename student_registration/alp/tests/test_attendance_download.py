@@ -17,7 +17,13 @@ class ALPAttendanceDownloadTest(TestCase):
         self.assertIn("function downloadAttendanceCsv()", script)
         self.assertIn("new Blob([csv]", script)
         self.assertIn("link.download = 'alp_attendance_'", script)
+
+        self.assertIn('id="section"', page)
+        self.assertIn("$('#section option:selected').text().trim()", script)
+        self.assertIn('{% trans "Section" %}: {{ item.section }}', children)
+
         self.assertIn(
             "$(document).on('click', '#download_attendance', downloadAttendanceCsv);",
             script,
         )
+

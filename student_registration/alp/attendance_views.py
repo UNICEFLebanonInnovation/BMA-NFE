@@ -26,6 +26,7 @@ from .utils import (
     parse_date_flexible,
 )
 from .mixins import ALPSchoolFilterMixin
+from student_registration.schools.models import Section
 
 class AttendanceView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
     template_name = 'alp/attendance.html'
@@ -39,6 +40,7 @@ class AttendanceView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
         close_reason = ''
         rounds = ALPRound.objects.filter(current_year=True)
         programmes = ALPProgram.objects.all()
+        sections = Section.objects.all()
 
         instance = None
 
@@ -58,6 +60,7 @@ class AttendanceView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
             'close_reason': close_reason,
             'rounds': rounds,
             'programmes': programmes,
+            'sections': sections,
         }
 
 class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
@@ -69,6 +72,7 @@ class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
         school_id = self.request.user.school_id
         programme_id = self.request.GET.get("programme")
         round_id = self.request.GET.get("round_id")
+        section_id = self.request.GET.get("section")
 
         if attendance_date_str is None:
             return {'instances': [], 'new_instances': []}
@@ -85,6 +89,7 @@ class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
                     round_id,
                     attendance_date_str,
                     programme_id,
+                    section_id,
                 )
             else:
                 data = {'instances': [], 'new_instances': []}
@@ -104,12 +109,16 @@ def export_attendance_children(request):
     attendance_date = request.GET.get('attendance_date')
     round_id = request.GET.get('round_id')
     programme_id = request.GET.get('programme')
+    section_id = request.GET.get('section')
     parsed_date = parse_date_flexible(attendance_date)
-    if not parsed_date or not round_id or not programme_id:
-        return HttpResponseBadRequest("Attendance date, round, and programme are required")
+    if not parsed_date or not round_id or not programme_id or not section_id:
+        return HttpResponseBadRequest(
+            "Attendance date, round, programme, and section are required"
+        )
 
     data = load_child_attendance(
         request.user.school_id, round_id, attendance_date, programme_id,
+        section_id,
     )
     rows = data['instances'] + data['new_instances']
     response = HttpResponse(content_type='text/csv; charset=utf-8')
@@ -120,12 +129,13 @@ def export_attendance_children(request):
     writer = csv.writer(response)
     writer.writerow([
         'Child ID', 'Child name', 'Mother name', 'Birthday', 'Nationality',
+        'Section',
         'Attendance status', 'Absence reason', 'Other absence reason',
     ])
     for row in rows:
         writer.writerow([
             row['child_id'], row['child_fullname'], row['child_mother_fullname'],
-            row['child_birthday'], row['child_nationality'], row['attended'],
+            row['child_birthday'], row['child_nationality'], row['section'], row['attended'],
             row['absence_reason'], row['absence_reason_other'],
         ])
     return response
