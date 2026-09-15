@@ -180,7 +180,10 @@ class CenterForm(forms.ModelForm):
     )
     neaby_phcc = forms.CharField(
         label=_("Nearby PHCC name"),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al-Razi PHC')}), required=True,
+        widget=forms.TextInput(
+            attrs={'placeholder': _('e.g. Al-Razi PHC')}
+        ),
+        required=False,
         help_text=_('Primary Healthcare Center closest to this location.')
     )
     def __init__(self, *args, **kwargs):
