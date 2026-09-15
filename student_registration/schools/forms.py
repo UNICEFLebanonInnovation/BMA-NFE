@@ -44,13 +44,17 @@ class SchoolForm(forms.ModelForm):
         required=True,
     )
     director_name = forms.CharField(
-        label=_("School director name"),
-        widget=forms.TextInput(attrs={'placeholder': _('Full name of the director')}), required=True
+        label=_("Program Manager Name"),
+        widget=forms.TextInput(attrs={'placeholder': _('Full name of the program manager')}), required=True
     )
     land_phone_number = forms.RegexField(
-        label=_('School land phone number'),
-        regex=r'^[0-9]{2}-[0-9]{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+        label=_('Phone Number'),
+        regex=r'^[0-9]+$',
+        widget=forms.TextInput(attrs={
+            'inputmode': 'numeric',
+            'pattern': '[0-9]+',
+            'placeholder': _('Numbers only'),
+        })
     )
     email = forms.EmailField(
         label=_('School email'),
