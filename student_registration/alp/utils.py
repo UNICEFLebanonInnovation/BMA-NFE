@@ -48,7 +48,9 @@ def parse_date_flexible(date_str):
             continue
     return None
 
-def load_child_attendance(school_id, round_id, attendance_date_str, programme_id):
+def load_child_attendance(
+    school_id, round_id, attendance_date_str, programme_id, section_id=None,
+):
 
     attendance = None
 
@@ -61,6 +63,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
             attendance_date=attendance_date,
             programme_id=programme_id,
             round_id=round_id,
+            section_id=section_id,
         ).last()
 
     existing_children = []
@@ -84,6 +87,10 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     'child_mother_fullname': attendance_child.child.mother_fullname,
                     'child_birthday': attendance_child.child.birthday,
                     'child_nationality': attendance_child.child.nationality.name,
+                    'section': (
+                        attendance_child.registration.section.name
+                        if attendance_child.registration.section else ''
+                    ),
                     'attended': attendance_child.attended,
                     'absence_reason': attendance_child.absence_reason,
                     'absence_reason_other': attendance_child.absence_reason_other,
@@ -97,6 +104,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     deleted=False,
                     round_id=round_id,
                     programme_id=programme_id,
+                    section_id=section_id,
                     registration_date__lte=attendance_day,
                 )
                 .exclude(id__in=existing_ids)
@@ -110,6 +118,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     'child_mother_fullname': registration_child.child.mother_fullname,
                     'child_birthday': registration_child.child.birthday,
                     'child_nationality': registration_child.child.nationality.name,
+                    'section': registration_child.section.name if registration_child.section else '',
                     'attended': 'Yes',
                     'absence_reason': '',
                     'absence_reason_other': '',
@@ -123,6 +132,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     deleted=False,
                     round_id=round_id,
                     programme_id=programme_id,
+                    section_id=section_id,
                     registration_date__lte=attendance_day,
                 )
             )
@@ -135,6 +145,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     'child_mother_fullname': registration_child.child.mother_fullname,
                     'child_birthday': registration_child.child.birthday,
                     'child_nationality': registration_child.child.nationality.name,
+                    'section': registration_child.section.name if registration_child.section else '',
                     'attended': 'Yes',
                     'absence_reason': '',
                     'absence_reason_other': '',
@@ -150,6 +161,11 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
 def create_attendance(data, school_id):
     round_id = data.get("round_id")
     programme_id = data.get("programme")
+    section_id = data.get("section")
+
+    if not round_id or not programme_id or not section_id:
+        logger.error("Round, programme, and section are required for ALP attendance")
+        return False
 
     attendance_date = parse_date_flexible(data["attendance_date"])
     if not attendance_date:
@@ -164,6 +180,7 @@ def create_attendance(data, school_id):
             school_id=school_id,
             attendance_date=attendance_date,
             programme_id=programme_id,
+            section_id=section_id,
         )
         attendance.day_off = data.get("attendance_day_off")
         attendance.close_reason = data.get("close_reason")
@@ -186,6 +203,7 @@ def create_attendance(data, school_id):
                 school_id=school_id,
                 round_id=round_id,
                 programme_id=programme_id,
+                section_id=section_id,
                 deleted=False,
                 registration_date__lte=attendance_day,
             ).first()

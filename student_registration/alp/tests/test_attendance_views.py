@@ -37,6 +37,7 @@ class AttendanceExportTests(SimpleTestCase):
                 'child_mother_fullname': 'Test Mother',
                 'child_birthday': '2015-01-02',
                 'child_nationality': 'Lebanese',
+                'section': 'A',
                 'attended': 'Yes',
                 'absence_reason': '',
                 'absence_reason_other': '',
@@ -47,6 +48,7 @@ class AttendanceExportTests(SimpleTestCase):
             'attendance_date': '2026-09-08',
             'round_id': '3',
             'programme': '2',
+            'section': '4',
         })
 
         response = export_attendance_children(request)
@@ -56,4 +58,6 @@ class AttendanceExportTests(SimpleTestCase):
         self.assertIn('alp-attendance-2026-09-08.csv', response['Content-Disposition'])
         self.assertTrue(response.content.startswith(b'\xef\xbb\xbf'))
         self.assertIn(b'Test Child', response.content)
-        load.assert_called_once_with(7, '3', '2026-09-08', '2')
+        load.assert_called_once_with(7, '3', '2026-09-08', '2', '4')
+        self.assertIn(b'Section', response.content)
+        self.assertIn(b',A,', response.content)

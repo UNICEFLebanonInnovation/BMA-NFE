@@ -83,7 +83,7 @@
                                           </div>
 
                                           <div class="row g-3 mb-4">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <label for="programme" class="form-label">{% trans "Programme" %}</label>
                                                     <select id="programme" class="form-select">
                                                         <option value="">{% trans "Select Programme" %}</option>
@@ -92,13 +92,22 @@
                                                         {% endfor %}
                                                     </select>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <label for="round" class="form-label">{% trans "Round" %}</label>
                                                     <select id="round" class="form-select">
                                                         <option value="">{% trans "Select Round" %}</option>
                                                          {% for item in rounds %}
                                                               <option value="{{ item.id }}" {% if round == item %}selected{% endif %}>{{ item.name }}</option>
                                                           {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="section" class="form-label">{% trans "Section" %}</label>
+                                                    <select id="section" class="form-select">
+                                                        <option value="">{% trans "Select Section" %}</option>
+                                                        {% for item in sections %}
+                                                            <option value="{{ item.id }}">{{ item.name }}</option>
+                                                        {% endfor %}
                                                     </select>
                                                 </div>
                                               </div>
@@ -130,7 +139,6 @@
 
                                         <div class="d-block text-right card-footer">
                                             <button type="button" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary disabled" id="download_attendance" disabled><i class="pe-7s-cloud-download btn-icon-wrapper"></i>{% trans "Download" %}</button>
-                                            <a href="{% url 'alp:export_attendance_children' %}" id="download_attendance" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary"><i class="pe-7s-cloud-download btn-icon-wrapper"></i>{% trans "Download" %}</a>
                                             <a href="{% url 'alp:load_attendance_children' %}?school_id={{ request.user.school_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>{% trans "Load" %}</a>
 {% if request.user|has_group:"ALP_SCHOOL" and request.user.school.id %}
                                             <a href="{% url 'alp:save_attendance_children' %}?school_id={{ request.user.school_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>{% trans "Save" %}</a>

@@ -9,7 +9,7 @@ from django.db.models import JSONField
 from django.contrib.postgres.fields import ArrayField
 
 from student_registration.students.models import AttachmentType, IDType, Nationality, Training
-from student_registration.schools.models import School
+from student_registration.schools.models import School, Section
 from student_registration.child.models import Child
 
 class ALPRound(models.Model):
@@ -326,6 +326,10 @@ class ALPRegistration(TimeStampedModel):
     child = models.ForeignKey(Child, blank=False, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Child'))
     round = models.ForeignKey(ALPRound, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Round'))
     programme = models.ForeignKey(ALPProgram, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Programme'))
+    section = models.ForeignKey(
+        Section, null=True, related_name='+', on_delete=models.SET_NULL,
+        verbose_name=_('Section'),
+    )
 
     student_old = models.IntegerField(blank=True, null=True, verbose_name=_('Student old'))
     have_labour = models.CharField(
@@ -502,6 +506,10 @@ class ALPAttendance(TimeStampedModel):
     round = models.ForeignKey(ALPRound, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Round'))
     school = models.ForeignKey(School, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('School'))
     programme = models.ForeignKey(ALPProgram, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Programme'))
+    section = models.ForeignKey(
+        Section, null=True, related_name='+', on_delete=models.SET_NULL,
+        verbose_name=_('Section'),
+    )
 
     attendance_date = models.DateField(
         blank=True,

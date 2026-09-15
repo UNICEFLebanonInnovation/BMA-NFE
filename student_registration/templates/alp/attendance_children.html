@@ -8,7 +8,8 @@
          data-child-name="{{ item.child_fullname }}"
          data-mother-name="{{ item.child_mother_fullname }}"
          data-birthday="{{ item.child_birthday }}"
-         data-nationality="{{ item.child_nationality }}">
+         data-nationality="{{ item.child_nationality }}"
+         data-section="{{ item.section }}">
         <div class="card-body p-3">
             <div class="d-flex align-items-center flex-wrap gap-3">
                 <!-- Avatar & Status Indicator -->
@@ -33,6 +34,9 @@
                     </h6>
                     <small class="text-muted d-block">
                         <i class="bi bi-person-heart me-1"></i> {{ item.child_mother_fullname }}
+                    </small>
+                    <small class="text-muted d-block">
+                        <i class="bi bi-people me-1"></i> {% trans "Section" %}: {{ item.section }}
                     </small>
                 </div>
 
@@ -108,7 +112,8 @@
              data-child-name="{{ item.child_fullname }}"
              data-mother-name="{{ item.child_mother_fullname }}"
              data-birthday="{{ item.child_birthday }}"
-             data-nationality="{{ item.child_nationality }}">
+             data-nationality="{{ item.child_nationality }}"
+             data-section="{{ item.section }}">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center flex-wrap gap-3">
                     <div class="position-relative">
@@ -131,6 +136,9 @@
                         </h6>
                         <small class="text-muted d-block">
                             <i class="bi bi-person-heart me-1"></i> {{ item.child_mother_fullname }}
+                        </small>
+                        <small class="text-muted d-block">
+                            <i class="bi bi-people me-1"></i> {% trans "Section" %}: {{ item.section }}
                         </small>
                     </div>
 
