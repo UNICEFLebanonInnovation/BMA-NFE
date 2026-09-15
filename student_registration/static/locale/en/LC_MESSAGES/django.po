@@ -6082,7 +6082,10 @@ msgid "Is Closed"
 msgstr ""
 
 #: student_registration/schools/forms.py:25
-#: student_registration/schools/models.py:88
+msgid "School CERD ID Number"
+msgstr ""
+
+#: student_registration/schools/models.py:110
 msgid "School CERD Number"
 msgstr ""
 

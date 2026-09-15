@@ -6799,7 +6799,10 @@ msgid "Is Closed"
 msgstr "مغلقة"
 
 #: student_registration/schools/forms.py:25
-#: student_registration/schools/models.py:88
+msgid "School CERD ID Number"
+msgstr "رقم معرّف المدرسة في المركز التربوي للبحوث والإنماء"
+
+#: student_registration/schools/models.py:110
 msgid "School CERD Number"
 msgstr "رقم المدرسة"
 

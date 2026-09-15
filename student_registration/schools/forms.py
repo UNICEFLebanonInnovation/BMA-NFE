@@ -27,12 +27,21 @@ class SchoolForm(forms.ModelForm):
         choices=School.OPERATING_SHIFT
     )
     number = forms.IntegerField(
-        label=_('School CERD Number'),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. 1234')}), required=False
+        label=_('School CERD ID Number'),
+        widget=forms.NumberInput(attrs={
+            'placeholder': _('e.g. 1234'),
+            'readonly': True,
+            'step': 1,
+        }),
+        required=False,
     )
     name = forms.CharField(
         label=_("School name"),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Hikma Public School')}), required=True
+        widget=forms.TextInput(attrs={
+            'placeholder': _('e.g. Al Hikma Public School'),
+            'readonly': True,
+        }),
+        required=True,
     )
     director_name = forms.CharField(
         label=_("Program Manager Name"),
@@ -411,10 +420,25 @@ class SchoolForm(forms.ModelForm):
     #     instance = super(SchoolForm, self).save()
     #     messages.success(request, _('Your data has been sent successfully to the server'))
 
+    def clean_number(self):
+        """Keep the admin-imported CERD ID unchanged when editing a school."""
+        if self.instance and self.instance.pk:
+            return self.instance.number
+        return self.cleaned_data.get('number')
+
+    def clean_name(self):
+        """Keep the admin-imported school name unchanged when editing a school."""
+        if self.instance and self.instance.pk:
+            return self.instance.name
+        return self.cleaned_data.get('name')
+
     def save(self, request=None, instance=None):
         if instance:
             instance = super(SchoolForm, self).save()
-            serializer = SchoolSerializer(instance, data=request.POST)
+            data = request.POST.copy()
+            data['number'] = instance.number
+            data['name'] = instance.name
+            serializer = SchoolSerializer(instance, data=data)
             if serializer.is_valid():
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
