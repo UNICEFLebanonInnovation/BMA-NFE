@@ -70,3 +70,11 @@ class SchoolFormAdditionalFieldsTests(TestCase):
                 with self.assertRaisesMessage(ValidationError, 'Enter a valid value.'):
                     field.clean(invalid_value)
 
+    def test_school_email_uses_email_input_with_format_placeholder(self):
+        field = self.form.fields['email']
+
+        self.assertEqual(field.widget.input_type, 'email')
+        self.assertEqual(
+            field.widget.attrs['placeholder'],
+            'Format: school@email.com',
+        )
