@@ -258,7 +258,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         return False
 
 
-# admin.site.register(School, SchoolAdmin)
+admin.site.register(School, SchoolAdmin)
 # admin.site.register(Section, SectionAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(EducationalLevel, EducationalLevelAdmin)
