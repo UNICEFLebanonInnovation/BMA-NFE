@@ -2,8 +2,9 @@ from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
 
-from student_registration.schools.models import School
+from student_registration.alp.forms import ALPSchoolProfileForm
 from student_registration.locations.models import Location, LocationType
+from student_registration.schools.models import School
 from student_registration.users.models import User
 
 
@@ -31,6 +32,9 @@ class SchoolProfileViewTests(TestCase):
         }
         data.update(overrides)
         return data
+
+    def test_nearby_phcc_name_is_optional(self):
+        self.assertFalse(ALPSchoolProfileForm().fields['neaby_phcc'].required)
 
     def test_focal_point_can_view_school_edit_form(self):
         response = self.client.get(reverse('alp:school_profile'))
