@@ -13818,3 +13818,9 @@ msgstr "المستخدم"
 
 #~ msgid "Is closed"
 #~ msgstr "مغلقة"
+
+#: student_registration/alp/models.py:435
+#: student_registration/alp/forms.py:163
+#: student_registration/templates/alp/child_profile.html:107
+msgid "Unique child number"
+msgstr "رقم الطفل الفريد"
