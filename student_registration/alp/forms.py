@@ -160,6 +160,7 @@ class ALPRegistrationForm(MainForm):
         route_kwargs = {'pk': self.instance.pk} if self.instance.pk else None
         self.helper.form_action = reverse(route, kwargs=route_kwargs)
         self.fields.pop('school', None)
+        self.fields['partner_unique_number'].label = _('Unique child number')
         # MainForm declares this field with the general registration choices;
         # use the ALP-specific referral sources for this profile instead.
         self.fields['source_of_identification'].choices = ALPRegistration.IDENTIFICATION_SOURCE

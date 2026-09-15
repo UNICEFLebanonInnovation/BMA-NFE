@@ -432,7 +432,7 @@ class ALPRegistration(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Partner unique child number')
+        verbose_name=_('Unique child number')
     )
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Owner'))

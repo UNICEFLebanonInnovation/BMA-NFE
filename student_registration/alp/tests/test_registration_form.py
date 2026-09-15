@@ -35,6 +35,13 @@ class ALPRegistrationFormSchoolTests(TestCase):
         self.assertIn('section', form.fields)
         self.assertTrue(form.fields['section'].required)
 
+    def test_unique_child_number_label_does_not_reference_partner(self):
+        request = SimpleNamespace(user=self.user)
+
+        form = ALPRegistrationForm(request=request)
+
+        self.assertEqual(form.fields['partner_unique_number'].label, 'Unique child number')
+
     def test_consent_form_accepts_document_or_photo_upload(self):
         request = SimpleNamespace(user=self.user)
 
