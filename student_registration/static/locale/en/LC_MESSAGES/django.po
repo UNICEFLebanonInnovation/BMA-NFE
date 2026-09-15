@@ -6082,7 +6082,10 @@ msgid "Is Closed"
 msgstr ""
 
 #: student_registration/schools/forms.py:25
-#: student_registration/schools/models.py:88
+msgid "School CERD ID Number"
+msgstr ""
+
+#: student_registration/schools/models.py:110
 msgid "School CERD Number"
 msgstr ""
 
@@ -6101,11 +6104,11 @@ msgstr ""
 
 #: student_registration/schools/forms.py:33
 #: student_registration/schools/models.py:101
-msgid "School director name"
+msgid "Program Manager Name"
 msgstr ""
 
 #: student_registration/schools/forms.py:34
-msgid "Full name of the director"
+msgid "Full name of the program manager"
 msgstr ""
 
 #: student_registration/schools/forms.py:37

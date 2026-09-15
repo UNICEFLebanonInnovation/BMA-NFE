@@ -156,7 +156,10 @@ class CenterForm(forms.ModelForm):
         choices=Center.YES_NO,
     )
     admin_staff_number = forms.IntegerField(
-        label=_('Number of Admin staff in the center'),
+        label=_(
+            '# of staff assigned under the ALP programme within the school, '
+            'including teaching and admin staff'
+        ),
         widget=forms.NumberInput(attrs=({'maxlength': 4, 'placeholder': '0'})),
         required=True,
         initial=0,
@@ -180,7 +183,10 @@ class CenterForm(forms.ModelForm):
     )
     neaby_phcc = forms.CharField(
         label=_("Nearby PHCC name"),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al-Razi PHC')}), required=True,
+        widget=forms.TextInput(
+            attrs={'placeholder': _('e.g. Al-Razi PHC')}
+        ),
+        required=False,
         help_text=_('Primary Healthcare Center closest to this location.')
     )
     def __init__(self, *args, **kwargs):

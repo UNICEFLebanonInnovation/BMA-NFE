@@ -12,11 +12,18 @@ class ALPAttendanceDownloadTest(TestCase):
         children = (template_root / "attendance_children.html").read_text(encoding="utf-8")
         script = (static_root / "attendance.js").read_text(encoding="utf-8")
 
-        self.assertIn('id="download_attendance"', page)
+        self.assertEqual(page.count('id="download_attendance"'), 1)
         self.assertIn('data-child-name="{{ item.child_fullname }}"', children)
         self.assertIn("function downloadAttendanceCsv()", script)
         self.assertIn("new Blob([csv]", script)
         self.assertIn("link.download = 'alp_attendance_'", script)
+
         self.assertIn('id="section"', page)
         self.assertIn("$('#section option:selected').text().trim()", script)
         self.assertIn('{% trans "Section" %}: {{ item.section }}', children)
+
+        self.assertIn(
+            "$(document).on('click', '#download_attendance', downloadAttendanceCsv);",
+            script,
+        )
+

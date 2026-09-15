@@ -46,7 +46,7 @@ class ALPSchoolProfileForm(forms.ModelForm):
     )
     neaby_phcc = forms.CharField(
         label=_('Nearby PHCC name'),
-        required=True,
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
