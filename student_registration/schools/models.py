@@ -125,7 +125,7 @@ class School(TimeStampedModel):
     director_name = models.CharField(
         max_length=100,
         blank=True, null=True,
-        verbose_name=_('School director name')
+        verbose_name=_('Program Manager Name')
     )
     land_phone_number = models.CharField(
         max_length=100,
