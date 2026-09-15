@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 
@@ -35,6 +36,22 @@ class SchoolProfileViewTests(TestCase):
 
     def test_nearby_phcc_name_is_optional(self):
         self.assertFalse(ALPSchoolProfileForm().fields['neaby_phcc'].required)
+
+    def test_phone_number_uses_generic_label_and_numeric_input_hints(self):
+        field = ALPSchoolProfileForm().fields['land_phone_number']
+
+        self.assertEqual(field.label, 'Phone number')
+        self.assertEqual(field.widget.attrs['inputmode'], 'numeric')
+        self.assertEqual(field.widget.attrs['pattern'], '[0-9]+')
+
+    def test_phone_number_accepts_digits_only(self):
+        field = ALPSchoolProfileForm().fields['land_phone_number']
+
+        self.assertEqual(field.clean('01234567'), '01234567')
+        for invalid_value in ('01-234567', '+9611234567', 'phone'):
+            with self.subTest(invalid_value=invalid_value):
+                with self.assertRaises(ValidationError):
+                    field.clean(invalid_value)
 
     def test_school_identifiers_are_read_only(self):
         form = ALPSchoolProfileForm(instance=self.school)
