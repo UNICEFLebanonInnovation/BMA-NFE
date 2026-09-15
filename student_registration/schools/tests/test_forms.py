@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from student_registration.schools.forms import SchoolForm
@@ -28,3 +29,19 @@ class SchoolFormAdditionalFieldsTests(TestCase):
 
         self.assertFalse(field.required)
         self.assertEqual(field.label, 'Nearby PHCC name')
+
+    def test_phone_number_uses_generic_label_and_numeric_input_hints(self):
+        field = self.form.fields['land_phone_number']
+
+        self.assertEqual(field.label, 'Phone Number')
+        self.assertEqual(field.widget.attrs['inputmode'], 'numeric')
+        self.assertEqual(field.widget.attrs['pattern'], '[0-9]+')
+
+    def test_phone_number_accepts_digits_only(self):
+        field = self.form.fields['land_phone_number']
+
+        self.assertEqual(field.clean('01234567'), '01234567')
+        for invalid_value in ('01-234567', '+9611234567', 'phone'):
+            with self.subTest(invalid_value=invalid_value):
+                with self.assertRaisesMessage(ValidationError, 'Enter a valid value.'):
+                    field.clean(invalid_value)
