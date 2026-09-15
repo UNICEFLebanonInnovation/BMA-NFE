@@ -35,8 +35,8 @@ class SchoolForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Hikma Public School')}), required=True
     )
     director_name = forms.CharField(
-        label=_("School director name"),
-        widget=forms.TextInput(attrs={'placeholder': _('Full name of the director')}), required=True
+        label=_("Program Manager Name"),
+        widget=forms.TextInput(attrs={'placeholder': _('Full name of the program manager')}), required=True
     )
     land_phone_number = forms.RegexField(
         label=_('School land phone number'),
