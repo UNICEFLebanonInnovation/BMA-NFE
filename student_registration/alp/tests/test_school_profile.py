@@ -53,6 +53,22 @@ class SchoolProfileViewTests(TestCase):
                 with self.assertRaises(ValidationError):
                     field.clean(invalid_value)
 
+    def test_school_email_uses_email_input_with_format_placeholder(self):
+        field = ALPSchoolProfileForm().fields['email']
+
+        self.assertEqual(field.widget.input_type, 'email')
+        self.assertEqual(
+            field.widget.attrs['placeholder'],
+            'Format: school@email.com',
+        )
+
+    def test_school_email_requires_a_valid_email_format(self):
+        field = ALPSchoolProfileForm().fields['email']
+
+        self.assertEqual(field.clean('school@example.com'), 'school@example.com')
+        with self.assertRaisesMessage(ValidationError, 'Enter a valid email address.'):
+            field.clean('not-an-email')
+
     def test_school_identifiers_are_read_only(self):
         form = ALPSchoolProfileForm(instance=self.school)
 
