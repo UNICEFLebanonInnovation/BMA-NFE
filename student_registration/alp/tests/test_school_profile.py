@@ -36,6 +36,16 @@ class SchoolProfileViewTests(TestCase):
     def test_nearby_phcc_name_is_optional(self):
         self.assertFalse(ALPSchoolProfileForm().fields['neaby_phcc'].required)
 
+    def test_school_identifiers_are_read_only(self):
+        form = ALPSchoolProfileForm(instance=self.school)
+
+        for field_name in ('number', 'name'):
+            with self.subTest(field_name=field_name):
+                self.assertTrue(form.fields[field_name].disabled)
+                self.assertTrue(
+                    form.fields[field_name].widget.attrs['readonly']
+                )
+
     def test_focal_point_can_view_school_edit_form(self):
         response = self.client.get(reverse('alp:school_profile'))
 
@@ -70,6 +80,7 @@ class SchoolProfileViewTests(TestCase):
         other_school = School.objects.create(number='200', name='Other school')
 
         response = self.client.post(reverse('alp:school_profile'), self.profile_data(
+            number='999',
             name='Updated name',
             type='Public School',
             operating_shift='afternoon shift',
@@ -78,7 +89,8 @@ class SchoolProfileViewTests(TestCase):
         self.assertRedirects(response, reverse('alp:school_profile'))
         self.school.refresh_from_db()
         other_school.refresh_from_db()
-        self.assertEqual(self.school.name, 'Updated name')
+        self.assertEqual(self.school.number, '100')
+        self.assertEqual(self.school.name, 'Old name')
         self.assertEqual(self.school.type, 'Public School')
         self.assertEqual(self.school.operating_shift, 'afternoon shift')
         self.assertEqual(self.school.provided_packages, ['Education'])
