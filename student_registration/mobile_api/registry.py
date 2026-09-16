@@ -368,7 +368,7 @@ def _build_registry():
         scope=mscc_registration_scope, can_write=access.mscc_can_edit, order=10,
         layout={'sections': REGISTRATION_SECTIONS, 'reveals': REGISTRATION_REVEALS,
                 'wizard': True, 'confirm_fields': ['first_phone_number', 'second_phone_number']},
-        description='Child registration at a Makani centre (child + registration).',
+        description='Child registration at an NFE centre (child + registration).',
         hidden_fields=('student_old',),
     ))
     specs.append(EntitySpec(
