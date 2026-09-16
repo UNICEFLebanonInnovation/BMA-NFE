@@ -72,10 +72,14 @@ def seed():
 
     partner = _get_or_create(PartnerOrganization, name='Partner NGO Lebanon',
                              defaults={'short_name': 'PNL', 'active': True})
-    center = _get_or_create(Center, name='Makani Centre – Bar Elias', defaults={
+    # Centre names are demo data invented here, so they use the sector's own
+    # naming (NFE). The choice LABELS below come from the live database and
+    # are quoted verbatim, Makani and all: renaming one would make the
+    # screenshots show a value the server would reject.
+    center = _get_or_create(Center, name='NFE Centre – Bar Elias', defaults={
         'partner': partner, 'governorate': bekaa, 'caza': zahle, 'cadaster': bar_elias, 'type': 'Community Hub',
         'programs': ['BLN', 'CBECE', 'YBLN'], 'is_active': True})
-    _get_or_create(Center, name='Makani Centre – Baabda', defaults={
+    _get_or_create(Center, name='NFE Centre – Baabda', defaults={
         'partner': partner, 'governorate': mount, 'caza': baabda, 'type': 'Municipality', 'programs': ['BLN', 'RS'],
         'is_active': True})
     school = _get_or_create(School, number='1234', defaults={
@@ -212,6 +216,7 @@ def run(out_dir, wipe=True):
                                'nationality': 2, 'round': round_id, 'center': center.id,
                                'primary_phone_number': '03-999888', 'email': 'hala@example.org',
                                'subjects_provided': ['arabic', 'math'], 'registration_level': ['Level one'],
+                               # A real choice label on the server, not a name we picked.
                                'teacher_assignment': 'Makani only', 'teaching_hours_mscc': 20,
                                'years_of_experience': 5, 'training_sessions_attended': 3, 'extra_coaching': 'no',
                                'trainings': list(Training.objects.values_list('id', flat=True)[:2])}})
