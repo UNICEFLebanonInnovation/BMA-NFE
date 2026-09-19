@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: BMA-NFE\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-11 14:40+0300\n"
-"PO-Revision-Date: 2026-06-07 00:00+0000\n"
+"PO-Revision-Date: 2026-09-19 00:00+0000\n"
 "Last-Translator: BMA NFE Team\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -3977,10 +3977,8 @@ msgid "IT Development"
 msgstr "تنمية مهارات تكنولوجيا المعلومات"
 
 #: student_registration/mscc/forms.py:51 student_registration/mscc/forms.py:60
-#, fuzzy
-#| msgid "----------"
 msgid "---------"
-msgstr "----------"
+msgstr "---------"
 
 #: student_registration/mscc/forms.py:54
 msgid "Only alphabetic characters are allowed."
@@ -4394,10 +4392,8 @@ msgstr "النتيجة الموصى بها"
 #: student_registration/mscc/forms.py:1343
 #: student_registration/mscc/forms.py:1354
 #: student_registration/mscc/forms.py:1381
-#, fuzzy
-#| msgid "----------"
 msgid "-------"
-msgstr "----------"
+msgstr "-------"
 
 #: student_registration/mscc/forms.py:1200
 #: student_registration/mscc/models.py:149
@@ -4599,10 +4595,8 @@ msgid "Name"
 msgstr "الاسم"
 
 #: student_registration/mscc/models.py:48
-#, fuzzy
-#| msgid "Currently:"
 msgid "Current year"
-msgstr "الحالة الحالية:"
+msgstr "السنة الحالية"
 
 #: student_registration/mscc/models.py:53
 #: student_registration/templates/mscc/attendance_report.html:46
@@ -4610,28 +4604,20 @@ msgid "Year"
 msgstr "السنة"
 
 #: student_registration/mscc/models.py:89
-#, fuzzy
-#| msgid "Birth date"
 msgid "Start date"
-msgstr "تاريخ الولادة"
+msgstr "تاريخ البدء"
 
 #: student_registration/mscc/models.py:90
-#, fuzzy
-#| msgid "Exam end date"
 msgid "End date"
-msgstr "  تاريخ انتهاء العام الدراسي - ضمناً الامتحانات "
+msgstr "تاريخ الانتهاء"
 
 #: student_registration/mscc/models.py:95
-#, fuzzy
-#| msgid "Partner"
 msgid "Round Partner"
-msgstr "الجمعية"
+msgstr "شريك الدورة"
 
 #: student_registration/mscc/models.py:96
-#, fuzzy
-#| msgid "Partners"
 msgid "Round Partners"
-msgstr "الشركاء"
+msgstr "شركاء الدورة"
 
 #: student_registration/mscc/models.py:156
 #: student_registration/students/models.py:147
@@ -4948,10 +4934,8 @@ msgstr "المساعدة النقدية الاجتماعية"
 
 #: student_registration/mscc/models.py:529
 #: student_registration/mscc/models.py:801
-#, fuzzy
-#| msgid "Student moved"
 msgid "Student old"
-msgstr "انتقل التلميذ "
+msgstr "طالب قديم"
 
 #: student_registration/mscc/models.py:569
 msgid "Number of working hours/week "
@@ -4975,10 +4959,8 @@ msgid "Packages received/to be provided to child under"
 msgstr "الحزم التي تلقاها الطفل/التي ستُقدم للطفل ضمن"
 
 #: student_registration/mscc/models.py:642
-#, fuzzy
-#| msgid "Delete"
 msgid "Deleted"
-msgstr "حذف"
+msgstr "محذوف"
 
 #: student_registration/mscc/models.py:648
 msgid "Deleted by"
@@ -4990,22 +4972,16 @@ msgid "Registrations"
 msgstr "التسجيلات"
 
 #: student_registration/mscc/models.py:802
-#, fuzzy
-#| msgid "Registration"
 msgid "Registration id"
-msgstr "التسجيل"
+msgstr "معرّف التسجيل"
 
 #: student_registration/mscc/models.py:808
-#, fuzzy
-#| msgid "Programme Type"
 msgid "Programme type"
-msgstr " نوع البرنامج"
+msgstr "نوع البرنامج"
 
 #: student_registration/mscc/models.py:809
-#, fuzzy
-#| msgid "Programme"
 msgid "Programme id"
-msgstr "البرنامج"
+msgstr "معرّف البرنامج"
 
 #: student_registration/mscc/models.py:813
 #: student_registration/templates/mscc/child_education_details.html:70
@@ -5014,10 +4990,8 @@ msgid "Education History"
 msgstr "السجل التعليمي"
 
 #: student_registration/mscc/models.py:814
-#, fuzzy
-#| msgid "Education History"
 msgid "Education Histories"
-msgstr "السجل التعليمي"
+msgstr "السجلات التعليمية"
 
 #: student_registration/mscc/models.py:840
 #: student_registration/mscc/models.py:881
@@ -5025,33 +4999,25 @@ msgid "Category"
 msgstr "الفئة"
 
 #: student_registration/mscc/models.py:842
-#, fuzzy
-#| msgid "Services"
 msgid "Service id"
-msgstr "الخدمات"
+msgstr "معرّف الخدمة"
 
 #: student_registration/mscc/models.py:843
-#, fuzzy
-#| msgid "Incomplete"
 msgid "Completed"
-msgstr "اكمال"
+msgstr "مكتمل"
 
 #: student_registration/mscc/models.py:844
 #: student_registration/mscc/models.py:883
-#, fuzzy
-#| msgid "Access Required"
 msgid "Required"
-msgstr "الوصول مطلوب"
+msgstr "مطلوب"
 
 #: student_registration/mscc/models.py:848
 msgid "Completion date"
 msgstr "تاريخ الإكمال"
 
 #: student_registration/mscc/models.py:859
-#, fuzzy
-#| msgid "Provided Services"
 msgid "Provided Service"
-msgstr "الخدمات المقدمة"
+msgstr "الخدمة المقدمة"
 
 #: student_registration/mscc/models.py:888
 #: student_registration/mscc/models.py:1555
@@ -5064,16 +5030,12 @@ msgid "Maximum Age"
 msgstr "الحد الأقصى للعمر"
 
 #: student_registration/mscc/models.py:904
-#, fuzzy
-#| msgid "Core Package"
 msgid "Package"
-msgstr "الحزمة الأساسية"
+msgstr "الحزمة"
 
 #: student_registration/mscc/models.py:905
-#, fuzzy
-#| msgid "Core Package"
 msgid "Packages"
-msgstr "الحزمة الأساسية"
+msgstr "الحزم"
 
 #: student_registration/mscc/models.py:912
 #: student_registration/mscc/models.py:2314
@@ -5112,10 +5074,8 @@ msgid "Inclusion"
 msgstr "الدمج"
 
 #: student_registration/mscc/models.py:943
-#, fuzzy
-#| msgid "Inclusion"
 msgid "Inclusions"
-msgstr "الدمج"
+msgstr "حالات الدمج"
 
 #: student_registration/mscc/models.py:949
 msgid "Class"
@@ -5426,16 +5386,12 @@ msgstr ""
 "العلامات أدناه لدى أطفاله؟"
 
 #: student_registration/mscc/models.py:1194
-#, fuzzy
-#| msgid "Services"
 msgid "PSS Service"
-msgstr "الخدمات"
+msgstr "خدمة الدعم النفسي الاجتماعي"
 
 #: student_registration/mscc/models.py:1195
-#, fuzzy
-#| msgid "Services"
 msgid "PSS Services"
-msgstr "الخدمات"
+msgstr "خدمات الدعم النفسي الاجتماعي"
 
 #: student_registration/mscc/models.py:1202
 msgid "Social/Emotional"
@@ -5714,16 +5670,12 @@ msgid "if yes to write the date of the session"
 msgstr "إذا كانت الإجابة نعم، اكتب تاريخ الجلسة"
 
 #: student_registration/mscc/models.py:1449
-#, fuzzy
-#| msgid "Health & Nutrition"
 msgid "Health & Nutrition Service"
-msgstr "الصحة والتغذية"
+msgstr "خدمة الصحة والتغذية"
 
 #: student_registration/mscc/models.py:1450
-#, fuzzy
-#| msgid "Health & Nutrition"
 msgid "Health & Nutrition Services"
-msgstr "الصحة والتغذية"
+msgstr "خدمات الصحة والتغذية"
 
 #: student_registration/mscc/models.py:1457
 msgid "Primary Health care center"
@@ -5831,16 +5783,12 @@ msgid "If yes (please add name of organization referred to)"
 msgstr "إذا كانت الإجابة نعم (يرجى إضافة اسم المنظمة التي تمت الإحالة إليها)"
 
 #: student_registration/mscc/models.py:1543
-#, fuzzy
-#| msgid "Health & Nutrition"
 msgid "Health & Nutrition Referral"
-msgstr "الصحة والتغذية"
+msgstr "إحالة الصحة والتغذية"
 
 #: student_registration/mscc/models.py:1544
-#, fuzzy
-#| msgid "Health & Nutrition"
 msgid "Health & Nutrition Referrals"
-msgstr "الصحة والتغذية"
+msgstr "إحالات الصحة والتغذية"
 
 #: student_registration/mscc/models.py:1552
 msgid "NFE Component Name (e.g. ECE, BLN, ALP)"
@@ -5923,16 +5871,12 @@ msgid "Yes-Undocumented programme"
 msgstr "نعم - برنامج غير الموثقين"
 
 #: student_registration/mscc/models.py:1726
-#, fuzzy
-#| msgid "Educational Level"
 msgid "Education Service"
-msgstr "المستوى التعليمي"
+msgstr "خدمة التعليم"
 
 #: student_registration/mscc/models.py:1727
-#, fuzzy
-#| msgid "Education Details"
 msgid "Education Services"
-msgstr "تفاصيل التعليم"
+msgstr "خدمات التعليم"
 
 #: student_registration/mscc/models.py:1743
 msgid "Foreign Languages"
@@ -5967,16 +5911,12 @@ msgid "Needed support"
 msgstr "يحتاج إلى المساعدة"
 
 #: student_registration/mscc/models.py:1818
-#, fuzzy
-#| msgid "Educational Level"
 msgid "Education RS Service"
-msgstr "المستوى التعليمي"
+msgstr "خدمة التعليم الرسمي"
 
 #: student_registration/mscc/models.py:1819
-#, fuzzy
-#| msgid "Education Details"
 msgid "Education RS Services"
-msgstr "تفاصيل التعليم"
+msgstr "خدمات التعليم الرسمي"
 
 #: student_registration/mscc/models.py:1827
 msgid "Phone call/WhatsApp"
@@ -6060,44 +6000,32 @@ msgid "Education Assessment"
 msgstr "التقييم التعليمي"
 
 #: student_registration/mscc/models.py:2052
-#, fuzzy
-#| msgid "Education Assessment"
 msgid "Education Assessments"
-msgstr "التقييم التعليمي"
+msgstr "التقييمات التعليمية"
 
 #: student_registration/mscc/models.py:2063
-#, fuzzy
-#| msgid "Pre test room"
 msgid "Pre test"
-msgstr "غرفة امتحان "
+msgstr "الاختبار القبلي"
 
 #: student_registration/mscc/models.py:2064
-#, fuzzy
-#| msgid "Post-test"
 msgid "Post test"
-msgstr "مجموع علامات ال Post-test"
+msgstr "الاختبار البعدي"
 
 #: student_registration/mscc/models.py:2065
-#, fuzzy
-#| msgid "School List"
 msgid "School test"
-msgstr "قائمة المدارس"
+msgstr "اختبار المدرسة"
 
 #: student_registration/mscc/models.py:2070
 msgid "Education Programme Type"
 msgstr " نوع البرنامج"
 
 #: student_registration/mscc/models.py:2075
-#, fuzzy
-#| msgid "Education Assessment"
 msgid "Education Programme Assessment"
-msgstr "التقييم التعليمي"
+msgstr "تقييم البرنامج التعليمي"
 
 #: student_registration/mscc/models.py:2076
-#, fuzzy
-#| msgid "Education Assessment"
 msgid "Education Programme Assessments"
-msgstr "التقييم التعليمي"
+msgstr "تقييمات البرنامج التعليمي"
 
 #: student_registration/mscc/models.py:2083
 #: student_registration/mscc/models.py:2490
@@ -6332,22 +6260,16 @@ msgid "Service Type"
 msgstr "نوع الخدمة"
 
 #: student_registration/mscc/models.py:2276
-#, fuzzy
-#| msgid "Services"
 msgid "Service values"
-msgstr "الخدمات"
+msgstr "قيم الخدمة"
 
 #: student_registration/mscc/models.py:2280
-#, fuzzy
-#| msgid "Services"
 msgid "Youth Service"
-msgstr "الخدمات"
+msgstr "خدمة الشباب"
 
 #: student_registration/mscc/models.py:2281
-#, fuzzy
-#| msgid "Services"
 msgid "Youth Services"
-msgstr "الخدمات"
+msgstr "خدمات الشباب"
 
 #: student_registration/mscc/models.py:2288
 msgid "Phone call"
@@ -6428,16 +6350,12 @@ msgid "Number number of sessions"
 msgstr "الرجاء إدخال عدد الجلسات"
 
 #: student_registration/mscc/models.py:2406
-#, fuzzy
-#| msgid "Follow up"
 msgid "Follow Up Service"
-msgstr "المتابعة"
+msgstr "خدمة المتابعة"
 
 #: student_registration/mscc/models.py:2407
-#, fuzzy
-#| msgid "Follow up actions"
 msgid "Follow Up Services"
-msgstr "عمليّة المتابعة"
+msgstr "خدمات المتابعة"
 
 #: student_registration/mscc/models.py:2415
 msgid "CP"
@@ -6457,10 +6375,8 @@ msgid "Name of the School referred to"
 msgstr "من أين تم إحالة الطفل؟"
 
 #: student_registration/mscc/models.py:2484
-#, fuzzy
-#| msgid "Referral"
 msgid "Referrals"
-msgstr "الإحالة"
+msgstr "الإحالات"
 
 #: student_registration/mscc/models.py:2508
 msgid "Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL...)"
@@ -6484,10 +6400,8 @@ msgid "Youth Assessment"
 msgstr "تقييم الشباب"
 
 #: student_registration/mscc/models.py:2605
-#, fuzzy
-#| msgid "Youth Assessment"
 msgid "Youth Assessments"
-msgstr "تقييم الشباب"
+msgstr "تقييمات الشباب"
 
 #: student_registration/mscc/models.py:2621
 #: student_registration/mscc/services_form.py:2393
@@ -6508,10 +6422,8 @@ msgid "Youth Referral"
 msgstr "إحالة الشباب"
 
 #: student_registration/mscc/models.py:2633
-#, fuzzy
-#| msgid "Youth Referral"
 msgid "Youth Referrals"
-msgstr "إحالة الشباب"
+msgstr "إحالات الشباب"
 
 #: student_registration/mscc/models.py:2644
 #: student_registration/templates/mscc/child_services_tab_org.html:2508
@@ -7379,10 +7291,8 @@ msgid "Documentation"
 msgstr "التوثيق"
 
 #: student_registration/templates/_sidebar_links.html:53
-#, fuzzy
-#| msgid "User Profile"
 msgid "User Guide"
-msgstr "ملف المستخدم"
+msgstr "دليل المستخدم"
 
 #: student_registration/templates/_sidebar_links.html:56
 #: student_registration/templates/wiki/page.html:11
@@ -11377,12 +11287,10 @@ msgid "Register in a New Round"
 msgstr "التسجيل في دورة جديدة"
 
 #: student_registration/templates/mscc/new_round.html:25
-#, fuzzy
-#| msgid "Enroll the beneficiary into a new educational cycle."
 msgid ""
 "Enroll the beneficiary into a new educational cycle and provide current "
 "enrollment details."
-msgstr "تسجيل المستفيد في دورة تعليمية جديدة."
+msgstr "تسجيل المستفيد في دورة تعليمية جديدة وإدخال تفاصيل التسجيل الحالية."
 
 #: student_registration/templates/mscc/new_round.html:38
 #: student_registration/templates/mscc/service_education_service_form.html:42
@@ -11390,17 +11298,11 @@ msgid "Education Details"
 msgstr "تفاصيل التعليم"
 
 #: student_registration/templates/mscc/new_round.html:40
-#, fuzzy
-#| msgid ""
-#| "To add this child to a new round, please confirm the action below. This "
-#| "will create a new registration record for the current active cycle."
 msgid ""
 "To add this child to a new round, please confirm the education situation "
 "below. This will create a new registration record for the current active "
 "cycle."
-msgstr ""
-"لإضافة هذا الطفل إلى جولة جديدة، يرجى تأكيد الإجراء أدناه. سيؤدي ذلك إلى "
-"إنشاء سجل تسجيل جديد للدورة النشطة الحالية."
+msgstr "لإضافة هذا الطفل إلى دورة جديدة، يرجى تأكيد الوضع التعليمي أدناه. سيؤدي ذلك إلى إنشاء سجل تسجيل جديد للدورة النشطة الحالية."
 
 #: student_registration/templates/mscc/new_round.html:48
 #: student_registration/templates/mscc/profile.html:123
@@ -12109,10 +12011,8 @@ msgid "No users found."
 msgstr "لم يتم العثور على مستخدمين."
 
 #: student_registration/templates/wiki/html_page.html:251
-#, fuzzy
-#| msgid "Table navigation"
 msgid "Navigation"
-msgstr "التنقل في الجدول"
+msgstr "التنقل"
 
 #: student_registration/users/admin.py:103
 msgid "Personal info"
