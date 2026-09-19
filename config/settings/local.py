@@ -136,10 +136,12 @@ LOGGING = {
 # SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 AUTO_LOGOUT_DELAY = 1000  # equivalent to 20 minutes
+# Debug Toolbar polls this endpoint in the background. Do not let those requests
+# keep users active or race with logout while attempting to save the old session.
+AUTO_LOGOUT_EXEMPT_PATHS = ('/__debug__/',)
 
 # Maximum number of GET/POST parameters that will be read before a
 # SuspiciousOperation (TooManyFieldsSent) is raised.
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 4000
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
 
