@@ -11,6 +11,7 @@ import logging
 from django import forms
 from django.core import validators as core_validators
 from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 
 from .registry import (
     KIND_ATTENDANCE, KIND_BRIDGING_SUBFORM, KIND_FORM, KIND_IDENTITY, KIND_MODELFORM, KIND_NEW_ROUND,
@@ -84,6 +85,58 @@ def _choices(field):
         else:
             result.append({'value': '' if value is None else str(value), 'label': str(label)})
     return result
+
+
+# Fields the website requires in ARABIC.
+#
+# This rule is not a Django validator and never reached the app. It lives in
+# static/js/validator.js as checkArabicOnly(), bound on blur to the
+# `arabic_fields` lists in static/js/mscc/mscc.js, alp/alp.js, registrations.js
+# and bridging/bridging.js. The check itself is:
+#
+#     var c = ch.charCodeAt(0);
+#     return !((c < 1536 || c > 1791) && ch != " ");
+#
+# i.e. accept U+0600-U+06FF (the Arabic block, Arabic-Indic digits included)
+# or a space, and silently discard everything else -- so a Latin name typed on
+# the website disappears when the field loses focus.
+#
+# The names below are the union of those four lists, with the `#id_` prefix
+# dropped. They are bio-data fields: a child's and a caregiver's name under the
+# several names the modules give them, plus the typed location on the ALP and
+# bridging forms.
+ARABIC_ONLY_FIELDS = frozenset([
+    'child_first_name', 'child_father_name', 'child_last_name', 'child_mother_fullname',
+    'caregiver_first_name', 'caregiver_middle_name', 'caregiver_last_name', 'caregiver_mother_name',
+    'student_first_name', 'student_father_name', 'student_last_name', 'student_mother_fullname',
+    'caretaker_first_name', 'caretaker_middle_name', 'caretaker_last_name', 'caretaker_mother_name',
+    'first_name', 'father_name', 'last_name', 'mother_fullname',
+    'location',
+])
+
+# A RAW string, so the schema carries the six characters \u0600 rather
+# than the code point itself: the JSON stays greppable and reads the same as
+# the Dart constant in the app. Every regex engine involved expands it.
+ARABIC_PATTERN = r'^[\u0600-\u06FF ]+$'
+
+# Types that hold typed text. A select or a reference never carries a name.
+_TEXTUAL = ('text', 'textarea')
+
+
+def _arabic_only(name, data):
+    """Mark a bio-data field as Arabic, and drop the weaker rule it implies.
+
+    only_letters_validator accepts Latin OR Arabic, so on these fields it is a
+    strictly weaker statement of the same idea. Leaving both would show the
+    worker two complaints about one character.
+    """
+    if name not in ARABIC_ONLY_FIELDS or data.get('type') not in _TEXTUAL:
+        return
+    data['script'] = 'arabic'
+    message = _('Please write this in Arabic.')
+    data['patterns'] = [{'pattern': ARABIC_PATTERN, 'message': str(message)}]
+    data['pattern'] = ARABIC_PATTERN
+    data['pattern_message'] = str(message)
 
 
 # Validators whose regex is an implementation detail rather than a rule worth
@@ -233,6 +286,7 @@ def field_spec(name, field, spec=None):
     # Last, so an explicit field argument above wins over the same rule
     # restated as a validator (setdefault in the helper).
     _rules_from_validators(field, data)
+    _arabic_only(name, data)
     return data
 
 
@@ -247,7 +301,14 @@ def _with_arabic_labels(fields, spec, user):
                 continue
             # A validator message is translated like any other string, and a
             # rule the worker cannot read is a rule they cannot act on.
-            if item.get('patterns'):
+            if item.get('script') == 'arabic':
+                # Stated here rather than on a validator, so the second pass
+                # has to translate it here too.
+                translated = str(_('Please write this in Arabic.'))
+                for rule in item.get('patterns') or []:
+                    rule['message_ar'] = translated
+                item['pattern_message_ar'] = translated
+            elif item.get('patterns'):
                 ar = _rules_from_validators(f, {}).get('patterns') or []
                 by_pattern = {p['pattern']: p.get('message') for p in ar}
                 for rule in item['patterns']:

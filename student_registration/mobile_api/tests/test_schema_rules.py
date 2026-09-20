@@ -14,7 +14,7 @@ from django.core.validators import (
 )
 from django.test import SimpleTestCase
 
-from ..schema import attendance_schema, field_spec
+from ..schema import ARABIC_ONLY_FIELDS, ARABIC_PATTERN, attendance_schema, field_spec
 
 ONLY_LETTERS = RegexValidator(
     regex=r'^[A-Za-zء-يٮ-ۓ\s]+$',
@@ -24,8 +24,8 @@ ONLY_LETTERS = RegexValidator(
 
 class FieldSpecRuleTests(SimpleTestCase):
     def test_a_regex_validator_reaches_the_app_with_its_message(self):
-        """The thirteen name fields on the child registration depend on this."""
-        data = field_spec('child_first_name', forms.CharField(required=True, validators=[ONLY_LETTERS]))
+        """Any field whose rule is expressed only as a validator depends on this."""
+        data = field_spec('child_address', forms.CharField(required=True, validators=[ONLY_LETTERS]))
         self.assertEqual(data['patterns'], [{
             'pattern': ONLY_LETTERS.regex.pattern,
             'message': 'Only alphabetic characters are allowed.',
@@ -72,6 +72,61 @@ class FieldSpecRuleTests(SimpleTestCase):
         data = field_spec('note', forms.CharField(required=False))
         for key in ('patterns', 'pattern', 'min_length', 'min_value', 'max_value'):
             self.assertNotIn(key, data, key)
+
+
+class ArabicOnlyTests(SimpleTestCase):
+    """The rule static/js/validator.js applies and the schema never carried.
+
+    checkArabicOnly accepts U+0600-U+06FF or a space and silently discards the
+    rest, so a Latin name typed on the website vanishes on blur. It is not a
+    Django validator, so without this the app had no way to know.
+    """
+
+    def test_a_child_name_is_marked_arabic(self):
+        data = field_spec('child_first_name', forms.CharField(validators=[ONLY_LETTERS]))
+        self.assertEqual(data['script'], 'arabic')
+        self.assertEqual([p['pattern'] for p in data['patterns']], [ARABIC_PATTERN])
+
+    def test_the_weaker_letters_only_rule_is_dropped(self):
+        """Arabic-only implies letters-only; two complaints for one character
+        would be noise."""
+        data = field_spec('child_first_name', forms.CharField(validators=[ONLY_LETTERS]))
+        self.assertEqual(len(data['patterns']), 1)
+        self.assertNotIn('A-Za-z', data['patterns'][0]['pattern'])
+
+    def test_the_rule_carries_a_message_because_the_app_rejects_rather_than_strips(self):
+        data = field_spec('child_first_name', forms.CharField())
+        self.assertTrue(data['patterns'][0]['message'])
+
+    def test_every_caregiver_name_is_covered(self):
+        for name in ('caregiver_first_name', 'caregiver_middle_name',
+                     'caregiver_last_name', 'caregiver_mother_name'):
+            self.assertEqual(field_spec(name, forms.CharField()).get('script'), 'arabic', name)
+
+    def test_the_other_modules_field_names_are_covered(self):
+        """ALP and bridging call the same people students and caretakers."""
+        for name in ('student_first_name', 'caretaker_last_name', 'mother_fullname', 'location'):
+            self.assertIn(name, ARABIC_ONLY_FIELDS)
+
+    def test_a_field_that_is_not_bio_data_is_untouched(self):
+        data = field_spec('child_address', forms.CharField(validators=[ONLY_LETTERS]))
+        self.assertNotIn('script', data)
+        self.assertIn('A-Za-z', data['patterns'][0]['pattern'])
+
+    def test_a_select_named_like_a_name_is_not_marked(self):
+        """The rule is about typed text; a dropdown cannot hold a stray glyph."""
+        data = field_spec('child_first_name', forms.ChoiceField(choices=[('a', 'A')]))
+        self.assertNotIn('script', data)
+
+    def test_the_pattern_accepts_arabic_and_rejects_the_rest(self):
+        import re
+        ok = re.compile(ARABIC_PATTERN)
+        self.assertTrue(ok.match('\u0645\u062d\u0645\u062f'))          # محمد
+        self.assertTrue(ok.match('\u0645\u062d\u0645\u062f \u0639\u0644\u064a'))  # two words
+        self.assertFalse(ok.match('Omar'))
+        self.assertFalse(ok.match('\u0645\u062d\u0645\u062fx'))        # one Latin letter
+        self.assertFalse(ok.match('\u0645\u062d\u0645\u062f!'))        # punctuation
+        self.assertFalse(ok.match(''))
 
 
 class _Spec(object):
