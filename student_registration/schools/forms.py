@@ -194,11 +194,6 @@ class SchoolForm(forms.ModelForm):
         label=_("Dirasa End Date"),
         required=True
     )
-    receive_supplies = forms.ChoiceField(
-        label=_("Did the school receive school supplies/stationery?"),
-        widget=forms.Select, required=True,
-        choices=School.YES_NO
-    )
     admin_staff_number = forms.IntegerField(
         label=_("Number of Admin staff in the school"),
         widget=forms.NumberInput(attrs={'min': 0, 'placeholder': '0'}),
@@ -219,15 +214,6 @@ class SchoolForm(forms.ModelForm):
         label=_("Nearby PHCC name"),
         widget=forms.TextInput(attrs={'placeholder': _('Nearby PHCC name')}),
         required=False
-    )
-
-    number_dirasa_children_disability = forms.IntegerField(
-        label=_('Total number of Children With Disability (Dirasa only)'),
-        widget=forms.TextInput, required=False
-    )
-    number_total_children_disability = forms.IntegerField(
-        label=_('Total number of Children With Disability (Excluding Dirasa)'),
-        widget=forms.TextInput, required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -369,24 +355,15 @@ class SchoolForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('CWD_accessible', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('receive_supplies', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('internet_available', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('digital_learning_programme', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_school_digital_capacity">18</span>'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_school_digital_capacity">17</span>'),
                     Div('school_digital_capacity', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                    Div('number_dirasa_children_disability', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
-                    Div('number_total_children_disability', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 css_id='step-2'
@@ -513,13 +490,10 @@ class SchoolForm(forms.ModelForm):
             'working_days',
             'academic_year_start',
             'academic_year_end',
-            'receive_supplies',
             'admin_staff_number',
             'offer_digital_learning',
             'have_digital_hub',
             'neaby_phcc',
-            'number_dirasa_children_disability',
-            'number_total_children_disability',
             'type',
             'operating_shift',
         )

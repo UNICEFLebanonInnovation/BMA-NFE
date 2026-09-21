@@ -184,13 +184,9 @@ class SchoolResource(resources.ModelResource):
             'CWD_accessible',
             'internet_available',
             'school_digital_capacity',
-            'is_first_shift',
             'working_days',
             'academic_year_start',
             'academic_year_end',
-            'receive_supplies',
-            'number_dirasa_children_disability',
-            'number_total_children_disability',
             'is_closed',
         )
         export_order = fields
@@ -228,13 +224,9 @@ class SchoolAdmin(ImportExportModelAdmin):
             'CWD_accessible',
             'internet_available',
             'school_digital_capacity',
-            'is_first_shift',
             'working_days',
             'academic_year_start',
             'academic_year_end',
-            'receive_supplies',
-            'number_dirasa_children_disability',
-            'number_total_children_disability',
     )
     list_display = (
         'id',

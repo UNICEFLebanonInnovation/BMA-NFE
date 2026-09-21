@@ -8,3 +8,8 @@ from student_registration.schools.models import School
 class SchoolAdminRegistrationTests(SimpleTestCase):
     def test_school_is_available_in_admin_portal(self):
         self.assertIsInstance(admin.site._registry[School], SchoolAdmin)
+
+    def test_school_admin_fields_pass_system_checks(self):
+        school_admin = admin.site._registry[School]
+
+        self.assertEqual(school_admin.check(), [])
