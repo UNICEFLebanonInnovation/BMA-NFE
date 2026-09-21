@@ -195,39 +195,9 @@ class SchoolResource(resources.ModelResource):
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = SchoolResource
 
-    fields = (
-            'number',
-            'name',
-            'is_closed',
-            'is_bma',
-            'director_name',
-            'land_phone_number',
-            'email',
-            'governorate',
-            'district',
-            'cadaster',
-            'longitude',
-            'latitude',
-            'registration_level',
-            'school_capacity',
-            'empty_building',
-            'number_children',
-            'number_children_male',
-            'number_children_female',
-            'number_children_lebanese',
-            'number_children_non_lebanese',
-            'number_children_sbp',
-            'number_children_male_sbp',
-            'number_children_female_sbp',
-            'number_children_lebanese_sbp',
-            'number_children_non_lebanese_sbp',
-            'CWD_accessible',
-            'internet_available',
-            'school_digital_capacity',
-            'working_days',
-            'academic_year_start',
-            'academic_year_end',
-    )
+    # Keep the centrally managed school page aligned with the profile that ALP
+    # focal points see.
+    fields = School.ALP_PROFILE_FIELDS
     list_display = (
         'id',
         'number',
