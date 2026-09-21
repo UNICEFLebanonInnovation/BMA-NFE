@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: BMA-NFE\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-11 14:40+0300\n"
-"PO-Revision-Date: 2026-09-19 00:00+0000\n"
+"PO-Revision-Date: 2026-09-21 00:00+0000\n"
 "Last-Translator: BMA NFE Team\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -13724,3 +13724,103 @@ msgstr "المستخدم"
 #: student_registration/templates/alp/child_profile.html:107
 msgid "Unique child number"
 msgstr "رقم الطفل الفريد"
+
+#: student_registration/locations/forms.py:160
+#: student_registration/alp/forms.py:57
+msgid ""
+"# of staff assigned under the ALP programme within the school, including "
+"teaching and admin staff"
+msgstr ""
+"عدد الموظفين المعيّنين ضمن برنامج التعليم المسرّع في المدرسة، بما في ذلك "
+"الكادر التعليمي والإداري"
+
+#: student_registration/schools/forms.py:62
+#: student_registration/alp/forms.py:36
+msgid "Format: school@email.com"
+msgstr "الصيغة: school@email.com"
+
+#: student_registration/alp/models.py:305
+msgid "Transitioned from National NFE assessment"
+msgstr "انتقل من التقييم الوطني للتعليم غير النظامي"
+
+#: student_registration/alp/models.py:474
+msgid "ALP Grading Definition"
+msgstr "تعريف تقييم برنامج التعليم المسرّع"
+
+#: student_registration/alp/forms.py:168
+msgid "Upload a scanned copy or clear photo of the signed consent form."
+msgstr "حمّل نسخة ممسوحة ضوئياً أو صورة واضحة لنموذج الموافقة الموقّع."
+
+#: student_registration/alp/filters.py:52
+#: student_registration/alp/filters.py:67
+msgid "Date"
+msgstr "التاريخ"
+
+#: student_registration/templates/_sidebar_links.html:110
+msgid "Technical Wiki"
+msgstr "الويكي التقني"
+
+#: student_registration/templates/alp/child_profile.html:33
+msgid "ALP"
+msgstr "برنامج التعليم المسرّع"
+
+#: student_registration/templates/alp/dashboard_school.html:23
+msgid "Explore school locations, enrollment, staff, and facilities."
+msgstr "استكشف مواقع المدارس والتسجيل والموظفين والمرافق."
+
+#: student_registration/templates/alp/dashboard_school.html:31
+msgid "In your reporting scope"
+msgstr "ضمن نطاق تقاريرك"
+
+#: student_registration/templates/alp/dashboard_school.html:92
+msgid "No schools with GPS coordinates are available for this selection."
+msgstr "لا تتوفر مدارس ذات إحداثيات GPS لهذا الاختيار."
+
+#: student_registration/templates/alp/dashboard_school.html:94
+msgid "School map data could not be loaded. Please try again."
+msgstr "تعذّر تحميل بيانات خريطة المدارس. يرجى المحاولة مرة أخرى."
+
+#: student_registration/templates/alp/dashboard_registration.html:159
+msgid ""
+"Latest assessment results and progress for children in the ALP programme."
+msgstr "أحدث نتائج التقييم ومستوى تقدم الأطفال في برنامج التعليم المسرّع."
+
+#: student_registration/templates/alp/dashboard_registration.html:164
+msgid "Average achievement"
+msgstr "متوسط التحصيل"
+
+#: student_registration/templates/alp/dashboard_registration.html:170
+msgid "Latest performance"
+msgstr "أحدث أداء"
+
+#: student_registration/templates/alp/dashboard_teacher.html:22
+msgid "Monitor ALP teacher coverage, capacity and professional development."
+msgstr "تابع تغطية معلمي برنامج التعليم المسرّع وقدراتهم وتطورهم المهني."
+
+#: student_registration/templates/alp/dashboard_teacher.html:28
+msgid "Create an ALP teacher profile."
+msgstr "أنشئ ملفاً لمعلم في برنامج التعليم المسرّع."
+
+#: student_registration/templates/alp/dashboard_teacher.html:35
+msgid "Teacher Workforce Insights"
+msgstr "مؤشرات الكادر التعليمي"
+
+#: student_registration/templates/alp/dashboard_teacher.html:46
+msgid "Avg. Training"
+msgstr "متوسط التدريب"
+
+#: student_registration/templates/alp/dashboard_teacher.html:52
+msgid "Coverage & Demographics"
+msgstr "التغطية والخصائص الديموغرافية"
+
+#: student_registration/templates/alp/dashboard_teacher.html:86
+msgid "Dashboard data could not be loaded. Please try again."
+msgstr "تعذّر تحميل بيانات لوحة المعلومات. يرجى المحاولة مرة أخرى."
+
+#: student_registration/templates/alp/school_profile.html:31
+msgid "Review and update your school's information below."
+msgstr "راجع معلومات مدرستك أدناه وحدّثها."
+
+#: student_registration/templates/alp/school_profile.html:43
+msgid "You are not assigned to any specific school."
+msgstr "لم يتم تعيينك في مدرسة محددة."
