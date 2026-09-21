@@ -195,6 +195,21 @@ class SchoolResource(resources.ModelResource):
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = SchoolResource
 
+    LOCATION_TYPES_BY_FIELD = {
+        'governorate': 1,
+        'district': 2,
+        'cadaster': 3,
+    }
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        location_type_id = self.LOCATION_TYPES_BY_FIELD.get(db_field.name)
+        if location_type_id is not None:
+            kwargs['queryset'] = Location.objects.filter(type_id=location_type_id)
+
+        return super(SchoolAdmin, self).formfield_for_foreignkey(
+            db_field, request, **kwargs
+        )
+
     fields = (
             'number',
             'name',
