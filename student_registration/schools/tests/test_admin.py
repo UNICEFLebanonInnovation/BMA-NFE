@@ -4,6 +4,7 @@ from django.test import SimpleTestCase, TestCase
 from student_registration.locations.models import Location, LocationType
 from student_registration.schools.admin import SchoolAdmin
 from student_registration.schools.models import School
+from student_registration.alp.forms import ALPSchoolProfileForm
 
 
 class SchoolAdminRegistrationTests(SimpleTestCase):
@@ -15,6 +16,10 @@ class SchoolAdminRegistrationTests(SimpleTestCase):
 
         self.assertEqual(school_admin.check(), [])
 
+    def test_school_admin_fields_match_alp_school_profile(self):
+        school_admin = admin.site._registry[School]
+
+        self.assertEqual(school_admin.fields, ALPSchoolProfileForm.Meta.fields)
 
 class SchoolAdminLocationChoicesTests(TestCase):
     @classmethod

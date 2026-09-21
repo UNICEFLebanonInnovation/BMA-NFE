@@ -156,13 +156,7 @@ class ALPSchoolProfileForm(forms.ModelForm):
 
     class Meta:
         model = School
-        fields = (
-            'number', 'name', 'type', 'operating_shift', 'director_name',
-            'land_phone_number', 'email', 'governorate', 'district', 'cadaster',
-            'longitude', 'latitude',
-            'provided_packages', 'offer_digital_learning',
-            'have_digital_hub', 'admin_staff_number', 'neaby_phcc',
-        )
+        fields = School.ALP_PROFILE_FIELDS
 
 
 class ALPRegistrationForm(MainForm):

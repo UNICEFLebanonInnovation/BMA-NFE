@@ -168,26 +168,6 @@ class SchoolResource(resources.ModelResource):
             'cadaster',
             'longitude',
             'latitude',
-            'registration_level',
-            'school_capacity',
-            'empty_building',
-            'number_children',
-            'number_children_male',
-            'number_children_female',
-            'number_children_lebanese',
-            'number_children_non_lebanese',
-            'number_children_sbp',
-            'number_children_male_sbp',
-            'number_children_female_sbp',
-            'number_children_lebanese_sbp',
-            'number_children_non_lebanese_sbp',
-            'CWD_accessible',
-            'internet_available',
-            'school_digital_capacity',
-            'working_days',
-            'academic_year_start',
-            'academic_year_end',
-            'is_closed',
         )
         export_order = fields
 
@@ -195,6 +175,9 @@ class SchoolResource(resources.ModelResource):
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = SchoolResource
 
+    # Keep the centrally managed school page aligned with the profile that ALP
+    # focal points see.
+    fields = School.ALP_PROFILE_FIELDS
     LOCATION_TYPES_BY_FIELD = {
         'governorate': 1,
         'district': 2,
@@ -210,39 +193,6 @@ class SchoolAdmin(ImportExportModelAdmin):
             db_field, request, **kwargs
         )
 
-    fields = (
-            'number',
-            'name',
-            'is_closed',
-            'is_bma',
-            'director_name',
-            'land_phone_number',
-            'email',
-            'governorate',
-            'district',
-            'cadaster',
-            'longitude',
-            'latitude',
-            'registration_level',
-            'school_capacity',
-            'empty_building',
-            'number_children',
-            'number_children_male',
-            'number_children_female',
-            'number_children_lebanese',
-            'number_children_non_lebanese',
-            'number_children_sbp',
-            'number_children_male_sbp',
-            'number_children_female_sbp',
-            'number_children_lebanese_sbp',
-            'number_children_non_lebanese_sbp',
-            'CWD_accessible',
-            'internet_available',
-            'school_digital_capacity',
-            'working_days',
-            'academic_year_start',
-            'academic_year_end',
-    )
     list_display = (
         'id',
         'number',
@@ -252,14 +202,11 @@ class SchoolAdmin(ImportExportModelAdmin):
         'email',
         'governorate',
         'district',
-        'is_closed',
-        'is_bma',
     )
     search_fields = (
         'name',
         'number',
     )
-    list_filter = ('is_closed', 'is_bma',)
 
     def has_delete_permission(self, request, obj=None):
         return False

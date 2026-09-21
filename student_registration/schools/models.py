@@ -104,6 +104,13 @@ class School(TimeStampedModel):
         ('YBLN', 'YBLN'),
         ('YFS', 'YFS'),
     )
+    ALP_PROFILE_FIELDS = (
+        'number', 'name', 'type', 'operating_shift', 'director_name',
+        'land_phone_number', 'email', 'governorate', 'district', 'cadaster',
+        'longitude', 'latitude', 'provided_packages',
+        'offer_digital_learning', 'have_digital_hub', 'admin_staff_number',
+        'neaby_phcc',
+    )
     number = models.CharField(
         max_length=45,
         unique=True,
