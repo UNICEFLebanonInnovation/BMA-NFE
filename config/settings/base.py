@@ -99,6 +99,7 @@ LOCAL_APPS = [
     'student_registration.child',
     'student_registration.mscc',
     'student_registration.alp',
+    'student_registration.data_quality.apps.DataQualityConfig',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
