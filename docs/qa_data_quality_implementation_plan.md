@@ -340,6 +340,11 @@ monitor-only runs and findings, an append-only audit history, a deterministic
 rule registry, reviewer permissions, and a service that creates, refreshes,
 resolves, or reopens findings without changing the evaluated beneficiary.
 
-The next implementation increment is **Phase 3: initial deterministic rules**.
-It will implement the first approved MSCC `Child` and `Registration` rules and a
-manual audit command on top of the quality core.
+**Phase 3: initial deterministic rules is implemented.** It provides the 11
+initial monitor-only MSCC `Child` and `Registration` rules, privacy-safe
+structured evidence, registry-backed batch execution, seeded rule metadata, and
+a manual audit command for one record or an explicitly selected full model.
+
+The next implementation increment is **Phase 4: beneficiary normalization**.
+It will add versioned Arabic and English name, phone, identity, and date
+normalization without changing original beneficiary values.

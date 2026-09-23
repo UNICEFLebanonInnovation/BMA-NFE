@@ -54,3 +54,29 @@ and registrations. `DataQualityReviewerFactory` creates a user in the dedicated
 The QA suite will test export business logic directly, including logic normally
 invoked by a background task. General Celery broker, routing, retry, worker, and
 queue-infrastructure testing remains outside the project scope.
+
+## Monitor-only data-quality audit
+
+Apply the data-quality migrations before running an audit:
+
+```bash
+python manage.py migrate
+```
+
+Audit one MSCC child or registration:
+
+```bash
+python manage.py audit_data_quality --model child --record-id 123
+python manage.py audit_data_quality --model registration --record-id 456
+```
+
+Audit all records of one type only when the operational impact has been
+reviewed:
+
+```bash
+python manage.py audit_data_quality --model child --all
+```
+
+The command is monitor-only. It creates or updates data-quality issues and an
+audited run summary; it does not modify, reject, merge, or delete the evaluated
+MSCC records.

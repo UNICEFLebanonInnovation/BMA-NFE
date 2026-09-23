@@ -26,3 +26,11 @@ class RuleRegistryTests(unittest.TestCase):
 
         with self.assertRaises(DuplicateRuleRegistration):
             registry.register(ExampleRule())
+
+    def test_class_decorator_stores_an_instance_and_returns_the_class(self):
+        registry = RuleRegistry()
+
+        returned_class = registry.register(ExampleRule)
+
+        self.assertIs(returned_class, ExampleRule)
+        self.assertIsInstance(registry.get("DQ-EXAMPLE-001", 1), ExampleRule)

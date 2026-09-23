@@ -9,6 +9,7 @@ from .models import (
     DataQualityAuditEvent,
     DataQualityIssue,
     DataQualityRule,
+    DataQualityRun,
     IssueStatus,
     RuleStatus,
 )
@@ -127,3 +128,49 @@ class MonitorOnlyIssueService:
             metadata={"run_id": run.pk if run else None},
         )
         return issue
+
+
+class MonitorOnlyEvaluationService:
+    """Run registered rules over saved subjects and track aggregate statistics."""
+
+    def __init__(self, *, issue_service=None, rule_registry=None):
+        if rule_registry is None:
+            from .registry import registry as default_registry
+
+            rule_registry = default_registry
+        self.issue_service = issue_service or MonitorOnlyIssueService()
+        self.rule_registry = rule_registry
+
+    def run(self, *, subjects, scope=None, triggered_by=None):
+        quality_run = DataQualityRun.objects.create(
+            scope=scope or {},
+            triggered_by=triggered_by,
+        )
+        records_checked = 0
+        rules_evaluated = 0
+        failures_found = 0
+        try:
+            for subject in subjects:
+                records_checked += 1
+                for evaluator in self.rule_registry.all():
+                    if not evaluator.applies_to(subject):
+                        continue
+                    evaluation = evaluator(subject)
+                    rules_evaluated += 1
+                    failures_found += int(not evaluation.passed)
+                    self.issue_service.record(
+                        subject=subject,
+                        evaluation=evaluation,
+                        run=quality_run,
+                        actor=triggered_by,
+                    )
+        except Exception as error:
+            quality_run.fail(error)
+            raise
+
+        quality_run.complete(
+            records_checked=records_checked,
+            rules_evaluated=rules_evaluated,
+            failures_found=failures_found,
+        )
+        return quality_run

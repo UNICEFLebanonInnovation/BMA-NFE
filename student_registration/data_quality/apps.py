@@ -10,6 +10,7 @@ class DataQualityConfig(AppConfig):
 
     def ready(self):
         from .permissions import ensure_reviewer_group
+        from . import rules  # noqa: F401
 
         post_migrate.connect(
             ensure_reviewer_group,
