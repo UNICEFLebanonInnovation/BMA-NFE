@@ -116,13 +116,20 @@ CACHES = {
 }
 
 # Sentry Configuration
-SENTRY_DSN = env('DJANGO_SENTRY_DSN', default='')
+SENTRY_DSN = env('DJANGO_SENTRY_DSN', default='https://6a1b8cc82cb0f1b66751ace7e36d4d10@o4512163169042432.ingest.de.sentry.io/4512163173761104')
 
 sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=[DjangoIntegration()],
     traces_sample_rate=1.0,  # Optional, for performance monitoring
     send_default_pii=True,   # Optional, if you want to send user info
+    # Enable sending logs to Sentry
+    enable_logs=True,
+    # of profile sessions.
+    profile_session_sample_rate=1.0,
+    # Set profile_lifecycle to "trace" to automatically
+    # run the profiler on when there is an active transaction
+    profile_lifecycle="trace",
 )
 
 LOGGING = {

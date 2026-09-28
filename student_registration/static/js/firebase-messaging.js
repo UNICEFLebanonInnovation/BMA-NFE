@@ -7,13 +7,13 @@ function translateMessage(message) {
 }
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAL2iS7YCesCURrxFViKUzH8LOrDzDIPHg",
-  authDomain: "leb-bma.firebaseapp.com",
-  projectId: "leb-bma",
-  storageBucket: "leb-bma.firebasestorage.app",
-  messagingSenderId: "455115377412",
-  appId: "1:455115377412:web:1e39a332cd97f98e009e51",
-  measurementId: "G-1QPVEZK990",
+  apiKey: "AIzaSyCfHk4d_bUgJcU-KI4wve7ZuA4YDlCHYVg",
+  authDomain: "bma-nfe.firebaseapp.com",
+  projectId: "bma-nfe",
+  storageBucket: "bma-nfe.firebasestorage.app",
+  messagingSenderId: "427743071075",
+  appId: "1:427743071075:web:c089e6f26c16c0142fe156",
+  measurementId: "G-XCEDM17QFX"
 };
 
 const app = initializeApp(firebaseConfig);
