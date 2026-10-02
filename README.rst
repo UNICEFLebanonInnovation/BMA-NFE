@@ -59,6 +59,15 @@ After editing any page under ``docs/wiki/``, regenerate the HTML mirror served t
 it usable as a CI guard.
 
 
+Mobile application
+------------------
+
+The ``BMA-App`` repository contains the Flutter tablet/phone application that
+mirrors this platform for offline field work. It talks to the
+``student_registration.mobile_api`` app (``/api/mobile/v1/``); the protocol,
+including server-side duplicate verification and the push report, is described
+in ``docs/mobile_sync_protocol.md``.
+
 Settings
 --------
 
