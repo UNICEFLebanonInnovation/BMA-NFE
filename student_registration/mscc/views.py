@@ -2,7 +2,9 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+import mimetypes
 from collections import Counter
+from pathlib import Path
 
 from django.views.generic import (
     DetailView,
@@ -15,7 +17,15 @@ from django.views.generic import (
 )
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpResponse,
+    JsonResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+)
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db import connection
@@ -37,7 +47,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 import uuid
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
@@ -76,7 +86,6 @@ from .models import (
     NFEToFEReferralMapping,
 )
 from student_registration.backends.models import ExportHistory
-
 from .education_form import NewRoundForm
 from .forms import (
     MainForm,
@@ -87,6 +96,29 @@ from .serializers import (
     MainSerializer,
     TeacherSerializer,
 )
+
+
+@login_required
+def informed_consent_file(request, pk):
+    """Serve a registration's consent file through its configured storage.
+
+    Media URLs are not served by Django when ``DEBUG`` is disabled. Reading
+    through the field also keeps this endpoint compatible with local and
+    remote storage backends.
+    """
+    registration = get_object_or_404(Registration, pk=pk)
+    consent = registration.informed_consent
+    if not consent:
+        raise Http404("No informed consent file is available.")
+
+    filename = Path(consent.name).name
+    content_type, _ = mimetypes.guess_type(filename)
+    return FileResponse(
+        consent.open("rb"),
+        content_type=content_type or "application/octet-stream",
+        as_attachment=False,
+        filename=filename,
+    )
 
 from .utils import *
 
