@@ -113,8 +113,16 @@ def informed_consent_file(request, pk):
 
     filename = Path(consent.name).name
     content_type, _ = mimetypes.guess_type(filename)
+    try:
+        consent_file = consent.open("rb")
+    except FileNotFoundError:
+        # A FileField can retain its database value after the underlying file
+        # has been removed from storage. Treat that stale reference like any
+        # other missing consent file instead of returning a server error.
+        raise Http404("The informed consent file could not be found.")
+
     return FileResponse(
-        consent.open("rb"),
+        consent_file,
         content_type=content_type or "application/octet-stream",
         as_attachment=False,
         filename=filename,
