@@ -76,6 +76,15 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': _('مثال: السيد'),
         'oninput': "this.value = this.value.replace(/[^A-Za-z\\u0621-\\u064A\\u066E-\\u06D3\\s]/g, '')"}), required=True,validators=[only_letters_validator]
     )
+    informed_consent = forms.FileField(
+        label=_('Informed Consent for Data Sharing\nNon-Formal Education Programming in Lebanon'),
+        help_text=_(
+            'UNICEF would like to share your personal data with the Ministry of Education in Lebanon '
+            'and possibly Syria to support children’s continuity of learning and facilitate access to '
+            'appropriate education opportunities and pathways in the future.'
+        ),
+        required=False,
+    )
     child_photo = forms.ImageField(
         label=_('Child Photo'),
         required=False,
@@ -769,8 +778,12 @@ class MainForm(forms.ModelForm):
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 
+                informed_consent = request.FILES.get('informed_consent')
                 child_photo = request.FILES.get('child_photo')
                 child_disability_other = request.POST.get('child_disability_other')
+
+                if informed_consent:
+                    instance.informed_consent = informed_consent
 
                 child_save = False
                 if child_photo:
@@ -805,8 +818,12 @@ class MainForm(forms.ModelForm):
                 if request.POST.get("student_old"):
                     instance.student_old = request.POST.get("student_old")
 
+                informed_consent = request.FILES.get('informed_consent')
                 child_photo = request.FILES.get('child_photo')
                 child_disability_other = request.POST.get('child_disability_other')
+
+                if informed_consent:
+                    instance.informed_consent = informed_consent
 
                 child_save = False
                 if child_photo:
@@ -846,6 +863,7 @@ class MainForm(forms.ModelForm):
         model = Registration
         fields = (
             'student_old',
+            'informed_consent',
             'child_first_name',
             'child_father_name',
             'child_last_name',
