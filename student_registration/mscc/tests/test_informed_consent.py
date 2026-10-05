@@ -1,6 +1,6 @@
 from io import BytesIO
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.http import Http404
 from django.test import RequestFactory, SimpleTestCase
@@ -48,6 +48,19 @@ class InformedConsentFileTests(SimpleTestCase):
         request.user = self.user
 
         with self.assertRaises(Http404):
+            views.informed_consent_file(request, pk=42)
+
+    @patch('student_registration.mscc.views.get_object_or_404')
+    def test_returns_not_found_when_stored_file_is_missing(self, get_object_or_404):
+        consent = SimpleNamespace(
+            name='uploads/mscc_registration/informed_consent/Informed_Consent_Form.docx',
+            open=Mock(side_effect=FileNotFoundError(2, 'No such file or directory')),
+        )
+        get_object_or_404.return_value = SimpleNamespace(informed_consent=consent)
+        request = self.factory.get('/mscc/informed-consent/42/')
+        request.user = self.user
+
+        with self.assertRaisesMessage(Http404, 'could not be found'):
             views.informed_consent_file(request, pk=42)
 
     def test_requires_authentication(self):
