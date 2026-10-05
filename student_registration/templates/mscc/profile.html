@@ -55,6 +55,11 @@
                             </div>
                         </div>
                         <div class="d-flex gap-2">
+                            {% if instance.informed_consent %}
+                            <a href="{{ instance.informed_consent.url }}" class="btn btn-outline-primary" target="_blank" rel="noopener">
+                                <i class="bi bi-file-earmark-check me-2"></i> {% trans "View Informed Consent" %}
+                            </a>
+                            {% endif %}
                             {% if request.user|has_group:"MSCC_FULL" %}
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newRoundModal">
                                 <i class="bi bi-plus-circle me-2"></i> {% trans "New Round" %}

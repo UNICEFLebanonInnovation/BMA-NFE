@@ -526,6 +526,12 @@ class Registration(TimeStampedModel):
         on_delete=models.SET_NULL,
         verbose_name=_('Child')
     )
+    informed_consent = models.FileField(
+        upload_to='uploads/mscc_registration/informed_consent',
+        blank=True,
+        null=True,
+        verbose_name=_('Informed Consent for Data Sharing\nNon-Formal Education Programming in Lebanon'),
+    )
     student_old = models.IntegerField(blank=True, null=True, verbose_name=_('Student old'))
     partner = models.ForeignKey(
         PartnerOrganization,
