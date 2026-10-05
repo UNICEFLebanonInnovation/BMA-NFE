@@ -2,12 +2,20 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+import mimetypes
 from datetime import datetime
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import (
+    FileResponse,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 import io
 import csv
 import logging
@@ -27,7 +35,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from django.templatetags.static import static
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -65,6 +74,27 @@ from .serializers import (
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
+
+
+@login_required
+def bridging_profile_picture(request, pk):
+    """Serve a bridging child's picture, falling back for stale media paths."""
+    registration = get_object_or_404(
+        Bridging.objects.select_related('student'),
+        pk=pk,
+    )
+    unicef_id = registration.student.unicef_id
+    if not unicef_id:
+        return HttpResponseRedirect(static('images/avatars/user.png'))
+
+    file_name = f'uploads/bridging/profile_pictures/{unicef_id}.jpg'
+    try:
+        profile_picture = default_storage.open(file_name, 'rb')
+    except (FileNotFoundError, OSError):
+        return HttpResponseRedirect(static('images/avatars/user.png'))
+
+    content_type = mimetypes.guess_type(file_name)[0] or 'application/octet-stream'
+    return FileResponse(profile_picture, content_type=content_type)
 
 
 class BridgingPage(LoginRequiredMixin,
@@ -939,5 +969,3 @@ def bridging_export_all(request, **kwargs):
     except Exception as e:
         logging.error("Export failed: %s", traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
-
-

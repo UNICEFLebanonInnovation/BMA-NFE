@@ -9,6 +9,12 @@ app_name = 'clm'
 urlpatterns = [
 
     re_path(
+        r'^bridging-profile-picture/(?P<pk>[\w.@+-]+)/image/$',
+        bridging_views.bridging_profile_picture,
+        name='bridging_profile_picture'
+    ),
+
+    re_path(
         r'^search-clm-child/$',
         bridging_views.search_clm_child,
         name='search_clm_child'
