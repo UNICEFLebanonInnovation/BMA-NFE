@@ -1,0 +1,66 @@
+{% extends "clm/base.html" %}
+{% load i18n %}
+
+{% block project_title %}{% trans "Profile Picture" %}{% endblock %}
+
+{% block main_content %}
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div>
+        <div class="page-title-head center-elem page-title-heading">
+          <span class="d-inline-block pr-2"><i class="fa fa-image"></i></span>
+          <span class="d-inline-block">{% trans "Profile Picture" %}</span>
+        </div>
+        <div class="page-title-subheading opacity-10">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'clm:bridging_list' %}">{% trans "Dirasa List" %}</a></li>
+              <li class="breadcrumb-item">{% trans "Profile Picture" %}</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main-card mb-3 card">
+  <div class="card-body">
+    <h5 class="card-title">{% trans "Profile Picture" %}</h5>
+
+    {% if object.profile_picture %}
+      <div class="mb-4">
+        <img src="{% url 'clm:bridging_profile_picture_file' object.pk %}"
+             alt="{% trans 'Current profile picture' %}"
+             class="img-thumbnail"
+             style="max-width: 320px; max-height: 320px; object-fit: contain;">
+      </div>
+    {% else %}
+      <p class="text-muted">{% trans "No profile picture has been uploaded." %}</p>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="form-group">
+        {{ form.profile_picture.label_tag }}
+        {{ form.profile_picture }}
+        {% for error in form.profile_picture.errors %}
+          <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <a href="{% url 'clm:bridging_list' %}" class="btn btn-link">{% trans "Back to list" %}</a>
+      <button type="submit" class="btn btn-success">{% trans "Save" %}</button>
+    </form>
+
+    <hr>
+    <h5 class="card-title">{% trans "Profile ID" %}</h5>
+    <p class="text-muted">{% trans "Generate a printable profile ID card for this child using the saved profile picture and registration details." %}</p>
+    <a href="{% url 'clm:bridging_profile_id' object.pk %}" class="btn btn-primary" target="_blank" rel="noopener">
+      <i class="fa fa-id-card"></i> {% trans "Generate Profile ID" %}
+    </a>
+  </div>
+</div>
+{% endblock %}

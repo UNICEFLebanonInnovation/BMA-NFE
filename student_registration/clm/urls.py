@@ -24,6 +24,31 @@ urlpatterns = [
         name='bridging_edit'
     ),
     re_path(
+        r'^bridging-profile-picture/(?P<pk>[\w.@+-]+)/$',
+        view=bridging_views.BridgingProfilePictureView.as_view(),
+        name='bridging_profile_picture'
+    ),
+    re_path(
+        r'^bridging-profile-picture/(?P<pk>[\w.@+-]+)/image/$',
+        view=bridging_views.BridgingProfilePictureFileView.as_view(),
+        name='bridging_profile_picture_file'
+    ),
+    re_path(
+        r'^bridging-profile-ids/$',
+        view=bridging_views.BridgingBulkProfileIdView.as_view(),
+        name='bridging_profile_id_bulk'
+    ),
+    re_path(
+        r'^bridging-profile-ids/download/(?P<file_name>.+)/$',
+        view=bridging_views.bridging_profile_ids_download,
+        name='bridging_profile_ids_download'
+    ),
+    re_path(
+        r'^bridging-profile-id/(?P<pk>[\w.@+-]+)/$',
+        view=bridging_views.BridgingProfileIdView.as_view(),
+        name='bridging_profile_id'
+    ),
+    re_path(
         r'^bridging-post-assessment/(?P<pk>[\w.@+-]+)/$',
         view=bridging_views.BridgingPostAssessmentView.as_view(),
         name='bridging_post_assessment'

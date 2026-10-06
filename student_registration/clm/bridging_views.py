@@ -4,16 +4,17 @@ from __future__ import absolute_import, unicode_literals
 import json
 from datetime import datetime
 
-from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
+from django.views.generic import ListView, FormView, TemplateView, UpdateView, View, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404, FileResponse
 import io
 import csv
 import logging
 logging.basicConfig(level=logging.ERROR)
 import os
 import uuid
+import mimetypes
 from django.core.files.storage import default_storage
 from storages.backends.azure_storage import AzureStorage
 from django.core.files.base import ContentFile
@@ -27,7 +28,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -52,11 +53,14 @@ from student_registration.schools.models import (
     CLMRound,
 )
 from student_registration.backends.models import ExportHistory
+from student_registration.backends.profile_ids import profile_ids_download, start_profile_ids_export
+from .profile_id import BRIDGING_PROFILE_IDS, bridging_profile_id_card
 from .bridging_forms import (
     BridgingAssessmentForm,
     BridgingMidAssessmentForm,
     BridgingFollowupForm,
     BridgingServiceForm,
+    BridgingProfilePictureForm,
     BridgingForm
 )
 from .serializers import (
@@ -70,6 +74,41 @@ from student_registration.students.models import Nationality
 class BridgingPage(LoginRequiredMixin,
                    TemplateView):
     template_name = 'clm/index.html'
+
+
+def bridging_list_queryset(request):
+    """Current-year Dirasa registrations the user may see, ordered like the Dirasa list."""
+    qs = (
+        Bridging.objects.filter(round__current_year=True, deleted=False)
+        .select_related(
+            "student",
+            "student__nationality",
+            "round",
+            "school",
+            "governorate",
+            "district",
+            "owner",
+            "modified_by",
+        )
+        .order_by(
+            "student__first_name",
+            "student__father_name",
+            "student__last_name",
+        )
+    )
+
+    if (
+        not has_group(request.user, "CLM_BRIDGING_ALL")
+        and not request.user.is_staff
+    ):
+        if request.user.partner:
+            qs = qs.filter(partner_id=request.user.partner_id)
+            if request.user.school:
+                qs = qs.filter(school_id=request.user.school_id)
+        else:
+            qs = qs.none()
+
+    return qs
 
 
 class BridgingListView(LoginRequiredMixin,
@@ -86,37 +125,84 @@ class BridgingListView(LoginRequiredMixin,
     filterset_class = BridgingFilter
 
     def get_queryset(self):
-        qs = (
-            Bridging.objects.filter(round__current_year=True, deleted=False)
-            .select_related(
-                "student",
-                "student__nationality",
-                "round",
-                "school",
-                "governorate",
-                "district",
-                "owner",
-                "modified_by",
-            )
-            .order_by(
-                "student__first_name",
-                "student__father_name",
-                "student__last_name",
-            )
+        return bridging_list_queryset(self.request)
+
+
+class BridgingProfilePictureView(LoginRequiredMixin,
+                                 GroupRequiredMixin,
+                                 UpdateView):
+    model = Bridging
+    form_class = BridgingProfilePictureForm
+    template_name = 'clm/bridging_profile_picture.html'
+    success_url = '/clm/bridging-list/'
+    group_required = [u"CLM_Bridging"]
+
+
+class BridgingProfilePictureFileView(LoginRequiredMixin,
+                                     GroupRequiredMixin,
+                                     View):
+    group_required = [u"CLM_Bridging"]
+
+    def get(self, request, pk):
+        bridging = get_object_or_404(Bridging, pk=pk)
+        if not bridging.profile_picture:
+            raise Http404("Profile picture not found")
+
+        content_type = mimetypes.guess_type(bridging.profile_picture.name)[0]
+        return FileResponse(
+            bridging.profile_picture.open('rb'),
+            content_type=content_type or 'application/octet-stream',
         )
 
-        if (
-            not has_group(self.request.user, "CLM_BRIDGING_ALL")
-            and not self.request.user.is_staff
-        ):
-            if self.request.user.partner:
-                qs = qs.filter(partner_id=self.request.user.partner_id)
-                if self.request.user.school:
-                    qs = qs.filter(school_id=self.request.user.school_id)
-            else:
-                qs = qs.none()
 
-        return qs
+class BridgingProfileIdView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            DetailView):
+    """Printable child profile ID card generated from a Bridging registration."""
+    model = Bridging
+    template_name = 'clm/bridging_profile_id.html'
+    group_required = [u"CLM_Bridging"]
+
+    def get_context_data(self, **kwargs):
+        context = super(BridgingProfileIdView, self).get_context_data(**kwargs)
+        context['card'] = bridging_profile_id_card(self.object)
+        return context
+
+
+def bridging_profile_ids_queryset(request):
+    """Children a bulk profile ID request covers: the Dirasa list scope and filters, plus optional ``ids``."""
+    queryset = bridging_list_queryset(request)
+    filterset = BridgingFilter(request.GET, queryset=queryset, request=request)
+    queryset = filterset.qs  # like the list page: invalid filters list nothing
+
+    ids = [value for value in request.GET.get('ids', '').split(',') if value.strip().isdigit()]
+    if ids:
+        queryset = queryset.filter(id__in=ids)
+    return queryset
+
+
+class BridgingBulkProfileIdView(LoginRequiredMixin,
+                                GroupRequiredMixin,
+                                View):
+    """Start background generation of one PDF with a profile ID page per child.
+
+    Takes the same filters as the Dirasa list, so the button on the list page
+    covers exactly the children currently listed. The PDF is built in the
+    background and the user gets a web push notification with the download
+    link when it is ready (or a failure notice).
+    """
+    group_required = [u"CLM_Bridging"]
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        registration_ids = list(bridging_profile_ids_queryset(request).values_list('id', flat=True))
+        if not registration_ids:
+            return JsonResponse({'error': 'No children match the current filters, so there is nothing to generate.'},
+                                status=400)
+        return JsonResponse(start_profile_ids_export(request, BRIDGING_PROFILE_IDS, registration_ids))
+
+
+bridging_profile_ids_download = profile_ids_download
 
 
 class BridgingAddView(LoginRequiredMixin,

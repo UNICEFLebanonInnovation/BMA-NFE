@@ -32,6 +32,8 @@ class BridgingTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                         template_name='django_tables2/clm_action_column.html',
                                         attrs={'url_edit': '/clm/bridging-edit/',
+                                               'url_profile_picture': '/clm/bridging-profile-picture/',
+                                               'url_profile_id': '/clm/bridging-profile-id/',
                                                'url_delete': '/clm/bridging-delete/',
                                                'url_post_assessment': '/clm/bridging-post-assessment/',
                                                'url_mid_assessment1': '/clm/bridging-mid-assessment/',

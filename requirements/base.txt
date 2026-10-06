@@ -24,6 +24,11 @@ django-model-utils==5.0.0
 # Images
 Pillow==11.3.0
 
+# PDF generation (child profile ID cards)
+reportlab==5.0.1
+arabic-reshaper==3.0.1
+python-bidi==0.6.11
+
 # Password storage
 argon2-cffi==21.3.0
 

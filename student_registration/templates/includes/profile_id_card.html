@@ -1,0 +1,24 @@
+{% comment %}
+One child profile ID card. Expects `card` (round, id, ngo, full_name, ...), `card_id` and `photo_url`.
+{% endcomment %}
+<div class="card" id="profile-id-card-{{ card_id }}" data-registration-id="{{ card_id }}">
+  <div class="photo">
+    {% if card.has_picture %}
+      <img src="{{ photo_url }}" alt="{{ card.full_name }}">
+    {% else %}
+      picture
+    {% endif %}
+  </div>
+  <div class="details">
+    <div class="title">{{ card.round }}</div>
+    <div class="subtitle">الامتحان الاستثنائي لطلاب التعليم الغير نظامي</div>
+    <div>ID: {{ card.id }}</div>
+    <div>NGO: {{ card.ngo }}</div>
+    <div class="name">الاسم الثلاثي: {{ card.full_name }}</div>
+    <div>Date of Birth: {{ card.birthday }}</div>
+    <div>Place of Birth: {{ card.place_of_birth }}</div>
+    <div>Nationality: {{ card.nationality }}</div>
+    <div>Governorate: {{ card.governorate }}</div>
+    <div>Physical difficulties: {{ card.physical_difficulties }}</div>
+  </div>
+</div>

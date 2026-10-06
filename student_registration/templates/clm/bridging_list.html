@@ -46,6 +46,11 @@
 <a href="{% url 'clm:bridging_add' %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>{% trans "Add New Beneficiary" %}</a>
 
 {% endif %}
+
+<a href="#" id="generate-profile-ids" data-url="{% url 'clm:bridging_profile_id_bulk' %}"
+   onclick="generateProfileIds(event)" class="mr-3 btn-icon btn btn-primary"
+   title="{% trans 'Generate one PDF with a profile ID page for every child in the current list. It runs in the background and you are notified when it is ready.' %}">
+  <i class="fa fa-id-card btn-icon-wrapper"> </i>{% trans "Generate Profile IDs (PDF)" %}</a>
                         </div>
                         </div>
 </div>
@@ -105,6 +110,54 @@
         var user_token = '{{ user_token }}';
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+        function pollProfileIdsUntilReady(exportId, attemptsRemaining) {
+            // Fallback for users without web push: watch the export until it is done.
+            $.ajax({
+                url: '/mscc/export-status/' + encodeURIComponent(exportId) + '/',
+                type: 'GET',
+                headers: getHeader(),
+                success: function (data) {
+                    if (data.status === 'done' && data.file_url) {
+                        $('#downloadReadyModal .download-link').attr('href', data.file_url);
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('downloadReadyModal')).show();
+                    } else if (data.status === 'failed') {
+                        showModal("{% trans 'Generating the profile IDs PDF failed. Please try again later.' %}");
+                    } else if (attemptsRemaining > 0) {
+                        setTimeout(function () {
+                            pollProfileIdsUntilReady(exportId, attemptsRemaining - 1);
+                        }, 3000);
+                    }
+                }
+            });
+        }
+
+        function generateProfileIds(event) {
+            event.preventDefault();
+            var button = $('#generate-profile-ids');
+            if (button.hasClass('disabled')) {
+                return;
+            }
+            button.addClass('disabled');
+
+            $.ajax({
+                url: button.data('url') + window.location.search,
+                type: "POST",
+                headers: getHeader(),
+                success: function (data) {
+                    showModal("{% trans 'Generating the profile IDs PDF in the background for' %} " + data.count +
+                              " {% trans 'child(ren). You will receive a notification with the download link once it is ready.' %}");
+                    pollProfileIdsUntilReady(data.export_id, 200);
+                },
+                error: function (xhr) {
+                    showModal((xhr.responseJSON && xhr.responseJSON.error) ||
+                              "{% trans 'Error starting the profile IDs generation. Please try again.' %}");
+                },
+                complete: function () {
+                    button.removeClass('disabled');
+                }
+            });
+        }
 
         function checkRoundBeforeExport(event) {
             event.preventDefault();

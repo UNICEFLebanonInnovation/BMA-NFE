@@ -13,6 +13,11 @@
                 <i class="bi bi-person-bounding-box text-info"></i> {% trans "View Profile" %}
             </a>
         </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'mscc:child_profile_id' record.id %}" target="_blank" rel="noopener">
+                <i class="bi bi-person-vcard text-info"></i> {% trans "Profile ID" %}
+            </a>
+        </li>
         {% if user|has_group:"MSCC_CENTER" and user.center %}
         <li>
             <a class="dropdown-item" href="{% url 'mscc:child_edit' record.id %}">

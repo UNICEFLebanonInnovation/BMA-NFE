@@ -126,6 +126,21 @@ urlpatterns = [
         name='child_profile'
     ),
     re_path(
+        r'^child-profile-id/(?P<pk>[\w.@+-]+)/$',
+        view=views.RegistrationProfileIdView.as_view(),
+        name='child_profile_id'
+    ),
+    re_path(
+        r'^profile-ids/$',
+        view=views.MakaniBulkProfileIdView.as_view(),
+        name='profile_ids_bulk'
+    ),
+    re_path(
+        r'^profile-ids/download/(?P<file_name>.+)/$',
+        view=views.makani_profile_ids_download,
+        name='profile_ids_download'
+    ),
+    re_path(
         r'^services/inclusion-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.InclusionFormView.as_view(),
         name='service_inclusion_add'
