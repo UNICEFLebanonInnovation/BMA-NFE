@@ -1,0 +1,24 @@
+{% load i18n %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BMA | {% trans "Profile ID" %} - {{ card.full_name }}</title>
+  {% include "includes/profile_id_style.html" %}
+</head>
+<body>
+  <div class="toolbar">
+    <button type="button" class="btn" onclick="window.print()">{% trans "Print / Save as PDF" %}</button>
+    <a class="btn secondary" href="{% url 'mscc:child_profile' object.pk %}">{% trans "Child Profile" %}</a>
+    <a class="btn secondary" href="{% url 'mscc:list' %}">{% trans "Makani List" %}</a>
+    <span class="spacer"></span>
+    {% if not card.has_picture %}
+      <span class="hint">{% trans "No photo has been uploaded for this child. Add one from Edit Profile." %}</span>
+    {% endif %}
+  </div>
+
+  <div class="sheet">
+    {% include "includes/profile_id_card.html" with card=card card_id=object.pk photo_url=photo_url %}
+  </div>
+</body>
+</html>

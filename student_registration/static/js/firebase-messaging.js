@@ -55,6 +55,18 @@ navigator.serviceWorker
   });
 
 onMessage(messaging, (payload) => {
+  if (payload.data && (payload.data.type === "profile_ids_ready" || payload.data.type === "profile_ids_failed")) {
+    const label = payload.data.label || '';
+    if (!document.hidden) {
+      if (payload.data.type === "profile_ids_ready") {
+        $('#downloadReadyModal .download-link').attr('href', payload.data.url);
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('downloadReadyModal')).show();
+      } else {
+        alert(label + ' ' + translateMessage('profile IDs failed: ') + (payload.data.reason || translateMessage('Unknown error')));
+      }
+    }
+    return;
+  }
   if (payload.data && (payload.data.type === "mscc_export_ready" || payload.data.type === "mscc_export_failed")) {
     const isSuccess = payload.data.type === "mscc_export_ready";
 

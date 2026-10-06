@@ -86,6 +86,8 @@ from .models import (
     NFEToFEReferralMapping,
 )
 from student_registration.backends.models import ExportHistory
+from student_registration.backends.profile_ids import profile_ids_download, start_profile_ids_export
+from .profile_id import MAKANI_PROFILE_IDS, registration_profile_id_card
 from .education_form import NewRoundForm
 from .forms import (
     MainForm,
@@ -643,6 +645,72 @@ def main_mark_delete_view(request, pk):
     return JsonResponse(result)
 
 
+def makani_list_queryset(request):
+    """Registrations the user may see, scoped and ordered like the Makani list."""
+    user = request.user
+    center_id = user.center_id
+    partner_id = user.partner_id
+
+    qs = (Registration.objects
+          .select_related(
+              'child',
+              'child__nationality',
+              'partner',
+              'center',
+              'center__governorate',
+              'center__caza',
+              'center__cadaster',
+              'owner',
+              'modified_by',
+              'round',
+          )
+          .prefetch_related('education_service')
+          .filter(deleted=False))
+
+    previous_registration = Registration.objects.filter(
+        child_id=OuterRef('child_id'),
+        created__lt=OuterRef('created'),
+    )
+
+    absent_days = (
+        MSCCAttendanceChild.objects
+        .filter(registration_id=OuterRef('pk'), attended='No')
+        .values('registration')
+        .annotate(count=Count('id'))
+        .values('count')
+    )
+
+    referred_to_fe_subquery = Referral.objects.filter(
+        registration_id=OuterRef('pk'),
+        recommended_learning_path='Progress to FE'
+    )
+
+    qs = qs.annotate(
+        has_previous=Exists(previous_registration),
+        _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
+        is_referred_to_fe=Exists(referred_to_fe_subquery),
+    )
+
+    round_filter = Q(round__isnull=True) | Q(round__current_year=True)
+
+    if has_group(user, 'MSCC_UNICEF'):
+        return qs.filter(round_filter).order_by('-id')
+
+    elif has_group(user, 'MSCC_PARTNER') and partner_id:
+        return qs.filter(round_filter, partner=partner_id).order_by('-id')
+
+    elif has_group(user, 'MSCC_CENTER') and center_id:
+        return qs.filter(round_filter, center=center_id).order_by('-id')
+
+    return Registration.objects.none()
+
+
+def makani_filterset_class(user):
+    if has_group(user, 'MSCC_UNICEF'):
+        return FullFilter
+    return MainFilter
+
+
 class MainListView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FilterView,
@@ -659,62 +727,7 @@ class MainListView(LoginRequiredMixin,
     filterset_class = MainFilter
 
     def get_queryset(self):
-        user = self.request.user
-        center_id = user.center_id
-        partner_id = user.partner_id
-
-        qs = (Registration.objects
-              .select_related(
-            'child',
-            'child__nationality',
-            'partner',
-            'center',
-            'center__governorate',
-            'center__caza',
-            'center__cadaster',
-            'owner',
-            'modified_by',
-            'round',
-        )
-              .prefetch_related('education_service')
-              .filter(deleted=False))
-
-        previous_registration = Registration.objects.filter(
-            child_id=OuterRef('child_id'),
-            created__lt=OuterRef('created'),
-        )
-
-        absent_days = (
-            MSCCAttendanceChild.objects
-                .filter(registration_id=OuterRef('pk'), attended='No')
-                .values('registration')
-                .annotate(count=Count('id'))
-                .values('count')
-        )
-
-        referred_to_fe_subquery = Referral.objects.filter(
-            registration_id=OuterRef('pk'),
-            recommended_learning_path='Progress to FE'
-        )
-
-        qs = qs.annotate(
-            has_previous=Exists(previous_registration),
-            _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
-            is_referred_to_fe=Exists(referred_to_fe_subquery),
-        )
-
-        round_filter = Q(round__isnull=True) | Q(round__current_year=True)
-
-        if has_group(user, 'MSCC_UNICEF'):
-            return qs.filter(round_filter).order_by('-id')
-
-        elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return qs.filter(round_filter, partner=partner_id).order_by('-id')
-
-        elif has_group(user, 'MSCC_CENTER') and center_id:
-            return qs.filter(round_filter, center=center_id).order_by('-id')
-
-        return Registration.objects.none()
+        return makani_list_queryset(self.request)
 
     def get_table_class(self):
 
@@ -733,14 +746,58 @@ class MainListView(LoginRequiredMixin,
         return self.table_class
 
     def get_filterset_class(self):
-        if has_group(self.request.user, 'MSCC_UNICEF'):
-            return FullFilter
-        elif has_group(self.request.user, 'MSCC_PARTNER'):
-            return self.filterset_class
-        elif has_group(self.request.user, 'MSCC_CENTER'):
-            return self.filterset_class
+        return makani_filterset_class(self.request.user)
 
-        return self.filterset_class
+
+class RegistrationProfileIdView(LoginRequiredMixin,
+                                GroupRequiredMixin,
+                                DetailView):
+    """Printable child profile ID card generated from a Makani registration."""
+    model = Registration
+    template_name = 'mscc/profile_id.html'
+    group_required = [u"MSCC"]
+
+    def get_context_data(self, **kwargs):
+        context = super(RegistrationProfileIdView, self).get_context_data(**kwargs)
+        context['card'] = registration_profile_id_card(self.object)
+        child = self.object.child
+        context['photo_url'] = child.photo.url if child and child.photo else ''
+        return context
+
+
+def makani_profile_ids_queryset(request):
+    """Children a bulk profile ID request covers: the Makani list scope and filters, plus optional ``ids``."""
+    queryset = makani_list_queryset(request)
+    filterset = makani_filterset_class(request.user)(request.GET, queryset=queryset, request=request)
+    queryset = filterset.qs  # like the list page: invalid filters list nothing
+
+    ids = [value for value in request.GET.get('ids', '').split(',') if value.strip().isdigit()]
+    if ids:
+        queryset = queryset.filter(id__in=ids)
+    return queryset
+
+
+class MakaniBulkProfileIdView(LoginRequiredMixin,
+                              GroupRequiredMixin,
+                              View):
+    """Start background generation of one PDF with a profile ID page per child.
+
+    Takes the same filters as the Makani list, so the button on the list page
+    covers exactly the children currently listed. The user gets a web push
+    notification with the download link when the PDF is ready.
+    """
+    group_required = [u"MSCC"]
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        registration_ids = list(makani_profile_ids_queryset(request).values_list('id', flat=True))
+        if not registration_ids:
+            return JsonResponse({'error': 'No children match the current filters, so there is nothing to generate.'},
+                                status=400)
+        return JsonResponse(start_profile_ids_export(request, MAKANI_PROFILE_IDS, registration_ids))
+
+
+makani_profile_ids_download = profile_ids_download
 
 
 class MainViewSet(mixins.RetrieveModelMixin,

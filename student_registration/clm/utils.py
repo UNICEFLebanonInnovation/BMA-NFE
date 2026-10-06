@@ -986,3 +986,19 @@ def update_consecutive_absence(registration_id, student_id, first_name, father_n
             consecutive_absence_days=1,
         )
         absence.save()
+
+
+def is_allowed_create(programme):
+    """Whether registrations can be created for ``programme`` in the current round.
+
+    The ``util_tags`` template filters import this from here; the implementation
+    lives with the shared student utilities.
+    """
+    from student_registration.students.utils import is_allowed_create as _is_allowed_create
+    return _is_allowed_create(programme)
+
+
+def is_allowed_edit(programme):
+    """Whether registrations of ``programme`` can be edited in the current round."""
+    from student_registration.students.utils import is_allowed_edit as _is_allowed_edit
+    return _is_allowed_edit(programme)

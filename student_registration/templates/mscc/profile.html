@@ -65,6 +65,9 @@
                                 <i class="bi bi-plus-circle me-2"></i> {% trans "New Round" %}
                             </button>
                             {% endif %}
+                            <a href="{% url 'mscc:child_profile_id' instance.id %}" class="btn btn-outline-primary" target="_blank" rel="noopener">
+                                <i class="bi bi-person-vcard me-2"></i> {% trans "Generate Profile ID" %}
+                            </a>
                             <a href="{% url 'mscc:child_edit' instance.id %}" class="btn btn-outline-secondary">
                                 <i class="bi bi-pencil me-2"></i> {% trans "Edit Profile" %}
                             </a>

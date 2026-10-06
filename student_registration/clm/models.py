@@ -1619,6 +1619,11 @@ class Bridging(CLM):
         on_delete=models.SET_NULL,
         verbose_name=_('School Name')
     )
+    profile_picture = models.ImageField(
+        upload_to='uploads/bridging/profile_pictures',
+        blank=True, null=True,
+        verbose_name=_('Profile picture')
+    )
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,

@@ -33,6 +33,11 @@
             <button class="btn btn-sm btn-outline-success me-2 download-report-async" type="button">
                 <i class="bi bi-download me-2"></i> {% trans "Export" %}
             </button>
+            <button class="btn btn-sm btn-outline-primary me-2" type="button" id="generate-profile-ids"
+                    data-url="{% url 'mscc:profile_ids_bulk' %}"
+                    title="{% trans 'Generate one PDF with a profile ID page for every child in the current list. It runs in the background and you are notified when it is ready.' %}">
+                <i class="bi bi-person-vcard me-2"></i> {% trans "Generate Profile IDs (PDF)" %}
+            </button>
             {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner.id %}
             <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#child-registration-modal">
                 <i class="bi bi-plus-lg me-2"></i> {% trans "Add New Child" %}
@@ -184,5 +189,51 @@
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=22"></script>
+    <script>
+        function pollProfileIdsUntilReady(exportId, attemptsRemaining) {
+            // Fallback for users without web push: watch the export until it is done.
+            $.ajax({
+                url: '/mscc/export-status/' + encodeURIComponent(exportId) + '/',
+                type: 'GET',
+                headers: getHeader(),
+                success: function (data) {
+                    if (data.status === 'done' && data.file_url) {
+                        $('#downloadReadyModal .download-link').attr('href', data.file_url);
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('downloadReadyModal')).show();
+                    } else if (data.status === 'failed') {
+                        showModal("{% trans 'Generating the profile IDs PDF failed. Please try again later.' %}");
+                    } else if (attemptsRemaining > 0) {
+                        setTimeout(function () {
+                            pollProfileIdsUntilReady(exportId, attemptsRemaining - 1);
+                        }, 3000);
+                    }
+                }
+            });
+        }
+
+        $(document).on('click', '#generate-profile-ids', function (event) {
+            event.preventDefault();
+            var button = $(this);
+            var originalHtml = button.html();
+            button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> {% trans "Processing..." %}');
+            $.ajax({
+                url: button.data('url') + window.location.search,
+                type: "POST",
+                headers: getHeader(),
+                success: function (data) {
+                    showModal("{% trans 'Generating the profile IDs PDF in the background for' %} " + data.count +
+                              " {% trans 'child(ren). You will receive a notification with the download link once it is ready.' %}");
+                    pollProfileIdsUntilReady(data.export_id, 200);
+                },
+                error: function (xhr) {
+                    showModal((xhr.responseJSON && xhr.responseJSON.error) ||
+                              "{% trans 'Error starting the profile IDs generation. Please try again.' %}");
+                },
+                complete: function () {
+                    button.prop('disabled', false).html(originalHtml);
+                }
+            });
+        });
+    </script>
 
 {% endblock %}

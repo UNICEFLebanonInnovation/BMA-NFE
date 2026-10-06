@@ -19,6 +19,18 @@
           {% trans "Edit" %}</a>
       {% endif %}
 
+      {% if column.attrs.url_profile_picture and column.attrs.programme|is_allowed_edit %}
+        <a type="button" href="{{ column.attrs.url_profile_picture }}{{ record.id }}" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-image btn-icon-wrapper"> </i></button>
+          {% trans "Profile Picture" %}</a>
+      {% endif %}
+
+      {% if column.attrs.url_profile_id %}
+        <a type="button" href="{{ column.attrs.url_profile_id }}{{ record.id }}" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-card btn-icon-wrapper"> </i></button>
+          {% trans "Profile ID" %}</a>
+      {% endif %}
+
       {% if record.owner.id == request.user.id and record.total_absent_days < 40 %}
         <a type="button" href="{{ column.attrs.url_delete }}{{ record.id }}" tabindex="0" class="dropdown-item delete-student"  data-registration-id="{{ record.id }}">
           <button id="delete-button-{{ record.id }}" class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-delete btn-icon-wrapper"> </i></button>

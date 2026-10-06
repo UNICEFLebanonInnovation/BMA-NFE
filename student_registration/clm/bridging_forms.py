@@ -3385,3 +3385,14 @@ class BridgingFollowupForm(forms.ModelForm):
             # 'child_health_examed',
             # 'child_health_concern',
         )
+
+
+class BridgingProfilePictureForm(forms.ModelForm):
+    """Upload or replace the profile picture stored on a Bridging record."""
+
+    class Meta:
+        model = Bridging
+        fields = ('profile_picture',)
+        widgets = {
+            'profile_picture': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+        }
