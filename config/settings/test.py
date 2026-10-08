@@ -68,3 +68,6 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
 #         return 'notmigrations'
 #
 # MIGRATION_MODULES = DisableMigrations()
+
+# Never call the external Unique-ID service from tests
+MOBILE_API_USE_UNIQUE_ID_SERVICE = False
