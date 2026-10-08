@@ -44,7 +44,9 @@ class Round(models.Model):
     """Program round metadata used to scope registrations for a given year."""
     YEAR_CHOICES = [(year, year) for year in range(2020, 2051)]
 
-    name = models.CharField(max_length=45, unique=True, verbose_name=_('Name'))
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('BMA ID'))
+    name = models.CharField(max_length=45, verbose_name=_('Name'))
     current_year = models.BooleanField(blank=True, default=False, verbose_name=_('Current year'))
     year = models.PositiveSmallIntegerField(
         choices=YEAR_CHOICES,
@@ -114,6 +116,9 @@ class RoundPartner(TimeStampedModel):
 
 class Teacher(TimeStampedModel):
     """Basic teacher profile stored for registrations."""
+
+    bma_id = models.CharField(max_length=64, blank=True, null=True,
+                              verbose_name=_('BMA Teacher ID'))
 
     GENDER = Choices(
         ('Male', _('Male')),
@@ -429,8 +434,17 @@ class Teacher(TimeStampedModel):
     class Meta:
         verbose_name=_('Teacher')
         verbose_name_plural=_('Teachers')
+        constraints = [
+            models.UniqueConstraint(fields=['bma_id', 'center'], name='mscc_teacher_bma_center_uniq'),
+            models.CheckConstraint(
+                condition=models.Q(bma_id__isnull=True) | models.Q(center__isnull=False),
+                name='mscc_teacher_bma_needs_center',
+            ),
+        ]
 
 class Registration(TimeStampedModel):
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('BMA registration ID'))
 
     YES_NO = Choices(
         ('', _('----------')),
@@ -1576,6 +1590,8 @@ class NFEToFEReferralMapping(TimeStampedModel):
 
 
 class EducationService(TimeStampedModel):
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('BMA ID'))
 
     EDUCATION_STATUS = Choices(
         ('', _('----------')),
@@ -2061,6 +2077,8 @@ class EducationAssessment(TimeStampedModel):
 
 
 class EducationProgrammeAssessment(TimeStampedModel):
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('BMA ID'))
 
     registration = models.ForeignKey(
         Registration,
@@ -2416,6 +2434,8 @@ class FollowUpService(TimeStampedModel):
 
 
 class Referral(TimeStampedModel):
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('BMA ID'))
 
     REFERRED_SERVICE = Choices(
         ('', _('----------')),

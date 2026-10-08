@@ -263,6 +263,8 @@ class CLMStudentTotalAttendance(TimeStampedModel):
 
 
 class MSCCAttendance(TimeStampedModel):
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('BMA ID'))
     YES_NO = Choices(
         ('', '----------'),
         ('yes', _("Yes")),
@@ -335,7 +337,8 @@ class MSCCAttendance(TimeStampedModel):
         ('Y', _('Y')),
         ('Z', _('Z')),
     )
-    round_id = models.IntegerField(blank=True, null=True)
+    round = models.ForeignKey('mscc.Round', blank=True, null=True,
+                              on_delete=models.SET_NULL, related_name='+')
     center = models.ForeignKey(
         Center,
         blank=True, null=True,
