@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-"""Turn the natural keys sent by the Compiler into local objects.
+"""Resolve Compiler reference dictionaries into real local foreign-key targets.
 
 The two databases do not share primary keys, so every relation crossing the
-wire travels as a small dictionary of natural keys, for example::
+wire travels as a reference dictionary, for example::
 
     "center": {"source_id": 12, "p_code": "LB-030201", "name": "Makani Tyre"}
 
-The helpers below resolve such a dictionary against the local database. They
-try, in order: an existing sync mapping, then the natural key columns, and --
-only for the lookups listed in :data:`AUTO_CREATE_LOOKUPS` -- creation of a
-placeholder row.
+Rounds, centres, registrations and children resolve only by model ``bma_id``.
+Names, P-codes and UNICEF IDs never identify those entities. Unknown rounds
+and centres may become BMA-ID-keyed placeholders when configured. Other
+lookup tables (nationalities, partners and geography) retain their own keys.
 
 Every resolver appends a human readable note to the :class:`ResolutionLog`
 handed to it, and those notes end up in the response the Compiler stores
@@ -25,7 +25,7 @@ from django.conf import settings
 from student_registration.child.models import Child
 from student_registration.clm.models import Disability
 from student_registration.locations.models import Center, Location
-from student_registration.mscc.models import Round
+from student_registration.mscc.models import Round, Registration
 from student_registration.schools.models import (
     EducationalLevel,
     PartnerOrganization,
@@ -38,13 +38,9 @@ from student_registration.students.models import (
     Training,
 )
 
-from .constants import (
-    RESOURCE_CENTER,
-    RESOURCE_CHILD,
-    RESOURCE_REGISTRATION,
-    RESOURCE_ROUND,
-)
+from .constants import SOURCE_SYSTEM_COMPILER
 from .models import SyncedRecord
+from .identity import UnresolvedDependency, reference_bma_id
 
 logger = logging.getLogger(__name__)
 
@@ -95,9 +91,11 @@ def mapped_object(resource, source_id, source_system=None):
     """
     if source_id in (None, ''):
         return None
-    lookup = {'resource': resource, 'source_id': str(source_id)}
-    if source_system:
-        lookup['source_system'] = source_system
+    lookup = {
+        'resource': resource, 'source_id': str(source_id),
+        'source_system': source_system or SOURCE_SYSTEM_COMPILER,
+        'source_scope': '',
+    }
     record = SyncedRecord.objects.filter(**lookup).first()
     if not record:
         return None
@@ -186,83 +184,50 @@ def resolve_partner(key, log):
 
 
 def resolve_round(key, log):
-    """Resolve a round by sync mapping or by its unique name.
-
-    Rounds are cheap and fully described by the payload, so a missing round is
-    created rather than left dangling -- otherwise every registration in a new
-    round would land without one.
-    """
-    if not key:
+    """Resolve only by BMA round ID, optionally creating an ID-keyed stub."""
+    if key is None:
         return None
-    if not isinstance(key, dict):
-        key = {'name': key}
-
-    instance = mapped_object(RESOURCE_ROUND, key.get('source_id'))
+    bma_id = reference_bma_id(key)
+    instance = Round.objects.filter(bma_id=bma_id).first()
     if instance is not None:
         return instance
-
-    name = _clean(key.get('name'))
-    if not name:
-        return None
-
-    instance = Round.objects.filter(name__iexact=name).first()
-    if instance is not None:
-        return instance
-
     if not _create_missing_allowed():
-        log.add('unknown Round "{}" ignored'.format(name))
-        return None
-
-    instance = Round.objects.create(
-        name=name,
-        year=key.get('year') or None,
-        current_year=bool(key.get('current_year')),
+        raise UnresolvedDependency('BMA round #{} has not arrived yet'.format(bma_id))
+    data = key if isinstance(key, dict) else {}
+    instance, created = Round.objects.get_or_create(
+        bma_id=bma_id,
+        defaults={
+            'name': _clean(data.get('name')) or 'BMA round {}'.format(bma_id)[:45],
+            'year': data.get('year') or None,
+            'current_year': bool(data.get('current_year')),
+        },
     )
-    log.add('created Round "{}"'.format(name))
+    if created:
+        log.add('created placeholder Round with BMA ID {}'.format(bma_id))
     return instance
 
 
 def resolve_center(key, log):
-    """Resolve a centre by sync mapping, P-code, or name plus partner.
-
-    A centre is itself a replicated resource, so in normal operation the
-    mapping already exists. When a registration arrives before its centre --
-    possible on a first run -- a stub is created from the natural key and the
-    later centre event fills in the remaining columns.
-    """
-    if not key:
+    """Resolve only by BMA centre ID; names and P-codes never identify rows."""
+    if key is None:
         return None
-    if not isinstance(key, dict):
-        key = {'name': key}
-
-    instance = mapped_object(RESOURCE_CENTER, key.get('source_id'))
+    bma_id = reference_bma_id(key)
+    instance = Center.objects.filter(bma_id=bma_id).first()
     if instance is not None:
         return instance
-
-    p_code = _clean(key.get('p_code'))
-    name = _clean(key.get('name'))
-    partner = resolve_partner(key.get('partner'), log)
-
-    if p_code:
-        instance = Center.objects.filter(p_code__iexact=p_code).first()
-        if instance is not None:
-            return instance
-
-    if name:
-        queryset = Center.objects.filter(name__iexact=name)
-        if partner is not None:
-            queryset = queryset.filter(partner=partner)
-        instance = queryset.first()
-        if instance is not None:
-            return instance
-
-    if not name or not _create_missing_allowed():
-        if name:
-            log.add('unknown Center "{}" ignored'.format(name))
-        return None
-
-    instance = Center.objects.create(name=name, p_code=p_code, partner=partner)
-    log.add('created placeholder Center "{}"'.format(name))
+    if not _create_missing_allowed():
+        raise UnresolvedDependency('BMA center #{} has not arrived yet'.format(bma_id))
+    data = key if isinstance(key, dict) else {}
+    instance, created = Center.objects.get_or_create(
+        bma_id=bma_id,
+        defaults={
+            'name': _clean(data.get('name')) or 'BMA center {}'.format(bma_id),
+            'p_code': _clean(data.get('p_code')),
+            'partner': resolve_partner(data.get('partner'), log),
+        },
+    )
+    if created:
+        log.add('created placeholder Center with BMA ID {}'.format(bma_id))
     return instance
 
 
@@ -328,39 +293,25 @@ def resolve_school(key, log):
 
 
 def resolve_registration(key, log):
-    """Resolve a registration through its sync mapping.
-
-    Registrations have no natural key of their own, so an unmapped one means
-    the parent event has not been applied yet and the caller should retry.
-    """
-    if not key:
+    """Resolve a registration's BMA ID to its real local foreign-key target."""
+    if key is None:
         return None
-    source_id = key.get('source_id') if isinstance(key, dict) else key
-    instance = mapped_object(RESOURCE_REGISTRATION, source_id)
+    source_id = reference_bma_id(key)
+    instance = Registration.objects.filter(bma_id=source_id).first()
     if instance is None:
         log.add('registration #{} not replicated yet'.format(source_id))
     return instance
 
 
 def resolve_child(key, log):
-    """Resolve a child by sync mapping, then by UNICEF unique id."""
-    if not key:
+    """Resolve a child only by its BMA entity ID, independently of UNICEF ID."""
+    if key is None:
         return None
-    if not isinstance(key, dict):
-        key = {'source_id': key}
-
-    instance = mapped_object(RESOURCE_CHILD, key.get('source_id'))
-    if instance is not None:
-        return instance
-
-    unicef_id = _clean(key.get('unicef_id'))
-    if unicef_id:
-        instance = Child.objects.filter(unicef_id=unicef_id).first()
-        if instance is not None:
-            return instance
-
-    log.add('child #{} not replicated yet'.format(key.get('source_id')))
-    return None
+    bma_id = reference_bma_id(key)
+    instance = Child.objects.filter(bma_id=bma_id).first()
+    if instance is None:
+        log.add('child #{} not replicated yet'.format(bma_id))
+    return instance
 
 
 #: Maps the ``__relation`` suffix used in payloads to the resolver above.
@@ -386,7 +337,7 @@ def resolve_relation(kind, key, log):
 
     Args:
         kind (str): A key of :data:`RELATION_RESOLVERS`.
-        key: The natural key dictionary sent by the Compiler.
+        key: The BMA-ID or lookup reference sent by the Compiler.
         log (ResolutionLog): Collector for explanatory notes.
 
     Returns:

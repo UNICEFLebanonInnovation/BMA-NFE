@@ -296,7 +296,7 @@ class IngestServiceTests(TestCase):
         )
 
     def test_existing_center_is_adopted_not_duplicated(self):
-        Center.objects.create(name='Makani Tripoli', p_code='LB-0301')
+        Center.objects.create(bma_id='41', name='Makani Tripoli', p_code='LB-0301')
 
         ingest_events(
             [event(RESOURCE_REGISTRATION, 1234, registration_payload())],
@@ -327,6 +327,171 @@ class IngestServiceTests(TestCase):
         log = SyncEventLog.objects.get()
         self.assertEqual(log.status, 'applied')
         self.assertEqual(log.resource, RESOURCE_REGISTRATION)
+
+
+class BmaIdMatchingTests(TestCase):
+    """BMA IDs identify records independently of their names or local IDs."""
+
+    def setUp(self):
+        self.child = Child.objects.create(bma_id='900', unicef_id='UNI-900', first_name='Local name')
+        self.center = Center.objects.create(bma_id='41', name='Makani Tripoli', p_code='LB-0301')
+        self.round = Round.objects.create(bma_id='3', name='2026 Round A', year=2026)
+        self.registration = Registration.objects.create(
+            bma_id='1234', child=self.child, center=self.center, round=self.round,
+            have_labour='Yes - Morning',
+        )
+
+    def push(self, payload=None, source_id=1234):
+        return ingest_events(
+            [event(RESOURCE_REGISTRATION, source_id,
+                   registration_payload() if payload is None else payload)],
+            SOURCE_SYSTEM_COMPILER,
+        )
+
+    def test_first_push_overwrites_existing_registration_and_maps_it(self):
+        service = EducationService.objects.create(registration=self.registration)
+        result = self.push()
+
+        self.assertEqual(result['applied'], 1, result['results'])
+        self.assertEqual(result['results'][0]['local_id'], self.registration.pk)
+        self.assertEqual(Registration.objects.count(), 1)
+        self.assertEqual(Child.objects.count(), 1)
+        self.registration.refresh_from_db()
+        self.child.refresh_from_db()
+        service.refresh_from_db()
+        self.assertEqual(self.registration.have_labour, 'No')
+        self.assertEqual(self.child.first_name, 'Lina')
+        self.assertEqual(service.registration_id, self.registration.pk)
+        mapping = SyncedRecord.objects.get(
+            source_system=SOURCE_SYSTEM_COMPILER,
+            resource=RESOURCE_REGISTRATION, source_id='1234',
+        )
+        self.assertEqual(mapping.local_object, self.registration)
+        self.assertIn('adopted existing Registration', result['results'][0]['detail'])
+
+    def test_subsequent_push_uses_mapping_and_records_local_conflict(self):
+        self.push()
+        self.registration.have_labour = 'Yes - Night Shift'
+        self.registration.save()
+        payload = registration_payload()
+        payload['fields']['have_labour'] = 'Yes - Full Day'
+
+        result = self.push(payload)
+
+        self.assertEqual(result['applied'], 1, result['results'])
+        self.assertTrue(result['results'][0]['conflict'])
+        self.registration.refresh_from_db()
+        self.assertEqual(self.registration.have_labour, 'Yes - Full Day')
+        self.assertEqual(Registration.objects.count(), 1)
+        self.assertEqual(SyncConflict.objects.get().synced_record.object_id,
+                         self.registration.pk)
+
+    def test_unicef_id_whitespace_does_not_create_a_duplicate(self):
+        payload = registration_payload()
+        payload['child']['fields']['unicef_id'] = '  UNI-900  '
+
+        result = self.push(payload)
+
+        self.assertEqual(result['applied'], 1, result['results'])
+        self.assertEqual(result['results'][0]['local_id'], self.registration.pk)
+        self.assertEqual(Registration.objects.count(), 1)
+        self.assertEqual(Child.objects.count(), 1)
+        self.child.refresh_from_db()
+        self.assertEqual(self.child.unicef_id, 'UNI-900')
+
+    def test_mapped_registration_keeps_its_local_id_when_key_changes(self):
+        self.push()
+        payload = registration_payload()
+        payload['round'] = {'source_id': 4, 'name': '2027 Round A', 'year': 2027}
+        payload['center'] = {'source_id': 42, 'name': 'Another centre', 'p_code': 'LB-9999'}
+
+        result = self.push(payload)
+
+        self.assertEqual(result['applied'], 1, result['results'])
+        self.assertEqual(result['results'][0]['local_id'], self.registration.pk)
+        self.assertEqual(Registration.objects.count(), 1)
+        self.registration.refresh_from_db()
+        self.assertEqual(self.registration.round.name, '2027 Round A')
+        self.assertEqual(self.registration.center.p_code, 'LB-9999')
+
+    def assert_new_registration(self, payload):
+        result = self.push(payload, source_id=1235)
+        self.assertEqual(result['applied'], 1, result['results'])
+        self.assertNotEqual(result['results'][0]['local_id'], self.registration.pk)
+        self.assertEqual(Registration.objects.count(), 2)
+        self.registration.refresh_from_db()
+        self.assertEqual(self.registration.have_labour, 'Yes - Morning')
+
+    def test_different_bma_registration_id_creates_a_new_registration(self):
+        payload = registration_payload()
+        self.assert_new_registration(payload)
+
+    def test_different_round_creates_a_new_registration(self):
+        payload = registration_payload(round={'source_id': 4, 'name': '2027 Round A', 'year': 2027})
+        self.assert_new_registration(payload)
+
+    def test_different_center_creates_a_new_registration(self):
+        payload = registration_payload(center={'source_id': 42, 'name': 'Other centre', 'p_code': 'LB-9999'})
+        self.assert_new_registration(payload)
+
+    def test_same_local_id_is_not_used_as_a_registration_match(self):
+        payload = registration_payload(round={'source_id': 4, 'name': '2027 Round A', 'year': 2027})
+        result = self.push(payload, source_id=self.registration.pk)
+
+        self.assertEqual(result['applied'], 1, result['results'])
+        self.assertNotEqual(result['results'][0]['local_id'], self.registration.pk)
+        self.registration.refresh_from_db()
+        self.assertEqual(self.registration.have_labour, 'Yes - Morning')
+
+    def test_bma_id_selects_the_record_even_when_natural_keys_overlap(self):
+        other = Registration.objects.create(
+            child=self.child, center=self.center, round=self.round, have_labour='No',
+        )
+        result = self.push()
+
+        self.assertEqual(result['applied'], 1, result['results'])
+        self.assertEqual(result['results'][0]['local_id'], self.registration.pk)
+        self.assertEqual(Registration.objects.count(), 2)
+        other.refresh_from_db()
+        self.assertIsNone(other.bma_id)
+        self.assertEqual(SyncEventLog.objects.get().status, 'applied')
+
+    def test_incomplete_initial_key_fails_without_writing_data(self):
+        for missing in ('child_bma_id', 'round', 'center'):
+            with self.subTest(missing=missing):
+                payload = registration_payload()
+                if missing == 'child_bma_id':
+                    payload['child'].pop('source_id')
+                else:
+                    payload.pop(missing)
+                result = self.push(payload)
+                self.assertEqual(result['failed'], 1, result['results'])
+                self.assertFalse(result['results'][0]['retryable'])
+                self.assertIn('BMA ID', result['results'][0]['detail'])
+                self.assertEqual(Registration.objects.count(), 1)
+                self.assertEqual(Child.objects.count(), 1)
+                self.assertEqual(SyncedRecord.objects.count(), 0)
+                self.child.refresh_from_db()
+                self.assertEqual(self.child.first_name, 'Local name')
+
+    def test_unresolved_initial_reference_can_be_retried_after_it_arrives(self):
+        payload = registration_payload(center={'source_id': 42, 'name': 'New centre', 'p_code': 'LB-9999'})
+        with self.settings(DATASYNC_CREATE_MISSING_REFERENCES=False):
+            wire = event(RESOURCE_REGISTRATION, 1234, payload)
+            first = ingest_events([wire], SOURCE_SYSTEM_COMPILER)
+            self.assertEqual(first['failed'], 1, first['results'])
+            self.assertTrue(first['results'][0]['retryable'])
+            self.assertEqual(SyncedRecord.objects.count(), 0)
+            self.child.refresh_from_db()
+            self.assertEqual(self.child.first_name, 'Local name')
+
+            Center.objects.create(bma_id='42', name='New centre', p_code='LB-9999')
+            second = ingest_events([wire], SOURCE_SYSTEM_COMPILER)
+
+        self.assertEqual(second['applied'], 1, second['results'])
+        self.assertEqual(Registration.objects.count(), 1)
+        self.assertEqual(SyncEventLog.objects.get(event_id=wire['event_id']).status,
+                         'applied')
 
 
 class IngestEndpointTests(TestCase):
@@ -371,6 +536,29 @@ class IngestEndpointTests(TestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data['applied'], 1)
         self.assertEqual(Registration.objects.count(), 1)
+
+    def test_service_account_overwrites_an_existing_registration(self):
+        child = Child.objects.create(bma_id='900', unicef_id='UNI-900', first_name='Local name')
+        center = Center.objects.create(bma_id='41', name='Makani Tripoli', p_code='LB-0301')
+        round_object = Round.objects.create(bma_id='3', name='2026 Round A', year=2026)
+        registration = Registration.objects.create(
+            bma_id='1234', child=child, center=center, round=round_object, have_labour='Yes - Morning',
+        )
+        self.authenticate()
+
+        response = self.client.post(
+            self.url,
+            {'source_system': SOURCE_SYSTEM_COMPILER,
+             'events': [event(RESOURCE_REGISTRATION, 1234, registration_payload())]},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data['applied'], 1, response.data)
+        self.assertEqual(response.data['results'][0]['local_id'], registration.pk)
+        self.assertEqual(Registration.objects.count(), 1)
+        registration.refresh_from_db()
+        self.assertEqual(registration.have_labour, 'No')
 
     def test_unknown_source_system_is_rejected(self):
         self.authenticate()

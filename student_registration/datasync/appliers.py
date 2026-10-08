@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Write incoming Compiler events into the local BMA-NFE tables.
 
-Each replicated resource has a handler that knows three things: which local
-model it writes, how to turn a payload into a dictionary of column values, and
-how to find an already existing local row for it.
+Each replicated resource has a handler that knows which local model it writes
+and how to turn a payload into column values. Rows are identified by their
+BMA IDs, or by BMA Teacher ID plus centre for teachers.
 
 The generic :func:`apply_event` then does the parts that are the same for
 every resource -- adopting or creating the row, detecting that a BMA-NFE user
@@ -27,7 +27,6 @@ import uuid
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as django_models
-from django.utils import timezone
 
 from student_registration.attendances.models import (
     MSCCAttendance,
@@ -58,6 +57,7 @@ from .constants import (
     RESOURCE_TEACHER,
 )
 from .models import SyncConflict, SyncedRecord
+from .identity import UnresolvedDependency, normalize_bma_id, reference_bma_id
 
 logger = logging.getLogger(__name__)
 
@@ -65,19 +65,11 @@ logger = logging.getLogger(__name__)
 #: timestamps maintained by ``TimeStampedModel``, and user foreign keys whose
 #: ids mean nothing in the other database.
 NEVER_COPIED = frozenset({
-    'id', 'pk', 'created', 'modified',
+    'id', 'pk', 'bma_id', 'created', 'modified',
     'owner', 'owner_id',
     'modified_by', 'modified_by_id',
     'deleted_by', 'deleted_by_id',
 })
-
-
-class UnresolvedDependency(Exception):
-    """Raised when a parent record has not been replicated yet.
-
-    The producer retries these events rather than discarding them, because the
-    parent usually arrives moments later.
-    """
 
 
 def jsonable(value):
@@ -106,7 +98,7 @@ def fingerprint(snapshot):
 def plain_field_names(model):
     """Return the concrete, non-relational column names of ``model``.
 
-    Relations are excluded because they always travel as natural keys and are
+    Relations are excluded because they travel as reference dictionaries and are
     resolved explicitly by the handlers.
     """
     names = set()
@@ -185,15 +177,6 @@ class BaseHandler(object):
         """
         raise NotImplementedError
 
-    def find_existing(self, payload, log):
-        """Return an existing local row to adopt, or ``None`` to create one.
-
-        Adoption matters on first run: BMA-NFE already holds rounds, centres
-        and children that the Compiler also knows about, and they must be
-        linked rather than duplicated.
-        """
-        return None
-
     def after_save(self, instance, payload, log):
         """Hook for related rows (many-to-many links, child tables)."""
         return None
@@ -207,19 +190,13 @@ def _plain(model, payload, extra=None):
 
 
 class RoundHandler(BaseHandler):
-    """Programme rounds. Matched on their unique name."""
+    """Programme rounds identified by BMA ID, regardless of their name."""
 
     resource = RESOURCE_ROUND
     model = Round
 
     def build(self, payload, log, ctx):
         return _plain(Round, payload)
-
-    def find_existing(self, payload, log):
-        name = (payload.get('fields') or {}).get('name')
-        if not name:
-            return None
-        return Round.objects.filter(name__iexact=str(name).strip()).first()
 
 
 class CenterHandler(BaseHandler):
@@ -236,22 +213,6 @@ class CenterHandler(BaseHandler):
             'cadaster': resolvers.resolve_location(payload.get('cadaster'), log),
         }
         return _plain(Center, payload, extra)
-
-    def find_existing(self, payload, log):
-        fields = payload.get('fields') or {}
-        p_code = (fields.get('p_code') or '').strip()
-        if p_code:
-            existing = Center.objects.filter(p_code__iexact=p_code).first()
-            if existing is not None:
-                return existing
-        name = (fields.get('name') or '').strip()
-        if not name:
-            return None
-        queryset = Center.objects.filter(name__iexact=name)
-        partner = resolvers.resolve_partner(payload.get('partner'), log)
-        if partner is not None:
-            queryset = queryset.filter(partner=partner)
-        return queryset.first()
 
 
 class TeacherHandler(BaseHandler):
@@ -276,13 +237,9 @@ class TeacherHandler(BaseHandler):
         for index in range(1, 6):
             key = 'attach_type_{}'.format(index)
             extra[key] = resolvers.resolve_attachment_type(payload.get(key), log)
+        if extra['center'] is None:
+            raise ValueError('A teacher requires a center identified by BMA ID')
         return _plain(Teacher, payload, extra)
-
-    def find_existing(self, payload, log):
-        unicef_id = ((payload.get('fields') or {}).get('unicef_id') or '').strip()
-        if not unicef_id:
-            return None
-        return Teacher.objects.filter(unicef_id=unicef_id).first()
 
     def after_save(self, instance, payload, log):
         """Replace the teacher's training topics with the incoming set."""
@@ -319,33 +276,36 @@ class ChildHandler(BaseHandler):
                 payload.get('mother_educational_level'), log
             ),
         }
-        return _plain(Child, payload, extra)
-
-    def find_existing(self, payload, log):
-        unicef_id = ((payload.get('fields') or {}).get('unicef_id') or '').strip()
-        if not unicef_id:
-            return None
-        return Child.objects.filter(unicef_id=unicef_id).first()
+        values, ignored = _plain(Child, payload, extra)
+        if isinstance(values.get('unicef_id'), str):
+            values['unicef_id'] = values['unicef_id'].strip()
+        return values, ignored
 
 
 class RegistrationHandler(BaseHandler):
-    """MSCC registrations, carrying their child record inline."""
+    """Registrations and embedded children have independent BMA IDs."""
 
     resource = RESOURCE_REGISTRATION
     model = Registration
 
     def build(self, payload, log, ctx):
         child_payload = payload.get('child')
-        child = None
-        if child_payload:
+        if not child_payload or not payload.get('round') or not payload.get('center'):
+            raise ValueError('A registration requires child, round and center BMA IDs')
+        child_id = reference_bma_id(child_payload)
+        if isinstance(child_payload, dict) and 'fields' in child_payload:
             child_result = apply_resource(
                 RESOURCE_CHILD,
-                child_payload.get('source_id'),
+                child_id,
                 child_payload,
                 log,
                 ctx,
             )
             child = child_result.instance
+        else:
+            child = resolvers.resolve_child(child_payload, log)
+            if child is None:
+                raise UnresolvedDependency('BMA child #{} has not arrived yet'.format(child_id))
         extra = {
             'child': child,
             'center': resolvers.resolve_center(payload.get('center'), log),
@@ -360,11 +320,13 @@ class RegistrationChildHandler(BaseHandler):
 
     def registration_of(self, payload, log):
         """Return the local registration, or raise when it is missing."""
+        if payload.get('registration') is None:
+            raise ValueError('A service, grading or referral requires a registration BMA ID')
         registration = resolvers.resolve_registration(payload.get('registration'), log)
         if registration is None:
             raise UnresolvedDependency(
                 'registration #{} has not been replicated yet'.format(
-                    (payload.get('registration') or {}).get('source_id')
+                    reference_bma_id(payload['registration'])
                 )
             )
         return registration
@@ -416,14 +378,13 @@ class AttendanceHandler(BaseHandler):
     model = MSCCAttendance
 
     def build(self, payload, log, ctx):
-        extra = {'center': resolvers.resolve_center(payload.get('center'), log)}
+        if payload.get('center') is None or payload.get('round') is None:
+            raise ValueError('Attendance requires center and round BMA IDs')
+        extra = {
+            'center': resolvers.resolve_center(payload['center'], log),
+            'round': resolvers.resolve_round(payload['round'], log),
+        }
         values, ignored = _plain(MSCCAttendance, payload, extra)
-        # ``round_id`` is a bare integer column on this model rather than a
-        # foreign key, so the local round's primary key has to be written into
-        # it explicitly -- the Compiler's own id would point at the wrong row.
-        values.pop('round_id', None)
-        round_object = resolvers.resolve_round(payload.get('round'), log)
-        values['round_id'] = round_object.id if round_object else None
         return values, ignored
 
     def after_save(self, instance, payload, log):
@@ -436,12 +397,11 @@ class AttendanceHandler(BaseHandler):
         for row in children:
             registration = resolvers.resolve_registration(row.get('registration'), log)
             if registration is None:
-                log.add(
-                    'attendance row for registration #{} skipped, not replicated yet'.format(
-                        (row.get('registration') or {}).get('source_id')
+                raise UnresolvedDependency(
+                    'attendance registration #{} has not arrived yet'.format(
+                        reference_bma_id(row.get('registration'))
                     )
                 )
-                continue
             values, _ignored = split_fields(MSCCAttendanceChild, row.get('fields'))
             child_row, _created = MSCCAttendanceChild.objects.get_or_create(
                 attendance_day=instance,
@@ -511,7 +471,7 @@ def apply_resource(resource, source_id, payload, log, ctx):
     Args:
         resource (str): One of the ``RESOURCE_*`` constants.
         source_id: The record's primary key in the Compiler.
-        payload (dict): Natural-keyed representation of the record.
+        payload (dict): Fields and BMA-ID references for the record.
         log (resolvers.ResolutionLog): Collector for explanatory notes.
         ctx (ApplyContext): Producer identity and current event id.
 
@@ -524,23 +484,37 @@ def apply_resource(resource, source_id, payload, log, ctx):
     """
     handler = HANDLERS[resource]
     payload = payload or {}
+    source_id = normalize_bma_id(source_id)
+    for supplied_id in (payload.get('bma_id'), (payload.get('fields') or {}).get('bma_id')):
+        if supplied_id is not None and normalize_bma_id(supplied_id) != source_id:
+            raise ValueError('Payload bma_id must equal the event source_id')
     values, ignored = handler.build(payload, log, ctx)
+    values['bma_id'] = source_id
+    identity = {'bma_id': source_id}
+    source_scope = ''
+    if resource == RESOURCE_TEACHER:
+        identity['center'] = values['center']
+        source_scope = values['center'].bma_id
 
     mapping_lookup = {
         'source_system': ctx.source_system,
         'resource': resource,
-        'source_id': str(source_id),
+        'source_id': source_id,
+        'source_scope': source_scope,
     }
-    record = SyncedRecord.objects.filter(**mapping_lookup).first()
-
-    instance = record.local_object if record else None
+    instance = handler.model.objects.select_for_update().filter(**identity).first()
+    created = False
     if instance is None:
-        instance = handler.find_existing(payload, log)
-        if instance is not None:
-            log.add('adopted existing {} #{}'.format(handler.model.__name__, instance.pk))
-    created = instance is None
-    if created:
-        instance = handler.model()
+        # The unique BMA identity also protects concurrent first deliveries.
+        instance, created = handler.model.objects.get_or_create(**identity, defaults=values)
+        if not created:
+            instance = handler.model.objects.select_for_update().get(pk=instance.pk)
+    record = SyncedRecord.objects.select_for_update().filter(**mapping_lookup).first()
+    if record is not None and record.local_object is not None:
+        if record.object_id != instance.pk:
+            raise ValueError('Sync mapping disagrees with the model BMA ID; review the mapping')
+    if not created and record is None:
+        log.add('adopted existing {} #{} by BMA ID'.format(handler.model.__name__, instance.pk))
 
     attnames = _attnames_for(handler.model, sorted(values.keys()))
 
@@ -565,12 +539,7 @@ def apply_resource(resource, source_id, payload, log, ctx):
         'local_fingerprint': fingerprint(applied_snapshot),
         'deleted': False,
     }
-    if record is None:
-        record = SyncedRecord.objects.create(**dict(mapping_lookup, **defaults))
-    else:
-        for name, value in defaults.items():
-            setattr(record, name, value)
-        record.save()
+    record, _ = SyncedRecord.objects.update_or_create(**mapping_lookup, defaults=defaults)
 
     if conflict_fields:
         SyncConflict.objects.create(
@@ -614,7 +583,7 @@ def _attnames_for(model, field_names):
     return attnames
 
 
-def delete_resource(resource, source_id, log, ctx):
+def delete_resource(resource, source_id, log, ctx, payload=None):
     """Remove the local row for a record deleted in the Compiler.
 
     Args:
@@ -625,31 +594,41 @@ def delete_resource(resource, source_id, log, ctx):
 
     Returns:
         bool: ``True`` when a row was removed, ``False`` when there was
-        nothing mapped to remove.
+        no BMA-identified local row to remove.
     """
-    record = SyncedRecord.objects.filter(
+    source_id = normalize_bma_id(source_id)
+    identity = {'bma_id': source_id}
+    source_scope = ''
+    if resource == RESOURCE_TEACHER:
+        center_id = reference_bma_id((payload or {}).get('center'))
+        center = Center.objects.filter(bma_id=center_id).first()
+        if center is None:
+            raise UnresolvedDependency('BMA center #{} has not arrived yet'.format(center_id))
+        identity['center'] = center
+        source_scope = center_id
+    record = SyncedRecord.objects.select_for_update().filter(
         source_system=ctx.source_system,
         resource=resource,
-        source_id=str(source_id),
+        source_id=source_id,
+        source_scope=source_scope,
     ).first()
-    if record is None:
-        log.add('nothing mapped for {}#{}'.format(resource, source_id))
-        return False
-
-    instance = record.local_object
+    handler = HANDLERS[resource]
+    instance = handler.model.objects.select_for_update().filter(**identity).first()
+    if record is not None and record.local_object is not None:
+        if instance is None or record.object_id != instance.pk:
+            raise ValueError('Sync mapping disagrees with the model BMA ID; review the mapping')
     if instance is not None:
         instance.delete()
 
-    # Written through the queryset rather than ``record.save()``: the generic
-    # relation still caches the object we just deleted, and saving the model
-    # would refuse to write a reference to a row that no longer exists. The
-    # content type is kept so the admin still shows what the mapping was for.
-    SyncedRecord.objects.filter(pk=record.pk).update(
-        object_id=None,
-        deleted=True,
-        last_applied_snapshot={},
-        local_fingerprint='',
-        modified=timezone.now(),
+    # Clear the local reference while preserving the identity as a tombstone.
+    SyncedRecord.objects.update_or_create(
+        source_system=ctx.source_system, resource=resource,
+        source_id=source_id, source_scope=source_scope,
+        defaults={
+            'content_type': ContentType.objects.get_for_model(handler.model),
+            'object_id': None, 'deleted': True, 'last_event_id': ctx.event_id,
+            'last_applied_snapshot': {}, 'local_fingerprint': '',
+        },
     )
     return instance is not None
 
@@ -677,7 +656,7 @@ def apply_event(event, source_system):
     ctx = ApplyContext(source_system, event_id=event.get('event_id'))
 
     if event.get('operation') == OPERATION_DELETE:
-        removed = delete_resource(resource, source_id, log, ctx)
+        removed = delete_resource(resource, source_id, log, ctx, event.get('payload'))
         return resource, removed, log.as_text()
 
     result = apply_resource(resource, source_id, event.get('payload') or {}, log, ctx)

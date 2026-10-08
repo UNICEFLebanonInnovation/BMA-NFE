@@ -61,6 +61,10 @@ class SyncedRecord(TimeStampedModel):
         db_index=True,
         verbose_name=_('Source primary key')
     )
+    source_scope = models.CharField(
+        max_length=64, blank=True, default='',
+        verbose_name=_('BMA centre ID for teacher identity'),
+    )
     content_type = models.ForeignKey(
         ContentType,
         blank=True, null=True,
@@ -97,7 +101,7 @@ class SyncedRecord(TimeStampedModel):
 
     class Meta:
         ordering = ['-modified']
-        unique_together = ('source_system', 'resource', 'source_id')
+        unique_together = ('source_system', 'resource', 'source_id', 'source_scope')
         indexes = [
             models.Index(fields=['resource', 'source_id']),
             models.Index(fields=['content_type', 'object_id']),

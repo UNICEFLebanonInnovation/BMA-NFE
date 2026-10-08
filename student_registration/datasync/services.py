@@ -28,6 +28,7 @@ from .constants import (
     resource_sort_key,
 )
 from .models import SyncEventLog
+from .identity import normalize_bma_id
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +50,10 @@ def _validate_event(event):
         return 'unknown resource "{}"'.format(event['resource'])
     if event['operation'] not in (OPERATION_UPSERT, OPERATION_DELETE):
         return 'unknown operation "{}"'.format(event['operation'])
+    try:
+        normalize_bma_id(event['source_id'])
+    except ValueError as error:
+        return str(error)
     return None
 
 

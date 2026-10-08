@@ -93,27 +93,77 @@ The reply reports every event separately:
 `GET /api/sync/events/` returns a capability document and is the quickest way
 to confirm the URL and token from the Compiler side.
 
-### No shared primary keys
+### BMA identifiers and local foreign keys
 
-The two databases were never seeded together, so nothing crosses the wire as
-a local id. Relations travel as natural keys and are resolved here:
+The event's `source_id` is the BMA ID. The receiver stores it as a string in
+the corresponding model's nullable `bma_id` column. The embedded child has its
+own `source_id`: it is not the registration ID and is not the UNICEF ID.
+Local database primary keys are preserved and are never copied from BMA.
+
+Replicated records and relationships are identified as follows:
 
 | Relation | Matched on |
 | --- | --- |
-| Round | sync mapping, then unique name — created if missing |
-| Centre | sync mapping, then P-code, then name + partner — a stub is created if missing |
+| Round | unique `Round.bma_id`; names may repeat |
+| Centre | unique `Center.bma_id`; name/P-code are descriptive only |
+| Teacher | `Teacher.bma_id` (BMA TeacherID) + resolved local centre |
+| Child | unique `Child.bma_id`, independent of UNICEF ID |
+| Registration | unique `Registration.bma_id`, independent of child/round/centre |
+| Education service | unique `EducationService.bma_id` |
+| Grading | unique `EducationProgrammeAssessment.bma_id` |
+| Referral | unique `Referral.bma_id` |
+| Attendance | unique `MSCCAttendance.bma_id` |
 | Partner organization | unique name — created if missing |
 | School | CERD number, then name — never created |
 | Location (governorate / caza / cadaster) | P-code, then name — never created |
 | Nationality, ID type, disability, educational level | name — never created |
 | Training topic, attachment type | name — created if missing |
-| Child | sync mapping, then UNICEF unique id |
-| Registration | sync mapping only |
 
-Anything left unresolved is reported in the event's `detail` and the field is
-left empty, rather than the whole record being rejected. Set
-`DATASYNC_CREATE_MISSING_REFERENCES=False` to stop even the placeholder
-creation, at the cost of registrations arriving without a centre.
+For each upsert, an existing row with the same BMA identity is updated in place;
+otherwise a row is created. Database unique constraints enforce these keys.
+Two registrations for the same child, round and centre remain distinct when
+their BMA registration IDs differ. Two children with the same UNICEF ID are
+also distinct when their BMA child IDs differ. A teacher in two centres has
+two rows and two audit mappings; `SyncedRecord.source_scope` stores the BMA
+centre ID for each teacher mapping. Teacher deletes must include `payload.center`.
+
+Round, centre, child and registration references must carry `source_id` or its
+explicit alias `bma_id`. If both are supplied, they must agree. A registration
+must supply child, round and centre references; a teacher must supply a centre;
+services, grading and referrals must supply a registration. References resolve
+by BMA ID and assign actual local objects to Django foreign keys. Names and
+UNICEF IDs are not fallback identifiers. IDs must be non-empty strings or
+integers and fit within 64 characters. A payload `bma_id`, if supplied, must
+agree with its event `source_id`.
+
+With `DATASYNC_CREATE_MISSING_REFERENCES=True`, round/centre references may
+create stubs carrying their exact BMA IDs, even when names are absent. Later
+master-record events update those same stubs. With it disabled, unknown BMA
+rounds/centres return `retryable: true`. Missing registrations/children are
+also retryable; missing IDs are invalid rather than guessed. Attendance with
+an unknown child registration is rejected atomically and retried, preserving
+the previously synchronized child attendance rows.
+
+`MSCCAttendance.round` is now a real foreign key. Its migration renames/alters
+the previous integer field, preserving existing local `round_id` values.
+Invalid existing round references must be repaired before that migration can
+add the foreign-key constraint. Other optional master-data lookups (school,
+geography, nationality, etc.) still report unresolved values as notes.
+
+### Upgrading existing data
+
+Run `python manage.py migrate` before running this receiver. The new fields are
+nullable so existing local rows can remain without a BMA ID. A data migration
+fills verified IDs from existing active Compiler `SyncedRecord` mappings and
+populates teacher mapping scopes from their centres. Conflicting mappings or
+mapped teachers without an identified centre stop the migration for review;
+the migration does not guess identities or merge records.
+
+For records that have never been synchronized, populate verified BMA IDs
+before the first import if they should be overwritten. Do not fill these
+columns with local primary keys unless their source identity has been verified.
+An untagged local record remains separate, even when names/UNICEF IDs match.
+The previous UNICEF ID + round + centre registration matching is superseded.
 
 ## Conflicts
 
@@ -149,7 +199,7 @@ on the mapping row, so a field nobody touched never raises one.
    | `DATASYNC_CLIENT_GROUP` | `DataSync` | Group a service account must be in |
    | `DATASYNC_ALLOWED_SOURCE_SYSTEMS` | `['compiler']` | Producers accepted |
    | `DATASYNC_MAX_BATCH_SIZE` | `200` | Events per request |
-   | `DATASYNC_CREATE_MISSING_REFERENCES` | `True` | Allow placeholder rounds, centres, partners and free-text lookups |
+   | `DATASYNC_CREATE_MISSING_REFERENCES` | `True` | Allow BMA-ID-keyed round/centre stubs, partners and free-text lookups |
 
 ## Operating it
 
@@ -171,7 +221,8 @@ is back on. Nothing is lost unless its outbox is cleared.
   columns into `birthdate`, `teaching_hours_dirasa` into
   `teaching_hours_mscc`, "Dirasa only" into "Makani only" — and takes the
   centre from an operator-maintained school-to-centre table on its side.
-  Until a school is mapped there, its teachers arrive without a centre.
+  The producer must supply a BMA centre ID for each teacher; without one the
+  receiver rejects the event rather than saving a teacher with no centre.
   `years_of_experience` and `training_date_of_completion` have no source in
   the Compiler and stay empty.
 * **Uploaded files are not copied.** Teacher attachments travel as their

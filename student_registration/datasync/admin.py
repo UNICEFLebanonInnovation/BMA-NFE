@@ -26,11 +26,11 @@ class ReadOnlyAdmin(admin.ModelAdmin):
 @admin.register(SyncedRecord)
 class SyncedRecordAdmin(ReadOnlyAdmin):
     list_display = (
-        'resource', 'source_id', 'object_id', 'source_system',
+        'resource', 'source_id', 'source_scope', 'object_id', 'source_system',
         'deleted', 'modified',
     )
     list_filter = ('resource', 'source_system', 'deleted')
-    search_fields = ('source_id', 'object_id')
+    search_fields = ('source_id', 'source_scope', 'object_id')
     date_hierarchy = 'modified'
 
 
