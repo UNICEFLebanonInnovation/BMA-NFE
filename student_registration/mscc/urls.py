@@ -363,6 +363,11 @@ urlpatterns = [
         name='export_status'
     ),
     re_path(
+        r'^examination-card/(?P<pk>\d+)/$',
+        view=views.examination_card,
+        name='examination_card'
+    ),
+    re_path(
         r"^export-download/(?P<file_name>.+)/$",
         view=views.get_file,
         name='export_download'

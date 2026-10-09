@@ -95,6 +95,14 @@ $(document).ready(function() {
             paramsObj.set('round', roundFromUrl);
         }
 
+        if (url === '/mscc/export-list-background/') {
+            var scope = $('#export-scope').val() || 'filtered';
+            if (scope === 'all') {
+                paramsObj = new URLSearchParams();
+            }
+            paramsObj.set('export_scope', scope);
+        }
+
         var format = $("input[name='export-format']:checked").val();
         var originalHtml = button.html();
         paramsObj.set('format', format);
