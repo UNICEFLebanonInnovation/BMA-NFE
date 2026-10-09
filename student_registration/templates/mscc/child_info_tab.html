@@ -30,6 +30,12 @@
                             <span class="d-block">{% trans "Mother" %}: {{ instance.child.mother_fullname }}</span>
                         </div>
                     </div>
+                    {% if instance.nfe_programme %}
+                    <div class="list-group-item py-3">
+                        <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Type of NFE Programme" %}</div>
+                        <div>{{ instance.get_nfe_programme_display }}</div>
+                    </div>
+                    {% endif %}
                     <div class="list-group-item py-3">
                         <div class="row">
                             <div class="col-6">
@@ -102,7 +108,10 @@
                                 <div class="small text-uppercase fw-bold text-muted mb-2">{% trans "Living Conditions" %}</div>
                                 <div class="d-flex flex-wrap gap-2">
                                     <span class="badge bg-white border text-dark fw-normal"><i class="bi bi-house-door me-1"></i> {{ instance.child.living_arrangement }}</span>
-                                    <span class="badge bg-white border text-dark fw-normal"><i class="bi bi-geo me-1"></i> {{ instance.child.address|truncatechars:30 }}</span>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="small text-uppercase fw-bold text-muted mb-2">{% trans "Residential Address" %}</div>
+                                    {% include 'mscc/child_residential_address.html' with child=instance.child %}
                                 </div>
                             </div>
                         </div>

@@ -591,7 +591,7 @@ function reorganizeForm()
 
 // main_form_validation.js merged into mscc.js
 // Client-side validation for MSCC MainForm with realtime feedback
-var phoneRegex = /^((03|70|71|76|78|79|81|86)-\d{6})$/;
+var phoneRegex = /^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$/;
 var regexMap = {
     '#id_first_phone_number': phoneRegex,
     '#id_first_phone_number_confirm': phoneRegex,
@@ -716,6 +716,14 @@ function validateMainForm(showModal, step) {
         '#id_child_gender',
         '#id_child_nationality',
         '#id_child_disability',
+        '#id_child_governorate',
+        '#id_child_district',
+        '#id_child_municipality',
+        '#id_child_village',
+        '#id_child_street',
+        '#id_child_building_camp',
+        '#id_child_cadaster',
+        '#id_nfe_programme',
         '#id_child_marital_status',
         '#id_child_have_children',
         '#id_child_have_sibling',
@@ -834,7 +842,7 @@ function validateMainForm(showModal, step) {
             showError('#id_first_phone_number_confirm', 'This field is required');
             valid = false;
         }
-        if (first_phone !== first_phone_confirm) {
+        if ($('#id_first_phone_number_confirm').length && first_phone !== first_phone_confirm) {
             showError('#id_first_phone_number_confirm', 'The phone numbers are not matched');
             valid = false;
         }
@@ -1069,11 +1077,11 @@ function validateMainForm(showModal, step) {
             }
         }
 
-        if (!$('#id_caregiver_mother_name').val() || $('#id_caregiver_mother_name').val().trim() === '') {
+        if ($('#id_caregiver_mother_name').is(':visible') && (!$('#id_caregiver_mother_name').val() || $('#id_caregiver_mother_name').val().trim() === '')) {
             showError('#id_caregiver_mother_name', 'This field is required');
             valid = false;
         }
-        if (!$('#id_child_living_arrangement').val() || $('#id_child_living_arrangement').val().trim() === '') {
+        if ($('#id_child_living_arrangement').is(':visible') && (!$('#id_child_living_arrangement').val() || $('#id_child_living_arrangement').val().trim() === '')) {
             showError('#id_child_living_arrangement', 'This field is required');
             valid = false;
         }

@@ -88,12 +88,13 @@ from .models import (
 from student_registration.backends.models import ExportHistory
 from .education_form import NewRoundForm
 from .forms import (
-    MainForm,
+    MSCCRegistrationForm,
     ReferralForm,
     TeacherForm,
 )
 from .serializers import (
     MainSerializer,
+    MSCCRegistrationSerializer,
     TeacherSerializer,
 )
 
@@ -521,7 +522,7 @@ class MainAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
     template_name = 'mscc/main_form.html'
-    form_class = MainForm
+    form_class = MSCCRegistrationForm
     success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
@@ -549,21 +550,22 @@ class MainAddView(LoginRequiredMixin,
         return initial
 
     def form_valid(self, form):
-        form.save(self.request)
+        if form.save(self.request) is None:
+            return self.form_invalid(form)
         return super(MainAddView, self).form_valid(form)
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
-            return MainForm(self.request.POST, instance=None, request=self.request)
+            return MSCCRegistrationForm(self.request.POST, self.request.FILES, instance=None, request=self.request)
         else:
-            return MainForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return MSCCRegistrationForm(None, instance=None, request=self.request, initial=self.get_initial())
 
 
 class MainEditView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FormView):
     template_name = 'mscc/main_form.html'
-    form_class = MainForm
+    form_class = MSCCRegistrationForm
     success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
@@ -579,20 +581,21 @@ class MainEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = Registration.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            return MainForm(self.request.POST, instance=instance, request=self.request)
+            return MSCCRegistrationForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         else:
-            data = MainSerializer(instance).data
+            data = MSCCRegistrationSerializer(instance).data
             data['child_nationality'] = data['child_nationality_id'] if 'child_nationality_id' in data else ''
             data['child_disability'] = data['child_disability_id'] if 'child_disability_id' in data else ''
             data['main_caregiver_nationality'] = data['main_caregiver_nationality_id']if 'main_caregiver_nationality_id' in data else ''
             data['father_educational_level'] = data['father_educational_level_id']if 'father_educational_level_id' in data else ''
             data['mother_educational_level'] = data['mother_educational_level_id']if 'mother_educational_level_id' in data else ''
             data['id_type'] = data['id_type_id']if 'id_type_id' in data else ''
-            return MainForm(data, instance=instance, request=self.request)
+            return MSCCRegistrationForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         instance = Registration.objects.get(id=self.kwargs['pk'])
-        form.save(request=self.request, instance=instance)
+        if form.save(request=self.request, instance=instance) is None:
+            return self.form_invalid(form)
         return super(MainEditView, self).form_valid(form)
 
 

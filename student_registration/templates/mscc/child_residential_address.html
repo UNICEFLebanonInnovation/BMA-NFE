@@ -1,0 +1,21 @@
+{% load i18n %}
+{% if child.governorate or child.district or child.municipality or child.village or child.street or child.building_camp or child.cadaster %}
+<dl class="row small mb-0">
+    <dt class="col-6">{% trans "Governorate (محافظة)" %}</dt>
+    <dd class="col-6">{{ child.governorate|default:"-" }}</dd>
+    <dt class="col-6">{% trans "District/Caza (قضاء)" %}</dt>
+    <dd class="col-6">{{ child.district|default:"-" }}</dd>
+    <dt class="col-6">{% trans "Municipality (بلدية)" %}</dt>
+    <dd class="col-6">{{ child.municipality|default:"-" }}</dd>
+    <dt class="col-6">{% trans "Village (قرية)" %}</dt>
+    <dd class="col-6">{{ child.village|default:"-" }}</dd>
+    <dt class="col-6">{% trans "Street (شارع)" %}</dt>
+    <dd class="col-6">{{ child.street|default:"-" }}</dd>
+    <dt class="col-6">{% trans "Building/Camp (مبنى/مخيم)" %}</dt>
+    <dd class="col-6">{{ child.building_camp|default:"-" }}</dd>
+    <dt class="col-6">{% trans "Cadaster (منطقة عقارية)" %}</dt>
+    <dd class="col-6 mb-0">{{ child.cadaster|default:"-" }}</dd>
+</dl>
+{% else %}
+<p class="small mb-0">{{ child.address|default:"-" }}</p>
+{% endif %}

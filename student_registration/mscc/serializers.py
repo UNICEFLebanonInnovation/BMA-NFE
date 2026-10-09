@@ -266,6 +266,74 @@ class MainSerializer(serializers.ModelSerializer):
         )
 
 
+class MSCCRegistrationSerializer(MainSerializer):
+    """The streamlined MSCC workflow, without changing the ALP serializer."""
+
+    child_nationality_other = serializers.CharField(
+        source='child.nationality_other', required=False, allow_blank=True,
+    )
+    child_fe_unique_id = serializers.CharField(
+        source='child.fe_unique_id', max_length=100, required=False, allow_blank=True,
+    )
+    child_disability_other = serializers.CharField(
+        source='child.disability_other', required=False, allow_blank=True,
+    )
+    child_governorate = serializers.CharField(source='child.governorate', max_length=255)
+    child_district = serializers.CharField(source='child.district', max_length=255)
+    child_municipality = serializers.CharField(source='child.municipality', max_length=255)
+    child_village = serializers.CharField(source='child.village', max_length=255)
+    child_street = serializers.CharField(source='child.street', max_length=255)
+    child_building_camp = serializers.CharField(source='child.building_camp', max_length=255)
+    child_cadaster = serializers.CharField(source='child.cadaster', max_length=255)
+    nfe_programme = serializers.ChoiceField(choices=Registration.NFE_PROGRAMMES)
+
+    EDITABLE_FIELDS = (
+        'child_first_name',
+        'child_father_name',
+        'child_last_name',
+        'child_mother_fullname',
+        'child_gender',
+        'child_nationality',
+        'child_nationality_other',
+        'child_birthday_year',
+        'child_birthday_month',
+        'child_birthday_day',
+        'child_governorate',
+        'child_district',
+        'child_municipality',
+        'child_village',
+        'child_street',
+        'child_building_camp',
+        'child_cadaster',
+        'child_disability',
+        'child_disability_other',
+        'child_fe_unique_id',
+        'first_phone_number',
+        'nfe_programme',
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Keep legacy values readable for existing consumers, while preventing
+        # omitted fields or forged submissions from replacing those values.
+        for name, field in self.fields.items():
+            if name not in self.EDITABLE_FIELDS:
+                field.read_only = True
+
+    class Meta(MainSerializer.Meta):
+        fields = MainSerializer.Meta.fields + (
+            'child_governorate',
+            'child_district',
+            'child_municipality',
+            'child_village',
+            'child_street',
+            'child_building_camp',
+            'child_cadaster',
+            'nfe_programme',
+            'child_disability_other',
+        )
+
+
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
