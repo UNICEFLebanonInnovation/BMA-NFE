@@ -9,7 +9,131 @@ var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last
 
 var isDuplicateFound = false;
 
+function initializeResidentialAddressLocations() {
+    var form = $('#registrationForm');
+    var optionsUrl = form.attr('data-location-options-url');
+    if (!optionsUrl) return;
+
+    var governorate = $('#id_child_governorate');
+    var district = $('#id_child_district');
+    var cadaster = $('#id_child_cadaster');
+    var errorMessage = $('#residential-location-error');
+    var selectionVersion = 0;
+    var districtRequest = { request: null, version: 0 };
+    var cadasterRequest = { request: null, version: 0 };
+    var initialDistrictOptions = district.children().clone();
+    var initialCadasterOptions = cadaster.children().clone();
+    var initialDistrict = district.val();
+    var initialCadaster = cadaster.val();
+    var districtPlaceholder = district.find('option[value=""]').first().text() || '---------';
+    var cadasterPlaceholder = cadaster.find('option[value=""]').first().text() || '---------';
+
+    function cancelRequest(field, state) {
+        // Increment before aborting so even an already completing request is stale.
+        state.version += 1;
+        if (state.request) state.request.abort();
+        state.request = null;
+        field.removeAttr('aria-busy');
+    }
+
+    function clearOptions(field, state, placeholder) {
+        cancelRequest(field, state);
+        field.empty().append(new Option(placeholder, '')).val('');
+        field.removeClass('is-invalid is-valid');
+        field.closest('.mb-3').removeClass('has-error');
+        field.siblings('.invalid-feedback').text('');
+    }
+
+    function loadOptions(field, state, parentField, type, selectedValue, placeholder) {
+        var parentId = parentField.val();
+        var completion = $.Deferred();
+        clearOptions(field, state, placeholder);
+        if (!parentId) return completion.resolve(false).promise();
+
+        var version = state.version;
+        field.attr('aria-busy', 'true');
+        state.request = $.ajax({
+            url: optionsUrl,
+            data: { type: type, parent: parentId },
+            dataType: 'json'
+        }).done(function(response) {
+            if (version !== state.version || parentField.val() !== parentId) {
+                completion.resolve(false);
+                return;
+            }
+            response.results.forEach(function(location) {
+                field.append(new Option(location.text, location.id));
+            });
+            field.val(selectedValue ? String(selectedValue) : '');
+            completion.resolve(true);
+        }).fail(function(request, status) {
+            if (status !== 'abort' && version === state.version) {
+                errorMessage.removeClass('d-none');
+            }
+            completion.resolve(false);
+        }).always(function() {
+            if (version === state.version) {
+                field.removeAttr('aria-busy');
+                state.request = null;
+            }
+        });
+        return completion.promise();
+    }
+
+    // Used when selecting a potential match, whose dependent choices are not
+    // necessarily among those currently rendered in the form.
+    window.setResidentialAddressLocations = function(values) {
+        var version = ++selectionVersion;
+        errorMessage.addClass('d-none');
+        governorate.val(values.child_governorate ? String(values.child_governorate) : '');
+        clearOptions(cadaster, cadasterRequest, cadasterPlaceholder);
+        loadOptions(district, districtRequest, governorate, 2, values.child_district, districtPlaceholder)
+            .done(function(loaded) {
+                if (loaded && version === selectionVersion && district.val()) {
+                    loadOptions(cadaster, cadasterRequest, district, 3, values.child_cadaster, cadasterPlaceholder);
+                }
+            });
+    };
+
+    governorate.on('change', function() {
+        selectionVersion += 1;
+        errorMessage.addClass('d-none');
+        clearOptions(cadaster, cadasterRequest, cadasterPlaceholder);
+        loadOptions(district, districtRequest, governorate, 2, '', districtPlaceholder);
+    });
+
+    district.on('change', function() {
+        selectionVersion += 1;
+        errorMessage.addClass('d-none');
+        loadOptions(cadaster, cadasterRequest, district, 3, '', cadasterPlaceholder);
+    });
+
+    $('#retry-residential-locations').on('click', function() {
+        window.setResidentialAddressLocations({
+            child_governorate: governorate.val(),
+            child_district: district.val(),
+            child_cadaster: cadaster.val()
+        });
+    });
+
+    form.on('reset', function(event) {
+        // Native reset runs after this event; restore the initial dependent
+        // choices afterwards, including values from a bound edit form.
+        window.setTimeout(function() {
+            if (event.isDefaultPrevented()) return;
+            selectionVersion += 1;
+            cancelRequest(district, districtRequest);
+            cancelRequest(cadaster, cadasterRequest);
+            district.empty().append(initialDistrictOptions.clone()).val(initialDistrict);
+            cadaster.empty().append(initialCadasterOptions.clone()).val(initialCadaster);
+            errorMessage.addClass('d-none');
+            clearErrors();
+        }, 0);
+    });
+}
+
 $(document).ready(function() {
+    initializeResidentialAddressLocations();
 
     $("#submit-id-save").click(function(e){
         var form = $(this).closest('form')[0];
@@ -406,11 +530,14 @@ function fill_old_child_data(data)
 {
     $('#nfe_search_loader').addClass('hidden');
     $(data).each(function(i, item) {
-        console.log(item);
         {
             Object.keys(item).forEach(key => {
+                if (window.setResidentialAddressLocations && ['child_governorate', 'child_district', 'child_cadaster'].indexOf(key) !== -1) return;
                 $('#id_'+ key).val(item[key]);
             });
+            if (window.setResidentialAddressLocations) {
+                window.setResidentialAddressLocations(item);
+            }
         }
     });
     $('#nfe_search_loader').addClass('hidden');

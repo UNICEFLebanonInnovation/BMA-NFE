@@ -518,6 +518,33 @@ class DashboardDataView(LoginRequiredMixin, View):
         return JsonResponse(data, safe=False)
 
 
+class ChildLocationOptionsView(LoginRequiredMixin, View):
+    """Return the next level in an MSCC child's residential address."""
+
+    def get(self, request, *args, **kwargs):
+        from student_registration.locations.models import Location
+
+        try:
+            location_type = int(request.GET.get('type', ''))
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid location type.'}, status=400)
+        if location_type not in (2, 3):
+            return JsonResponse({'error': 'Invalid location type.'}, status=400)
+
+        parent_value = request.GET.get('parent')
+        if not parent_value:
+            return JsonResponse({'results': []})
+        try:
+            parent_id = int(parent_value)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+        if not Location.objects.filter(pk=parent_id, type_id=location_type - 1).exists():
+            return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+
+        locations = Location.objects.filter(type_id=location_type, parent_id=parent_id).order_by('name')
+        return JsonResponse({'results': [{'id': location.pk, 'text': str(location)} for location in locations]})
+
+
 class MainAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):

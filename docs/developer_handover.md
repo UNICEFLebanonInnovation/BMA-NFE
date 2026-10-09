@@ -29,10 +29,21 @@ district/caza, municipality, village, street, building/camp and cadaster) and th
 BLN/DIRASA programme selection are required when saving a Makani registration.
 The caregiver section collects only the primary phone number.
 
+Governorate, district/caza and cadaster use linked `Location` selections with
+type IDs 1, 2 and 3 respectively. Selecting a governorate limits districts to
+its children; selecting a district limits cadasters to its children. Changing
+a parent clears the dependent selections. The form and registration serializer
+also validate the location types and parent relationships. Municipality, village,
+street and building/camp remain mandatory text fields.
+
 Apply the new `child` and `mscc` migrations with `python manage.py migrate` before
 running the updated application. New columns are nullable for existing records;
 editing a legacy registration requires completing its address and programme.
 Previously collected fields and the original free-text address remain stored.
+The linked-location migration keeps the earlier governorate, district and
+cadaster text in separate legacy columns, and maps an existing value only when
+it identifies one location of the correct type and parent. Profiles show the
+legacy text when a value has not been mapped; editing requires valid selections.
 Removed form fields cannot be overwritten through Makani registration submissions.
 
 ## Background processing

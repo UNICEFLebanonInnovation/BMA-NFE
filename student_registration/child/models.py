@@ -160,11 +160,21 @@ class Child(TimeStampedModel):
     )
     # Legacy registrations may not have a structured address yet. New MSCC
     # registrations require all seven components through their registration form.
-    governorate = models.CharField(
+    governorate_legacy = models.CharField(
         max_length=255, blank=True, null=True, verbose_name=_('Governorate (محافظة)')
     )
-    district = models.CharField(
+    district_legacy = models.CharField(
         max_length=255, blank=True, null=True, verbose_name=_('District/Caza (قضاء)')
+    )
+    governorate = models.ForeignKey(
+        'locations.Location', blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 1},
+        verbose_name=_('Governorate (محافظة)'),
+    )
+    district = models.ForeignKey(
+        'locations.Location', blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 2},
+        verbose_name=_('District/Caza (قضاء)'),
     )
     municipality = models.CharField(
         max_length=255, blank=True, null=True, verbose_name=_('Municipality (بلدية)')
@@ -178,8 +188,13 @@ class Child(TimeStampedModel):
     building_camp = models.CharField(
         max_length=255, blank=True, null=True, verbose_name=_('Building/Camp (مبنى/مخيم)')
     )
-    cadaster = models.CharField(
+    cadaster_legacy = models.CharField(
         max_length=255, blank=True, null=True, verbose_name=_('Cadaster (منطقة عقارية)')
+    )
+    cadaster = models.ForeignKey(
+        'locations.Location', blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 3},
+        verbose_name=_('Cadaster (منطقة عقارية)'),
     )
     living_arrangement = models.CharField(
         max_length=50,

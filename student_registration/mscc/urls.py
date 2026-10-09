@@ -9,6 +9,12 @@ app_name = 'mscc'
 urlpatterns = [
 
     re_path(
+        r'^child-location-options/$',
+        view=views.ChildLocationOptionsView.as_view(),
+        name='child_location_options'
+    ),
+
+    re_path(
         r'^informed-consent/(?P<pk>[\w.@+-]+)/$',
         view=views.informed_consent_file,
         name='informed_consent_file'

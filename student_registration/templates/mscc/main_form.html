@@ -122,7 +122,7 @@
                         </li>
                     </ul>
 
-                    <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" enctype="multipart/form-data" novalidate>
+                    <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" data-location-options-url="{% url 'mscc:child_location_options' %}" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
                         {% for h in form.hidden_fields %}{{ h }}{% endfor %}
 
@@ -153,11 +153,17 @@
                             <div class="row g-3">
                                 <div class="col-md-6">{{ form.child_governorate|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_district|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_cadaster|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_municipality|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_village|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_street|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_building_camp|as_crispy_field }}</div>
-                                <div class="col-md-6">{{ form.child_cadaster|as_crispy_field }}</div>
+                                <div class="col-12">
+                                    <div id="residential-location-error" class="alert alert-danger d-none mb-0" role="alert">
+                                        {% trans "Could not load address options. Please try again." %}
+                                        <button type="button" id="retry-residential-locations" class="btn btn-outline-danger btn-sm ms-2">{% trans "Try again" %}</button>
+                                    </div>
+                                </div>
                             </div>
 
                             <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "3. Status & Background" %}</h5>
@@ -263,7 +269,7 @@
         window.isAddPage = function() { return {% if not form.instance.id %}true{% else %}false{% endif %}; };
     </script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=44"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=45"></script>
     <script type="text/javascript">
         $(function() {
             let currentStep = 1;
@@ -277,7 +283,11 @@
                 $('#summary-phone').text($('#id_first_phone_number').val() || '{% trans "Not provided" %}');
                 $('#summary-programme').text($('#id_nfe_programme option:selected').text());
                 const addressFields = ['child_governorate', 'child_district', 'child_municipality', 'child_village', 'child_street', 'child_building_camp', 'child_cadaster'];
-                $('#summary-address').text(addressFields.map(field => $(`#id_${field}`).val()).filter(Boolean).join(', '));
+                $('#summary-address').text(addressFields.map(field => {
+                    const input = $(`#id_${field}`);
+                    if (!input.val()) return '';
+                    return input.is('select') ? input.find('option:selected').text() : input.val();
+                }).filter(Boolean).join(', '));
             }
 
             function updateWizard(step) {

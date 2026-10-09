@@ -24,7 +24,7 @@ from student_registration.students.models import (
     AttachmentType,
 )
 
-from student_registration.locations.models import Center
+from student_registration.locations.models import Center, Location
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.child.models import Child
 from .models import (
@@ -947,13 +947,20 @@ class MainForm(forms.ModelForm):
 class MSCCRegistrationForm(MainForm):
     """Simplified child registration for MSCC/Makani only."""
 
-    child_governorate = forms.CharField(label=_('Governorate (محافظة)'), max_length=255)
-    child_district = forms.CharField(label=_('District/Caza (قضاء)'), max_length=255)
+    child_governorate = forms.ModelChoiceField(
+        label=_('Governorate (محافظة)'),
+        queryset=Location.objects.filter(type_id=1).order_by('name'), required=True,
+    )
+    child_district = forms.ModelChoiceField(
+        label=_('District/Caza (قضاء)'), queryset=Location.objects.none(), required=True,
+    )
     child_municipality = forms.CharField(label=_('Municipality (بلدية)'), max_length=255)
     child_village = forms.CharField(label=_('Village (قرية)'), max_length=255)
     child_street = forms.CharField(label=_('Street (شارع)'), max_length=255)
     child_building_camp = forms.CharField(label=_('Building/Camp (مبنى/مخيم)'), max_length=255)
-    child_cadaster = forms.CharField(label=_('Cadaster (منطقة عقارية)'), max_length=255)
+    child_cadaster = forms.ModelChoiceField(
+        label=_('Cadaster (منطقة عقارية)'), queryset=Location.objects.none(), required=True,
+    )
     nfe_programme = forms.ChoiceField(
         label=_('Type of NFE Programme'),
         choices=(('', _('---------')),) + tuple(Registration.NFE_PROGRAMMES),
@@ -969,6 +976,32 @@ class MSCCRegistrationForm(MainForm):
         for name in tuple(self.fields):
             if name not in visible_fields:
                 del self.fields[name]
+
+        # Bound values take precedence after a validation error. An edit form
+        # may also be constructed directly from its registration instance.
+        if self.instance.pk and self.instance.child_id:
+            for name in ('governorate', 'district', 'cadaster'):
+                self.initial.setdefault('child_' + name, getattr(self.instance.child, name + '_id'))
+
+        def selected_id(name):
+            value = self.data.get(self.add_prefix(name)) if self.is_bound else self.initial.get(name)
+            value = getattr(value, 'pk', value)
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                return None
+
+        governorate_id = selected_id('child_governorate')
+        district_id = selected_id('child_district')
+        if governorate_id is not None:
+            self.fields['child_district'].queryset = Location.objects.filter(
+                type_id=2, parent_id=governorate_id, parent__type_id=1,
+            ).order_by('name')
+        if governorate_id is not None and district_id is not None:
+            self.fields['child_cadaster'].queryset = Location.objects.filter(
+                type_id=3, parent_id=district_id, parent__type_id=2,
+                parent__parent_id=governorate_id, parent__parent__type_id=1,
+            ).order_by('name')
 
     def clean(self):
         # MainForm retains the legacy ALP validation. Only fields still offered

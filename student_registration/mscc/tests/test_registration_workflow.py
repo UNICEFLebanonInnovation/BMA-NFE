@@ -1,15 +1,19 @@
 from html.parser import HTMLParser
 from types import SimpleNamespace
+from urllib.parse import urlsplit
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
+from django.shortcuts import resolve_url
 from django.urls import reverse
 
 from student_registration.alp.forms import ALPRegistrationForm
 from student_registration.child.models import Child
 from student_registration.clm.models import Disability
+from student_registration.locations.models import Location, LocationType
 from student_registration.mscc.forms import MSCCRegistrationForm
 from student_registration.mscc.models import Registration
 from student_registration.mscc.serializers import MSCCRegistrationSerializer
@@ -25,6 +29,8 @@ ADDRESS = {
     'child_building_camp': 'مبنى الأمل 2 / طابق 3',
     'child_cadaster': 'منطقة رأس بيروت العقارية',
 }
+
+LOCATION_FIELDS = ('child_governorate', 'child_district', 'child_cadaster')
 
 REMOVED_FIELDS = {
     'informed_consent', 'child_p_code', 'child_address',
@@ -61,6 +67,9 @@ class FormControls(HTMLParser):
     def __init__(self, html):
         super().__init__()
         self.controls = {}
+        self.tags = {}
+        self.options = {}
+        self.current_select = None
         self.feed(html)
 
     def handle_starttag(self, tag, attrs):
@@ -68,6 +77,16 @@ class FormControls(HTMLParser):
             attrs = dict(attrs)
             if attrs.get('name'):
                 self.controls[attrs['name']] = attrs
+                self.tags[attrs['name']] = tag
+                if tag == 'select':
+                    self.current_select = attrs['name']
+                    self.options[self.current_select] = []
+        elif tag == 'option' and self.current_select:
+            self.options[self.current_select].append(dict(attrs))
+
+    def handle_endtag(self, tag):
+        if tag == 'select':
+            self.current_select = None
 
 
 @override_settings(LANGUAGE_CODE='en')
@@ -80,6 +99,49 @@ class MSCCRegistrationWorkflowTests(TestCase):
         cls.disability = Disability.objects.create(name='None', name_en='None')
         cls.user = get_user_model().objects.create_user(username='mscc-registration')
         cls.user.groups.add(Group.objects.get_or_create(name='MSCC')[0])
+        cls.governorate_type = LocationType.objects.create(pk=1, name='Governorate')
+        cls.district_type = LocationType.objects.create(pk=2, name='District')
+        cls.cadaster_type = LocationType.objects.create(pk=3, name='Cadaster')
+        cls.governorate = Location.objects.create(
+            name='بيروت', name_en='Beirut', type=cls.governorate_type,
+        )
+        cls.district = Location.objects.create(
+            name='بيروت', name_en='Beirut district', type=cls.district_type,
+            parent=cls.governorate,
+        )
+        cls.cadaster = Location.objects.create(
+            name='منطقة رأس بيروت العقارية', name_en='Ras Beirut',
+            type=cls.cadaster_type, parent=cls.district,
+        )
+        cls.other_governorate = Location.objects.create(
+            name='جبل لبنان', name_en='Mount Lebanon', type=cls.governorate_type,
+        )
+        cls.other_district = Location.objects.create(
+            name='المتن', name_en='Metn', type=cls.district_type,
+            parent=cls.other_governorate,
+        )
+        cls.other_cadaster = Location.objects.create(
+            name='الجديدة', name_en='Jdeideh', type=cls.cadaster_type,
+            parent=cls.other_district,
+        )
+        cls.wrong_district_type = Location.objects.create(
+            name='Wrong district type', type=cls.cadaster_type, parent=cls.governorate,
+        )
+        cls.wrong_cadaster_type = Location.objects.create(
+            name='Wrong cadaster type', type=cls.district_type, parent=cls.district,
+        )
+        cls.orphan_district = Location.objects.create(
+            name='Orphan district', type=cls.district_type,
+        )
+        cls.orphan_cadaster = Location.objects.create(
+            name='Orphan cadaster', type=cls.cadaster_type,
+        )
+        cls.address = {
+            **ADDRESS,
+            'child_governorate': str(cls.governorate.pk),
+            'child_district': str(cls.district.pk),
+            'child_cadaster': str(cls.cadaster.pk),
+        }
 
     def setUp(self):
         self.client.force_login(self.user)
@@ -98,7 +160,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
             'child_disability': str(self.disability.pk),
             'first_phone_number': '70-123456',
             'nfe_programme': 'BLN',
-            **ADDRESS,
+            **self.address,
         }
         data.update(updates)
         return data
@@ -109,6 +171,189 @@ class MSCCRegistrationWorkflowTests(TestCase):
         )
         self.assertEqual(response.status_code, 302)
         return Registration.objects.get()
+
+    def test_location_fields_offer_only_the_expected_types_and_selected_parents(self):
+        form = MSCCRegistrationForm()
+
+        self.assertCountEqual(
+            form.fields['child_governorate'].queryset,
+            [self.governorate, self.other_governorate],
+        )
+        self.assertFalse(form.fields['child_district'].queryset.exists())
+        self.assertFalse(form.fields['child_cadaster'].queryset.exists())
+
+        form = MSCCRegistrationForm(data=self.registration_data())
+        self.assertTrue(form.is_valid(), form.errors.as_json())
+        self.assertEqual(list(form.fields['child_district'].queryset), [self.district])
+        self.assertEqual(list(form.fields['child_cadaster'].queryset), [self.cadaster])
+        self.assertEqual(form.cleaned_data['child_governorate'], self.governorate)
+        self.assertEqual(form.cleaned_data['child_district'], self.district)
+        self.assertEqual(form.cleaned_data['child_cadaster'], self.cadaster)
+
+    def test_form_and_serializer_reject_location_ids_with_wrong_types_or_parents(self):
+        invalid_selections = (
+            ('child_governorate', self.district.pk),
+            ('child_district', self.governorate.pk),
+            ('child_district', self.wrong_district_type.pk),
+            ('child_cadaster', self.district.pk),
+            ('child_cadaster', self.wrong_cadaster_type.pk),
+            ('child_district', self.other_district.pk),
+            ('child_cadaster', self.other_cadaster.pk),
+            ('child_district', self.orphan_district.pk),
+            ('child_cadaster', self.orphan_cadaster.pk),
+        )
+        for field, value in invalid_selections:
+            with self.subTest(field=field, value=value):
+                data = self.registration_data(**{field: str(value)})
+                form = MSCCRegistrationForm(data=data)
+                self.assertFalse(form.is_valid())
+                self.assertIn(field, form.errors)
+                serializer = MSCCRegistrationSerializer(data=data)
+                self.assertFalse(serializer.is_valid())
+                self.assertIn(field, serializer.errors)
+
+    def test_form_and_serializer_reject_unknown_or_malformed_location_ids(self):
+        for field in LOCATION_FIELDS:
+            for value in ('999999999', '-1', 'not-a-location'):
+                with self.subTest(field=field, value=value):
+                    data = self.registration_data(**{field: value})
+                    form = MSCCRegistrationForm(data=data)
+                    self.assertFalse(form.is_valid())
+                    self.assertIn(field, form.errors)
+                    serializer = MSCCRegistrationSerializer(data=data)
+                    self.assertFalse(serializer.is_valid())
+                    self.assertIn(field, serializer.errors)
+
+    def test_missing_parent_leaves_descendant_form_choices_empty(self):
+        for parent_field, descendant_field in (
+            ('child_governorate', 'child_district'),
+            ('child_district', 'child_cadaster'),
+        ):
+            with self.subTest(parent_field=parent_field):
+                data = self.registration_data()
+                del data[parent_field]
+                form = MSCCRegistrationForm(data=data)
+                self.assertFalse(form.fields[descendant_field].queryset.exists())
+                self.assertFalse(form.is_valid())
+                self.assertIn(parent_field, form.errors)
+
+    def test_serializer_represents_saved_locations_as_ids_for_edit_preloading(self):
+        registration = self.create_registration()
+
+        data = MSCCRegistrationSerializer(registration).data
+
+        self.assertEqual(data['child_governorate'], self.governorate.pk)
+        self.assertEqual(data['child_district'], self.district.pk)
+        self.assertEqual(data['child_cadaster'], self.cadaster.pk)
+
+        form = MSCCRegistrationForm(instance=registration)
+        for field in LOCATION_FIELDS:
+            self.assertEqual(str(form[field].value()), self.address[field])
+        self.assertEqual(list(form.fields['child_district'].queryset), [self.district])
+        self.assertEqual(list(form.fields['child_cadaster'].queryset), [self.cadaster])
+
+    def test_partial_serializer_updates_validate_against_existing_location_hierarchy(self):
+        registration = self.create_registration()
+        for data, error in (
+            ({'child_governorate': self.other_governorate.pk}, 'child_district'),
+            ({'child_district': self.other_district.pk}, 'child_district'),
+            ({'child_cadaster': self.other_cadaster.pk}, 'child_cadaster'),
+        ):
+            with self.subTest(data=data):
+                serializer = MSCCRegistrationSerializer(registration, data=data, partial=True)
+                self.assertFalse(serializer.is_valid())
+                self.assertIn(error, serializer.errors)
+
+        serializer = MSCCRegistrationSerializer(registration, data={
+            'child_governorate': self.other_governorate.pk,
+            'child_district': self.other_district.pk,
+            'child_cadaster': self.other_cadaster.pk,
+        }, partial=True)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+
+    def test_edit_can_move_child_to_a_different_complete_location_hierarchy(self):
+        registration = self.create_registration()
+        url = reverse('mscc:child_edit', args=[registration.pk])
+
+        response = self.client.post(url, self.registration_data(
+            child_governorate=str(self.other_governorate.pk),
+            child_district=str(self.other_district.pk),
+            child_cadaster=str(self.other_cadaster.pk),
+        ))
+
+        self.assertEqual(response.status_code, 302)
+        registration.child.refresh_from_db()
+        self.assertEqual(registration.child.governorate, self.other_governorate)
+        self.assertEqual(registration.child.district, self.other_district)
+        self.assertEqual(registration.child.cadaster, self.other_cadaster)
+        response = self.client.get(url)
+        form = response.context['form']
+        self.assertEqual(list(form.fields['child_district'].queryset), [self.other_district])
+        self.assertEqual(list(form.fields['child_cadaster'].queryset), [self.other_cadaster])
+        rendered = FormControls(response.content.decode())
+        for field, location in (
+            ('child_governorate', self.other_governorate),
+            ('child_district', self.other_district),
+            ('child_cadaster', self.other_cadaster),
+        ):
+            with self.subTest(field=field):
+                self.assertEqual(
+                    [option['value'] for option in rendered.options[field]
+                     if 'selected' in option],
+                    [str(location.pk)],
+                )
+
+    def test_location_option_endpoint_returns_typed_direct_children(self):
+        url = reverse('mscc:child_location_options')
+        for location_type, parent, child in (
+            (2, self.governorate, self.district),
+            (3, self.district, self.cadaster),
+            (2, self.other_governorate, self.other_district),
+            (3, self.other_district, self.other_cadaster),
+        ):
+            with self.subTest(location_type=location_type, parent=parent.pk):
+                response = self.client.get(url, {'type': location_type, 'parent': parent.pk})
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(
+                    response.json(),
+                    {'results': [{'id': child.pk, 'text': child.name}]},
+                )
+
+    def test_location_option_endpoint_has_no_choices_before_parent_is_selected(self):
+        url = reverse('mscc:child_location_options')
+        for location_type in (2, 3):
+            with self.subTest(location_type=location_type):
+                response = self.client.get(url, {'type': location_type})
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.json(), {'results': []})
+
+    def test_location_option_endpoint_rejects_invalid_types_and_parents(self):
+        url = reverse('mscc:child_location_options')
+        for params in (
+            {'type': 1, 'parent': self.governorate.pk},
+            {'type': 4, 'parent': self.governorate.pk},
+            {'type': 'invalid', 'parent': self.governorate.pk},
+            {'type': 2, 'parent': 'invalid'},
+            {'type': 2, 'parent': 999999999},
+            {'type': 2, 'parent': self.district.pk},
+            {'type': 3, 'parent': self.governorate.pk},
+        ):
+            with self.subTest(params=params):
+                response = self.client.get(url, params)
+                self.assertEqual(response.status_code, 400)
+
+    def test_location_option_endpoint_requires_login(self):
+        self.client.logout()
+
+        response = self.client.get(
+            reverse('mscc:child_location_options'),
+            {'type': 2, 'parent': self.governorate.pk},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            urlsplit(response.url).path, urlsplit(resolve_url(settings.LOGIN_URL)).path,
+        )
 
     def test_hidden_fields_are_excluded_and_primary_phone_remains_required(self):
         form = MSCCRegistrationForm()
@@ -193,8 +438,13 @@ class MSCCRegistrationWorkflowTests(TestCase):
                 )
                 self.assertEqual(registration.nfe_programme, programme)
                 self.assertEqual(registration.child.first_phone_number, '70-123456')
-                for field, value in ADDRESS.items():
-                    self.assertEqual(getattr(registration.child, field[6:]), value)
+                for field, value in self.address.items():
+                    saved = getattr(registration.child, field[6:])
+                    if field in LOCATION_FIELDS:
+                        self.assertIsInstance(saved, Location)
+                        self.assertEqual(saved.pk, int(value))
+                    else:
+                        self.assertEqual(saved, value)
 
         self.assertEqual(Registration.objects.count(), 2)
         self.assertEqual(Child.objects.count(), 2)
@@ -218,8 +468,10 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         form = response.context['form']
         self.assertFalse(form.is_bound)
-        for field, value in ADDRESS.items():
-            self.assertEqual(form[field].value(), value)
+        for field, value in self.address.items():
+            self.assertEqual(str(form[field].value()), value)
+        self.assertEqual(list(form.fields['child_district'].queryset), [self.district])
+        self.assertEqual(list(form.fields['child_cadaster'].queryset), [self.cadaster])
         self.assertEqual(form['nfe_programme'].value(), 'BLN')
 
         response = self.client.post(url, self.registration_data(
@@ -241,6 +493,9 @@ class MSCCRegistrationWorkflowTests(TestCase):
         child = registration.child
         existing_child_values = {
             'address': 'Legacy full address', 'p_code': 'LB-01-001',
+            'governorate_legacy': 'Original governorate text',
+            'district_legacy': 'Original district text',
+            'cadaster_legacy': 'Original cadaster text',
             'living_arrangement': 'Living with caregivers',
             'marital_status': 'Single', 'have_children': 'Yes', 'children_number': 1,
             'caregiver_first_name': 'Saved caregiver', 'main_caregiver': 'Other',
@@ -313,13 +568,16 @@ class MSCCRegistrationWorkflowTests(TestCase):
         response = self.client.get(reverse('mscc:child_add'))
 
         self.assertEqual(response.status_code, 200)
-        controls = FormControls(response.content.decode()).controls
+        rendered = FormControls(response.content.decode())
+        controls = rendered.controls
         self.assertFalse(REMOVED_FIELDS.intersection(controls))
         self.assertIn('first_phone_number', controls)
         for field in (*ADDRESS, 'nfe_programme'):
             with self.subTest(field=field):
                 self.assertIn(field, controls)
                 self.assertIn('required', controls[field])
+        for field in LOCATION_FIELDS:
+            self.assertEqual(rendered.tags[field], 'select')
         self.assertNotContains(response, 'Identification Documentation')
         self.assertNotContains(response, 'Labour &amp; Vulnerability')
 
