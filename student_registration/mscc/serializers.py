@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from django.utils.translation import gettext as _
+from student_registration.locations.models import Location
 from .models import (
     Registration,
     Teacher,
@@ -263,6 +265,119 @@ class MainSerializer(serializers.ModelSerializer):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
+        )
+
+
+class MSCCRegistrationSerializer(MainSerializer):
+    """The streamlined MSCC workflow, without changing the ALP serializer."""
+
+    child_nationality_other = serializers.CharField(
+        source='child.nationality_other', required=False, allow_blank=True,
+    )
+    child_fe_unique_id = serializers.CharField(
+        source='child.fe_unique_id', max_length=100, required=False, allow_blank=True,
+    )
+    child_disability_other = serializers.CharField(
+        source='child.disability_other', required=False, allow_blank=True,
+    )
+    child_governorate = serializers.PrimaryKeyRelatedField(
+        source='child.governorate', queryset=Location.objects.filter(type_id=1),
+    )
+    child_district = serializers.PrimaryKeyRelatedField(
+        source='child.district', queryset=Location.objects.filter(type_id=2),
+    )
+    child_municipality = serializers.CharField(source='child.municipality', max_length=255)
+    child_village = serializers.CharField(source='child.village', max_length=255)
+    child_street = serializers.CharField(source='child.street', max_length=255)
+    child_building_camp = serializers.CharField(source='child.building_camp', max_length=255)
+    child_cadaster = serializers.PrimaryKeyRelatedField(
+        source='child.cadaster', queryset=Location.objects.filter(type_id=3),
+    )
+    nfe_programme = serializers.ChoiceField(choices=Registration.NFE_PROGRAMMES)
+
+    EDITABLE_FIELDS = (
+        'child_first_name',
+        'child_father_name',
+        'child_last_name',
+        'child_mother_fullname',
+        'child_gender',
+        'child_nationality',
+        'child_nationality_other',
+        'child_birthday_year',
+        'child_birthday_month',
+        'child_birthday_day',
+        'child_governorate',
+        'child_district',
+        'child_municipality',
+        'child_village',
+        'child_street',
+        'child_building_camp',
+        'child_cadaster',
+        'child_disability',
+        'child_disability_other',
+        'child_fe_unique_id',
+        'first_phone_number',
+        'nfe_programme',
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Keep legacy values readable for existing consumers, while preventing
+        # omitted fields or forged submissions from replacing those values.
+        for name, field in self.fields.items():
+            if name not in self.EDITABLE_FIELDS:
+                field.read_only = True
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        child_data = attrs.get('child', {})
+        existing_child = self.instance.child if self.instance and self.instance.child_id else None
+
+        def selected(name):
+            if name in child_data:
+                return child_data[name]
+            return getattr(existing_child, name, None)
+
+        governorate = selected('governorate')
+        district = selected('district')
+        cadaster = selected('cadaster')
+        errors = {}
+        if district and (not governorate or district.parent_id != governorate.pk):
+            errors['child_district'] = _('Select a district within the selected governorate.')
+        if cadaster and (not district or cadaster.parent_id != district.pk):
+            errors['child_cadaster'] = _('Select a cadaster within the selected district.')
+        if errors:
+            raise serializers.ValidationError(errors)
+        return attrs
+
+    @staticmethod
+    def _location_ids(validated_data):
+        # MainSerializer passes nested data through ChildSerializer again.
+        # Its input expects primary keys, not the Location instances produced
+        # by this serializer's related fields.
+        child_data = validated_data.get('child', {})
+        for name in ('governorate', 'district', 'cadaster'):
+            if name in child_data:
+                child_data[name] = getattr(child_data[name], 'pk', child_data[name])
+        return validated_data
+
+    def create(self, validated_data):
+        return super().create(self._location_ids(validated_data))
+
+    def update(self, instance, validated_data):
+        return super().update(instance, self._location_ids(validated_data))
+
+    class Meta(MainSerializer.Meta):
+        fields = MainSerializer.Meta.fields + (
+            'child_governorate',
+            'child_district',
+            'child_municipality',
+            'child_village',
+            'child_street',
+            'child_building_camp',
+            'child_cadaster',
+            'nfe_programme',
+            'child_disability_other',
         )
 
 

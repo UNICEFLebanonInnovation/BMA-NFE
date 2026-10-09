@@ -432,6 +432,11 @@ class Teacher(TimeStampedModel):
 
 class Registration(TimeStampedModel):
 
+    NFE_PROGRAMMES = Choices(
+        ('BLN', _('Basic Literacy and Numeracy (BLN)')),
+        ('DIRASA', _('DIRASA')),
+    )
+
     YES_NO = Choices(
         ('', _('----------')),
         ('Yes', _("Yes")),
@@ -525,6 +530,13 @@ class Registration(TimeStampedModel):
         related_name='+',
         on_delete=models.SET_NULL,
         verbose_name=_('Child')
+    )
+    nfe_programme = models.CharField(
+        max_length=6,
+        choices=NFE_PROGRAMMES,
+        blank=True,
+        null=True,
+        verbose_name=_('Type of NFE Programme'),
     )
     informed_consent = models.FileField(
         upload_to='uploads/mscc_registration/informed_consent',

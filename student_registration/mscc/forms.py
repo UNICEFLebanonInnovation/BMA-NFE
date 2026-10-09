@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import gettext as _
 from django import forms
+from django.db import transaction
 from django.urls import reverse
 from django.contrib import messages
 from django.forms.widgets import ClearableFileInput
@@ -23,7 +24,7 @@ from student_registration.students.models import (
     AttachmentType,
 )
 
-from student_registration.locations.models import Center
+from student_registration.locations.models import Center, Location
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.child.models import Child
 from .models import (
@@ -37,7 +38,7 @@ from student_registration.schools.models import (
     School
 )
 from django.core.validators import RegexValidator
-from .serializers import MainSerializer
+from .serializers import MainSerializer, MSCCRegistrationSerializer
 from student_registration.mscc.templatetags.simple_tags import get_service, get_education_service
 from student_registration.users.templatetags.custom_tags import has_group
 import datetime
@@ -940,6 +941,146 @@ class MainForm(forms.ModelForm):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
+        )
+
+
+class MSCCRegistrationForm(MainForm):
+    """Simplified child registration for MSCC/Makani only."""
+
+    child_governorate = forms.ModelChoiceField(
+        label=_('Governorate (محافظة)'),
+        queryset=Location.objects.filter(type_id=1).order_by('name'), required=True,
+    )
+    child_district = forms.ModelChoiceField(
+        label=_('District/Caza (قضاء)'), queryset=Location.objects.none(), required=True,
+    )
+    child_municipality = forms.CharField(label=_('Municipality (بلدية)'), max_length=255)
+    child_village = forms.CharField(label=_('Village (قرية)'), max_length=255)
+    child_street = forms.CharField(label=_('Street (شارع)'), max_length=255)
+    child_building_camp = forms.CharField(label=_('Building/Camp (مبنى/مخيم)'), max_length=255)
+    child_cadaster = forms.ModelChoiceField(
+        label=_('Cadaster (منطقة عقارية)'), queryset=Location.objects.none(), required=True,
+    )
+    nfe_programme = forms.ChoiceField(
+        label=_('Type of NFE Programme'),
+        choices=(('', _('---------')),) + tuple(Registration.NFE_PROGRAMMES),
+        required=True,
+    )
+    child_fe_unique_id = forms.CharField(
+        label=_('Formal Education unique student ID'), max_length=100, required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        visible_fields = set(self.Meta.fields)
+        for name in tuple(self.fields):
+            if name not in visible_fields:
+                del self.fields[name]
+
+        # Bound values take precedence after a validation error. An edit form
+        # may also be constructed directly from its registration instance.
+        if self.instance.pk and self.instance.child_id:
+            for name in ('governorate', 'district', 'cadaster'):
+                self.initial.setdefault('child_' + name, getattr(self.instance.child, name + '_id'))
+
+        def selected_id(name):
+            value = self.data.get(self.add_prefix(name)) if self.is_bound else self.initial.get(name)
+            value = getattr(value, 'pk', value)
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                return None
+
+        governorate_id = selected_id('child_governorate')
+        district_id = selected_id('child_district')
+        if governorate_id is not None:
+            self.fields['child_district'].queryset = Location.objects.filter(
+                type_id=2, parent_id=governorate_id, parent__type_id=1,
+            ).order_by('name')
+        if governorate_id is not None and district_id is not None:
+            self.fields['child_cadaster'].queryset = Location.objects.filter(
+                type_id=3, parent_id=district_id, parent__type_id=2,
+                parent__parent_id=governorate_id, parent__parent__type_id=1,
+            ).order_by('name')
+
+    def clean(self):
+        # MainForm retains the legacy ALP validation. Only fields still offered
+        # by MSCC may impose requirements on this registration workflow.
+        cleaned_data = forms.ModelForm.clean(self)
+        try:
+            datetime.date(
+                int(cleaned_data.get('child_birthday_year') or 0),
+                int(cleaned_data.get('child_birthday_month') or 0),
+                int(cleaned_data.get('child_birthday_day') or 0),
+            )
+        except ValueError:
+            self.add_error('child_birthday_year', _('The date is not valid.'))
+
+        nationality = cleaned_data.get('child_nationality')
+        if nationality and nationality.id == 6 and not cleaned_data.get('child_nationality_other'):
+            self.add_error('child_nationality_other', _('This field is required'))
+
+        disability = cleaned_data.get('child_disability')
+        if disability and (disability.name_en == 'Other' or disability.name == 'غير ذلك'):
+            if not cleaned_data.get('child_disability_other'):
+                self.add_error('child_disability_other', _('This field is required'))
+
+        return cleaned_data
+
+    @transaction.atomic
+    def save(self, request=None, instance=None):
+        from student_registration.students.utils import generate_one_unique_id
+
+        instance = instance or (self.instance if self.instance.pk else None)
+        # Serialize only the editable MSCC fields, including trimmed strings.
+        # Removed data remains stored when an existing child is edited.
+        data = request.POST.copy()
+        for name in tuple(data):
+            if name not in MSCCRegistrationSerializer.EDITABLE_FIELDS:
+                del data[name]
+        for name in data:
+            value = self.cleaned_data.get(name)
+            if isinstance(value, str):
+                data[name] = value
+
+        serializer = MSCCRegistrationSerializer(instance, data=data)
+        if not serializer.is_valid():
+            for name, errors in serializer.errors.items():
+                self.add_error(name if name in self.fields else None, errors)
+            return None
+        registration = serializer.save()
+        registration.owner = registration.owner or request.user
+        registration.modified_by = request.user
+        if instance is None:
+            registration.partner = request.user.partner
+            if not registration.partner and registration.center and registration.center.partner_id:
+                registration.partner_id = registration.center.partner_id
+            registration.center = request.user.center
+            if self.cleaned_data.get('student_old') is not None:
+                registration.student_old = self.cleaned_data['student_old']
+
+        child = registration.child
+        child_photo = request.FILES.get('child_photo')
+        if child_photo:
+            child.photo = child_photo
+        child.disability_other = self.cleaned_data.get('child_disability_other', '')
+        child.unicef_id = generate_one_unique_id(
+            str(child.pk), child.first_name, child.father_name, child.last_name,
+            child.mother_fullname, child.birthdate, child.nationality_name_en, child.gender,
+        )
+        child.save()
+        registration.save()
+        request.session['instance_id'] = registration.id
+        messages.success(request, _('Your data has been sent successfully to the server'))
+        return registration
+
+    class Meta:
+        model = Registration
+        fields = MSCCRegistrationSerializer.EDITABLE_FIELDS + (
+            'child_photo',
+            'student_old',
+            'registration_id',
+            'partner_name',
         )
 
 

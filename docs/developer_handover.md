@@ -21,6 +21,31 @@ full architecture reference see [`docs/wiki/developer.md`](./wiki/developer.md).
 ## Local development quickstart
 For a detailed guide on setting up a local development environment, please refer to the `docs/deployment.md` file. This document provides comprehensive instructions on how to configure the project, including the database and other sensitive information.
 
+## MSCC/Makani child registration
+
+The Makani create/edit workflow uses `MSCCRegistrationForm`; ALP retains its existing
+registration workflow. All seven residential address components (governorate,
+district/caza, municipality, village, street, building/camp and cadaster) and the
+BLN/DIRASA programme selection are required when saving a Makani registration.
+The caregiver section collects only the primary phone number.
+
+Governorate, district/caza and cadaster use linked `Location` selections with
+type IDs 1, 2 and 3 respectively. Selecting a governorate limits districts to
+its children; selecting a district limits cadasters to its children. Changing
+a parent clears the dependent selections. The form and registration serializer
+also validate the location types and parent relationships. Municipality, village,
+street and building/camp remain mandatory text fields.
+
+Apply the new `child` and `mscc` migrations with `python manage.py migrate` before
+running the updated application. New columns are nullable for existing records;
+editing a legacy registration requires completing its address and programme.
+Previously collected fields and the original free-text address remain stored.
+The linked-location migration keeps the earlier governorate, district and
+cadaster text in separate legacy columns, and maps an existing value only when
+it identifies one location of the correct type and parent. Profiles show the
+legacy text when a value has not been mapped; editing requires valid selections.
+Removed form fields cannot be overwritten through Makani registration submissions.
+
 ## Background processing
 - **Celery bootstrap**: `student_registration/taskapp/celery.py` loads Django settings, autodiscovers tasks across installed apps, and registers logging/monitoring hooks (Opbeat where enabled).
 - **MSCC exports**: `student_registration/mscc/tasks.py` contains threaded exporters that read from database views (`vw_mscc_child`, `vw_mscc_data`, `mscc_followupservice`), write CSV/XLSX output into a ZIP file, and persist it via `ExportStorage`. A push notification is sent via Firebase when a file is ready or if the export fails. Long exports should use the `mscc_export` queue to avoid contention with other tasks.
