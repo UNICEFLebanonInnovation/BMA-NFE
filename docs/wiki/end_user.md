@@ -564,11 +564,14 @@ Click any column header to sort by that column. Click again to reverse the sort 
 ### How to Request an Export
 
 - Go to **MSCC → Registrations List**.
-- Apply any filters you want (date range, center, round, etc.).
 - Click **Export** at the top of the list.
-- A dialog box opens. Select the **fields** you want to include in the export (or leave all selected for full data).
-- Choose the **format**: XLSX (Excel) or CSV.
-- Click **Generate Export**.
+- Choose **All registered children I can access** to include every accessible registration across rounds, or **Children matching the current filters** to export your search results.
+- Choose **Excel with photographs** (the default), or **CSV (text only)**.
+- Click **Start Export**. The export includes the saved child and registration information, including the address and BLN/DIRASA programme.
+
+Excel embeds each photograph in the same row as its child and registration IDs. Children registered in
+more than one round have a separate row for each registration. A missing or unreadable photograph is
+identified in the photograph status column.
 
 ### What Happens Next
 
@@ -580,10 +583,18 @@ Export requested. Processing... [spinner]
 
 You can **continue using the system** while the export is being prepared. When it is ready:
 
-- The button changes to **Download**.
+- The file downloads automatically if you remain on the list page. You can also open the download link in the recent exports menu.
 - You will receive a **push notification** in your browser (if notifications are enabled) saying "Your export is ready."
 
-Click **Download** to save the file to your computer.
+Only the user who requested an export can download its file.
+
+### Downloading an Examination Card
+
+Open the child's **MSCC profile** and click **Download Examination Card (Word)**. The editable `.docx`
+card contains the current saved identity, programme, caregiver phone number, residential address and
+photograph, with child and registration IDs. Correct any information on the profile before downloading
+a new card; each download reads the saved record again. If no photograph is available, the card shows
+that status instead of an image.
 
 ### Enabling Browser Notifications
 
@@ -596,12 +607,13 @@ To receive push notifications when exports are ready:
 
 | Format | Best for |
 |---|---|
-| XLSX (Excel) | Opening in Microsoft Excel or Google Sheets for analysis |
-| CSV | Importing into other databases or tools |
+| XLSX (Excel) | Registered information with embedded photographs, for analysis in Excel |
+| CSV | Registered text information for importing into other tools; photographs are not embedded |
+| DOCX (Word) | An individual examination card downloaded from a child's profile |
 
 > **Arabic text in CSV:** CSV exports are written in UTF-8 with a byte-order mark so that Arabic names display correctly when the file is opened directly in Excel.
 
-> **Note:** Export access may be restricted to users with the **EXPORT** role. If you do not see the Export button, contact your coordinator.
+> **Access:** Centre users export their assigned centre's registrations; partner users export their assigned partner's registrations. UNICEF users and staff administrators can export across the platform. Contact your coordinator if your account needs an assignment or export role.
 
 ---
 
@@ -889,7 +901,7 @@ The interface will reload immediately in the selected language.
 
 **Q: I can't see the Export button. Do I have access?**
 
-> Export access is controlled by your user role. Contact your coordinator or system administrator to request the EXPORT permission if you need it.
+> Export access is controlled by your user role and assigned centre or partner. Contact your coordinator or system administrator to check the assignment and role for your module.
 
 **Q: I switched language to Arabic but some parts are still in English.**
 

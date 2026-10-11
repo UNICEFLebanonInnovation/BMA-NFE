@@ -221,6 +221,17 @@ user-type filter and the user-type column) and to branch navigation for youth wo
 
 ## Where this is enforced in code
 
+MSCC Excel exports with photographs and Word examination cards use the same registration scope:
+staff, superusers and `MSCC_UNICEF` can export all non-deleted registrations; `MSCC_PARTNER` can
+export registrations for their assigned partner; `MSCC_CENTER` can export registrations for their
+assigned centre. Accounts without one of these roles and a required assignment cannot export child
+records. Selecting all registrations ignores search filters, while selecting current filters applies
+them within this scope.
+
+`mscc:examination_card` (`/mscc/examination-card/<registration_id>/`) requires authentication and
+returns a Word card only for an accessible registration. The profile action follows the same scope.
+Background child export status and downloads are limited to the user who created the export.
+
 | Mechanism | Location |
 |---|---|
 | `has_group(user, name)` | `student_registration/users/templatetags/custom_tags.py` |

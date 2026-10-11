@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+import logging
 import mimetypes
 from collections import Counter
 from pathlib import Path
@@ -51,12 +52,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 import uuid
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_GET, require_http_methods
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
 from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.backends.utils import (
     ExportStorage,
-    download_file,
     is_valid_filename,
 )
 
@@ -88,14 +90,19 @@ from .models import (
 from student_registration.backends.models import ExportHistory
 from .education_form import NewRoundForm
 from .forms import (
-    MainForm,
+    MSCCRegistrationForm,
     ReferralForm,
     TeacherForm,
 )
 from .serializers import (
     MainSerializer,
+    MSCCRegistrationSerializer,
     TeacherSerializer,
 )
+from .document_exports import build_examination_card
+from .export_access import filter_registrations, scoped_registrations, user_can_export
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -263,6 +270,10 @@ class ProfileView(LoginRequiredMixin,
 
         return {
             'instance': instance,
+            'can_export_examination_card': bool(
+                instance.child_id
+                and scoped_registrations(self.request.user).filter(pk=instance.pk).exists()
+            ),
             'new_round': new_round,
             'current_tab': current_tab,
             'provided_services': services_dict,
@@ -517,11 +528,38 @@ class DashboardDataView(LoginRequiredMixin, View):
         return JsonResponse(data, safe=False)
 
 
+class ChildLocationOptionsView(LoginRequiredMixin, View):
+    """Return the next level in an MSCC child's residential address."""
+
+    def get(self, request, *args, **kwargs):
+        from student_registration.locations.models import Location
+
+        try:
+            location_type = int(request.GET.get('type', ''))
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid location type.'}, status=400)
+        if location_type not in (2, 3):
+            return JsonResponse({'error': 'Invalid location type.'}, status=400)
+
+        parent_value = request.GET.get('parent')
+        if not parent_value:
+            return JsonResponse({'results': []})
+        try:
+            parent_id = int(parent_value)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+        if not Location.objects.filter(pk=parent_id, type_id=location_type - 1).exists():
+            return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+
+        locations = Location.objects.filter(type_id=location_type, parent_id=parent_id).order_by('name')
+        return JsonResponse({'results': [{'id': location.pk, 'text': str(location)} for location in locations]})
+
+
 class MainAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
     template_name = 'mscc/main_form.html'
-    form_class = MainForm
+    form_class = MSCCRegistrationForm
     success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
@@ -549,21 +587,22 @@ class MainAddView(LoginRequiredMixin,
         return initial
 
     def form_valid(self, form):
-        form.save(self.request)
+        if form.save(self.request) is None:
+            return self.form_invalid(form)
         return super(MainAddView, self).form_valid(form)
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
-            return MainForm(self.request.POST, instance=None, request=self.request)
+            return MSCCRegistrationForm(self.request.POST, self.request.FILES, instance=None, request=self.request)
         else:
-            return MainForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return MSCCRegistrationForm(None, instance=None, request=self.request, initial=self.get_initial())
 
 
 class MainEditView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FormView):
     template_name = 'mscc/main_form.html'
-    form_class = MainForm
+    form_class = MSCCRegistrationForm
     success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
@@ -579,20 +618,21 @@ class MainEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = Registration.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            return MainForm(self.request.POST, instance=instance, request=self.request)
+            return MSCCRegistrationForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         else:
-            data = MainSerializer(instance).data
+            data = MSCCRegistrationSerializer(instance).data
             data['child_nationality'] = data['child_nationality_id'] if 'child_nationality_id' in data else ''
             data['child_disability'] = data['child_disability_id'] if 'child_disability_id' in data else ''
             data['main_caregiver_nationality'] = data['main_caregiver_nationality_id']if 'main_caregiver_nationality_id' in data else ''
             data['father_educational_level'] = data['father_educational_level_id']if 'father_educational_level_id' in data else ''
             data['mother_educational_level'] = data['mother_educational_level_id']if 'mother_educational_level_id' in data else ''
             data['id_type'] = data['id_type_id']if 'id_type_id' in data else ''
-            return MainForm(data, instance=instance, request=self.request)
+            return MSCCRegistrationForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         instance = Registration.objects.get(id=self.kwargs['pk'])
-        form.save(request=self.request, instance=instance)
+        if form.save(request=self.request, instance=instance) is None:
+            return self.form_invalid(form)
         return super(MainEditView, self).form_valid(form)
 
 
@@ -1127,10 +1167,21 @@ class ChildProfilePreview(LoginRequiredMixin, TemplateView):
 
 
 @login_required(login_url='/users/login')
+@require_GET
 def export_list_background(request):
     user = request.user
+    if not user_can_export(user):
+        return HttpResponseForbidden('An assigned MSCC export role is required.')
     filters = request.GET.dict()
     file_format = request.GET.get('format', 'csv')
+    if file_format not in ('csv', 'xlsx'):
+        return HttpResponseBadRequest('Unsupported export format.')
+    if filters.get('export_scope', 'all') not in ('all', 'filtered'):
+        return HttpResponseBadRequest('Unsupported export scope.')
+    try:
+        filter_registrations(scoped_registrations(user), filters)
+    except ValidationError as exc:
+        return HttpResponseBadRequest('; '.join(exc.messages))
 
     export_record = ExportHistory.objects.create(
         export_type='NFR Sector List',
@@ -1203,7 +1254,10 @@ def export_child_list_background(request):
 
 
 @login_required(login_url='/users/login')
+@require_http_methods(['GET', 'POST'])
 def export_list_async(request):
+    if not user_can_export(request.user):
+        return HttpResponseForbidden('An assigned MSCC export role is required.')
     fields = None
     file_format = 'csv'
     if request.method == 'POST':
@@ -1211,13 +1265,19 @@ def export_list_async(request):
             payload = json.loads(request.body.decode('utf-8'))
         except (ValueError, AttributeError):
             payload = request.POST
-        if isinstance(payload, dict):
-            file_format = payload.get('format', 'csv')
-            fields = payload.get('fields') or None
-        else:
-            file_format = payload.get('format', 'csv') if payload else 'csv'
+        if not isinstance(payload, dict):
+            return HttpResponseBadRequest('The export request must be an object.')
+        file_format = payload.get('format', 'csv')
+        fields = payload.get('fields') or None
     else:
         file_format = request.GET.get('format', 'csv')
+    if file_format not in ('csv', 'xlsx'):
+        return HttpResponseBadRequest('Unsupported export format.')
+    if fields is not None and (
+        not isinstance(fields, list)
+        or any(not isinstance(field, str) for field in fields)
+    ):
+        return HttpResponseBadRequest('Export fields must be a list of names.')
     export_record = ExportHistory.objects.create(
         export_type='NFR Sector List',
         created_by=request.user,
@@ -1226,29 +1286,69 @@ def export_list_async(request):
         file_format=file_format,
     )
     queue_mscc_export(export_record.id, fields, file_format)
-    return JsonResponse({'status': 'started'})
+    return JsonResponse({'status': 'started', 'export_id': export_record.pk})
+
+
+@login_required
+@require_GET
+def examination_card(request, pk):
+    """Download a child's Word card from the current authorised registration."""
+    registration = get_object_or_404(scoped_registrations(request.user), pk=pk)
+    if not registration.child_id:
+        raise Http404('No child is associated with this registration.')
+    payload = build_examination_card(registration)
+    return FileResponse(
+        io.BytesIO(payload),
+        as_attachment=True,
+        filename='examination_card_child_%s_registration_%s.docx' % (
+            registration.child_id, registration.pk,
+        ),
+        content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    )
+
+
+def _download_owned_export(request, file_name, formats):
+    """Serve only completed export files associated with their requester."""
+    file_format = next(
+        (extension for extension in formats if is_valid_filename(file_name, extension)),
+        None,
+    )
+    if file_format is None:
+        raise Http404('Export file not found.')
+    urls = [reverse('mscc:export_download', args=[file_name])]
+    if file_format == 'csv':
+        urls.append(reverse('mscc:export_download_csv', args=[file_name]))
+    if not ExportHistory.objects.filter(
+        created_by=request.user, status='done', file_url__in=urls,
+    ).exists():
+        raise Http404('Export file not found.')
+
+    try:
+        stream = ExportStorage().open(file_name, 'rb')
+    except Exception:
+        logger.exception('Could not open export file %s', file_name)
+        raise Http404('Export file not found.')
+    content_types = {
+        'zip': 'application/zip',
+        'csv': 'text/csv',
+        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }
+    return FileResponse(
+        stream,
+        as_attachment=True,
+        filename='exported_data.%s' % file_format,
+        content_type=content_types[file_format],
+    )
 
 
 @login_required(login_url='/users/login')
 def get_file(request, file_name):
-    if is_valid_filename(file_name, 'zip'):
-        return download_file(file_name, 'output_file.zip')
-    if is_valid_filename(file_name, 'csv'):
-        return download_file(file_name, 'exported_data.csv', content_type='text/csv')
-    if is_valid_filename(file_name, 'xlsx'):
-        return download_file(
-            file_name,
-            'exported_data.xlsx',
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-    return HttpResponse("Invalid file.")
+    return _download_owned_export(request, file_name, ('zip', 'csv', 'xlsx'))
 
 
 @login_required(login_url='/users/login')
 def get_file_csv(request, file_name):
-    if is_valid_filename(file_name, 'csv'):
-        return download_file(file_name, 'exported_data.csv', content_type='text/csv')
-    return HttpResponse("Invalid file.", status=400)
+    return _download_owned_export(request, file_name, ('csv',))
 
 
 class WellbeingDashboardView(LoginRequiredMixin, TemplateView):

@@ -158,6 +158,44 @@ class Child(TimeStampedModel):
         null=True,
         verbose_name=_('Registered child Home Address')
     )
+    # Legacy registrations may not have a structured address yet. New MSCC
+    # registrations require all seven components through their registration form.
+    governorate_legacy = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Governorate (محافظة)')
+    )
+    district_legacy = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('District/Caza (قضاء)')
+    )
+    governorate = models.ForeignKey(
+        'locations.Location', blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 1},
+        verbose_name=_('Governorate (محافظة)'),
+    )
+    district = models.ForeignKey(
+        'locations.Location', blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 2},
+        verbose_name=_('District/Caza (قضاء)'),
+    )
+    municipality = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Municipality (بلدية)')
+    )
+    village = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Village (قرية)')
+    )
+    street = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Street (شارع)')
+    )
+    building_camp = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Building/Camp (مبنى/مخيم)')
+    )
+    cadaster_legacy = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('Cadaster (منطقة عقارية)')
+    )
+    cadaster = models.ForeignKey(
+        'locations.Location', blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 3},
+        verbose_name=_('Cadaster (منطقة عقارية)'),
+    )
     living_arrangement = models.CharField(
         max_length=50,
         blank=True,
@@ -535,6 +573,8 @@ class Child(TimeStampedModel):
 
     @property
     def id_number(self):
+        if not self.id_type_id:
+            return ''
         # 1	"UNHCR Registered"
         if self.id_type.id == 1:
             return  self.individual_case_number
@@ -559,6 +599,8 @@ class Child(TimeStampedModel):
 
     @property
     def caregiver_id_number(self):
+        if not self.id_type_id:
+            return ''
         # 1	"UNHCR Registered"
         if self.id_type.id == 1:
             return self.parent_individual_case_number

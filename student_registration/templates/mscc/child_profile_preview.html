@@ -70,6 +70,18 @@
                                             </div>
                                         </div>
                                     </li>
+                                    {% if instance.nfe_programme %}
+                                    <li class="list-group-item">
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <div class="widget-content-left">
+                                                    <div class="widget-heading">{% trans "Type of NFE Programme" %}</div>
+                                                    <div class="widget-subheading">{{ instance.get_nfe_programme_display }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {% endif %}
                                     <li class="list-group-item">
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
@@ -391,7 +403,7 @@
                                                                     <p>
                                                                         <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
                                                                     </p>
-                                                                    <p> {{ instance.child.address }}</p>
+                                                                    {% include 'mscc/child_residential_address.html' with child=instance.child %}
                                                                 </div>
                                                             </div>
                                                         </div>

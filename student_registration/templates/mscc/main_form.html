@@ -122,7 +122,7 @@
                         </li>
                     </ul>
 
-                    <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" enctype="multipart/form-data" novalidate>
+                    <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" data-location-options-url="{% url 'mscc:child_location_options' %}" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
                         {% for h in form.hidden_fields %}{{ h }}{% endfor %}
 
@@ -130,7 +130,6 @@
                         <div class="step-content active" id="step-1">
                             <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "1. Basic Identity Information" %}</h5>
                             <div class="row g-3">
-                                <div class="col-md-12">{{ form.informed_consent|as_crispy_field }}</div>
                                 <div class="col-md-12">{{ form.child_photo|as_crispy_field }}</div>
                                 <div class="col-md-4">{{ form.child_first_name|as_crispy_field }}</div>
                                 <div class="col-md-4">{{ form.child_father_name|as_crispy_field }}</div>
@@ -146,129 +145,46 @@
                                 <div class="col-md-6">{{ form.child_nationality|as_crispy_field }}</div>
                                 <div class="col-md-6" id="div_id_child_nationality_other">{{ form.child_nationality_other|as_crispy_field }}</div>
 
-                                <div class="col-md-6">{{ form.child_p_code|as_crispy_field }}</div>
-                                <div class="col-md-8">{{ form.child_address|as_crispy_field }}</div>
-
-                                <div class="col-md-6">{{ form.source_of_identification|as_crispy_field }}</div>
-                                <div class="col-md-6 " id="div_id_source_of_identification_specify">{{ form.source_of_identification_specify|as_crispy_field }}</div>
-
-                                <div class="col-md-6">{{ form.partner_unique_number|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.nfe_programme|as_crispy_field }}</div>
                                 <div class="col-md-6 " id="child_fe_unique_id_block">{{ form.child_fe_unique_id|as_crispy_field }}</div>
                             </div>
 
-                            <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "2. Status & Background" %}</h5>
+                            <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "2. Child's Residential Address" %}</h5>
                             <div class="row g-3">
-                                <div class="col-md-4">{{ form.child_living_arrangement|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.child_disability|as_crispy_field }}</div>
-                                <div class="col-md-4" >{{ form.child_disability_other|as_crispy_field }}</div>
-                            </div>
-                            <div class="row g-3">
-                                <div class="col-md-4">{{ form.child_marital_status|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.child_have_children|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.child_children_number|as_crispy_field }}</div>
-                            </div>
-                        </div>
-
-                        <!-- Step 2: Parent/Caregiver Information -->
-                        <div class="step-content d-none" id="step-2">
-                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "3. Caregiver Details" %}</h5>
-                            <div class="row g-3">
-                                <div class="col-md-6">{{ form.child_have_sibling|as_crispy_field }}</div>
-                                <div class="col-md-6 " id="div_id_child_siblings_have_disability">{{ form.child_siblings_have_disability|as_crispy_field }}</div>
-                                <div class="col-md-6">{{ form.child_mother_pregnant_expecting|as_crispy_field }}</div>
-                                <div class="col-md-6"></div> <!-- Empty column for layout balance -->
-
-                                <div class="col-md-6">{{ form.father_educational_level|as_crispy_field }}</div>
-                                <div class="col-md-6">{{ form.mother_educational_level|as_crispy_field }}</div>
-
-                                <div class="col-md-4">{{ form.first_phone_number|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.first_phone_number_confirm|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.first_phone_owner|as_crispy_field }}</div>
-
-                                <div class="col-md-4">{{ form.second_phone_number|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.second_phone_number_confirm|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.second_phone_owner|as_crispy_field }}</div>
-
-                                <div class="col-md-4">{{ form.children_number_under18|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.main_caregiver|as_crispy_field }}</div>
-                                <div class="col-md-4 " id="div_id_main_caregiver_other">{{ form.main_caregiver_other|as_crispy_field }}</div>
-
-                                <div class="col-md-4">{{ form.caregiver_first_name|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.caregiver_middle_name|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.caregiver_last_name|as_crispy_field }}</div>
-
-                                <div class="col-md-4">{{ form.caregiver_mother_name|as_crispy_field }}</div>
-                                <div class="col-md-4">{{ form.main_caregiver_nationality|as_crispy_field }}</div>
-                                <div class="col-md-4 " id="div_id_main_caregiver_nationality_other">{{ form.main_caregiver_nationality_other|as_crispy_field }}</div>
-                            </div>
-
-                            <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "4. Identification Documentation" %}</h5>
-                            <div class="row g-3">
-                                <div class="col-md-12">{{ form.id_type|as_crispy_field }}</div>
-
-                                <!-- Group 1: UNHCR Registered -->
-                                <div class="col-md-6 child_id child_id1 d-none">{{ form.case_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id1 d-none">{{ form.case_number_confirm|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id1 d-none">{{ form.parent_individual_case_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id1 d-none">{{ form.parent_individual_case_number_confirm|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id1 d-none">{{ form.individual_case_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id1 d-none">{{ form.individual_case_number_confirm|as_crispy_field }}</div>
-
-                                <!-- Group 2: UNHCR Recorded -->
-                                <div class="col-md-6 child_id child_id2 d-none">{{ form.recorded_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id2 d-none">{{ form.recorded_number_confirm|as_crispy_field }}</div>
-
-                                <!-- Group 3: Lebanese ID -->
-                                <div class="col-md-6 child_id child_id3 d-none">{{ form.parent_national_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id3 d-none">{{ form.parent_national_number_confirm|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id3 d-none">{{ form.national_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id3 d-none">{{ form.national_number_confirm|as_crispy_field }}</div>
-
-                                <!-- Group 4: Syrian ID -->
-                                <div class="col-md-6 child_id child_id4 d-none">{{ form.parent_syrian_national_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id4 d-none">{{ form.parent_syrian_national_number_confirm|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id4 d-none">{{ form.syrian_national_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id4 d-none">{{ form.syrian_national_number_confirm|as_crispy_field }}</div>
-
-                                <!-- Group 5: Palestinian ID -->
-                                <div class="col-md-6 child_id child_id5 d-none">{{ form.parent_sop_national_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id5 d-none">{{ form.parent_sop_national_number_confirm|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id5 d-none">{{ form.sop_national_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id5 d-none">{{ form.sop_national_number_confirm|as_crispy_field }}</div>
-
-                                <!-- Group 6: Other ID -->
-                                <div class="col-md-6 child_id child_id6 d-none">{{ form.parent_other_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id6 d-none">{{ form.parent_other_number_confirm|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id6 d-none">{{ form.other_number|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id6 d-none">{{ form.other_number_confirm|as_crispy_field }}</div>
-
-                                <!-- Group 7: Extract Record -->
-                                <div class="col-md-6 child_id child_id7 d-none">{{ form.parent_extract_record|as_crispy_field }}</div>
-                                <div class="col-md-6 child_id child_id7 d-none">{{ form.parent_extract_record_confirm|as_crispy_field }}</div>
-                            </div>
-                        </div>
-
-                        <!-- Step 3: Work Status & Final -->
-                        <div class="step-content d-none" id="step-3">
-                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "5. Labour & Vulnerability" %}</h5>
-                            <div class="row g-3">
-                                <div class="col-md-6">{{ form.have_labour|as_crispy_field }}</div>
-                                <div class="col-md-6 " id="div_id_labour_type">{{ form.labour_type|as_crispy_field }}</div>
-
-                                <div class="col-md-12 " id="labour_details_1">{{ form.labour_type_specify|as_crispy_field }}</div>
-
-                                <div class="col-md-6 " id="labour_details_2">{{ form.labour_hours|as_crispy_field }}</div>
-                                <div class="col-md-6 " id="labour_details_2_alt">{{ form.labour_weekly_income|as_crispy_field }}</div>
-
-                                <div class="col-md-12 " id="labour_details_3">{{ form.labour_condition|as_crispy_field }}</div>
-
-                                <div class="col-md-12 mt-4">
-                                    {{ form.cash_support_programmes|as_crispy_field }}
+                                <div class="col-md-6">{{ form.child_governorate|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_district|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_cadaster|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_municipality|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_village|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_street|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_building_camp|as_crispy_field }}</div>
+                                <div class="col-12">
+                                    <div id="residential-location-error" class="alert alert-danger d-none mb-0" role="alert">
+                                        {% trans "Could not load address options. Please try again." %}
+                                        <button type="button" id="retry-residential-locations" class="btn btn-outline-danger btn-sm ms-2">{% trans "Try again" %}</button>
+                                    </div>
                                 </div>
                             </div>
 
+                            <h5 class="fw-bold mt-5 mb-4 pb-2 border-bottom">{% trans "3. Status & Background" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-4">{{ form.child_disability|as_crispy_field }}</div>
+                                <div class="col-md-4" >{{ form.child_disability_other|as_crispy_field }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Caregiver Contact -->
+                        <div class="step-content d-none" id="step-2">
+                            <h5 class="fw-bold mb-4 pb-2 border-bottom">{% trans "4. Caregiver Details" %}</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">{{ form.first_phone_number|as_crispy_field }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Final Review -->
+                        <div class="step-content d-none" id="step-3">
                             <!-- Form Summary / Review -->
-                            <div class="mt-5 border-top pt-4">
+                            <div>
                                 <h5 class="fw-bold mb-3"><i class="bi bi-card-checklist me-2 text-primary"></i> {% trans "Final Review" %}</h5>
                                 <div class="row g-3">
                                     <div class="col-md-6">
@@ -296,18 +212,18 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="summary-card p-3 rounded border h-100">
-                                            <h6 class="fw-bold mb-3 text-muted small text-uppercase">{% trans "Caregiver Information" %}</h6>
+                                            <h6 class="fw-bold mb-3 text-muted small text-uppercase">{% trans "Contact & Programme" %}</h6>
                                             <div class="mb-2">
-                                                <label class="small text-muted d-block">{% trans "Contact Method" %}</label>
+                                                <label class="small text-muted d-block">{% trans "Caregiver Phone Number" %}</label>
                                                 <span id="summary-phone" class="fw-medium text-dark">-</span>
                                             </div>
                                             <div class="mb-2">
-                                                <label class="small text-muted d-block">{% trans "ID Document" %}</label>
-                                                <span id="summary-id-type" class="fw-medium text-dark">-</span>
+                                                <label class="small text-muted d-block">{% trans "Type of NFE Programme" %}</label>
+                                                <span id="summary-programme" class="fw-medium text-dark">-</span>
                                             </div>
                                             <div>
-                                                <label class="small text-muted d-block">{% trans "ID Number" %}</label>
-                                                <span id="summary-id-num" class="fw-medium text-dark">-</span>
+                                                <label class="small text-muted d-block">{% trans "Residential Address" %}</label>
+                                                <span id="summary-address" class="fw-medium text-dark">-</span>
                                             </div>
                                         </div>
                                     </div>
@@ -317,7 +233,7 @@
                             <div class="mt-4 p-4 bg-primary bg-opacity-10 rounded border border-primary border-opacity-25">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="bi bi-shield-check fs-4 text-primary me-3"></i>
-                                    <p class="small text-dark mb-0">{% trans "By completing this registration, you confirm that all entered details are verified against physical documentation." %}</p>
+                                    <p class="small text-dark mb-0">{% trans "By completing this registration, you confirm that the entered information is complete and accurate." %}</p>
                                 </div>
                                 <div class="d-flex justify-content-end">
                                     <button type="reset" class="btn btn-light border me-3">{% trans "Reset Form" %}</button>
@@ -353,7 +269,7 @@
         window.isAddPage = function() { return {% if not form.instance.id %}true{% else %}false{% endif %}; };
     </script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=42"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=45"></script>
     <script type="text/javascript">
         $(function() {
             let currentStep = 1;
@@ -365,15 +281,18 @@
                 $('#summary-nat').text($('#id_child_nationality option:selected').text());
                 $('#summary-gender').text($('#id_child_gender').val());
                 $('#summary-phone').text($('#id_first_phone_number').val() || '{% trans "Not provided" %}');
-                $('#summary-id-type').text($('#id_id_type option:selected').text() || '{% trans "Not selected" %}');
-
-                // Get the visible ID field value
-                let $visibleIdField = $('.child_id:visible').find('input');
-                let idVal = $visibleIdField.val() || '{% trans "N/A" %}';
-                $('#summary-id-num').text(idVal);
+                $('#summary-programme').text($('#id_nfe_programme option:selected').text());
+                const addressFields = ['child_governorate', 'child_district', 'child_municipality', 'child_village', 'child_street', 'child_building_camp', 'child_cadaster'];
+                $('#summary-address').text(addressFields.map(field => {
+                    const input = $(`#id_${field}`);
+                    if (!input.val()) return '';
+                    return input.is('select') ? input.find('option:selected').text() : input.val();
+                }).filter(Boolean).join(', '));
             }
 
             function updateWizard(step) {
+                currentStep = step;
+                window.currentStep = step;
                 // Progress Bar
                 const progress = (step / totalSteps) * 100;
                 $('#wizardProgressBar').css('width', `${progress}%`);
@@ -416,22 +335,6 @@
                 } else if (typeof validateMainForm === 'function') {
                    if (!validateMainForm(true, currentStep)) return;
                 }
-    if (currentStep === 2) {
-        const idTypeVal = $('#id_id_type').val();
-
-        if (!idTypeVal) {
-            $('#id_id_type').addClass('is-invalid');
-
-            // scroll to field
-            $('html, body').animate({
-                scrollTop: $('#id_id_type').offset().top - 150
-            }, 200);
-
-            return; 
-        } else {
-            $('#id_id_type').removeClass('is-invalid');
-        }
-    }
                 if (currentStep < totalSteps) {
                     currentStep++;
                     updateWizard(currentStep);
@@ -477,52 +380,4 @@
             };
         });
     </script>
-    <script>
-    $(function () {
-        const $cashChecks = $('#div_id_cash_support_programmes input[type="checkbox"]');
-
-        $cashChecks.on('change', function () {
-            const $changed = $(this);
-            const value = $changed.val();
-            const checked = $changed.is(':checked');
-
-            if (!checked) return;
-
-            if (value === 'None') {
-                $cashChecks.not($changed).prop('checked', false);
-            } else {
-                $cashChecks.filter('[value="None"]').prop('checked', false);
-            }
-        });
-    });
-</script>
-<script>
-$(function () {
-    const $haveChildren = $('#id_child_have_children');
-    const $childrenDiv = $('#div_id_child_children_number');
-    const $childrenInput = $('#id_child_children_number');
-
-    function toggleChildrenField() {
-        const value = $haveChildren.val();
-
-        if (value === "Yes" || value === "Child pregnant or expecting children") {
-            $childrenDiv.removeClass('d-none');
-
-            if (!$childrenInput.val() || $childrenInput.val() == 0) {
-                $childrenInput.val(1);
-            }
-
-        } else {
-            $childrenDiv.addClass('d-none');
-            $childrenInput.val(0);
-        }
-    }
-
-    // Run on page load
-    toggleChildrenField();
-
-    // Run on change
-    $haveChildren.on('change', toggleChildrenField);
-});
-</script>
 {% endblock %}
