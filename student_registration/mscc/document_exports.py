@@ -20,6 +20,7 @@ from PIL import Image, ImageOps
 
 from student_registration.child.models import Child
 from student_registration.mscc.models import ExceptionalExam, Registration
+from student_registration.mscc.exceptional_exam_locations import location_label
 
 
 logger = logging.getLogger(__name__)
@@ -134,7 +135,11 @@ def _field_values(instance, model, prefix, excluded):
         key = '{}__{}'.format(prefix, field.name)
         value = getattr(instance, field.name, None) if instance is not None else None
         if isinstance(field, models.ForeignKey):
-            values[key] = _text(value)
+            values[key] = _text(
+                location_label(value)
+                if prefix == 'exceptional_exam' and field.name in ('governorate', 'district')
+                else value
+            )
             values['{}__{}_id'.format(prefix, field.name)] = _text(
                 getattr(instance, field.attname, None) if instance is not None else None
             )

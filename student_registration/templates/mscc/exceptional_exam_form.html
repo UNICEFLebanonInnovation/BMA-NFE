@@ -21,7 +21,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4 p-md-5">
                     <p class="text-muted mb-4">All questions are required. / <span lang="ar" dir="rtl">جميع الأسئلة مطلوبة.</span></p>
-                    <form method="post" action="{% url 'mscc:exceptional_exam_form' registry=registration.pk %}" id="exceptional-exam-form">
+                    <form method="post" action="{% url 'mscc:exceptional_exam_form' registry=registration.pk %}" id="exceptional-exam-form" data-options-url="{% url 'mscc:exceptional_exam_location_options' %}">
                         {% csrf_token %}
                         {% if form.errors %}
                         <div class="alert alert-danger" role="alert" id="exceptional-exam-errors" tabindex="-1">
@@ -36,11 +36,19 @@
                         {% endif %}
                         <fieldset class="mb-4">
                             <legend class="fs-5 fw-bold mb-2">Place of residence / <span lang="ar" dir="rtl">مكان الإقامة</span></legend>
-                            <p class="small text-muted" id="residence-selection-help">Select the governorate, then the district, then the nearest town. / <span lang="ar" dir="rtl">اختر المحافظة ثم القضاء ثم أقرب بلدة.</span></p>
+                            <p class="small text-muted" id="residence-selection-help">Select the governorate, then the district, then the village. / <span lang="ar" dir="rtl">اختر المحافظة ثم القضاء ثم القرية.</span></p>
                             <div class="row">
                                 <div class="col-md-4">{% bootstrap_field form.governorate %}</div>
-                                <div class="col-md-4">{% bootstrap_field form.district %}</div>
-                                <div class="col-md-4">{% bootstrap_field form.nearest_town %}</div>
+                                <div class="col-md-4">
+                                    {% bootstrap_field form.district %}
+                                    <p class="small text-muted mt-2 mb-0" id="exceptional-exam-district-status" role="status" aria-live="polite"></p>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-1 d-none" id="exceptional-exam-district-retry" hidden>Retry districts / <span lang="ar" dir="rtl">إعادة تحميل الأقضية</span></button>
+                                </div>
+                                <div class="col-md-4">
+                                    {% bootstrap_field form.nearest_town %}
+                                    <p class="small text-muted mt-2 mb-0" id="exceptional-exam-village-status" role="status" aria-live="polite"></p>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-1 d-none" id="exceptional-exam-village-retry" hidden>Retry villages / <span lang="ar" dir="rtl">إعادة تحميل القرى</span></button>
+                                </div>
                             </div>
                         </fieldset>
                         <div class="mb-4">{% bootstrap_field form.programme %}</div>
@@ -57,9 +65,8 @@
         </div>
     </div>
 </div>
-{{ residence_catalog|json_script:"exceptional-exam-residence-catalog" }}
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=1"></script>
+<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=2"></script>
 {% endblock %}

@@ -604,8 +604,9 @@ After registering a child, open the **MSCC profile → Exceptional Exam / الا
 select **Add Exceptional Exam / إضافة امتحان استثنائي**. Questions and answer choices display both
 English and Arabic. Complete all fields:
 
-- **Place of residence / مكان الإقامة:** choose the governorate, then its district and nearest town.
-  These linked choices follow the supplied examination residence list.
+- **Place of residence / مكان الإقامة:** choose a governorate from the platform's Location records,
+  then one of its districts and a village. Governorates and districts use Location types 1 and 2;
+  village choices follow the supplied examination village/town list for the selected district.
 - **Non-formal education programme / البرنامج التعليمي غير النظامي:** BLN or DIRASA.
 - **Grade applied for / الصف الدراسي الذي يتقدم للامتحان له:** Grades 2–7 are available for both
   programmes.
@@ -617,6 +618,10 @@ reopens those answers for correction. Each registration has one exam record, so 
 different rounds keep separate answers. Exam residence and programme are saved with the exam record;
 the child's registration address and programme retain their original values. Excel and CSV exports
 include the saved exam details alongside the corresponding child and registration IDs.
+
+Changing the governorate clears the district and village; changing the district clears the village.
+Saved location selections are restored when editing. Existing exam residence codes remain available
+as legacy values where they could not be mapped unambiguously to a Location record.
 
 ### Enabling Browser Notifications
 

@@ -2,8 +2,10 @@
 
 from django import forms
 
-from .exceptional_exam_choices import (
-    GOVERNORATE_CHOICES, district_choices, town_choices,
+from student_registration.locations.models import Location
+
+from .exceptional_exam_locations import (
+    location_label, positive_location_id, town_choices_for_locations,
 )
 from .models import ExceptionalExam
 
@@ -11,23 +13,22 @@ from .models import ExceptionalExam
 SELECT_PROMPT = ('', 'Select an option / اختر خياراً')
 
 
-def _matching_location_code(location, choices):
-    """Use an exact registered location name only when the match is unique."""
-    if not location:
-        return ''
-    names = {
-        str(value).strip().casefold()
-        for value in (location.name, getattr(location, 'name_en', None)) if value
-    }
-    matches = [
-        code for code, label in choices
-        if names.intersection(part.strip().casefold() for part in label.split(' / '))
-    ]
-    return matches[0] if len(matches) == 1 else ''
+class BilingualLocationChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return location_label(obj)
 
 
 class ExceptionalExamForm(forms.ModelForm):
     """Keep residence and examination choices independent of child registration."""
+
+    governorate = BilingualLocationChoiceField(
+        queryset=Location.objects.filter(type_id=1).order_by('name'),
+        label='Governorate / المحافظة', empty_label=SELECT_PROMPT[1],
+    )
+    district = BilingualLocationChoiceField(
+        queryset=Location.objects.none(), label='District/Caza / القضاء',
+        empty_label=SELECT_PROMPT[1],
+    )
 
     class Meta:
         model = ExceptionalExam
@@ -48,29 +49,37 @@ class ExceptionalExamForm(forms.ModelForm):
         if not self.is_bound and not self.instance.pk and registration is not None:
             self.initial.setdefault('programme', registration.nfe_programme)
             child = registration.child if registration.child_id else None
-            governorate = _matching_location_code(
-                child.governorate if child else None, GOVERNORATE_CHOICES,
-            )
-            self.initial.setdefault('governorate', governorate)
-            self.initial.setdefault('district', _matching_location_code(
-                child.district if child else None, district_choices(self.initial['governorate']),
-            ))
+            governorate = child.governorate if child and child.governorate_id else None
+            district = child.district if child and child.district_id else None
+            if governorate and governorate.type_id == 1:
+                self.initial.setdefault('governorate', governorate.pk)
+                if (district and district.type_id == 2
+                        and district.parent_id == governorate.pk):
+                    self.initial.setdefault('district', district.pk)
 
         def selected(name):
             if self.is_bound:
                 return self.data.get(self.add_prefix(name), '')
             return self.initial.get(name, '')
 
-        governorate = selected('governorate')
-        district = selected('district')
-        self.fields['district'].choices = district_choices(governorate)
-        self.fields['nearest_town'].choices = town_choices(governorate, district)
+        governorate_id = positive_location_id(selected('governorate'))
+        governorate = Location.objects.filter(pk=governorate_id, type_id=1).first()
+        district_queryset = Location.objects.none()
+        if governorate:
+            district_queryset = Location.objects.filter(
+                type_id=2, parent_id=governorate.pk,
+            ).order_by('name')
+        self.fields['district'].queryset = district_queryset
+        district_id = positive_location_id(selected('district'))
+        district = district_queryset.filter(pk=district_id).first()
+        self.fields['nearest_town'].choices = town_choices_for_locations(governorate, district)
 
         for field in self.fields.values():
             field.required = True
-            field.choices = (SELECT_PROMPT,) + tuple(
-                choice for choice in field.choices if choice[0] != ''
-            )
+            if not isinstance(field, forms.ModelChoiceField):
+                field.choices = (SELECT_PROMPT,) + tuple(
+                    choice for choice in field.choices if choice[0] != ''
+                )
             field.widget.attrs['class'] = 'form-select'
             field.error_messages.update({
                 'required': 'This field is required. / هذا الحقل مطلوب.',

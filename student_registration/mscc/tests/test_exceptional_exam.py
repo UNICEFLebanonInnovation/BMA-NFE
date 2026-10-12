@@ -15,7 +15,7 @@ from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 
 from student_registration.child.models import Child
-from student_registration.locations.models import Center
+from student_registration.locations.models import Center, Location, LocationType
 from student_registration.mscc.exceptional_exam_choices import (
     GRADE_CHOICES,
     LANGUAGE_EXAM_CHOICES,
@@ -118,6 +118,29 @@ class ExceptionalExamResidenceCatalogTests(SimpleTestCase):
 class ExceptionalExamWorkflowTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        for pk, name in ((1, 'Governorate'), (2, 'District'), (3, 'Cadaster')):
+            LocationType.objects.create(pk=pk, name=name)
+        cls.governorate = Location.objects.create(
+            name='بيروت', name_en='Beirut', type_id=1,
+        )
+        cls.district = Location.objects.create(
+            name='بيروت', name_en='Beirut', type_id=2, parent=cls.governorate,
+        )
+        cls.other_governorate = Location.objects.create(
+            name='جبل لبنان', name_en='Mount Lebanon', type_id=1,
+        )
+        cls.baabda = Location.objects.create(
+            name='بعبدا', name_en='Baabda', type_id=2, parent=cls.other_governorate,
+        )
+        cls.keserwan = Location.objects.create(
+            name='كسروان', name_en='Keserwan', type_id=2, parent=cls.other_governorate,
+        )
+        cls.aley = Location.objects.create(
+            name='عاليه', name_en='Aley', type_id=2, parent=cls.other_governorate,
+        )
+        cls.cadaster = Location.objects.create(
+            name='الأشرفية', name_en='Achrafieh', type_id=3, parent=cls.district,
+        )
         cls.partner = PartnerOrganization.objects.create(name='Exam partner')
         cls.other_partner = PartnerOrganization.objects.create(name='Outside exam partner')
         cls.center = Center.objects.create(name='Assigned exam centre', partner=cls.partner)
@@ -129,6 +152,7 @@ class ExceptionalExamWorkflowTests(TestCase):
             mother_fullname='Mother of Rania', gender='Female', nationality=cls.nationality,
             birthday_year='2014', birthday_month='3', birthday_day='12',
             first_phone_number='70-123456', street='Original residential street',
+            governorate=cls.governorate, district=cls.district,
         )
         cls.round = Round.objects.create(name='Exam registration round', year=2026, current_year=True)
         cls.other_round = Round.objects.create(name='Previous registration round', year=2025)
@@ -181,17 +205,21 @@ class ExceptionalExamWorkflowTests(TestCase):
 
     def exam_data(self, **updates):
         data = {
-            'governorate': 'beirut', 'district': 'beirut', 'nearest_town': 'achrafieh',
+            'governorate': self.governorate.pk, 'district': self.district.pk,
+            'nearest_town': 'achrafieh',
             'programme': 'BLN', 'grade': '2', 'math_language': 'ar', 'language_exam': 'en',
         }
         data.update(updates)
         return data
 
     def create_exam(self, registration=None, **updates):
+        data = self.exam_data(**updates)
+        for field in ('governorate', 'district'):
+            data[field + '_id'] = data.pop(field)
         return ExceptionalExam.objects.create(
             registration=registration or self.registration,
             created_by=self.center_user, modified_by=self.center_user,
-            **self.exam_data(**updates),
+            **data,
         )
 
     def test_get_prefills_programme_and_shows_all_questions_in_both_languages(self):
@@ -199,6 +227,8 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         form = response.context['form']
         self.assertEqual(form['programme'].value(), 'BLN')
+        self.assertEqual(form['governorate'].value(), self.governorate.pk)
+        self.assertEqual(form['district'].value(), self.district.pk)
         self.assertEqual(set(form.fields), set(REQUIRED_FIELDS))
         for field in form.fields.values():
             self.assertTrue(field.required)
@@ -229,7 +259,11 @@ class ExceptionalExamWorkflowTests(TestCase):
 
     def test_invalid_choices_and_wrong_residence_parents_are_rejected(self):
         invalid_choices = (
-            ('governorate', 'unknown'), ('district', 'baabda'),
+            ('governorate', 'unknown'), ('governorate', 999999999),
+            ('governorate', self.district.pk), ('governorate', self.cadaster.pk),
+            ('district', 'unknown'), ('district', 999999999),
+            ('district', self.governorate.pk), ('district', self.cadaster.pk),
+            ('district', self.baabda.pk),
             ('nearest_town', 'jounieh'), ('nearest_town', 'unknown'),
             ('programme', 'ALP'), ('grade', '1'), ('grade', '8'),
             ('math_language', 'de'), ('language_exam', 'ar'),
@@ -247,19 +281,201 @@ class ExceptionalExamWorkflowTests(TestCase):
                 form = ExceptionalExamForm(data=self.exam_data(math_language=language))
                 self.assertTrue(form.is_valid(), form.errors.as_json())
 
+    def test_residence_fields_use_typed_location_records_and_bilingual_labels(self):
+        form = ExceptionalExamForm(registration=self.registration)
+        self.assertEqual(
+            set(form.fields['governorate'].queryset.values_list('pk', flat=True)),
+            {self.governorate.pk, self.other_governorate.pk},
+        )
+        self.assertEqual(
+            set(form.fields['district'].queryset.values_list('pk', flat=True)),
+            {self.district.pk},
+        )
+        self.assertEqual(form.fields['governorate'].label_from_instance(self.governorate), 'Beirut / بيروت')
+        self.assertEqual(form.fields['district'].label_from_instance(self.district), 'Beirut / بيروت')
+        self.assertEqual(str(form.fields['nearest_town'].label), 'Village / القرية')
+
+    def test_changing_governorate_requires_a_new_district_and_village(self):
+        for updates, expected in (
+            ({'governorate': self.other_governorate.pk}, 'district'),
+            ({'governorate': self.other_governorate.pk, 'district': self.baabda.pk}, 'nearest_town'),
+        ):
+            with self.subTest(updates=updates):
+                form = ExceptionalExamForm(data=self.exam_data(**updates))
+                self.assertFalse(form.is_valid())
+                self.assertIn(expected, form.errors)
+
+    def test_repeated_document_villages_are_valid_only_in_their_document_districts(self):
+        for district in (self.baabda, self.aley):
+            with self.subTest(district=district.pk):
+                form = ExceptionalExamForm(data=self.exam_data(
+                    governorate=self.other_governorate.pk,
+                    district=district.pk, nearest_town='aley',
+                ))
+                self.assertTrue(form.is_valid(), form.errors.as_json())
+        form = ExceptionalExamForm(data=self.exam_data(
+            governorate=self.other_governorate.pk,
+            district=self.keserwan.pk, nearest_town='aley',
+        ))
+        self.assertFalse(form.is_valid())
+        self.assertIn('nearest_town', form.errors)
+
+    def test_district_options_use_existing_location_ids_and_correct_parent(self):
+        url = reverse('mscc:exceptional_exam_location_options')
+        response = self.client.get(url, {'type': '2', 'parent': self.other_governorate.pk})
+        self.assertEqual(response.status_code, 200)
+        results = response.json()['results']
+        self.assertEqual({row['id'] for row in results}, {self.baabda.pk, self.keserwan.pk, self.aley.pk})
+        self.assertIn({'id': self.keserwan.pk, 'text': 'Keserwan / كسروان'}, results)
+        self.assertNotIn(self.district.pk, {row['id'] for row in results})
+
+    def test_village_options_follow_the_selected_existing_district(self):
+        url = reverse('mscc:exceptional_exam_location_options')
+        response = self.client.get(url, {'type': 'village', 'parent': self.keserwan.pk})
+        self.assertEqual(response.status_code, 200)
+        results = response.json()['results']
+        self.assertIn({'id': 'jounieh', 'text': 'Jounieh / جونية'}, results)
+        self.assertNotIn('achrafieh', {row['id'] for row in results})
+        self.assertEqual(len(results), 6)
+
+    def test_options_reject_malformed_missing_and_wrong_type_parents(self):
+        url = reverse('mscc:exceptional_exam_location_options')
+        for kind, parent in (
+            ('2', 'not-an-id'), ('2', 999999999),
+            ('2', self.district.pk), ('2', self.cadaster.pk),
+            ('village', 'not-an-id'), ('village', 999999999),
+            ('village', self.governorate.pk), ('village', self.cadaster.pk),
+            ('unknown', self.governorate.pk),
+        ):
+            with self.subTest(kind=kind, parent=parent):
+                response = self.client.get(url, {'type': kind, 'parent': parent})
+                self.assertEqual(response.status_code, 400)
+                self.assertIn('error', response.json())
+        for kind in ('2', 'village'):
+            response = self.client.get(url, {'type': kind})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json()['results'], [])
+
+    def test_options_require_mscc_scope(self):
+        url = reverse('mscc:exceptional_exam_location_options')
+        self.client.logout()
+        self.assertEqual(self.client.get(url, {'type': '2', 'parent': self.governorate.pk}).status_code, 302)
+        for user in (self.alp_user, self.unassigned_user, self.unassigned_center_user):
+            self.client.force_login(user)
+            with self.subTest(user=user.username):
+                response = self.client.get(url, {'type': '2', 'parent': self.governorate.pk})
+                self.assertEqual(response.status_code, 403)
+
+    def test_registered_location_ids_prefill_without_matching_catalogue_codes(self):
+        governorate = Location.objects.create(name='المحافظة المسجلة', name_en='Registered governorate', type_id=1)
+        district = Location.objects.create(
+            name='القضاء المسجل', name_en='Registered district', type_id=2, parent=governorate,
+        )
+        self.child.governorate = governorate
+        self.child.district = district
+        self.child.save()
+        response = self.client.get(self.exam_url())
+        form = response.context['form']
+        self.assertEqual(form['governorate'].value(), governorate.pk)
+        self.assertEqual(form['district'].value(), district.pk)
+        self.assertEqual([value for value, _ in form.fields['nearest_town'].choices if value], [])
+
+    def test_existing_location_parent_is_authoritative_when_document_uses_another_governorate(self):
+        governorate = Location.objects.create(name='البقاع', name_en='Bekaa', type_id=1)
+        district = Location.objects.create(
+            name='بعلبك', name_en='Baalbek', type_id=2, parent=governorate,
+        )
+        form = ExceptionalExamForm(data=self.exam_data(
+            governorate=governorate.pk, district=district.pk, nearest_town='douris',
+        ))
+        self.assertTrue(form.is_valid(), form.errors.as_json())
+        response = self.client.get(reverse('mscc:exceptional_exam_location_options'), {
+            'type': 'village', 'parent': district.pk,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn({'id': 'douris', 'text': 'Douris / دورس'}, response.json()['results'])
+
+    def test_village_lookup_matches_existing_governorate_alias_and_district_separator(self):
+        governorate = Location.objects.create(name='الشمال', name_en='North', type_id=1)
+        district = Location.objects.create(name='المنية الضنية', type_id=2, parent=governorate)
+        form = ExceptionalExamForm(data=self.exam_data(
+            governorate=governorate.pk, district=district.pk, nearest_town='minnieh',
+        ))
+        self.assertTrue(form.is_valid(), form.errors.as_json())
+        response = self.client.get(reverse('mscc:exceptional_exam_location_options'), {
+            'type': 'village', 'parent': district.pk,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn({'id': 'minnieh', 'text': 'Minniyeh / المنية'}, response.json()['results'])
+
+    def test_standalone_existing_hermel_governorate_can_use_the_document_hermel_villages(self):
+        governorate = Location.objects.create(name='الهرمل', name_en='Hermel', type_id=1)
+        district = Location.objects.create(name='الهرمل', name_en='Hermel', type_id=2, parent=governorate)
+        form = ExceptionalExamForm(data=self.exam_data(
+            governorate=governorate.pk, district=district.pk, nearest_town='qasr',
+        ))
+        self.assertTrue(form.is_valid(), form.errors.as_json())
+
+    def test_ambiguous_existing_district_names_do_not_guess_a_village_list(self):
+        governorate = Location.objects.create(name='Unknown governorate', type_id=1)
+        district = Location.objects.create(name='بعلبك', name_en='Hermel', type_id=2, parent=governorate)
+        form = ExceptionalExamForm(data=self.exam_data(
+            governorate=governorate.pk, district=district.pk, nearest_town='douris',
+        ))
+        self.assertFalse(form.is_valid())
+        self.assertIn('nearest_town', form.errors)
+        response = self.client.get(reverse('mscc:exceptional_exam_location_options'), {
+            'type': 'village', 'parent': district.pk,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'], [])
+
+    def test_unmapped_legacy_answers_remain_readable_and_edit_requires_linked_locations(self):
+        exam = self.create_exam(
+            governorate=None, district=None,
+            governorate_legacy='beirut', district_legacy='beirut',
+        )
+        profile = self.client.get(reverse('mscc:child_profile', args=[self.registration.pk]), {
+            'current_tab': 'exceptional_exam',
+        })
+        self.assertContains(profile, 'Beirut / بيروت')
+        self.assertContains(profile, 'Achrafieh / الأشرفية')
+        response = self.client.get(self.exam_url())
+        self.assertIn(response.context['form']['governorate'].value(), ('', None))
+        self.assertIn(response.context['form']['district'].value(), ('', None))
+        response = self.client.post(self.exam_url(), self.exam_data(governorate='', district=''))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('governorate', response.context['form'].errors)
+        self.assertIn('district', response.context['form'].errors)
+        exam.refresh_from_db()
+        self.assertEqual((exam.governorate_legacy, exam.district_legacy), ('beirut', 'beirut'))
+
+    def test_invalid_registered_location_hierarchy_does_not_prefill_a_wrong_district(self):
+        self.child.district = self.baabda
+        self.child.save()
+        self.registration.refresh_from_db()
+        form = ExceptionalExamForm(registration=self.registration)
+        self.assertEqual(form['governorate'].value(), self.governorate.pk)
+        self.assertIn(form['district'].value(), ('', None))
+
     def test_model_clean_protects_the_residence_hierarchy(self):
         for data, field in (
-            (self.exam_data(district='baabda'), 'district'),
+            (self.exam_data(district=self.baabda.pk), 'district'),
+            (self.exam_data(governorate=self.district.pk), 'governorate'),
+            (self.exam_data(district=self.cadaster.pk), 'district'),
             (self.exam_data(nearest_town='jounieh'), 'nearest_town'),
         ):
             with self.subTest(data=data):
+                for parent in ('governorate', 'district'):
+                    data[parent + '_id'] = data.pop(parent)
                 exam = ExceptionalExam(registration=self.registration, **data)
                 with self.assertRaises(ValidationError) as error:
                     exam.full_clean()
                 self.assertIn(field, error.exception.message_dict)
         exam = ExceptionalExam(
             registration=self.registration,
-            **self.exam_data(governorate='mount_lebanon', district='baabda', nearest_town='aley'),
+            governorate=self.other_governorate, district=self.baabda, nearest_town='aley',
+            programme='BLN', grade='2', math_language='ar', language_exam='en',
         )
         exam.full_clean()
 
@@ -282,13 +498,16 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(self.registration.source_of_identification, 'Other Sources')
         self.assertEqual(self.child.street, 'Original residential street')
         self.assertEqual(self.child.first_phone_number, '70-123456')
+        self.assertEqual(self.child.governorate_id, self.governorate.pk)
+        self.assertEqual(self.child.district_id, self.district.pk)
 
     def test_edit_reuses_one_record_and_preserves_original_creator(self):
         exam = self.create_exam()
         self.client.force_login(self.other_editor)
         response = self.client.post(self.exam_url(), self.exam_data(
             programme='DIRASA', grade='7', math_language='fr', language_exam='fr',
-            governorate='mount_lebanon', district='keserwan', nearest_town='jounieh',
+            governorate=self.other_governorate.pk, district=self.keserwan.pk,
+            nearest_town='jounieh',
         ))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(ExceptionalExam.objects.count(), 1)
@@ -303,24 +522,30 @@ class ExceptionalExamWorkflowTests(TestCase):
 
     def test_edit_preloads_stored_parent_choices_and_answers(self):
         exam = self.create_exam(
-            governorate='mount_lebanon', district='keserwan', nearest_town='jounieh', grade='6',
+            governorate=self.other_governorate.pk, district=self.keserwan.pk,
+            nearest_town='jounieh', grade='6',
         )
         response = self.client.get(self.exam_url())
         self.assertEqual(response.status_code, 200)
         form = response.context['form']
         for field in REQUIRED_FIELDS:
-            self.assertEqual(form[field].value(), getattr(exam, field))
-        self.assertIn(('keserwan', 'Keserwan / كسروان'), tuple(form.fields['district'].choices))
+            value = getattr(exam, field + '_id') if field in ('governorate', 'district') else getattr(exam, field)
+            self.assertEqual(form[field].value(), value)
+        self.assertEqual(
+            set(form.fields['district'].queryset.values_list('pk', flat=True)),
+            {self.baabda.pk, self.keserwan.pk, self.aley.pk},
+        )
+        self.assertEqual(form.fields['district'].label_from_instance(self.keserwan), 'Keserwan / كسروان')
         self.assertIn(('jounieh', 'Jounieh / جونية'), tuple(form.fields['nearest_town'].choices))
-        self.assertNotIn('beirut', dict(form.fields['district'].choices))
+        self.assertNotIn(self.district.pk, form.fields['district'].queryset.values_list('pk', flat=True))
         self.assertNotIn('achrafieh', dict(form.fields['nearest_town'].choices))
 
     def test_invalid_edit_keeps_the_existing_answers(self):
         exam = self.create_exam()
-        response = self.client.post(self.exam_url(), self.exam_data(district='baabda'))
+        response = self.client.post(self.exam_url(), self.exam_data(district=self.baabda.pk))
         self.assertEqual(response.status_code, 200)
         exam.refresh_from_db()
-        self.assertEqual(exam.district, 'beirut')
+        self.assertEqual(exam.district_id, self.district.pk)
         self.assertEqual(exam.nearest_town, 'achrafieh')
         self.assertEqual(ExceptionalExam.objects.count(), 1)
 
@@ -460,7 +685,8 @@ class ExceptionalExamWorkflowTests(TestCase):
         )
         self.create_exam(
             registration=previous_registration, programme='DIRASA', grade='7',
-            governorate='mount_lebanon', district='keserwan', nearest_town='jounieh',
+            governorate=self.other_governorate.pk, district=self.keserwan.pk,
+            nearest_town='jounieh',
             math_language='fr', language_exam='fr',
         )
         with tempfile.TemporaryDirectory() as media_root, override_settings(
@@ -483,20 +709,24 @@ class ExceptionalExamWorkflowTests(TestCase):
             second_number, second = rows[str(self.second_registration.pk)]
             self.assertEqual(first['Child ID'], previous['Child ID'])
             self.assertEqual(first['Child ID'], str(self.child.pk))
+            self.assertEqual(first['Exceptional Exam - Governorate / المحافظة ID'], str(self.governorate.pk))
+            self.assertEqual(first['Exceptional Exam - District/Caza / القضاء ID'], str(self.district.pk))
+            self.assertEqual(previous['Exceptional Exam - Governorate / المحافظة ID'], str(self.other_governorate.pk))
+            self.assertEqual(previous['Exceptional Exam - District/Caza / القضاء ID'], str(self.keserwan.pk))
             grade_header = 'Exceptional Exam - Grade applying for the examination / الصف الدراسي الذي يتقدم للامتحان له'
             self.assertEqual(first[grade_header], 'Grade 2 / الصف الثاني')
             self.assertEqual(previous[grade_header], 'Grade 7 / الصف السابع')
             for header, expected in (
                 ('Governorate / المحافظة', 'Beirut / بيروت'),
                 ('District/Caza / القضاء', 'Beirut / بيروت'),
-                ('Nearest town / البلدة الأقرب', 'Achrafieh / الأشرفية'),
+                ('Village / القرية', 'Achrafieh / الأشرفية'),
                 ('Non-formal education programme / البرنامج التعليمي غير النظامي', dict(PROGRAMME_CHOICES)['BLN']),
                 ('Mathematics examination language / لغة امتحان الرياضيات', 'Arabic / العربية'),
                 ('Language examination / امتحان اللغة', 'English / الإنكليزية'),
             ):
                 self.assertEqual(first['Exceptional Exam - ' + header], expected)
             self.assertEqual(
-                previous['Exceptional Exam - Nearest town / البلدة الأقرب'], 'Jounieh / جونية',
+                previous['Exceptional Exam - Village / القرية'], 'Jounieh / جونية',
             )
             exam_headers = [name for name in first if name.startswith('Exceptional Exam - ')]
             self.assertTrue(exam_headers)

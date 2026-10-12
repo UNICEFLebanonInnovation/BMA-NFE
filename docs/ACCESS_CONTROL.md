@@ -243,6 +243,9 @@ Staff and superusers can add or edit exam details. Assigned centre editors (`MSC
 Partner and UNICEF roles otherwise see the recorded answers without an edit action. The authenticated
 form binds its registration from the URL, validates all seven required fields and their residence
 hierarchy, and keeps creation/modification audit users. Each registration has one editable exam record.
+Governorates and districts reference typed Location records, and a district must belong to its selected
+governorate. `mscc:exceptional_exam_location_options` requires an authenticated MSCC account with a
+read scope or a staff/superuser account, and returns only the requested parent's districts or villages.
 
 | Mechanism | Location |
 |---|---|

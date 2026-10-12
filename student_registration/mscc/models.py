@@ -12,7 +12,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 from student_registration.child.models import Child
-from student_registration.locations.models import Center
+from student_registration.locations.models import Center, Location
 from student_registration.students.models import AttachmentType, IDType, Nationality, Training
 from student_registration.schools.models import (
     School,
@@ -26,10 +26,8 @@ from .exceptional_exam_choices import (
     GRADE_CHOICES,
     MATH_LANGUAGE_CHOICES,
     LANGUAGE_EXAM_CHOICES,
-    district_choices,
-    town_choices,
-    residence_labels,
 )
+from .exceptional_exam_locations import location_label, town_choices_for_locations
 
 PACKAGE_CATEGORIES = Choices(
     ('Education', 'Education'),
@@ -2686,26 +2684,36 @@ class Recreational(TimeStampedModel):
 class ExceptionalExam(TimeStampedModel):
     """The exceptional-exam application for a registered MSCC child.
 
-    Residence is recorded independently of the child's registration address:
-    these governorate, district and nearest-town options are the exam-specific
-    catalog supplied by the NFE sector.
+    Residence is recorded independently of the child's registration address.
+    Governorate and district use the shared Location hierarchy; village choices
+    come from the exam-specific catalog supplied by the NFE sector.
     """
 
     registration = models.OneToOneField(
         Registration, related_name='exceptional_exam', on_delete=models.CASCADE,
         verbose_name='Registration / التسجيل',
     )
-    governorate = models.CharField(
-        max_length=64, choices=GOVERNORATE_CHOICES,
+    governorate_legacy = models.CharField(
+        max_length=64, choices=GOVERNORATE_CHOICES, blank=True, null=True,
+        verbose_name='Legacy governorate / المحافظة السابقة',
+    )
+    district_legacy = models.CharField(
+        max_length=64, choices=DISTRICT_CHOICES, blank=True, null=True,
+        verbose_name='Legacy district / القضاء السابق',
+    )
+    governorate = models.ForeignKey(
+        'locations.Location', related_name='+', null=True, blank=True,
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 1},
         verbose_name='Governorate / المحافظة',
     )
-    district = models.CharField(
-        max_length=64, choices=DISTRICT_CHOICES,
+    district = models.ForeignKey(
+        'locations.Location', related_name='+', null=True, blank=True,
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 2},
         verbose_name='District/Caza / القضاء',
     )
     nearest_town = models.CharField(
         max_length=100, choices=TOWN_CHOICES,
-        verbose_name='Nearest town / البلدة الأقرب',
+        verbose_name='Village / القرية',
     )
     programme = models.CharField(
         max_length=6, choices=PROGRAMME_CHOICES,
@@ -2740,20 +2748,34 @@ class ExceptionalExam(TimeStampedModel):
         verbose_name_plural = 'Exceptional Exams / الامتحانات الاستثنائية'
 
     def clean(self):
-        """Reject residence combinations outside the supplied hierarchy."""
+        """Reject wrong Location types and combinations outside their parents."""
         super().clean()
         errors = {}
-        if self.district and self.district not in dict(district_choices(self.governorate)):
+        governorate = self._state.fields_cache.get('governorate')
+        if governorate is None and self.governorate_id:
+            governorate = Location.objects.filter(pk=self.governorate_id).first()
+        district = self._state.fields_cache.get('district')
+        if district is None and self.district_id:
+            district = Location.objects.filter(pk=self.district_id).first()
+        if self.governorate_id and (not governorate or governorate.type_id != 1):
+            errors['governorate'] = (
+                'Select a valid governorate. / اختر محافظةً صالحة.'
+            )
+        if self.district_id and (not district or district.type_id != 2):
+            errors['district'] = 'Select a valid district. / اختر قضاءً صالحاً.'
+        elif district and (not governorate or district.parent_id != governorate.pk):
             errors['district'] = (
                 'Select a district in the selected governorate. / '
                 'اختر قضاءً ضمن المحافظة المحددة.'
             )
-        if self.nearest_town and self.nearest_town not in dict(
-            town_choices(self.governorate, self.district)
+        # Missing legacy FKs remain readable. Form saves require all fields and
+        # therefore always validate the village against both selected parents.
+        if governorate and district and self.nearest_town and self.nearest_town not in dict(
+            town_choices_for_locations(governorate, district)
         ):
             errors['nearest_town'] = (
-                'Select a town in the selected district. / '
-                'اختر بلدةً ضمن القضاء المحدد.'
+                'Select a village in the selected district. / '
+                'اختر قريةً ضمن القضاء المحدد.'
             )
         if errors:
             raise ValidationError(errors)
@@ -2761,7 +2783,11 @@ class ExceptionalExam(TimeStampedModel):
     @property
     def display_rows(self):
         """Bilingual labels and values used to display the saved application."""
-        residence = residence_labels(self.governorate, self.district, self.nearest_town)
+        residence = (
+            location_label(self.governorate) or self.get_governorate_legacy_display() or '',
+            location_label(self.district) or self.get_district_legacy_display() or '',
+            self.get_nearest_town_display(),
+        )
         fields = ('governorate', 'district', 'nearest_town', 'programme', 'grade',
                   'math_language', 'language_exam')
         values = residence + (

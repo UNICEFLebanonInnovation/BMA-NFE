@@ -38,7 +38,8 @@ def scoped_registrations(user):
         if field.many_to_one
     )
     related.extend(('exceptional_exam', 'exceptional_exam__created_by',
-                    'exceptional_exam__modified_by'))
+                    'exceptional_exam__modified_by', 'exceptional_exam__governorate',
+                    'exceptional_exam__district'))
     queryset = Registration.objects.filter(deleted=False).select_related(
         *related
     ).order_by('pk')

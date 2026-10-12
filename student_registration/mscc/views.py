@@ -105,7 +105,9 @@ from .document_exports import build_examination_card
 from .export_access import filter_registrations, scoped_registrations, user_can_export
 from .exceptional_exam_access import exceptional_exam_registrations, can_manage_exceptional_exam
 from .exceptional_exam_forms import ExceptionalExamForm
-from .exceptional_exam_choices import RESIDENCE_CATALOG
+from .exceptional_exam_locations import (
+    location_label, positive_location_id, town_choices_for_locations,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -344,8 +346,50 @@ def exceptional_exam_form(request, registry):
         'registration': registration,
         'instance': form.instance,
         'form': form,
-        'residence_catalog': RESIDENCE_CATALOG,
     })
+
+
+@login_required
+@require_GET
+def exceptional_exam_location_options(request):
+    """Return only the selected parent's bilingual exam residence choices."""
+    from student_registration.locations.models import Location
+
+    user = request.user
+    can_view = user_can_export(user) or bool(
+        user.is_active and has_group(user, 'MSCC') and user.center_id
+    )
+    if not can_view:
+        return JsonResponse({'error': 'Access denied. / تم رفض الوصول.'}, status=403)
+
+    location_type = request.GET.get('type', '')
+    if location_type not in ('2', 'village'):
+        return JsonResponse({'error': 'Invalid location type.'}, status=400)
+    parent_value = request.GET.get('parent')
+    if not parent_value:
+        return JsonResponse({'results': []})
+    parent_id = positive_location_id(parent_value)
+    if parent_id is None:
+        return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+    parent_type = 1 if location_type == '2' else 2
+    parent = Location.objects.select_related('parent').filter(
+        pk=parent_id, type_id=parent_type,
+    ).first()
+    if parent is None:
+        return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+
+    if location_type == '2':
+        locations = Location.objects.filter(
+            type_id=2, parent_id=parent.pk,
+        ).order_by('name')
+        results = [
+            {'id': location.pk, 'text': location_label(location)}
+            for location in locations
+        ]
+    else:
+        choices = town_choices_for_locations(parent.parent, parent)
+        results = [{'id': code, 'text': label} for code, label in choices]
+    return JsonResponse({'results': results})
 
 
 class DashboardView(LoginRequiredMixin,
