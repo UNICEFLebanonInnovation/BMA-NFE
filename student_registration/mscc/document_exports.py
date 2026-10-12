@@ -19,7 +19,7 @@ from django.db import models
 from PIL import Image, ImageOps
 
 from student_registration.child.models import Child
-from student_registration.mscc.models import Registration
+from student_registration.mscc.models import ExceptionalExam, Registration
 
 
 logger = logging.getLogger(__name__)
@@ -108,10 +108,14 @@ def export_columns(fields=None):
             column.aliases,
         ) for column in registration_columns
     ]
+    exam_columns = [
+        ExportColumn(column.key, 'Exceptional Exam - ' + column.label, column.aliases)
+        for column in _model_columns(ExceptionalExam, 'exceptional_exam', {'registration'})
+    ]
     optional = [
         ExportColumn('child_full_name', 'Child full name', ('child_fullname',)),
         ExportColumn('date_of_birth', 'Date of birth', ('birthday',)),
-    ] + child_columns + registration_columns
+    ] + child_columns + registration_columns + exam_columns
     if fields:
         if isinstance(fields, str):
             fields = [fields]
@@ -213,6 +217,8 @@ def registration_snapshot(registration):
     ))
     values.update(_field_values(child, Child, 'child', {'id'}))
     values.update(_field_values(registration, Registration, 'registration', {'id', 'child'}))
+    exam = None if registration._state.adding else getattr(registration, 'exceptional_exam', None)
+    values.update(_field_values(exam, ExceptionalExam, 'exceptional_exam', {'registration'}))
     return RegistrationSnapshot(values, photo_data, photo_status)
 
 

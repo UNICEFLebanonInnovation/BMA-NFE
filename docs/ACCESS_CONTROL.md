@@ -232,6 +232,18 @@ them within this scope.
 returns a Word card only for an accessible registration. The profile action follows the same scope.
 Background child export status and downloads are limited to the user who created the export.
 
+The **Exceptional Exam** profile section and `mscc:exceptional_exam_form` use scoped MSCC registrations:
+staff, superusers and `MSCC_UNICEF` can read across registrations; partner users can read their own
+partner's registrations; centre users can read their assigned centre's registrations. A plain `MSCC`
+user with an assigned centre can read that centre's exam details. Deleted registrations and records
+without a child are excluded.
+
+Staff and superusers can add or edit exam details. Assigned centre editors (`MSCC_CENTER`, or plain
+`MSCC` users without a partner/UNICEF read role) can add or edit their own centre's registrations.
+Partner and UNICEF roles otherwise see the recorded answers without an edit action. The authenticated
+form binds its registration from the URL, validates all seven required fields and their residence
+hierarchy, and keeps creation/modification audit users. Each registration has one editable exam record.
+
 | Mechanism | Location |
 |---|---|
 | `has_group(user, name)` | `student_registration/users/templatetags/custom_tags.py` |

@@ -598,6 +598,26 @@ Birth line remains blank because MSCC does not store that field. Correct any inf
 before downloading a new card; each download reads the saved record again. If no photograph is
 available, the card shows that status instead of an image.
 
+### Adding Exceptional Exam Details
+
+After registering a child, open the **MSCC profile → Exceptional Exam / الامتحان الاستثنائي** tab and
+select **Add Exceptional Exam / إضافة امتحان استثنائي**. Questions and answer choices display both
+English and Arabic. Complete all fields:
+
+- **Place of residence / مكان الإقامة:** choose the governorate, then its district and nearest town.
+  These linked choices follow the supplied examination residence list.
+- **Non-formal education programme / البرنامج التعليمي غير النظامي:** BLN or DIRASA.
+- **Grade applied for / الصف الدراسي الذي يتقدم للامتحان له:** Grades 2–7 are available for both
+  programmes.
+- **Mathematics exam language / لغة امتحان الرياضيات:** Arabic, English or French.
+- **Language exam / امتحان اللغة:** English or French.
+
+Save to return to the child's exam tab and review the recorded answers. **Edit Exceptional Exam**
+reopens those answers for correction. Each registration has one exam record, so registrations in
+different rounds keep separate answers. Exam residence and programme are saved with the exam record;
+the child's registration address and programme retain their original values. Excel and CSV exports
+include the saved exam details alongside the corresponding child and registration IDs.
+
 ### Enabling Browser Notifications
 
 To receive push notifications when exports are ready:

@@ -1,0 +1,29 @@
+<section aria-labelledby="exceptional-exam-heading">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <h4 class="fw-bold mb-0" id="exceptional-exam-heading">
+            Exceptional Exam / <span lang="ar" dir="rtl">الامتحان الاستثنائي</span>
+        </h4>
+        {% if can_manage_exceptional_exam %}
+        <a href="{% url 'mscc:exceptional_exam_form' registry=instance.pk %}" class="btn btn-primary">
+            {% if exceptional_exam %}
+            <i class="bi bi-pencil me-2" aria-hidden="true"></i> Edit Exceptional Exam / <span lang="ar" dir="rtl">تعديل الامتحان الاستثنائي</span>
+            {% else %}
+            <i class="bi bi-plus-circle me-2" aria-hidden="true"></i> Add Exceptional Exam / <span lang="ar" dir="rtl">إضافة امتحان استثنائي</span>
+            {% endif %}
+        </a>
+        {% endif %}
+    </div>
+    {% if exceptional_exam %}
+    <dl class="row mb-0">
+        {% for label, value in exceptional_exam_rows %}
+        <dt class="col-md-5 text-muted py-2 border-bottom" dir="auto">{{ label }}</dt>
+        <dd class="col-md-7 py-2 border-bottom mb-0" dir="auto">{{ value }}</dd>
+        {% endfor %}
+    </dl>
+    {% else %}
+    <p class="text-muted mb-0">
+        An exceptional exam has not been added for this registration.
+        <span class="d-block mt-1" lang="ar" dir="rtl">لم تتم إضافة امتحان استثنائي لهذا التسجيل.</span>
+    </p>
+    {% endif %}
+</section>

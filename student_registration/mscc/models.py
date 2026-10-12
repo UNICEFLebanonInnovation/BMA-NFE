@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.db.models import JSONField
@@ -16,6 +17,18 @@ from student_registration.students.models import AttachmentType, IDType, Nationa
 from student_registration.schools.models import (
     School,
     PartnerOrganization
+)
+from .exceptional_exam_choices import (
+    GOVERNORATE_CHOICES,
+    DISTRICT_CHOICES,
+    TOWN_CHOICES,
+    PROGRAMME_CHOICES,
+    GRADE_CHOICES,
+    MATH_LANGUAGE_CHOICES,
+    LANGUAGE_EXAM_CHOICES,
+    district_choices,
+    town_choices,
+    residence_labels,
 )
 
 PACKAGE_CATEGORIES = Choices(
@@ -2668,6 +2681,100 @@ class Recreational(TimeStampedModel):
         ordering = ['id']
         verbose_name=_("Recreational")
         verbose_name_plural=_("Recreational")
+
+
+class ExceptionalExam(TimeStampedModel):
+    """The exceptional-exam application for a registered MSCC child.
+
+    Residence is recorded independently of the child's registration address:
+    these governorate, district and nearest-town options are the exam-specific
+    catalog supplied by the NFE sector.
+    """
+
+    registration = models.OneToOneField(
+        Registration, related_name='exceptional_exam', on_delete=models.CASCADE,
+        verbose_name='Registration / التسجيل',
+    )
+    governorate = models.CharField(
+        max_length=64, choices=GOVERNORATE_CHOICES,
+        verbose_name='Governorate / المحافظة',
+    )
+    district = models.CharField(
+        max_length=64, choices=DISTRICT_CHOICES,
+        verbose_name='District/Caza / القضاء',
+    )
+    nearest_town = models.CharField(
+        max_length=100, choices=TOWN_CHOICES,
+        verbose_name='Nearest town / البلدة الأقرب',
+    )
+    programme = models.CharField(
+        max_length=6, choices=PROGRAMME_CHOICES,
+        verbose_name='Non-formal education programme / البرنامج التعليمي غير النظامي',
+    )
+    grade = models.CharField(
+        max_length=1, choices=GRADE_CHOICES,
+        verbose_name='Grade applying for the examination / الصف الدراسي الذي يتقدم للامتحان له',
+    )
+    math_language = models.CharField(
+        max_length=2, choices=MATH_LANGUAGE_CHOICES,
+        verbose_name='Mathematics examination language / لغة امتحان الرياضيات',
+    )
+    language_exam = models.CharField(
+        max_length=2, choices=LANGUAGE_EXAM_CHOICES,
+        verbose_name='Language examination / امتحان اللغة',
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        related_name='+', on_delete=models.SET_NULL,
+        verbose_name='Created by / أُنشئ بواسطة',
+    )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        related_name='+', on_delete=models.SET_NULL,
+        verbose_name='Modified by / عُدّل بواسطة',
+    )
+
+    class Meta:
+        ordering = ['registration_id']
+        verbose_name = 'Exceptional Exam / الامتحان الاستثنائي'
+        verbose_name_plural = 'Exceptional Exams / الامتحانات الاستثنائية'
+
+    def clean(self):
+        """Reject residence combinations outside the supplied hierarchy."""
+        super().clean()
+        errors = {}
+        if self.district and self.district not in dict(district_choices(self.governorate)):
+            errors['district'] = (
+                'Select a district in the selected governorate. / '
+                'اختر قضاءً ضمن المحافظة المحددة.'
+            )
+        if self.nearest_town and self.nearest_town not in dict(
+            town_choices(self.governorate, self.district)
+        ):
+            errors['nearest_town'] = (
+                'Select a town in the selected district. / '
+                'اختر بلدةً ضمن القضاء المحدد.'
+            )
+        if errors:
+            raise ValidationError(errors)
+
+    @property
+    def display_rows(self):
+        """Bilingual labels and values used to display the saved application."""
+        residence = residence_labels(self.governorate, self.district, self.nearest_town)
+        fields = ('governorate', 'district', 'nearest_town', 'programme', 'grade',
+                  'math_language', 'language_exam')
+        values = residence + (
+            self.get_programme_display(), self.get_grade_display(),
+            self.get_math_language_display(), self.get_language_exam_display(),
+        )
+        return tuple(
+            (self._meta.get_field(name).verbose_name, value)
+            for name, value in zip(fields, values)
+        )
+
+    def __str__(self):
+        return 'Exceptional Exam / الامتحان الاستثنائي — %s' % self.registration_id
 
 
 class LegoService(TimeStampedModel):
