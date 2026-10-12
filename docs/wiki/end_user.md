@@ -591,10 +591,12 @@ Only the user who requested an export can download its file.
 ### Downloading an Examination Card
 
 Open the child's **MSCC profile** and click **Download Examination Card (Word)**. The editable `.docx`
-card contains the current saved identity, programme, caregiver phone number, residential address and
-photograph, with child and registration IDs. Correct any information on the profile before downloading
-a new card; each download reads the saved record again. If no photograph is available, the card shows
-that status instead of an image.
+card follows the bordered landscape examination-card layout, with the child's photograph at the upper
+left and centred round, registration ID, NGO, Arabic full name, date of birth, nationality, governorate
+and physical-difficulties details. The round and year come from the saved registration. The Place of
+Birth line remains blank because MSCC does not store that field. Correct any information on the profile
+before downloading a new card; each download reads the saved record again. If no photograph is
+available, the card shows that status instead of an image.
 
 ### Enabling Browser Notifications
 

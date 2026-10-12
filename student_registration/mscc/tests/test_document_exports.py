@@ -41,7 +41,9 @@ DRAWING_NS = {
     'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
 }
 WORD_NS = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+WORD_DRAWING_NS = 'http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing'
 RELATIONSHIP_NS = 'http://schemas.openxmlformats.org/package/2006/relationships'
+CARD_HEADING = 'الامتحان الاستثنائي لطلاب التعليم الغير نظامي'
 
 
 def portrait_bytes(colour):
@@ -116,9 +118,20 @@ def workbook_photos_by_row(content):
 def word_text_and_photos(content):
     with zipfile.ZipFile(io.BytesIO(content)) as archive:
         document = ElementTree.fromstring(archive.read('word/document.xml'))
-        text = '\n'.join(value.text or '' for value in document.findall('.//w:t', WORD_NS))
+        text = '\n'.join(
+            ''.join(value.text or '' for value in paragraph.findall('.//w:t', WORD_NS))
+            for paragraph in document.findall('.//w:p', WORD_NS)
+        )
         photos = [archive.read(name) for name in archive.namelist() if name.startswith('word/media/')]
     return text, photos
+
+
+def card_field(text, label):
+    """Read a reference-card label and value after joining its editable runs."""
+    return next(
+        line.partition(':')[2].strip() for line in text.splitlines()
+        if line.strip().startswith(label + ':')
+    )
 
 
 def field_value(row, label, field=None):
@@ -343,30 +356,152 @@ class MSCCDocumentExportTests(TestCase):
         self.first_registration.refresh_from_db()
         text, photos = word_text_and_photos(build_examination_card(self.first_registration))
         for value in (
-            'Examination Card', 'Rania', 'Samir', 'Example', 'PHOTO-CHILD-001',
-            'BLN', '70-123456', str(self.governorate), str(self.district), str(self.cadaster),
-            'Verification municipality', 'Verification village', 'Verification street', 'Building 12',
-            'Registration ID', 'Child ID', str(self.first_registration.pk), str(self.first_child.pk),
-            'Registered special need', 'Registered additional support need', 'FORMAL-EDUCATION-123',
+            CARD_HEADING, 'Round', self.round.name, str(self.round.year),
+            'Rania Samir Example', '12/3/14', self.nationality.name_en,
+            self.governorate.name_en, self.partner.name, self.disability.name_en,
         ):
             self.assertIn(value, text)
+        self.assertEqual(card_field(text, 'ID'), str(self.first_registration.pk))
+        self.assertEqual(card_field(text, 'Place of Birth'), '')
+        for value in (
+            'PHOTO-CHILD-001', 'BLN', '70-123456', self.district.name, self.cadaster.name,
+            'Verification municipality', 'Verification village', 'Verification street', 'Building 12',
+            'Registered additional support need', 'FORMAL-EDUCATION-123',
+        ):
+            self.assertNotIn(value, text)
         self.assertNotIn('Karim', text)
         self.assertNotIn('PHOTO-CHILD-002', text)
         self.assertEqual(len(photos), 1)
         self.assertPhotoColour(photos[0], (255, 0, 0))
 
+    def test_word_card_uses_registration_id_stored_round_and_preferred_labels(self):
+        self.partner.short_name = 'REFERENCE-NGO'
+        self.partner.save(update_fields=['short_name'])
+        self.nationality.name = 'جنسية مسجلة'
+        self.nationality.name_en = 'Preferred nationality'
+        self.nationality.save(update_fields=['name', 'name_en'])
+        self.disability.name = 'صعوبة مسجلة'
+        self.disability.name_en = 'Preferred physical difficulty'
+        self.disability.save(update_fields=['name', 'name_en'])
+        self.governorate.name_en = ''
+        self.governorate.save(update_fields=['name_en'])
+        self.first_child.nationality_other = 'Detail for an unselected Other nationality'
+        self.first_child.save(update_fields=['nationality_other'])
+        round = Round.objects.create(name='Stored card round', year=2037, current_year=False)
+        registration = Registration.objects.create(
+            pk=876543, child=self.first_child, partner=self.partner, center=self.center, round=round,
+        )
+        content = build_examination_card(registration)
+        text, photos = word_text_and_photos(content)
+        self.assertNotEqual(registration.pk, self.first_child.pk)
+        self.assertEqual(card_field(text, 'ID'), str(registration.pk))
+        self.assertEqual(card_field(text, 'NGO'), 'REFERENCE-NGO')
+        self.assertEqual(card_field(text, 'Nationality'), 'Preferred nationality')
+        self.assertEqual(card_field(text, 'Governorate'), self.governorate.name)
+        self.assertEqual(card_field(text, 'Physical difficulties'), 'Preferred physical difficulty')
+        self.assertEqual(card_field(text, 'Place of Birth'), '')
+        self.assertIn('Stored card round', text)
+        self.assertIn('2037', text)
+        self.assertNotIn('Historic export round', text)
+        self.assertNotIn('Detail for an unselected Other nationality', text)
+        self.assertNotIn('Registered additional support need', text)
+        self.assertPhotoColour(photos[0], (255, 0, 0))
+        with zipfile.ZipFile(io.BytesIO(content)) as archive:
+            properties = ElementTree.fromstring(archive.read('docProps/core.xml'))
+        namespace = '{http://purl.org/dc/elements/1.1/}'
+        self.assertIn('Child {}'.format(self.first_child.pk), properties.find(namespace + 'title').text)
+        self.assertIn(str(registration.pk), properties.find(namespace + 'subject').text)
+
+    def test_word_card_leaves_unrecorded_fields_blank_and_preserves_partial_birthdate(self):
+        registration = Registration.objects.get(pk=self.second_registration.pk)
+        text, photos = word_text_and_photos(build_examination_card(registration))
+        for label in ('Date of Birth', 'Place of Birth', 'Nationality', 'Governorate', 'Physical difficulties'):
+            with self.subTest(label=label):
+                self.assertEqual(card_field(text, label), '')
+        self.assertNotIn('Not recorded', text)
+        self.assertNotIn('No', card_field(text, 'Physical difficulties'))
+        self.assertNotIn(str(self.round.year), text)
+        self.assertPhotoColour(photos[0], (0, 0, 255))
+        self.second_child.birthday_year = '2015'
+        self.second_child.birthday_month = None
+        self.second_child.birthday_day = None
+        self.second_child.save(update_fields=['birthday_year', 'birthday_month', 'birthday_day'])
+        registration.refresh_from_db()
+        text, _ = word_text_and_photos(build_examination_card(registration))
+        self.assertEqual(card_field(text, 'Date of Birth'), '2015')
+
+    def test_word_card_uses_arabic_and_legacy_fallbacks_and_only_selected_other_details(self):
+        self.nationality.name = 'جنسية عربية مسجلة'
+        self.nationality.name_en = None
+        self.nationality.save(update_fields=['name', 'name_en'])
+        self.disability.name = 'صعوبة مسجلة'
+        self.disability.name_en = ''
+        self.disability.save(update_fields=['name', 'name_en'])
+        self.first_child.governorate = None
+        self.first_child.save(update_fields=['governorate'])
+        self.first_registration.refresh_from_db()
+        text, _ = word_text_and_photos(build_examination_card(self.first_registration))
+        self.assertEqual(card_field(text, 'Nationality'), self.nationality.name)
+        self.assertEqual(card_field(text, 'Governorate'), self.first_child.governorate_legacy)
+        self.assertEqual(card_field(text, 'Physical difficulties'), self.disability.name)
+        self.disability.name_en = 'None'
+        self.disability.save(update_fields=['name_en'])
+        self.first_registration.refresh_from_db()
+        text, _ = word_text_and_photos(build_examination_card(self.first_registration))
+        self.assertEqual(card_field(text, 'Physical difficulties'), 'No')
+        self.disability.name_en = 'Other'
+        self.disability.save(update_fields=['name_en'])
+        self.nationality.name_en = 'Other'
+        self.nationality.save(update_fields=['name_en'])
+        self.first_child.nationality_other = 'Registered other nationality'
+        self.first_child.save(update_fields=['nationality_other'])
+        self.first_registration.refresh_from_db()
+        text, _ = word_text_and_photos(build_examination_card(self.first_registration))
+        self.assertIn('Registered additional support need', card_field(text, 'Physical difficulties'))
+        self.assertIn('Registered other nationality', card_field(text, 'Nationality'))
+
+    def test_word_card_keeps_reference_print_size_border_floating_photo_and_arabic_direction(self):
+        content = build_examination_card(Registration.objects.get(pk=self.first_registration.pk))
+        with zipfile.ZipFile(io.BytesIO(content)) as archive:
+            document = ElementTree.fromstring(archive.read('word/document.xml'))
+        page = document.find('.//w:sectPr/w:pgSz', WORD_NS)
+        namespace = '{%s}' % WORD_NS['w']
+        self.assertEqual(page.get(namespace + 'orient'), 'landscape')
+        self.assertAlmostEqual(int(page.get(namespace + 'w')), 210 / 25.4 * 1440, delta=2)
+        self.assertAlmostEqual(int(page.get(namespace + 'h')), 148 / 25.4 * 1440, delta=2)
+        borders = (
+            document.findall('.//w:tblBorders', WORD_NS)
+            + document.findall('.//w:pBdr', WORD_NS)
+            + document.findall('.//w:pgBorders', WORD_NS)
+        )
+        self.assertTrue(any(
+            all(border.find('w:' + side, WORD_NS) is not None for side in ('top', 'left', 'bottom', 'right'))
+            for border in borders
+        ))
+        self.assertEqual(len(document.findall('.//{%s}anchor' % WORD_DRAWING_NS)), 1)
+        heading = next(
+            paragraph for paragraph in document.findall('.//w:p', WORD_NS)
+            if CARD_HEADING in ''.join(value.text or '' for value in paragraph.findall('.//w:t', WORD_NS))
+        )
+        self.assertIsNotNone(heading.find('w:pPr/w:bidi', WORD_NS))
+        self.assertIsNotNone(heading.find('.//w:rtl', WORD_NS))
+
     def test_excel_and_word_use_saved_edits_and_replacement_photo(self):
         self.first_child.first_name = 'Updated Rania'
         self.first_child.street = 'Updated registered street'
-        self.first_child.save(update_fields=['first_name', 'street'])
+        self.first_child.birthday_day = '9'
+        self.first_child.birthday_month = '11'
+        self.first_child.birthday_year = '2016'
+        self.first_child.save(update_fields=['first_name', 'street', 'birthday_day', 'birthday_month', 'birthday_year'])
         self.first_child.photo.save('replacement.png', ContentFile(portrait_bytes('green')))
         self.first_registration.nfe_programme = 'DIRASA'
         self.first_registration.save(update_fields=['nfe_programme'])
         current_registration = Registration.objects.get(pk=self.first_registration.pk)
         text, photos = word_text_and_photos(build_examination_card(current_registration))
         self.assertIn('Updated Rania', text)
-        self.assertIn('Updated registered street', text)
-        self.assertIn('DIRASA', text)
+        self.assertIn('9/11/16', text)
+        self.assertNotIn('Updated registered street', text)
+        self.assertNotIn('DIRASA', text)
         self.assertPhotoColour(photos[0], (0, 128, 0))
         content = build_children_workbook(Registration.objects.filter(pk=current_registration.pk))
         row_number, row = workbook_rows(content)[0]
