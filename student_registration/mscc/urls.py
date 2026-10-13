@@ -9,6 +9,18 @@ app_name = 'mscc'
 urlpatterns = [
 
     re_path(
+        r'^exceptional-exam-location-options/$',
+        view=views.exceptional_exam_location_options,
+        name='exceptional_exam_location_options'
+    ),
+
+    re_path(
+        r'^exceptional-exam/(?P<registry>\d+)/$',
+        view=views.exceptional_exam_form,
+        name='exceptional_exam_form'
+    ),
+
+    re_path(
         r'^child-location-options/$',
         view=views.ChildLocationOptionsView.as_view(),
         name='child_location_options'

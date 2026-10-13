@@ -18,6 +18,7 @@ from django.views.generic import (
 )
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.http import (
     FileResponse,
     Http404,
@@ -29,7 +30,7 @@ from django.http import (
 )
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db import connection
+from django.db import connection, transaction
 import csv
 import io
 import zipfile
@@ -79,6 +80,7 @@ from .models import (
     Round,
     ProvidedServices,
     Registration,
+    ExceptionalExam,
     Teacher,
     PSSService,
     EducationAssessment,
@@ -101,6 +103,11 @@ from .serializers import (
 )
 from .document_exports import build_examination_card
 from .export_access import filter_registrations, scoped_registrations, user_can_export
+from .exceptional_exam_access import exceptional_exam_registrations, can_manage_exceptional_exam
+from .exceptional_exam_forms import ExceptionalExamForm
+from .exceptional_exam_locations import (
+    location_label, positive_location_id, town_choices_for_locations,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -248,8 +255,18 @@ class ProfileView(LoginRequiredMixin,
             dict: Context containing the registration, service metadata and
             whether the child can be enrolled in a new round.
         """
-        instance = Registration.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(
+            Registration.objects.select_related('child').filter(deleted=False).exclude(child_id=None),
+            pk=self.kwargs['pk'],
+        )
         current_tab = self.request.GET.get('current_tab', 'info')
+        can_view_exam = exceptional_exam_registrations(self.request.user).filter(pk=instance.pk).exists()
+        can_manage_exam = can_view_exam and can_manage_exceptional_exam(self.request.user, instance)
+        exam = ExceptionalExam.objects.filter(registration=instance).first() if can_view_exam else None
+        if current_tab not in ('info', 'services', 'attendance', 'exceptional_exam'):
+            current_tab = 'info'
+        if current_tab == 'exceptional_exam' and not can_view_exam:
+            current_tab = 'info'
 
         rounds_registered = EducationService.objects.filter(
             registration__child_id=instance.child.id,
@@ -275,9 +292,104 @@ class ProfileView(LoginRequiredMixin,
                 and scoped_registrations(self.request.user).filter(pk=instance.pk).exists()
             ),
             'new_round': new_round,
+            'can_view_exceptional_exam': can_view_exam,
+            'can_manage_exceptional_exam': can_manage_exam,
+            'exceptional_exam': exam,
+            'exceptional_exam_rows': exam.display_rows if exam else (),
             'current_tab': current_tab,
             'provided_services': services_dict,
         }
+
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+def exceptional_exam_form(request, registry):
+    """Create or edit one application for an accessible child registration."""
+    queryset = exceptional_exam_registrations(request.user)
+    registration = get_object_or_404(queryset, pk=registry)
+    if not can_manage_exceptional_exam(request.user, registration):
+        return HttpResponseForbidden(
+            'You may view this application but cannot edit it. / '
+            'يمكنك عرض هذا الطلب ولكن لا يمكنك تعديله.'
+        )
+
+    if request.method == 'POST':
+        # Lock the registration, rather than a possibly nonexistent exam row.
+        # Concurrent first submissions then update the same OneToOne record.
+        with transaction.atomic():
+            registration = get_object_or_404(
+                queryset.select_for_update(of=('self',)), pk=registry,
+            )
+            if not can_manage_exceptional_exam(request.user, registration):
+                return HttpResponseForbidden('Editing is not permitted. / لا يُسمح بالتعديل.')
+            exam = ExceptionalExam.objects.filter(registration=registration).first()
+            form = ExceptionalExamForm(request.POST, instance=exam, registration=registration)
+            if form.is_valid():
+                saved_exam = form.save(commit=False)
+                if exam is None:
+                    saved_exam.created_by = request.user
+                saved_exam.modified_by = request.user
+                saved_exam.save()
+                messages.success(
+                    request,
+                    'Exceptional exam saved. / تم حفظ بيانات الامتحان الاستثنائي.',
+                )
+                return redirect(
+                    reverse('mscc:child_profile', kwargs={'pk': registration.pk})
+                    + '?current_tab=exceptional_exam'
+                )
+    else:
+        exam = ExceptionalExam.objects.filter(registration=registration).first()
+        form = ExceptionalExamForm(instance=exam, registration=registration)
+
+    return render(request, 'mscc/exceptional_exam_form.html', {
+        'registration': registration,
+        'instance': form.instance,
+        'form': form,
+    })
+
+
+@login_required
+@require_GET
+def exceptional_exam_location_options(request):
+    """Return only the selected parent's bilingual exam residence choices."""
+    from student_registration.locations.models import Location
+
+    user = request.user
+    can_view = user_can_export(user) or bool(
+        user.is_active and has_group(user, 'MSCC') and user.center_id
+    )
+    if not can_view:
+        return JsonResponse({'error': 'Access denied. / تم رفض الوصول.'}, status=403)
+
+    location_type = request.GET.get('type', '')
+    if location_type not in ('2', 'village'):
+        return JsonResponse({'error': 'Invalid location type.'}, status=400)
+    parent_value = request.GET.get('parent')
+    if not parent_value:
+        return JsonResponse({'results': []})
+    parent_id = positive_location_id(parent_value)
+    if parent_id is None:
+        return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+    parent_type = 1 if location_type == '2' else 2
+    parent = Location.objects.select_related('parent').filter(
+        pk=parent_id, type_id=parent_type,
+    ).first()
+    if parent is None:
+        return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+
+    if location_type == '2':
+        locations = Location.objects.filter(
+            type_id=2, parent_id=parent.pk,
+        ).order_by('name')
+        results = [
+            {'id': location.pk, 'text': location_label(location)}
+            for location in locations
+        ]
+    else:
+        choices = town_choices_for_locations(parent.parent, parent)
+        results = [{'id': code, 'text': label} for code, label in choices]
+    return JsonResponse({'results': results})
 
 
 class DashboardView(LoginRequiredMixin,

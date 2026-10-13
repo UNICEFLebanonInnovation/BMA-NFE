@@ -19,7 +19,8 @@ from django.db import models
 from PIL import Image, ImageOps
 
 from student_registration.child.models import Child
-from student_registration.mscc.models import Registration
+from student_registration.mscc.models import ExceptionalExam, Registration
+from student_registration.mscc.exceptional_exam_locations import location_label
 
 
 logger = logging.getLogger(__name__)
@@ -108,10 +109,14 @@ def export_columns(fields=None):
             column.aliases,
         ) for column in registration_columns
     ]
+    exam_columns = [
+        ExportColumn(column.key, 'Exceptional Exam - ' + column.label, column.aliases)
+        for column in _model_columns(ExceptionalExam, 'exceptional_exam', {'registration'})
+    ]
     optional = [
         ExportColumn('child_full_name', 'Child full name', ('child_fullname',)),
         ExportColumn('date_of_birth', 'Date of birth', ('birthday',)),
-    ] + child_columns + registration_columns
+    ] + child_columns + registration_columns + exam_columns
     if fields:
         if isinstance(fields, str):
             fields = [fields]
@@ -130,7 +135,11 @@ def _field_values(instance, model, prefix, excluded):
         key = '{}__{}'.format(prefix, field.name)
         value = getattr(instance, field.name, None) if instance is not None else None
         if isinstance(field, models.ForeignKey):
-            values[key] = _text(value)
+            values[key] = _text(
+                location_label(value)
+                if prefix == 'exceptional_exam' and field.name in ('governorate', 'district')
+                else value
+            )
             values['{}__{}_id'.format(prefix, field.name)] = _text(
                 getattr(instance, field.attname, None) if instance is not None else None
             )
@@ -213,6 +222,8 @@ def registration_snapshot(registration):
     ))
     values.update(_field_values(child, Child, 'child', {'id'}))
     values.update(_field_values(registration, Registration, 'registration', {'id', 'child'}))
+    exam = None if registration._state.adding else getattr(registration, 'exceptional_exam', None)
+    values.update(_field_values(exam, ExceptionalExam, 'exceptional_exam', {'registration'}))
     return RegistrationSnapshot(values, photo_data, photo_status)
 
 
@@ -294,96 +305,183 @@ def build_children_csv(registrations, fields=None):
 
 
 def build_examination_card(registration):
-    """Return an editable Word card populated from one current snapshot."""
+    """Return the reference-style landscape card using the saved registration.
+
+    Browser print headers and the empty overflow page in the reference are
+    not part of the card. Birthplace is intentionally blank: MSCC children
+    have no stored place-of-birth field, and residence is not birthplace.
+    """
     from docx import Document
-    from docx.enum.text import WD_ALIGN_PARAGRAPH
-    from docx.shared import Inches, Mm, Pt
+    from docx.enum.section import WD_ORIENT
+    from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+    from docx.shared import Mm, Pt
 
     snapshot = registration_snapshot(registration)
     values = snapshot.values
     document = Document()
     section = document.sections[0]
+    section.orientation = WD_ORIENT.LANDSCAPE
     section.page_width = Mm(210)
-    section.page_height = Mm(297)
-    section.top_margin = Inches(0.55)
-    section.bottom_margin = Inches(0.55)
-    section.left_margin = Inches(0.65)
-    section.right_margin = Inches(0.65)
-    document.styles['Normal'].font.name = 'Arial'
-    document.styles['Normal'].font.size = Pt(10)
-    document.styles['Normal'].paragraph_format.space_after = Pt(4)
+    section.page_height = Mm(148)
+    section.top_margin = section.bottom_margin = Mm(10)
+    section.left_margin = section.right_margin = Mm(12)
+    normal = document.styles['Normal']
+    normal.font.name = 'Times New Roman'
+    normal.font.size = Pt(16)
+    normal.font.bold = True
+    normal.paragraph_format.space_after = Pt(4)
+    normal.paragraph_format.line_spacing = Pt(21)
 
-    title = document.add_heading('Examination Card', 0)
-    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    subtitle = document.add_paragraph('MSCC / Makani')
-    subtitle.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    header = document.add_table(rows=1, cols=2)
-    header.autofit = False
-    header.columns[0].width = Inches(4.9)
-    header.columns[1].width = Inches(1.3)
-    identity = header.cell(0, 0)
-    identity.paragraphs[0].add_run(values['child_full_name'] or 'Child name not recorded').bold = True
-    identity.add_paragraph('Child ID: {}'.format(values['child_id']))
-    identity.add_paragraph('Registration ID: {}'.format(values['registration_id']))
-    identity.add_paragraph('UNIQUE ID: {}'.format(values['child__unicef_id'] or 'Not recorded'))
-    photo = header.cell(0, 1).paragraphs[0]
-    photo.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    borders = OxmlElement('w:pgBorders')
+    borders.set(qn('w:offsetFrom'), 'page')
+    for side in ('top', 'left', 'bottom', 'right'):
+        border = OxmlElement('w:' + side)
+        for attribute, value in (
+            ('val', 'single'), ('sz', '6'), ('space', '28'), ('color', '000000'),
+        ):
+            border.set(qn('w:' + attribute), value)
+        borders.append(border)
+    section._sectPr.insert_element_before(
+        borders, 'w:lnNumType', 'w:pgNumType', 'w:cols', 'w:formProt',
+        'w:vAlign', 'w:noEndnote', 'w:titlePg', 'w:textDirection', 'w:bidi',
+        'w:rtlGutter', 'w:docGrid', 'w:printerSettings', 'w:sectPrChange',
+    )
+
+    # The photo floats at the upper left, so the centred details retain the
+    # same alignment regardless of the photograph's aspect ratio.
+    photo = document.add_paragraph()
+    photo.paragraph_format.line_spacing = Pt(1)
+    photo.paragraph_format.line_spacing_rule = WD_LINE_SPACING.EXACTLY
+    photo.paragraph_format.space_after = Pt(0)
     if snapshot.photo_data:
         with Image.open(io.BytesIO(snapshot.photo_data)) as image:
-            scale = min(1.15 / image.width, 1.4 / image.height)
+            scale = min(48 / image.width, 42 / image.height)
             width, height = image.width * scale, image.height * scale
-        photo.add_run().add_picture(
-            io.BytesIO(snapshot.photo_data), width=Inches(width), height=Inches(height),
+        picture = photo.add_run().add_picture(
+            io.BytesIO(snapshot.photo_data), width=Mm(width), height=Mm(height),
+        )
+        anchor = picture._inline
+        anchor.tag = qn('wp:anchor')
+        for attribute, value in (
+            ('simplePos', '0'), ('relativeHeight', '0'), ('behindDoc', '0'),
+            ('locked', '0'), ('layoutInCell', '1'), ('allowOverlap', '1'),
+        ):
+            anchor.set(attribute, value)
+        simple_position = OxmlElement('wp:simplePos')
+        simple_position.set('x', '0')
+        simple_position.set('y', '0')
+        anchor.insert(0, simple_position)
+        for index, axis in enumerate(('H', 'V'), start=1):
+            position = OxmlElement('wp:position' + axis)
+            position.set('relativeFrom', 'page')
+            offset = OxmlElement('wp:posOffset')
+            offset.text = str(Mm(16.5))
+            position.append(offset)
+            anchor.insert(index, position)
+        anchor.insert(4, OxmlElement('wp:wrapNone'))
+        anchor.find(qn('wp:docPr')).set(
+            'descr', 'Photograph for child {}, registration {}'.format(
+                values['child_id'], values['registration_id'],
+            ),
         )
     else:
-        photo.add_run(snapshot.photo_status)
+        # Keep missing-image status visible without adding a made-up picture.
+        photo.paragraph_format.line_spacing = Pt(12)
+        photo.paragraph_format.left_indent = Mm(4.5)
+        run = photo.add_run(snapshot.photo_status)
+        run.font.size = Pt(9)
 
-    document.add_paragraph()
-    details = (
-        ('First name', 'child__first_name'),
-        ('Father name', 'child__father_name'),
-        ('Last name', 'child__last_name'),
-        ('Mother full name', 'child__mother_fullname'),
-        ('Date of birth', 'date_of_birth'),
-        ('Gender', 'child__gender'),
-        ('Nationality', 'child__nationality'),
-        ('Other nationality', 'child__nationality_other'),
-        ('Disability / special need', 'child__disability'),
-        ('Other disability', 'child__disability_other'),
-        ('Formal Education unique student ID', 'child__fe_unique_id'),
-        ('Type of NFE Programme', 'registration__nfe_programme'),
-        ('Caregiver phone number', 'child__first_phone_number'),
-        ('Governorate (محافظة)', 'child__governorate'),
-        ('District/Caza (قضاء)', 'child__district'),
-        ('Municipality (بلدية)', 'child__municipality'),
-        ('Village (قرية)', 'child__village'),
-        ('Street (شارع)', 'child__street'),
-        ('Building/Camp (مبنى/مخيم)', 'child__building_camp'),
-        ('Cadaster (منطقة عقارية)', 'child__cadaster'),
-        ('Center', 'registration__center'),
-        ('Partner', 'registration__partner'),
-        ('Round', 'registration__round'),
-        ('Registration date', 'registration__registration_date'),
-    )
-    table = document.add_table(rows=0, cols=2)
-    table.style = 'Table Grid'
-    for label, key in details:
-        if key in ('child__nationality_other', 'child__disability_other') and not values.get(key):
-            continue
-        cells = table.add_row().cells
-        cells[0].text = label
-        value = values.get(key)
-        if not value and key in ('child__governorate', 'child__district', 'child__cadaster'):
-            value = values.get('{}_legacy'.format(key))
-        cells[1].text = value or 'Not recorded'
-        cells[0].paragraphs[0].runs[0].bold = True
-    if values.get('child__address') and not any(values.get('child__{}'.format(field)) for field in (
-        'governorate', 'district', 'municipality', 'village', 'street', 'building_camp', 'cadaster'
-    )):
-        cells = table.add_row().cells
-        cells[0].text = 'Residential address (legacy)'
-        cells[1].text = values['child__address']
-        cells[0].paragraphs[0].runs[0].bold = True
+    def display_name(instance):
+        if instance is None:
+            return ''
+        return _text(getattr(instance, 'name_en', None) or instance.name).strip()
+
+    def centred_line(text, size=16, arabic=False):
+        text = ' '.join(text.split())
+        # Longer registered names and labels need smaller type rather than
+        # losing characters or spilling the card onto a blank first page.
+        if len(text) > 100:
+            size = min(size, 9)
+        elif len(text) > 68:
+            size = min(size, 12)
+        paragraph = document.add_paragraph()
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        paragraph.paragraph_format.keep_with_next = True
+        if len(text) > 68:
+            paragraph.paragraph_format.line_spacing = Pt(size + 3)
+            paragraph.paragraph_format.space_after = Pt(2)
+        run = paragraph.add_run(text)
+        run.font.name = 'Times New Roman'
+        run.font.size = Pt(size)
+        # Word needs the complex-script font/size and RTL flags explicitly;
+        # font.size alone applies only to Latin text in several renderers.
+        properties = run._element.get_or_add_rPr()
+        fonts = properties.get_or_add_rFonts()
+        fonts.set(qn('w:cs'), 'Times New Roman')
+        complex_size = OxmlElement('w:szCs')
+        complex_size.set(qn('w:val'), str(size * 2))
+        properties.insert_element_before(complex_size, 'w:highlight', 'w:u', 'w:rtl')
+        run.font.cs_bold = True
+        if arabic:
+            paragraph._element.get_or_add_pPr().insert_element_before(
+                OxmlElement('w:bidi'), 'w:adjustRightInd', 'w:snapToGrid',
+                'w:spacing', 'w:ind', 'w:contextualSpacing', 'w:mirrorIndents',
+                'w:suppressOverlap', 'w:jc', 'w:textDirection', 'w:textAlignment',
+                'w:textboxTightWrap', 'w:outlineLvl', 'w:divId', 'w:cnfStyle',
+                'w:rPr', 'w:sectPr', 'w:pPrChange',
+            )
+            run.font.rtl = True
+        return paragraph
+
+    round_ = registration.round
+    round_name = _text(round_.name).strip() if round_ else ''
+    if round_ and round_.year and str(round_.year) not in round_name:
+        round_name += '/{}'.format(round_.year)
+    round_label = round_name if round_name.lower().startswith('round') else 'Round ' + round_name
+    title = centred_line(round_label.strip() or 'Round', size=18)
+    title.paragraph_format.space_before = Mm(35 if snapshot.photo_data else 31)
+    title.paragraph_format.line_spacing = Pt(22)
+    title.paragraph_format.space_after = Pt(2)
+    heading = centred_line('الامتحان الاستثنائي لطلاب التعليم الغير نظامي', size=11, arabic=True)
+    heading.paragraph_format.line_spacing = Pt(15)
+    heading.paragraph_format.space_after = Pt(3)
+
+    partner = registration.partner
+    ngo = _text((partner.short_name or partner.name) if partner else '').strip()
+    child = registration.child
+    nationality = display_name(child.nationality) if child else ''
+    disability = display_name(child.disability) if child else ''
+    for name, extra_key in (('nationality', 'child__nationality_other'),
+                            ('disability', 'child__disability_other')):
+        label = nationality if name == 'nationality' else disability
+        if label.casefold() in ('other', 'others', 'أخرى', 'اخرى', 'آخر', 'اخر') and values[extra_key]:
+            label += ': ' + values[extra_key]
+        if name == 'nationality':
+            nationality = label
+        else:
+            disability = label
+    if disability.casefold() in ('none', 'no', 'no disability', 'لا', 'لا يوجد', 'بدون إعاقة'):
+        disability = 'No'
+    governorate = display_name(child.governorate) if child else ''
+    governorate = governorate or values.get('child__governorate_legacy', '')
+    birthday = values['date_of_birth']
+    try:
+        date = datetime.date.fromisoformat(birthday)
+        birthday = '{}/{}/{:02d}'.format(date.day, date.month, date.year % 100)
+    except ValueError:
+        pass  # Preserve incomplete saved dates instead of fabricating one.
+
+    centred_line('ID: ' + values['registration_id'])
+    centred_line('NGO: ' + ngo)
+    centred_line('الاسم الثلاثي: ' + values['child_full_name'], arabic=True)
+    centred_line('Date of Birth: ' + birthday)
+    centred_line('Place of Birth:')
+    centred_line('Nationality: ' + nationality)
+    centred_line('Governorate: ' + governorate)
+    last_line = centred_line('Physical difficulties: ' + disability)
+    last_line.paragraph_format.keep_with_next = False
     document.core_properties.title = 'Examination card - Child {}'.format(values['child_id'])
     document.core_properties.subject = 'MSCC / Makani registration {}'.format(values['registration_id'])
     destination = io.BytesIO()

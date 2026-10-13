@@ -591,10 +591,37 @@ Only the user who requested an export can download its file.
 ### Downloading an Examination Card
 
 Open the child's **MSCC profile** and click **Download Examination Card (Word)**. The editable `.docx`
-card contains the current saved identity, programme, caregiver phone number, residential address and
-photograph, with child and registration IDs. Correct any information on the profile before downloading
-a new card; each download reads the saved record again. If no photograph is available, the card shows
-that status instead of an image.
+card follows the bordered landscape examination-card layout, with the child's photograph at the upper
+left and centred round, registration ID, NGO, Arabic full name, date of birth, nationality, governorate
+and physical-difficulties details. The round and year come from the saved registration. The Place of
+Birth line remains blank because MSCC does not store that field. Correct any information on the profile
+before downloading a new card; each download reads the saved record again. If no photograph is
+available, the card shows that status instead of an image.
+
+### Adding Exceptional Exam Details
+
+After registering a child, open the **MSCC profile → Exceptional Exam / الامتحان الاستثنائي** tab and
+select **Add Exceptional Exam / إضافة امتحان استثنائي**. Questions and answer choices display both
+English and Arabic. Complete all fields:
+
+- **Place of residence / مكان الإقامة:** choose a governorate from the platform's Location records,
+  then one of its districts and a village. Governorates and districts use Location types 1 and 2;
+  village choices follow the supplied examination village/town list for the selected district.
+- **Non-formal education programme / البرنامج التعليمي غير النظامي:** BLN or DIRASA.
+- **Grade applied for / الصف الدراسي الذي يتقدم للامتحان له:** Grades 2–7 are available for both
+  programmes.
+- **Mathematics exam language / لغة امتحان الرياضيات:** Arabic, English or French.
+- **Language exam / امتحان اللغة:** English or French.
+
+Save to return to the child's exam tab and review the recorded answers. **Edit Exceptional Exam**
+reopens those answers for correction. Each registration has one exam record, so registrations in
+different rounds keep separate answers. Exam residence and programme are saved with the exam record;
+the child's registration address and programme retain their original values. Excel and CSV exports
+include the saved exam details alongside the corresponding child and registration IDs.
+
+Changing the governorate clears the district and village; changing the district clears the village.
+Saved location selections are restored when editing. Existing exam residence codes remain available
+as legacy values where they could not be mapped unambiguously to a Location record.
 
 ### Enabling Browser Notifications
 
