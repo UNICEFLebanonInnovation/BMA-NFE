@@ -3,6 +3,8 @@
 import csv
 import io
 import tempfile
+from datetime import date, datetime, timedelta, timezone as datetime_timezone
+from unittest.mock import patch
 
 from PIL import Image
 
@@ -14,7 +16,7 @@ from django.core.files.base import ContentFile
 from django.db import IntegrityError, transaction
 from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
-from django.utils import translation
+from django.utils import timezone, translation
 
 from student_registration.child.models import Child
 from student_registration.locations.models import Center, Location, LocationType
@@ -30,6 +32,9 @@ from student_registration.mscc.exceptional_exam_choices import (
     valid_residence,
 )
 from student_registration.mscc.exceptional_exam_forms import ExceptionalExamForm
+from student_registration.mscc.exceptional_exam_grades import (
+    completed_age, programme_grade_choices,
+)
 from student_registration.mscc.document_exports import build_children_csv, build_children_workbook
 from student_registration.mscc.models import ExceptionalExam, Registration, Round
 from student_registration.mscc.tests.test_document_exports import (
@@ -133,6 +138,83 @@ class ExceptionalExamResidenceCatalogTests(SimpleTestCase):
             self.assertEqual(residence_labels('beirut', 'baabda', 'aley'), ('Beirut', '', ''))
 
 
+class ExceptionalExamAgeGradeTests(SimpleTestCase):
+    today = date(2026, 10, 13)
+
+    def child_with_birthdate(self, year, month='1', day='1'):
+        return Child(birthday_year=str(year), birthday_month=str(month), birthday_day=str(day))
+
+    def grade_codes(self, programme, child):
+        return tuple(value for value, _ in programme_grade_choices(programme, child, on_date=self.today))
+
+    def test_bln_mapping_uses_completed_age_and_never_offers_grade_seven(self):
+        for age, grade in ((7, '2'), (8, '2'), (9, '3'), (10, '4'), (11, '5'),
+                           (12, '6'), (13, '6'), (14, '6')):
+            with self.subTest(age=age):
+                child = self.child_with_birthdate(self.today.year - age)
+                self.assertEqual(completed_age(child, on_date=self.today), age)
+                self.assertEqual(self.grade_codes('BLN', child), (grade,))
+
+    def test_birthday_boundary_changes_the_grade_on_the_ninth_birthday(self):
+        child = self.child_with_birthdate(2017, 10, 14)
+        self.assertEqual(completed_age(child, on_date=self.today), 8)
+        self.assertEqual(self.grade_codes('BLN', child), ('2',))
+        birthday = self.today + timedelta(days=1)
+        self.assertEqual(completed_age(child, on_date=birthday), 9)
+        self.assertEqual(
+            tuple(code for code, _ in programme_grade_choices('BLN', child, on_date=birthday)),
+            ('3',),
+        )
+
+    def test_bln_requires_a_complete_valid_nonfuture_birthdate(self):
+        birthdates = (
+            ('', '', ''), ('2018', '', '1'), ('2018', '1', ''), ('', '1', '1'),
+            ('unknown', '1', '1'), ('2018', '13', '1'), ('2018', '2', '30'),
+            ('2018', '2', '29'), ('2018', '1', '0'), ('2026', '10', '14'),
+        )
+        for year, month, day in birthdates:
+            with self.subTest(birthdate=(year, month, day)):
+                child = self.child_with_birthdate(year, month, day)
+                self.assertIsNone(completed_age(child, on_date=self.today))
+                self.assertEqual(self.grade_codes('BLN', child), ())
+        self.assertEqual(self.grade_codes('BLN', None), ())
+
+    def test_bln_has_no_allowed_grade_outside_ages_seven_through_fourteen(self):
+        for age in (0, 6, 15, 18):
+            with self.subTest(age=age):
+                child = self.child_with_birthdate(self.today.year - age)
+                self.assertEqual(completed_age(child, on_date=self.today), age)
+                self.assertEqual(self.grade_codes('BLN', child), ())
+
+    def test_dirasa_retains_all_grades_regardless_of_age_or_birthdate(self):
+        children = (
+            None, self.child_with_birthdate('', '', ''),
+            self.child_with_birthdate(2020), self.child_with_birthdate(2008),
+            self.child_with_birthdate(2018, 2, 30),
+        )
+        for child in children:
+            with self.subTest(child=child):
+                self.assertEqual(self.grade_codes('DIRASA', child), ('2', '3', '4', '5', '6', '7'))
+
+    @override_settings(USE_TZ=False)
+    def test_default_age_calculation_accepts_the_projects_naive_clock(self):
+        child = self.child_with_birthdate(2017, 10, 13)
+        with patch('student_registration.mscc.exceptional_exam_grades.timezone.now',
+                   return_value=datetime(2026, 10, 13, 0, 1)):
+            self.assertEqual(completed_age(child), 9)
+            self.assertEqual(tuple(code for code, _ in programme_grade_choices('BLN', child)), ('3',))
+
+    @override_settings(USE_TZ=True, TIME_ZONE='Asia/Beirut')
+    def test_default_age_calculation_uses_local_date_at_the_birthday_boundary(self):
+        child = self.child_with_birthdate(2017, 10, 13)
+        utc_now = datetime(2026, 10, 12, 22, 1, tzinfo=datetime_timezone.utc)
+        with timezone.override('Asia/Beirut'), patch(
+            'student_registration.mscc.exceptional_exam_grades.timezone.now', return_value=utc_now,
+        ):
+            self.assertEqual(completed_age(child), 9)
+            self.assertEqual(tuple(code for code, _ in programme_grade_choices('BLN', child)), ('3',))
+
+
 @override_settings(LANGUAGE_CODE='en')
 class ExceptionalExamWorkflowTests(TestCase):
     @classmethod
@@ -169,7 +251,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         cls.child = Child.objects.create(
             first_name='Rania', father_name='Samir', last_name='Example',
             mother_fullname='Mother of Rania', gender='Female', nationality=cls.nationality,
-            birthday_year='2014', birthday_month='3', birthday_day='12',
+            birthday_year=str(date.today().year - 8), birthday_month='1', birthday_day='1',
             first_phone_number='70-123456', street='Original residential street',
             governorate=cls.governorate, district=cls.district,
         )
@@ -236,6 +318,13 @@ class ExceptionalExamWorkflowTests(TestCase):
         data.update(updates)
         return data
 
+    def set_child_age(self, age):
+        self.child.birthday_year = str(date.today().year - age)
+        self.child.birthday_month = '1'
+        self.child.birthday_day = '1'
+        self.child.save(update_fields=('birthday_year', 'birthday_month', 'birthday_day'))
+        self.registration.child = self.child
+
     def create_exam(self, registration=None, **updates):
         data = self.exam_data(**updates)
         for field in ('governorate', 'district'):
@@ -251,6 +340,15 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         form = response.context['form']
         self.assertEqual(form['programme'].value(), 'BLN')
+        self.assertEqual(form['grade'].value(), '2')
+        self.assertEqual(tuple(value for value, _ in form.fields['grade'].choices if value), ('2',))
+        self.assertEqual(
+            tuple(option['id'] for option in form.grade_choices_by_programme['BLN']), ('2',),
+        )
+        self.assertEqual(
+            tuple(option['id'] for option in form.grade_choices_by_programme['DIRASA']),
+            ('2', '3', '4', '5', '6', '7'),
+        )
         self.assertEqual(form['governorate'].value(), self.governorate.pk)
         self.assertEqual(form['district'].value(), self.district.pk)
         self.assertEqual(set(form.fields), set(REQUIRED_FIELDS))
@@ -270,7 +368,7 @@ class ExceptionalExamWorkflowTests(TestCase):
                 ),
                 'help': (
                     'Required', 'Select a governorate first.', 'Select a district first.',
-                    'Required', 'Grades 2–7 are available for both programmes.',
+                    'Required', "For BLN, the grade is determined by the child's current age.",
                     'Required', 'Required',
                 ),
                 'prompt': 'Select an option',
@@ -285,7 +383,7 @@ class ExceptionalExamWorkflowTests(TestCase):
                 ),
                 'help': (
                     'مطلوب', 'اختر المحافظة أولاً.', 'اختر القضاء أولاً.',
-                    'مطلوب', 'الصفوف من الثاني إلى السابع متاحة لكلا البرنامجين.',
+                    'مطلوب', 'يُحدَّد الصف في برنامج المهارات الأساسية في القراءة والكتابة والحساب بحسب عمر الطفل الحالي.',
                     'مطلوب', 'مطلوب',
                 ),
                 'prompt': 'اختر خياراً',
@@ -370,16 +468,85 @@ class ExceptionalExamWorkflowTests(TestCase):
                 self.assertEqual(response.context['form']['grade'].value(), '2')
         self.assertEqual(ExceptionalExam.objects.count(), 1)
 
-    def test_both_programmes_allow_every_grade_from_two_through_seven(self):
-        for programme in ('BLN', 'DIRASA'):
-            for grade in range(2, 8):
-                with self.subTest(programme=programme, grade=grade):
-                    form = ExceptionalExamForm(data=self.exam_data(programme=programme, grade=str(grade)))
-                    self.assertTrue(form.is_valid(), form.errors.as_json())
-                    self.assertEqual(
-                        {value for value, _ in form.fields['grade'].choices if value},
-                        {'2', '3', '4', '5', '6', '7'},
+    def test_bln_form_offers_and_accepts_only_the_grade_allowed_for_the_registered_child(self):
+        for age, grade in ((7, '2'), (8, '2'), (9, '3'), (10, '4'), (11, '5'),
+                           (12, '6'), (13, '6'), (14, '6')):
+            self.set_child_age(age)
+            with self.subTest(age=age, grade=grade):
+                form = ExceptionalExamForm(
+                    data=self.exam_data(grade=grade), registration=self.registration,
+                )
+                self.assertEqual(
+                    tuple(value for value, _ in form.fields['grade'].choices if value), (grade,),
+                )
+                self.assertTrue(form.is_valid(), form.errors.as_json())
+                for wrong_grade in {'2', '3', '4', '5', '6', '7'} - {grade}:
+                    rejected = ExceptionalExamForm(
+                        data=self.exam_data(grade=wrong_grade), registration=self.registration,
                     )
+                    self.assertFalse(rejected.is_valid())
+                    self.assertIn('grade', rejected.errors)
+
+    def test_dirasa_forms_allow_every_grade_from_two_through_seven(self):
+        for grade in range(2, 8):
+            with self.subTest(grade=grade):
+                form = ExceptionalExamForm(
+                    data=self.exam_data(programme='DIRASA', grade=str(grade)),
+                    registration=self.registration,
+                )
+                self.assertTrue(form.is_valid(), form.errors.as_json())
+                self.assertEqual(
+                    {value for value, _ in form.fields['grade'].choices if value},
+                    {'2', '3', '4', '5', '6', '7'},
+                )
+
+    def test_bln_cannot_be_submitted_without_an_eligible_registered_birthdate(self):
+        for year, month, day in (
+            ('', '', ''), ('2018', '', '1'), ('2018', '2', '30'),
+            (str(date.today().year + 1), '1', '1'),
+            (str(date.today().year - 6), '1', '1'),
+            (str(date.today().year - 15), '1', '1'),
+        ):
+            with self.subTest(birthdate=(year, month, day)):
+                self.child.birthday_year, self.child.birthday_month, self.child.birthday_day = year, month, day
+                self.child.save(update_fields=('birthday_year', 'birthday_month', 'birthday_day'))
+                response = self.client.post(self.exam_url(), self.exam_data())
+                self.assertEqual(response.status_code, 200)
+                form = response.context['form']
+                self.assertEqual(tuple(value for value, _ in form.fields['grade'].choices if value), ())
+                self.assertIn('grade', form.errors)
+                self.assertFalse(ExceptionalExam.objects.exists())
+
+    def test_dirasa_can_be_saved_with_missing_birthdate_or_an_age_outside_bln_range(self):
+        for year, month, day in (
+            ('', '', ''), (str(date.today().year - 6), '1', '1'),
+            (str(date.today().year - 15), '1', '1'),
+        ):
+            with self.subTest(birthdate=(year, month, day)):
+                self.child.birthday_year, self.child.birthday_month, self.child.birthday_day = year, month, day
+                self.child.save(update_fields=('birthday_year', 'birthday_month', 'birthday_day'))
+                response = self.client.post(self.exam_url(), self.exam_data(programme='DIRASA', grade='7'))
+                self.assertEqual(response.status_code, 302)
+                exam = ExceptionalExam.objects.get(registration=self.registration)
+                self.assertEqual((exam.programme, exam.grade), ('DIRASA', '7'))
+
+    def test_posted_age_birthdate_child_and_registration_cannot_override_the_registered_age(self):
+        response = self.client.post(self.exam_url(), self.exam_data(
+            grade='3', age='9', child=str(self.second_registration.child_id),
+            registration=str(self.second_registration.pk),
+            birthday_year=str(date.today().year - 9), birthday_month='1', birthday_day='1',
+        ))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('grade', response.context['form'].errors)
+        self.assertFalse(ExceptionalExam.objects.exists())
+        self.child.refresh_from_db()
+        self.assertEqual(self.child.birthday_year, str(date.today().year - 8))
+
+    def test_bln_without_a_registration_cannot_accept_a_grade(self):
+        form = ExceptionalExamForm(data=self.exam_data())
+        self.assertEqual(tuple(value for value, _ in form.fields['grade'].choices if value), ())
+        self.assertFalse(form.is_valid())
+        self.assertIn('grade', form.errors)
 
     def test_missing_required_answers_do_not_create_an_exam(self):
         for field in REQUIRED_FIELDS:
@@ -412,7 +579,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_math_language_accepts_arabic_english_and_french(self):
         for language in ('ar', 'en', 'fr'):
             with self.subTest(language=language):
-                form = ExceptionalExamForm(data=self.exam_data(math_language=language))
+                form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(math_language=language))
                 self.assertTrue(form.is_valid(), form.errors.as_json())
 
     def test_residence_fields_use_typed_location_records_and_english_labels(self):
@@ -435,19 +602,19 @@ class ExceptionalExamWorkflowTests(TestCase):
             ({'governorate': self.other_governorate.pk, 'district': self.baabda.pk}, 'nearest_town'),
         ):
             with self.subTest(updates=updates):
-                form = ExceptionalExamForm(data=self.exam_data(**updates))
+                form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(**updates))
                 self.assertFalse(form.is_valid())
                 self.assertIn(expected, form.errors)
 
     def test_repeated_document_villages_are_valid_only_in_their_document_districts(self):
         for district in (self.baabda, self.aley):
             with self.subTest(district=district.pk):
-                form = ExceptionalExamForm(data=self.exam_data(
+                form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
                     governorate=self.other_governorate.pk,
                     district=district.pk, nearest_town='aley',
                 ))
                 self.assertTrue(form.is_valid(), form.errors.as_json())
-        form = ExceptionalExamForm(data=self.exam_data(
+        form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=self.other_governorate.pk,
             district=self.keserwan.pk, nearest_town='aley',
         ))
@@ -539,7 +706,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         district = Location.objects.create(
             name='بعلبك', name_en='Baalbek', type_id=2, parent=governorate,
         )
-        form = ExceptionalExamForm(data=self.exam_data(
+        form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='douris',
         ))
         self.assertTrue(form.is_valid(), form.errors.as_json())
@@ -552,7 +719,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_village_lookup_matches_existing_governorate_alias_and_district_separator(self):
         governorate = Location.objects.create(name='الشمال', name_en='North', type_id=1)
         district = Location.objects.create(name='المنية الضنية', type_id=2, parent=governorate)
-        form = ExceptionalExamForm(data=self.exam_data(
+        form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='minnieh',
         ))
         self.assertTrue(form.is_valid(), form.errors.as_json())
@@ -565,7 +732,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_standalone_existing_hermel_governorate_can_use_the_document_hermel_villages(self):
         governorate = Location.objects.create(name='الهرمل', name_en='Hermel', type_id=1)
         district = Location.objects.create(name='الهرمل', name_en='Hermel', type_id=2, parent=governorate)
-        form = ExceptionalExamForm(data=self.exam_data(
+        form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='qasr',
         ))
         self.assertTrue(form.is_valid(), form.errors.as_json())
@@ -573,7 +740,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_ambiguous_existing_district_names_do_not_guess_a_village_list(self):
         governorate = Location.objects.create(name='Unknown governorate', type_id=1)
         district = Location.objects.create(name='بعلبك', name_en='Hermel', type_id=2, parent=governorate)
-        form = ExceptionalExamForm(data=self.exam_data(
+        form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='douris',
         ))
         self.assertFalse(form.is_valid())
@@ -612,6 +779,15 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(form['governorate'].value(), self.governorate.pk)
         self.assertIn(form['district'].value(), ('', None))
 
+    def test_model_grade_validation_handles_a_missing_registration(self):
+        data = self.exam_data()
+        for parent in ('governorate', 'district'):
+            data[parent + '_id'] = data.pop(parent)
+        exam = ExceptionalExam(registration_id=999999999, **data)
+        with self.assertRaises(ValidationError) as error:
+            exam.full_clean()
+        self.assertIn('registration', error.exception.message_dict)
+
     def test_model_clean_protects_the_residence_hierarchy(self):
         for data, field in (
             (self.exam_data(district=self.baabda.pk), 'district'),
@@ -632,6 +808,42 @@ class ExceptionalExamWorkflowTests(TestCase):
             programme='BLN', grade='2', math_language='ar', language_exam='en',
         )
         exam.full_clean()
+
+    def test_model_clean_rejects_a_bln_grade_for_the_wrong_age_and_grade_seven(self):
+        for grade in ('3', '4', '5', '6', '7'):
+            with self.subTest(grade=grade):
+                exam = ExceptionalExam(
+                    registration=self.registration,
+                    governorate=self.governorate, district=self.district, nearest_town='achrafieh',
+                    programme='BLN', grade=grade, math_language='ar', language_exam='en',
+                )
+                with self.assertRaises(ValidationError) as error:
+                    exam.full_clean()
+                self.assertIn('grade', error.exception.message_dict)
+
+    def test_existing_bln_grade_seven_remains_readable_until_a_valid_edit_is_saved(self):
+        exam = self.create_exam(grade='7')
+        profile = self.client.get(reverse('mscc:child_profile', args=[self.registration.pk]), {
+            'current_tab': 'exceptional_exam',
+        })
+        self.assertContains(profile, 'Grade 7')
+        csv_rows = list(csv.DictReader(io.StringIO(
+            build_children_csv(Registration.objects.filter(pk=self.registration.pk)).decode('utf-8-sig'),
+        )))
+        self.assertEqual(csv_rows[0]['Exceptional Exam - Grade applying for the examination'], 'Grade 7')
+        edit = self.client.get(self.exam_url())
+        self.assertEqual(edit.context['form']['grade'].value(), '2')
+        self.assertEqual(tuple(value for value, _ in edit.context['form'].fields['grade'].choices if value), ('2',))
+        exam.refresh_from_db()
+        self.assertEqual(exam.grade, '7')
+        invalid_edit = self.client.post(self.exam_url(), self.exam_data(grade='7'))
+        self.assertEqual(invalid_edit.status_code, 200)
+        exam.refresh_from_db()
+        self.assertEqual(exam.grade, '7')
+        valid_edit = self.client.post(self.exam_url(), self.exam_data(grade='2'))
+        self.assertEqual(valid_edit.status_code, 302)
+        exam.refresh_from_db()
+        self.assertEqual(exam.grade, '2')
 
     def test_save_binds_url_registration_and_audit_user_and_leaves_registration_untouched(self):
         response = self.client.post(self.exam_url(), self.exam_data(
@@ -675,6 +887,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(self.registration.nfe_programme, 'BLN')
 
     def test_edit_preloads_stored_parent_choices_and_answers(self):
+        self.set_child_age(12)
         exam = self.create_exam(
             governorate=self.other_governorate.pk, district=self.keserwan.pk,
             nearest_town='jounieh', grade='6',
@@ -748,7 +961,9 @@ class ExceptionalExamWorkflowTests(TestCase):
                 self.client.force_login(user)
                 response = self.client.get(self.exam_url(self.outside_registration))
                 self.assertEqual(response.status_code, 200)
-                response = self.client.post(self.exam_url(self.outside_registration), self.exam_data())
+                response = self.client.post(
+                    self.exam_url(self.outside_registration), self.exam_data(programme='DIRASA'),
+                )
                 self.assertEqual(response.status_code, 302)
         exam = ExceptionalExam.objects.get()
         self.assertEqual(exam.created_by_id, self.staff_user.pk)
@@ -783,7 +998,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         for user in (self.unicef_center_user, self.partner_center_user):
             self.client.force_login(user)
             with self.subTest(user=user.username):
-                response = self.client.post(self.exam_url(), self.exam_data(grade='5'))
+                response = self.client.post(self.exam_url(), self.exam_data())
                 self.assertEqual(response.status_code, 302)
                 response = self.client.post(self.exam_url(self.second_registration), self.exam_data())
                 self.assertIn(response.status_code, (403, 404))

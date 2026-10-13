@@ -10277,6 +10277,31 @@ msgctxt "exceptional_exam"
 msgid "Governorate"
 msgstr ""
 
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "Select a programme first."
+msgstr "Select a programme first."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "For BLN, the grade is determined by the child's current age."
+msgstr "For BLN, the grade is determined by the child's current age."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "Grades 2–7 are available for DIRASA."
+msgstr "Grades 2–7 are available for DIRASA."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "BLN requires a complete, valid date of birth. Update the child's registration first."
+msgstr "BLN requires a complete, valid date of birth. Update the child's registration first."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "BLN is available for children aged 7–14."
+msgstr "BLN is available for children aged 7–14."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "Select the BLN grade allowed for the child's age."
+msgstr "Select the BLN grade allowed for the child's age."
+
 #~ msgid "Source of identification of the child to ABLN"
 #~ msgstr "مصدر احالة الطفل إلى برنامج ABLN"
 
