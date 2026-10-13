@@ -1,31 +1,46 @@
 {% extends "mscc/base.html" %}
-{% load static django_bootstrap5 %}
+{% load static django_bootstrap5 i18n %}
 
-{% block project_title %}Exceptional Exam / الامتحان الاستثنائي{% endblock %}
-{% block module_name %}Exceptional Exam / الامتحان الاستثنائي{% endblock %}
+{% block project_title %}{% translate "Exceptional Exam" %}{% endblock %}
+{% block module_name %}{% translate "Exceptional Exam" %}{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
         <div>
-            <h3 class="fw-bold mb-2">Exceptional Exam / <span lang="ar" dir="rtl">الامتحان الاستثنائي</span></h3>
+            <h3 class="fw-bold mb-2">{% translate "Exceptional Exam" %}</h3>
             <p class="mb-1">{{ registration.child.full_name }}</p>
-            <p class="small text-muted mb-0">Registration ID / <span lang="ar" dir="rtl">رقم التسجيل</span>: {{ registration.pk }}</p>
+            <p class="small text-muted mb-0">{% translate "Registration ID" %}: {{ registration.pk }}</p>
         </div>
         <a href="{% url 'mscc:child_profile' registration.pk %}?current_tab=exceptional_exam" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i> Back to Profile / <span lang="ar" dir="rtl">العودة إلى الملف</span>
+            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i> {% translate "Back to Profile" %}
         </a>
     </div>
     <div class="row justify-content-center">
         <div class="col-xl-9">
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4 p-md-5">
-                    <p class="text-muted mb-4">All questions are required. / <span lang="ar" dir="rtl">جميع الأسئلة مطلوبة.</span></p>
-                    <form method="post" action="{% url 'mscc:exceptional_exam_form' registry=registration.pk %}" id="exceptional-exam-form" data-options-url="{% url 'mscc:exceptional_exam_location_options' %}">
+                    <p class="text-muted mb-4">{% translate "All questions are required." %}</p>
+                    {% translate 'Select' as select_prompt %}
+                    {% translate 'Loading districts…' as district_loading %}
+                    {% translate 'No districts are available for this governorate.' as district_empty %}
+                    {% translate 'Districts could not be loaded. Please retry.' as district_error %}
+                    {% translate 'Loading villages…' as village_loading %}
+                    {% translate 'No villages are available for this district.' as village_empty %}
+                    {% translate 'Villages could not be loaded. Please retry.' as village_error %}
+                    <form method="post" action="{% url 'mscc:exceptional_exam_form' registry=registration.pk %}" id="exceptional-exam-form"
+                          data-options-url="{% url 'mscc:exceptional_exam_location_options' %}"
+                          data-select-prompt="{{ select_prompt|force_escape }}"
+                          data-district-loading="{{ district_loading|force_escape }}"
+                          data-district-empty="{{ district_empty|force_escape }}"
+                          data-district-error="{{ district_error|force_escape }}"
+                          data-village-loading="{{ village_loading|force_escape }}"
+                          data-village-empty="{{ village_empty|force_escape }}"
+                          data-village-error="{{ village_error|force_escape }}">
                         {% csrf_token %}
                         {% if form.errors %}
                         <div class="alert alert-danger" role="alert" id="exceptional-exam-errors" tabindex="-1">
-                            <p class="fw-bold mb-2">Please correct the following errors. / <span lang="ar" dir="rtl">يرجى تصحيح الأخطاء التالية.</span></p>
+                            <p class="fw-bold mb-2">{% translate "Please correct the following errors." %}</p>
                             <ul class="mb-0">
                                 {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
                                 {% for field in form %}
@@ -35,19 +50,19 @@
                         </div>
                         {% endif %}
                         <fieldset class="mb-4">
-                            <legend class="fs-5 fw-bold mb-2">Place of residence / <span lang="ar" dir="rtl">مكان الإقامة</span></legend>
-                            <p class="small text-muted" id="residence-selection-help">Select the governorate, then the district, then the village. / <span lang="ar" dir="rtl">اختر المحافظة ثم القضاء ثم القرية.</span></p>
+                            <legend class="fs-5 fw-bold mb-2">{% translate "Place of residence" %}</legend>
+                            <p class="small text-muted" id="residence-selection-help">{% translate "Select the governorate, then the district, then the village." %}</p>
                             <div class="row">
                                 <div class="col-md-4">{% bootstrap_field form.governorate %}</div>
                                 <div class="col-md-4">
                                     {% bootstrap_field form.district %}
                                     <p class="small text-muted mt-2 mb-0" id="exceptional-exam-district-status" role="status" aria-live="polite"></p>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-1 d-none" id="exceptional-exam-district-retry" hidden>Retry districts / <span lang="ar" dir="rtl">إعادة تحميل الأقضية</span></button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-1 d-none" id="exceptional-exam-district-retry" hidden>{% translate "Retry districts" %}</button>
                                 </div>
                                 <div class="col-md-4">
                                     {% bootstrap_field form.nearest_town %}
                                     <p class="small text-muted mt-2 mb-0" id="exceptional-exam-village-status" role="status" aria-live="polite"></p>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-1 d-none" id="exceptional-exam-village-retry" hidden>Retry villages / <span lang="ar" dir="rtl">إعادة تحميل القرى</span></button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-1 d-none" id="exceptional-exam-village-retry" hidden>{% translate "Retry villages" %}</button>
                                 </div>
                             </div>
                         </fieldset>
@@ -56,8 +71,8 @@
                         <div class="mb-4">{% bootstrap_field form.math_language %}</div>
                         <div class="mb-4">{% bootstrap_field form.language_exam %}</div>
                         <div class="d-flex flex-wrap gap-2 border-top pt-4">
-                            <button type="submit" class="btn btn-primary px-4">Save / <span lang="ar" dir="rtl">حفظ</span></button>
-                            <a href="{% url 'mscc:child_profile' registration.pk %}?current_tab=exceptional_exam" class="btn btn-outline-secondary">Cancel / <span lang="ar" dir="rtl">إلغاء</span></a>
+                            <button type="submit" class="btn btn-primary px-4">{% translate "Save" %}</button>
+                            <a href="{% url 'mscc:child_profile' registration.pk %}?current_tab=exceptional_exam" class="btn btn-outline-secondary">{% translate "Cancel" %}</a>
                         </div>
                     </form>
                 </div>
@@ -68,5 +83,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=2"></script>
+<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=3"></script>
 {% endblock %}

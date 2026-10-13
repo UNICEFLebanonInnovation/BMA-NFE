@@ -55,6 +55,7 @@ from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.views.decorators.http import require_GET, require_http_methods
+from django.utils.translation import gettext as _
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
 from student_registration.attendances.models import MSCCAttendanceChild
@@ -309,8 +310,7 @@ def exceptional_exam_form(request, registry):
     registration = get_object_or_404(queryset, pk=registry)
     if not can_manage_exceptional_exam(request.user, registration):
         return HttpResponseForbidden(
-            'You may view this application but cannot edit it. / '
-            'يمكنك عرض هذا الطلب ولكن لا يمكنك تعديله.'
+            _('You may view this application but cannot edit it.')
         )
 
     if request.method == 'POST':
@@ -321,7 +321,7 @@ def exceptional_exam_form(request, registry):
                 queryset.select_for_update(of=('self',)), pk=registry,
             )
             if not can_manage_exceptional_exam(request.user, registration):
-                return HttpResponseForbidden('Editing is not permitted. / لا يُسمح بالتعديل.')
+                return HttpResponseForbidden(_('Editing is not permitted.'))
             exam = ExceptionalExam.objects.filter(registration=registration).first()
             form = ExceptionalExamForm(request.POST, instance=exam, registration=registration)
             if form.is_valid():
@@ -332,7 +332,7 @@ def exceptional_exam_form(request, registry):
                 saved_exam.save()
                 messages.success(
                     request,
-                    'Exceptional exam saved. / تم حفظ بيانات الامتحان الاستثنائي.',
+                    _('Exceptional exam saved.'),
                 )
                 return redirect(
                     reverse('mscc:child_profile', kwargs={'pk': registration.pk})
@@ -352,7 +352,7 @@ def exceptional_exam_form(request, registry):
 @login_required
 @require_GET
 def exceptional_exam_location_options(request):
-    """Return only the selected parent's bilingual exam residence choices."""
+    """Return the selected parent's exam choices in the interface language."""
     from student_registration.locations.models import Location
 
     user = request.user
@@ -360,23 +360,23 @@ def exceptional_exam_location_options(request):
         user.is_active and has_group(user, 'MSCC') and user.center_id
     )
     if not can_view:
-        return JsonResponse({'error': 'Access denied. / تم رفض الوصول.'}, status=403)
+        return JsonResponse({'error': _('Access denied.')}, status=403)
 
     location_type = request.GET.get('type', '')
     if location_type not in ('2', 'village'):
-        return JsonResponse({'error': 'Invalid location type.'}, status=400)
+        return JsonResponse({'error': _('Invalid location type.')}, status=400)
     parent_value = request.GET.get('parent')
     if not parent_value:
         return JsonResponse({'results': []})
     parent_id = positive_location_id(parent_value)
     if parent_id is None:
-        return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+        return JsonResponse({'error': _('Invalid parent location.')}, status=400)
     parent_type = 1 if location_type == '2' else 2
     parent = Location.objects.select_related('parent').filter(
         pk=parent_id, type_id=parent_type,
     ).first()
     if parent is None:
-        return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+        return JsonResponse({'error': _('Invalid parent location.')}, status=400)
 
     if location_type == '2':
         locations = Location.objects.filter(

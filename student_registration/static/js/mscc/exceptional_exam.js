@@ -11,14 +11,23 @@
         var nearestTown = form.elements.nearest_town;
         if (!optionsUrl || !governorate || !district || !nearestTown) return;
 
-        var districtPlaceholder = district.options.length ? district.options[0].text : 'Select / اختر';
-        var villagePlaceholder = nearestTown.options.length ? nearestTown.options[0].text : 'Select / اختر';
+        var selectPrompt = form.getAttribute('data-select-prompt') || '';
+        var districtPlaceholder = district.options.length ? district.options[0].text : selectPrompt;
+        var villagePlaceholder = nearestTown.options.length ? nearestTown.options[0].text : selectPrompt;
         var districtStatus = document.getElementById('exceptional-exam-district-status');
         var villageStatus = document.getElementById('exceptional-exam-village-status');
         var districtRetry = document.getElementById('exceptional-exam-district-retry');
         var villageRetry = document.getElementById('exceptional-exam-village-retry');
         var districtRequest = { version: 0, controller: null };
         var villageRequest = { version: 0, controller: null };
+
+        function locationMessages(type) {
+            return {
+                loading: form.getAttribute('data-' + type + '-loading') || '',
+                empty: form.getAttribute('data-' + type + '-empty') || '',
+                error: form.getAttribute('data-' + type + '-error') || ''
+            };
+        }
 
         function replaceChoices(select, choices, placeholder, enabled) {
             select.innerHTML = '';
@@ -113,22 +122,14 @@
             setStatus(districtStatus, districtRetry, '', false);
             clearVillage();
             if (governorate.value) {
-                loadChoices(district, governorate.value, '2', districtPlaceholder, districtRequest, districtStatus, districtRetry, {
-                    loading: 'Loading districts… / جارٍ تحميل الأقضية…',
-                    empty: 'No districts are available for this governorate. / لا توجد أقضية متاحة لهذه المحافظة.',
-                    error: 'Districts could not be loaded. Please retry. / تعذّر تحميل الأقضية. يرجى إعادة المحاولة.'
-                });
+                loadChoices(district, governorate.value, '2', districtPlaceholder, districtRequest, districtStatus, districtRetry, locationMessages('district'));
             }
         }
 
         function updateVillages() {
             clearVillage();
             if (governorate.value && district.value) {
-                loadChoices(nearestTown, district.value, 'village', villagePlaceholder, villageRequest, villageStatus, villageRetry, {
-                    loading: 'Loading villages… / جارٍ تحميل القرى…',
-                    empty: 'No villages are available for this district. / لا توجد قرى متاحة لهذا القضاء.',
-                    error: 'Villages could not be loaded. Please retry. / تعذّر تحميل القرى. يرجى إعادة المحاولة.'
-                });
+                loadChoices(nearestTown, district.value, 'village', villagePlaceholder, villageRequest, villageStatus, villageRetry, locationMessages('village'));
             }
         }
 

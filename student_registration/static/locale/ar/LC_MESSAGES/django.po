@@ -12030,6 +12030,791 @@ msgstr "التواريخ المهمة"
 msgid "User"
 msgstr "المستخدم"
 
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Beirut"
+msgstr "بيروت"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Achrafieh"
+msgstr "الأشرفية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Moussaitbeh"
+msgstr "المصيطبة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Ras Beirut"
+msgstr "رأس بيروت"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Mazraa"
+msgstr "المزرعة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Medawar"
+msgstr "المدور"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Minet El Hosn"
+msgstr "ميناء الحصن"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Zokak El Blat"
+msgstr "زقاق البلاط"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Mount Lebanon"
+msgstr "جبل لبنان"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Baabda"
+msgstr "بعبدا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Hadath"
+msgstr "الحدث"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Hazmieh"
+msgstr "الحازمية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Chiyah"
+msgstr "الشياح"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Furn El Chebbak"
+msgstr "فرن الشباك"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Kfarshima"
+msgstr "كفرشيما"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Aley"
+msgstr "عاليه"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Metn"
+msgstr "المتن"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Jdeideh"
+msgstr "الجديدة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bouchrieh"
+msgstr "البوشرية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Sed El Bouchrieh"
+msgstr "سد البوشرية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bourj Hammoud"
+msgstr "برج حمود"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Antelias"
+msgstr "أنطلياس"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Jal El Dib"
+msgstr "جل الديب"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bikfaya"
+msgstr "بكفيا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Broummana"
+msgstr "برمانا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Keserwan"
+msgstr "كسروان"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Jounieh"
+msgstr "جونية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Ghazir"
+msgstr "غزير"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Zouk Mikael"
+msgstr "ذوق مكايل"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Zouk Mosbeh"
+msgstr "ذوق مصبح"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Ajaltoun"
+msgstr "عجلتون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Faraya"
+msgstr "فاريا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Jbeil"
+msgstr "جبيل"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Amchit"
+msgstr "عمشيت"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Halat"
+msgstr "حالات"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Qartaba"
+msgstr "قرطبا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Lassa"
+msgstr "لاسا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bhamdoun"
+msgstr "بحمدون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Souq El Gharb"
+msgstr "سوق الغرب"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Aramoun"
+msgstr "عرمون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bchamoun"
+msgstr "بشامون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Choueifat"
+msgstr "شويفات"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Chouf"
+msgstr "الشوف"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Beit Eddine"
+msgstr "بيت الدين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Deir El Qamar"
+msgstr "دير القمر"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Baakline"
+msgstr "بعقلين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Moukhtara"
+msgstr "المختارة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Barja"
+msgstr "برجا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Chhim"
+msgstr "شحيم"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Damour"
+msgstr "الدامور"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "North Lebanon"
+msgstr "الشمال"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Tripoli"
+msgstr "طرابلس"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "El Mina"
+msgstr "الميناء"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Qobbeh"
+msgstr "القبة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Abi Samra"
+msgstr "أبي سمراء"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Tebbaneh"
+msgstr "التبانة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Minniyeh–Danniyeh"
+msgstr "المنية–الضنية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Minniyeh"
+msgstr "المنية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bhanine"
+msgstr "بحنين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Deir Ammar"
+msgstr "دير عمار"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Sir El Danniyeh"
+msgstr "سير الضنية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bakhoun"
+msgstr "بخعون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Zgharta"
+msgstr "زغرتا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Ehden"
+msgstr "إهدن"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Rachine"
+msgstr "رشعين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Koura"
+msgstr "الكورة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Amioun"
+msgstr "أميون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Anfeh"
+msgstr "أنفه"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Kousba"
+msgstr "كوسبا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Kfar Aaqqa"
+msgstr "كفرعقا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bcharre"
+msgstr "بشري"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Hadath El Jebbeh"
+msgstr "حدث الجبة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bqaa Kafra"
+msgstr "بقاعكفرا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Batroun"
+msgstr "البترون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Chekka"
+msgstr "شكا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Tannourine"
+msgstr "تنورين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Kfar Aabida"
+msgstr "كفرعبيدا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Akkar"
+msgstr "عكار"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Halba"
+msgstr "حلبا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Qoubaiyat"
+msgstr "القبيات"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bebnine"
+msgstr "ببنين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Abdeh"
+msgstr "العبدة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Wadi Khaled"
+msgstr "وادي خالد"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Berqayel"
+msgstr "برقايل"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Mishmish"
+msgstr "مشمش"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bekaa"
+msgstr "البقاع"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Zahle"
+msgstr "زحلة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Taanayel"
+msgstr "تعنايل"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Chtoura"
+msgstr "شتورا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Qabb Elias"
+msgstr "قب إلياس"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bar Elias"
+msgstr "بر الياس"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Majdal Anjar"
+msgstr "مجدل عنجر"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "West Bekaa"
+msgstr "البقاع الغربي"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Joub Jannine"
+msgstr "جب جنين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Qaraoun"
+msgstr "القرعون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Machghara"
+msgstr "مشغرة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Sohmor"
+msgstr "سحمر"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Gaza"
+msgstr "غزة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Rashaya"
+msgstr "راشيا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Kfar Mechki"
+msgstr "كفرمشكي"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bakka"
+msgstr "بكا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Baalbek–Hermel"
+msgstr "بعلبك–الهرمل"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Baalbek"
+msgstr "بعلبك"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Douris"
+msgstr "دورس"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Arsal"
+msgstr "عرسال"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Labweh"
+msgstr "اللبوة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Nabi Chit"
+msgstr "النبي شيت"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Chmistar"
+msgstr "شمسطار"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Hermel"
+msgstr "الهرمل"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Qasr"
+msgstr "القصر"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "South Lebanon"
+msgstr "الجنوب"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Sidon"
+msgstr "صيدا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Abra"
+msgstr "عبرا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Hlaliyeh"
+msgstr "الهلالية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Maghdoucheh"
+msgstr "مغدوشة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Ghazieh"
+msgstr "الغازية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Tyre"
+msgstr "صور"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Abbassiyeh"
+msgstr "العباسية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bourj El Chamali"
+msgstr "برج الشمالي"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Qana"
+msgstr "قانا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Jouaiya"
+msgstr "جويا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Naqoura"
+msgstr "الناقورة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Jezzine"
+msgstr "جزين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bkassine"
+msgstr "بكاسين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Lebaa"
+msgstr "لبعا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Nabatieh"
+msgstr "النبطية"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Kfar Roummane"
+msgstr "كفررمان"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Habbouch"
+msgstr "حبوش"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Douair"
+msgstr "الدوير"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Bint Jbeil"
+msgstr "بنت جبيل"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Tebnine"
+msgstr "تبنين"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Ainata"
+msgstr "عيناتا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Aitaroun"
+msgstr "عيترون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Rmeich"
+msgstr "رميش"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Marjayoun"
+msgstr "مرجعيون"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Khiam"
+msgstr "الخيام"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Kfar Kila"
+msgstr "كفركلا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Adaisseh"
+msgstr "العديسة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Qlayaa"
+msgstr "القليعة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Hasbaya"
+msgstr "حاصبيا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Chebaa"
+msgstr "شبعا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Kfar Chouba"
+msgstr "كفرشوبا"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Hebbariyeh"
+msgstr "الهبارية"
+
+#: student_registration/mscc/models.py
+msgid "Legacy governorate"
+msgstr "المحافظة السابقة"
+
+#: student_registration/mscc/models.py
+msgid "Legacy district"
+msgstr "القضاء السابق"
+
+#: student_registration/mscc/models.py
+msgid "District/Caza"
+msgstr "القضاء"
+
+#: student_registration/mscc/models.py
+msgid "Village"
+msgstr "القرية"
+
+#: student_registration/mscc/models.py
+msgid "Non-formal education programme"
+msgstr "البرنامج التعليمي غير النظامي"
+
+#: student_registration/mscc/models.py
+msgid "Grade applying for the examination"
+msgstr "الصف الدراسي الذي يتقدم للامتحان له"
+
+#: student_registration/mscc/models.py
+msgid "Mathematics examination language"
+msgstr "لغة امتحان الرياضيات"
+
+#: student_registration/mscc/models.py
+msgid "Language examination"
+msgstr "امتحان اللغة"
+
+#: student_registration/mscc/models.py
+msgid "Created by"
+msgstr "أُنشئ بواسطة"
+
+#: student_registration/mscc/models.py
+msgid "Exceptional Exam"
+msgstr "الامتحان الاستثنائي"
+
+#: student_registration/mscc/models.py
+msgid "Exceptional Exams"
+msgstr "الامتحانات الاستثنائية"
+
+#: student_registration/mscc/views.py
+msgid "You may view this application but cannot edit it."
+msgstr "يمكنك عرض هذا الطلب ولكن لا يمكنك تعديله."
+
+#: student_registration/mscc/views.py
+msgid "Editing is not permitted."
+msgstr "لا يُسمح بالتعديل."
+
+#: student_registration/mscc/views.py
+msgid "Exceptional exam saved."
+msgstr "تم حفظ بيانات الامتحان الاستثنائي."
+
+#: student_registration/mscc/views.py
+msgid "Access denied."
+msgstr "تم رفض الوصول."
+
+#: student_registration/mscc/views.py
+msgid "Invalid location type."
+msgstr "نوع الموقع غير صالح."
+
+#: student_registration/mscc/views.py
+msgid "Invalid parent location."
+msgstr "الموقع الرئيسي غير صالح."
+
+#: student_registration/mscc/exceptional_exam_forms.py
+msgid "Select an option"
+msgstr "اختر خياراً"
+
+#: student_registration/mscc/exceptional_exam_forms.py
+msgid "This field is required."
+msgstr "هذا الحقل مطلوب."
+
+#: student_registration/mscc/exceptional_exam_forms.py
+msgid "Select a valid option."
+msgstr "اختر خياراً صالحاً."
+
+#: student_registration/mscc/exceptional_exam_forms.py
+msgid "Select a governorate first."
+msgstr "اختر المحافظة أولاً."
+
+#: student_registration/mscc/exceptional_exam_forms.py
+msgid "Select a district first."
+msgstr "اختر القضاء أولاً."
+
+#: student_registration/mscc/exceptional_exam_forms.py
+msgid "Grades 2–7 are available for both programmes."
+msgstr "الصفوف من الثاني إلى السابع متاحة لكلا البرنامجين."
+
+#: student_registration/mscc/models.py
+msgid "Select a valid governorate."
+msgstr "اختر محافظةً صالحة."
+
+#: student_registration/mscc/models.py
+msgid "Select a valid district."
+msgstr "اختر قضاءً صالحاً."
+
+#: student_registration/mscc/models.py
+msgid "Select a district in the selected governorate."
+msgstr "اختر قضاءً ضمن المحافظة المحددة."
+
+#: student_registration/mscc/models.py
+msgid "Select a village in the selected district."
+msgstr "اختر قريةً ضمن القضاء المحدد."
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Basic Literacy and Numeracy (BLN)"
+msgstr "برنامج المهارات الأساسية في القراءة والكتابة والحساب (BLN)"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "DIRASA"
+msgstr "دراسة"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Grade 2"
+msgstr "الصف الثاني"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Grade 3"
+msgstr "الصف الثالث"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Grade 4"
+msgstr "الصف الرابع"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Grade 5"
+msgstr "الصف الخامس"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Grade 6"
+msgstr "الصف السادس"
+
+#: student_registration/mscc/exceptional_exam_choices.py
+msgid "Grade 7"
+msgstr "الصف السابع"
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Registration ID"
+msgstr "رقم التسجيل"
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "All questions are required."
+msgstr "جميع الأسئلة مطلوبة."
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Select"
+msgstr "اختر"
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Loading districts…"
+msgstr "جارٍ تحميل الأقضية…"
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "No districts are available for this governorate."
+msgstr "لا توجد أقضية متاحة لهذه المحافظة."
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Districts could not be loaded. Please retry."
+msgstr "تعذّر تحميل الأقضية. يرجى إعادة المحاولة."
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Loading villages…"
+msgstr "جارٍ تحميل القرى…"
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "No villages are available for this district."
+msgstr "لا توجد قرى متاحة لهذا القضاء."
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Villages could not be loaded. Please retry."
+msgstr "تعذّر تحميل القرى. يرجى إعادة المحاولة."
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Please correct the following errors."
+msgstr "يرجى تصحيح الأخطاء التالية."
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Place of residence"
+msgstr "مكان الإقامة"
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Select the governorate, then the district, then the village."
+msgstr "اختر المحافظة ثم القضاء ثم القرية."
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Retry districts"
+msgstr "إعادة تحميل الأقضية"
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Retry villages"
+msgstr "إعادة تحميل القرى"
+
+#: student_registration/templates/mscc/exceptional_exam_tab.html
+msgid "Edit Exceptional Exam"
+msgstr "تعديل الامتحان الاستثنائي"
+
+#: student_registration/templates/mscc/exceptional_exam_tab.html
+msgid "Add Exceptional Exam"
+msgstr "إضافة امتحان استثنائي"
+
+#: student_registration/templates/mscc/exceptional_exam_tab.html
+msgid "An exceptional exam has not been added for this registration."
+msgstr "لم تتم إضافة امتحان استثنائي لهذا التسجيل."
+
+#: student_registration/mscc/models.py
+msgctxt "exceptional_exam"
+msgid "Governorate"
+msgstr "المحافظة"
+
 #~| msgid "Enrollment"
 #~ msgid "Confirm Enrollment"
 #~ msgstr "تأكيد التسجيل"
