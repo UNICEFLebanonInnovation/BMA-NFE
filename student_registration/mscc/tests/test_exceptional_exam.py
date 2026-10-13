@@ -6,6 +6,7 @@ import tempfile
 
 from PIL import Image
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
@@ -13,6 +14,7 @@ from django.core.files.base import ContentFile
 from django.db import IntegrityError, transaction
 from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
+from django.utils import translation
 
 from student_registration.child.models import Child
 from student_registration.locations.models import Center, Location, LocationType
@@ -91,8 +93,8 @@ class ExceptionalExamResidenceCatalogTests(SimpleTestCase):
         self.assertEqual(rows, list(DOCUMENT_RESIDENCES))
         self.assertEqual(len(RESIDENCE_CATALOG), 8)
 
-    def test_choice_labels_include_arabic_and_english(self):
-        choices = list(PROGRAMME_CHOICES + GRADE_CHOICES + MATH_LANGUAGE_CHOICES + LANGUAGE_EXAM_CHOICES)
+    def test_source_residence_labels_preserve_the_supplied_arabic_and_english(self):
+        choices = []
         for code, governorate in RESIDENCE_CATALOG.items():
             choices.append((code, governorate['label']))
             for district_code, district in governorate['districts'].items():
@@ -104,6 +106,22 @@ class ExceptionalExamResidenceCatalogTests(SimpleTestCase):
                 self.assertRegex(str(label), '[\u0600-\u06ff]')
                 self.assertIn(' / ', str(label))
 
+    def test_programme_grade_and_language_choices_follow_the_active_language(self):
+        expected = {
+            'en': ('Basic Literacy and Numeracy (BLN)', 'Grade 2', 'Arabic', 'English'),
+            'ar': (
+                'برنامج المهارات الأساسية في القراءة والكتابة والحساب (BLN)',
+                'الصف الثاني', 'اللغة العربية', 'الانكليزية',
+            ),
+        }
+        choices = (PROGRAMME_CHOICES, GRADE_CHOICES, MATH_LANGUAGE_CHOICES, LANGUAGE_EXAM_CHOICES)
+        for language, labels in expected.items():
+            with self.subTest(language=language), translation.override(language):
+                self.assertEqual(tuple(str(values[0][1]) for values in choices), labels)
+                for values in choices:
+                    for code, label in values:
+                        self.assertNotIn(' / ', str(label))
+
     def test_cascade_rejects_unknown_or_wrong_parent_selections(self):
         self.assertEqual(district_choices('unknown'), ())
         self.assertEqual(town_choices('beirut', 'baabda'), ())
@@ -111,7 +129,8 @@ class ExceptionalExamResidenceCatalogTests(SimpleTestCase):
         self.assertFalse(valid_residence('beirut', 'baabda', 'aley'))
         self.assertTrue(valid_residence('mount_lebanon', 'baabda', 'aley'))
         self.assertTrue(valid_residence('mount_lebanon', 'aley', 'aley'))
-        self.assertEqual(residence_labels('beirut', 'baabda', 'aley'), ('Beirut / بيروت', '', ''))
+        with translation.override('en'):
+            self.assertEqual(residence_labels('beirut', 'baabda', 'aley'), ('Beirut', '', ''))
 
 
 @override_settings(LANGUAGE_CODE='en')
@@ -198,7 +217,12 @@ class ExceptionalExamWorkflowTests(TestCase):
         return user
 
     def setUp(self):
+        translation.activate('en')
+        self.addCleanup(translation.deactivate)
         self.client.force_login(self.center_user)
+
+    def set_language(self, language):
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = language
 
     def exam_url(self, registration=None):
         return reverse('mscc:exceptional_exam_form', args=[(registration or self.registration).pk])
@@ -222,7 +246,7 @@ class ExceptionalExamWorkflowTests(TestCase):
             **data,
         )
 
-    def test_get_prefills_programme_and_shows_all_questions_in_both_languages(self):
+    def test_get_prefills_programme_and_shows_required_questions_in_english(self):
         response = self.client.get(self.exam_url())
         self.assertEqual(response.status_code, 200)
         form = response.context['form']
@@ -233,8 +257,118 @@ class ExceptionalExamWorkflowTests(TestCase):
         for field in form.fields.values():
             self.assertTrue(field.required)
             self.assertRegex(str(field.label), '[A-Za-z]')
-            self.assertRegex(str(field.label), '[\u0600-\u06ff]')
+            self.assertNotRegex(str(field.label), '[\u0600-\u06ff]')
         self.assertFalse(ExceptionalExam.objects.exists())
+
+    def test_form_labels_help_and_options_follow_the_selected_ui_language(self):
+        expected = {
+            'en': {
+                'labels': (
+                    'Governorate', 'District/Caza', 'Village',
+                    'Non-formal education programme', 'Grade applying for the examination',
+                    'Mathematics examination language', 'Language examination',
+                ),
+                'help': (
+                    'Required', 'Select a governorate first.', 'Select a district first.',
+                    'Required', 'Grades 2–7 are available for both programmes.',
+                    'Required', 'Required',
+                ),
+                'prompt': 'Select an option',
+                'options': ('Beirut', 'Achrafieh', 'Basic Literacy and Numeracy (BLN)', 'Grade 2', 'Arabic', 'English'),
+                'title': 'Exceptional Exam',
+                'instructions': 'All questions are required.',
+            },
+            'ar': {
+                'labels': (
+                    'المحافظة', 'القضاء', 'القرية', 'البرنامج التعليمي غير النظامي',
+                    'الصف الدراسي الذي يتقدم للامتحان له', 'لغة امتحان الرياضيات', 'امتحان اللغة',
+                ),
+                'help': (
+                    'مطلوب', 'اختر المحافظة أولاً.', 'اختر القضاء أولاً.',
+                    'مطلوب', 'الصفوف من الثاني إلى السابع متاحة لكلا البرنامجين.',
+                    'مطلوب', 'مطلوب',
+                ),
+                'prompt': 'اختر خياراً',
+                'options': (
+                    'بيروت', 'الأشرفية', 'برنامج المهارات الأساسية في القراءة والكتابة والحساب (BLN)',
+                    'الصف الثاني', 'اللغة العربية', 'الانكليزية',
+                ),
+                'title': 'الامتحان الاستثنائي',
+                'instructions': 'جميع الأسئلة مطلوبة.',
+            },
+        }
+        for language, values in expected.items():
+            with self.subTest(language=language):
+                self.set_language(language)
+                response = self.client.get(self.exam_url(), HTTP_ACCEPT_LANGUAGE='ar' if language == 'en' else 'en')
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response['Content-Language'], language)
+                with translation.override(language):
+                    form = response.context['form']
+                    self.assertEqual(tuple(str(form.fields[name].label) for name in REQUIRED_FIELDS), values['labels'])
+                    self.assertEqual(tuple(str(form.fields[name].help_text) for name in REQUIRED_FIELDS), values['help'])
+                    self.assertEqual(str(form.fields['governorate'].empty_label), values['prompt'])
+                    displayed = (
+                        form.fields['governorate'].label_from_instance(self.governorate),
+                        dict(form.fields['nearest_town'].choices)['achrafieh'],
+                        dict(form.fields['programme'].choices)['BLN'],
+                        dict(form.fields['grade'].choices)['2'],
+                        dict(form.fields['math_language'].choices)['ar'],
+                        dict(form.fields['language_exam'].choices)['en'],
+                    )
+                    self.assertEqual(tuple(str(label) for label in displayed), values['options'])
+                    for field in form.fields.values():
+                        for _, label in field.choices:
+                            self.assertNotIn(' / ', str(label))
+                for text in values['labels'] + values['options'] + (values['title'], values['instructions']):
+                    self.assertContains(response, text)
+                self.assertNotContains(response, 'Exceptional Exam /')
+                self.assertNotContains(response, 'Grade 2 /')
+
+    def test_accept_language_selects_arabic_when_no_language_cookie_is_set(self):
+        self.client.cookies.pop(settings.LANGUAGE_COOKIE_NAME, None)
+        response = self.client.get(self.exam_url(), HTTP_ACCEPT_LANGUAGE='ar')
+        self.assertEqual(response['Content-Language'], 'ar')
+        self.assertContains(response, 'الامتحان الاستثنائي')
+        self.assertContains(response, 'الصف الثاني')
+        self.assertNotContains(response, 'Grade 2 /')
+
+    def test_required_and_invalid_choice_errors_follow_the_ui_language(self):
+        expected = {
+            'en': ('This field is required.', 'Select a valid option.'),
+            'ar': ('هذا الحقل مطلوب.', 'اختر خياراً صالحاً.'),
+        }
+        for language, (required_message, invalid_message) in expected.items():
+            self.set_language(language)
+            for field, value, message in (
+                ('math_language', '', required_message),
+                ('programme', 'ALP', invalid_message),
+            ):
+                with self.subTest(language=language, field=field):
+                    response = self.client.post(self.exam_url(), self.exam_data(**{field: value}))
+                    self.assertEqual(response.status_code, 200)
+                    with translation.override(language):
+                        self.assertEqual(list(response.context['form'].errors[field]), [message])
+                    self.assertContains(response, message)
+                    self.assertNotContains(response, 'This field is required. /')
+                    self.assertNotContains(response, 'Select a valid option. /')
+        self.assertFalse(ExceptionalExam.objects.exists())
+
+    def test_changing_ui_language_does_not_change_saved_answer_codes_or_location_ids(self):
+        for language in ('ar', 'en'):
+            with self.subTest(language=language):
+                self.set_language(language)
+                response = self.client.post(self.exam_url(), self.exam_data())
+                self.assertEqual(response.status_code, 302)
+                exam = ExceptionalExam.objects.get(registration=self.registration)
+                self.assertEqual((exam.governorate_id, exam.district_id), (self.governorate.pk, self.district.pk))
+                self.assertEqual(
+                    (exam.nearest_town, exam.programme, exam.grade, exam.math_language, exam.language_exam),
+                    ('achrafieh', 'BLN', '2', 'ar', 'en'),
+                )
+                response = self.client.get(self.exam_url())
+                self.assertEqual(response.context['form']['grade'].value(), '2')
+        self.assertEqual(ExceptionalExam.objects.count(), 1)
 
     def test_both_programmes_allow_every_grade_from_two_through_seven(self):
         for programme in ('BLN', 'DIRASA'):
@@ -281,7 +415,7 @@ class ExceptionalExamWorkflowTests(TestCase):
                 form = ExceptionalExamForm(data=self.exam_data(math_language=language))
                 self.assertTrue(form.is_valid(), form.errors.as_json())
 
-    def test_residence_fields_use_typed_location_records_and_bilingual_labels(self):
+    def test_residence_fields_use_typed_location_records_and_english_labels(self):
         form = ExceptionalExamForm(registration=self.registration)
         self.assertEqual(
             set(form.fields['governorate'].queryset.values_list('pk', flat=True)),
@@ -291,9 +425,9 @@ class ExceptionalExamWorkflowTests(TestCase):
             set(form.fields['district'].queryset.values_list('pk', flat=True)),
             {self.district.pk},
         )
-        self.assertEqual(form.fields['governorate'].label_from_instance(self.governorate), 'Beirut / بيروت')
-        self.assertEqual(form.fields['district'].label_from_instance(self.district), 'Beirut / بيروت')
-        self.assertEqual(str(form.fields['nearest_town'].label), 'Village / القرية')
+        self.assertEqual(form.fields['governorate'].label_from_instance(self.governorate), 'Beirut')
+        self.assertEqual(form.fields['district'].label_from_instance(self.district), 'Beirut')
+        self.assertEqual(str(form.fields['nearest_town'].label), 'Village')
 
     def test_changing_governorate_requires_a_new_district_and_village(self):
         for updates, expected in (
@@ -326,7 +460,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         results = response.json()['results']
         self.assertEqual({row['id'] for row in results}, {self.baabda.pk, self.keserwan.pk, self.aley.pk})
-        self.assertIn({'id': self.keserwan.pk, 'text': 'Keserwan / كسروان'}, results)
+        self.assertIn({'id': self.keserwan.pk, 'text': 'Keserwan'}, results)
         self.assertNotIn(self.district.pk, {row['id'] for row in results})
 
     def test_village_options_follow_the_selected_existing_district(self):
@@ -334,9 +468,29 @@ class ExceptionalExamWorkflowTests(TestCase):
         response = self.client.get(url, {'type': 'village', 'parent': self.keserwan.pk})
         self.assertEqual(response.status_code, 200)
         results = response.json()['results']
-        self.assertIn({'id': 'jounieh', 'text': 'Jounieh / جونية'}, results)
+        self.assertIn({'id': 'jounieh', 'text': 'Jounieh'}, results)
         self.assertNotIn('achrafieh', {row['id'] for row in results})
         self.assertEqual(len(results), 6)
+
+    def test_linked_dropdown_ajax_uses_the_selected_language_and_keeps_option_ids(self):
+        url = reverse('mscc:exceptional_exam_location_options')
+        for language, district_text, village_text in (
+            ('en', 'Keserwan', 'Jounieh'),
+            ('ar', 'كسروان', 'جونية'),
+        ):
+            with self.subTest(language=language):
+                self.set_language(language)
+                district_response = self.client.get(url, {'type': '2', 'parent': self.other_governorate.pk})
+                village_response = self.client.get(url, {'type': 'village', 'parent': self.keserwan.pk})
+                self.assertEqual(district_response.status_code, 200)
+                self.assertEqual(village_response.status_code, 200)
+                districts = district_response.json()['results']
+                villages = village_response.json()['results']
+                self.assertIn({'id': self.keserwan.pk, 'text': district_text}, districts)
+                self.assertIn({'id': 'jounieh', 'text': village_text}, villages)
+                self.assertEqual({row['id'] for row in districts}, {self.baabda.pk, self.keserwan.pk, self.aley.pk})
+                self.assertEqual({row['id'] for row in villages}, {'jounieh', 'ghazir', 'zouk_mikael', 'zouk_mosbeh', 'ajaltoun', 'faraya'})
+                self.assertTrue(all(' / ' not in row['text'] for row in districts + villages))
 
     def test_options_reject_malformed_missing_and_wrong_type_parents(self):
         url = reverse('mscc:exceptional_exam_location_options')
@@ -393,7 +547,7 @@ class ExceptionalExamWorkflowTests(TestCase):
             'type': 'village', 'parent': district.pk,
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn({'id': 'douris', 'text': 'Douris / دورس'}, response.json()['results'])
+        self.assertIn({'id': 'douris', 'text': 'Douris'}, response.json()['results'])
 
     def test_village_lookup_matches_existing_governorate_alias_and_district_separator(self):
         governorate = Location.objects.create(name='الشمال', name_en='North', type_id=1)
@@ -406,7 +560,7 @@ class ExceptionalExamWorkflowTests(TestCase):
             'type': 'village', 'parent': district.pk,
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn({'id': 'minnieh', 'text': 'Minniyeh / المنية'}, response.json()['results'])
+        self.assertIn({'id': 'minnieh', 'text': 'Minniyeh'}, response.json()['results'])
 
     def test_standalone_existing_hermel_governorate_can_use_the_document_hermel_villages(self):
         governorate = Location.objects.create(name='الهرمل', name_en='Hermel', type_id=1)
@@ -438,8 +592,8 @@ class ExceptionalExamWorkflowTests(TestCase):
         profile = self.client.get(reverse('mscc:child_profile', args=[self.registration.pk]), {
             'current_tab': 'exceptional_exam',
         })
-        self.assertContains(profile, 'Beirut / بيروت')
-        self.assertContains(profile, 'Achrafieh / الأشرفية')
+        self.assertContains(profile, 'Beirut')
+        self.assertContains(profile, 'Achrafieh')
         response = self.client.get(self.exam_url())
         self.assertIn(response.context['form']['governorate'].value(), ('', None))
         self.assertIn(response.context['form']['district'].value(), ('', None))
@@ -535,8 +689,8 @@ class ExceptionalExamWorkflowTests(TestCase):
             set(form.fields['district'].queryset.values_list('pk', flat=True)),
             {self.baabda.pk, self.keserwan.pk, self.aley.pk},
         )
-        self.assertEqual(form.fields['district'].label_from_instance(self.keserwan), 'Keserwan / كسروان')
-        self.assertIn(('jounieh', 'Jounieh / جونية'), tuple(form.fields['nearest_town'].choices))
+        self.assertEqual(form.fields['district'].label_from_instance(self.keserwan), 'Keserwan')
+        self.assertIn(('jounieh', 'Jounieh'), tuple(form.fields['nearest_town'].choices))
         self.assertNotIn(self.district.pk, form.fields['district'].queryset.values_list('pk', flat=True))
         self.assertNotIn('achrafieh', dict(form.fields['nearest_town'].choices))
 
@@ -663,7 +817,7 @@ class ExceptionalExamWorkflowTests(TestCase):
                 self.assertEqual(response.status_code, 403)
         self.assertFalse(ExceptionalExam.objects.exists())
 
-    def test_profile_shows_editor_summary_in_both_languages(self):
+    def test_profile_shows_editor_summary_in_english(self):
         exam = self.create_exam()
         response = self.client.get(
             reverse('mscc:child_profile', args=[self.registration.pk]),
@@ -675,8 +829,44 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertTrue(response.context['can_manage_exceptional_exam'])
         self.assertEqual(response.context['exceptional_exam'].pk, exam.pk)
         self.assertContains(response, 'Exceptional Exam')
-        for text in ('بيروت', 'الأشرفية', 'Grade 2', 'الصف الثاني', 'English', 'الإنكليزية'):
+        for text in ('Beirut', 'Achrafieh', 'Grade 2', 'English'):
             self.assertContains(response, text)
+
+    def test_saved_exam_profile_summary_follows_the_selected_ui_language(self):
+        exam = self.create_exam()
+        expected = {
+            'en': (
+                ('Governorate', 'Beirut'), ('District/Caza', 'Beirut'), ('Village', 'Achrafieh'),
+                ('Non-formal education programme', 'Basic Literacy and Numeracy (BLN)'),
+                ('Grade applying for the examination', 'Grade 2'),
+                ('Mathematics examination language', 'Arabic'), ('Language examination', 'English'),
+            ),
+            'ar': (
+                ('المحافظة', 'بيروت'), ('القضاء', 'بيروت'), ('القرية', 'الأشرفية'),
+                ('البرنامج التعليمي غير النظامي', 'برنامج المهارات الأساسية في القراءة والكتابة والحساب (BLN)'),
+                ('الصف الدراسي الذي يتقدم للامتحان له', 'الصف الثاني'),
+                ('لغة امتحان الرياضيات', 'اللغة العربية'), ('امتحان اللغة', 'الانكليزية'),
+            ),
+        }
+        for language, rows in expected.items():
+            with self.subTest(language=language):
+                self.set_language(language)
+                response = self.client.get(
+                    reverse('mscc:child_profile', args=[self.registration.pk]),
+                    {'current_tab': 'exceptional_exam'},
+                )
+                self.assertEqual(response.status_code, 200)
+                with translation.override(language):
+                    displayed = tuple((str(label), str(value)) for label, value in response.context['exceptional_exam_rows'])
+                self.assertEqual(displayed, rows)
+                for label, value in rows:
+                    self.assertContains(response, label)
+                    self.assertContains(response, value)
+                self.assertNotContains(response, 'Achrafieh /')
+                self.assertNotContains(response, 'Grade 2 /')
+        exam.refresh_from_db()
+        self.assertEqual(exam.nearest_town, 'achrafieh')
+        self.assertEqual(exam.grade, '2')
 
     def test_excel_and_csv_keep_exam_answers_and_current_photos_on_the_correct_registration(self):
         self.create_exam()
@@ -709,24 +899,24 @@ class ExceptionalExamWorkflowTests(TestCase):
             second_number, second = rows[str(self.second_registration.pk)]
             self.assertEqual(first['Child ID'], previous['Child ID'])
             self.assertEqual(first['Child ID'], str(self.child.pk))
-            self.assertEqual(first['Exceptional Exam - Governorate / المحافظة ID'], str(self.governorate.pk))
-            self.assertEqual(first['Exceptional Exam - District/Caza / القضاء ID'], str(self.district.pk))
-            self.assertEqual(previous['Exceptional Exam - Governorate / المحافظة ID'], str(self.other_governorate.pk))
-            self.assertEqual(previous['Exceptional Exam - District/Caza / القضاء ID'], str(self.keserwan.pk))
-            grade_header = 'Exceptional Exam - Grade applying for the examination / الصف الدراسي الذي يتقدم للامتحان له'
-            self.assertEqual(first[grade_header], 'Grade 2 / الصف الثاني')
-            self.assertEqual(previous[grade_header], 'Grade 7 / الصف السابع')
+            self.assertEqual(first['Exceptional Exam - Governorate ID'], str(self.governorate.pk))
+            self.assertEqual(first['Exceptional Exam - District/Caza ID'], str(self.district.pk))
+            self.assertEqual(previous['Exceptional Exam - Governorate ID'], str(self.other_governorate.pk))
+            self.assertEqual(previous['Exceptional Exam - District/Caza ID'], str(self.keserwan.pk))
+            grade_header = 'Exceptional Exam - Grade applying for the examination'
+            self.assertEqual(first[grade_header], 'Grade 2')
+            self.assertEqual(previous[grade_header], 'Grade 7')
             for header, expected in (
-                ('Governorate / المحافظة', 'Beirut / بيروت'),
-                ('District/Caza / القضاء', 'Beirut / بيروت'),
-                ('Village / القرية', 'Achrafieh / الأشرفية'),
-                ('Non-formal education programme / البرنامج التعليمي غير النظامي', dict(PROGRAMME_CHOICES)['BLN']),
-                ('Mathematics examination language / لغة امتحان الرياضيات', 'Arabic / العربية'),
-                ('Language examination / امتحان اللغة', 'English / الإنكليزية'),
+                ('Governorate', 'Beirut'),
+                ('District/Caza', 'Beirut'),
+                ('Village', 'Achrafieh'),
+                ('Non-formal education programme', dict(PROGRAMME_CHOICES)['BLN']),
+                ('Mathematics examination language', 'Arabic'),
+                ('Language examination', 'English'),
             ):
                 self.assertEqual(first['Exceptional Exam - ' + header], expected)
             self.assertEqual(
-                previous['Exceptional Exam - Village / القرية'], 'Jounieh / جونية',
+                previous['Exceptional Exam - Village'], 'Jounieh',
             )
             exam_headers = [name for name in first if name.startswith('Exceptional Exam - ')]
             self.assertTrue(exam_headers)
@@ -742,7 +932,7 @@ class ExceptionalExamWorkflowTests(TestCase):
                 build_children_csv(queryset).decode('utf-8-sig'),
             )))
             csv_records = {row['Registration ID']: row for row in csv_rows}
-            self.assertEqual(csv_records[str(self.registration.pk)][grade_header], 'Grade 2 / الصف الثاني')
-            self.assertEqual(csv_records[str(previous_registration.pk)][grade_header], 'Grade 7 / الصف السابع')
+            self.assertEqual(csv_records[str(self.registration.pk)][grade_header], 'Grade 2')
+            self.assertEqual(csv_records[str(previous_registration.pk)][grade_header], 'Grade 7')
             self.assertEqual(csv_records[str(self.second_registration.pk)][grade_header], '')
 

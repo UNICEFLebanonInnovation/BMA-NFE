@@ -3,19 +3,20 @@
 import re
 import unicodedata
 
+from django.utils.translation import get_language
+
 from .exceptional_exam_choices import RESIDENCE_CATALOG, town_choices
 
 
 def location_label(location):
-    """Display both stored languages without repeating identical names."""
+    """Display the active language, falling back to the other stored name."""
     if not location:
         return ''
-    names = []
-    for value in (location.name_en, location.name):
-        value = str(value).strip() if value else ''
-        if value and value not in names:
-            names.append(value)
-    return ' / '.join(names)
+    arabic = str(location.name or '').strip()
+    english = str(location.name_en or '').strip()
+    if (get_language() or '').split('-')[0] == 'ar':
+        return arabic or english
+    return english or arabic
 
 
 def normalized_name(value):

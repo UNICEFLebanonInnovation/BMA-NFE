@@ -4,7 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, gettext_lazy, pgettext_lazy
 from django.db.models import JSONField
 from django.contrib.postgres.fields import ArrayField
 
@@ -2691,61 +2691,61 @@ class ExceptionalExam(TimeStampedModel):
 
     registration = models.OneToOneField(
         Registration, related_name='exceptional_exam', on_delete=models.CASCADE,
-        verbose_name='Registration / التسجيل',
+        verbose_name=gettext_lazy('Registration'),
     )
     governorate_legacy = models.CharField(
         max_length=64, choices=GOVERNORATE_CHOICES, blank=True, null=True,
-        verbose_name='Legacy governorate / المحافظة السابقة',
+        verbose_name=gettext_lazy('Legacy governorate'),
     )
     district_legacy = models.CharField(
         max_length=64, choices=DISTRICT_CHOICES, blank=True, null=True,
-        verbose_name='Legacy district / القضاء السابق',
+        verbose_name=gettext_lazy('Legacy district'),
     )
     governorate = models.ForeignKey(
         'locations.Location', related_name='+', null=True, blank=True,
         on_delete=models.SET_NULL, limit_choices_to={'type_id': 1},
-        verbose_name='Governorate / المحافظة',
+        verbose_name=pgettext_lazy('exceptional_exam', 'Governorate'),
     )
     district = models.ForeignKey(
         'locations.Location', related_name='+', null=True, blank=True,
         on_delete=models.SET_NULL, limit_choices_to={'type_id': 2},
-        verbose_name='District/Caza / القضاء',
+        verbose_name=gettext_lazy('District/Caza'),
     )
     nearest_town = models.CharField(
         max_length=100, choices=TOWN_CHOICES,
-        verbose_name='Village / القرية',
+        verbose_name=gettext_lazy('Village'),
     )
     programme = models.CharField(
         max_length=6, choices=PROGRAMME_CHOICES,
-        verbose_name='Non-formal education programme / البرنامج التعليمي غير النظامي',
+        verbose_name=gettext_lazy('Non-formal education programme'),
     )
     grade = models.CharField(
         max_length=1, choices=GRADE_CHOICES,
-        verbose_name='Grade applying for the examination / الصف الدراسي الذي يتقدم للامتحان له',
+        verbose_name=gettext_lazy('Grade applying for the examination'),
     )
     math_language = models.CharField(
         max_length=2, choices=MATH_LANGUAGE_CHOICES,
-        verbose_name='Mathematics examination language / لغة امتحان الرياضيات',
+        verbose_name=gettext_lazy('Mathematics examination language'),
     )
     language_exam = models.CharField(
         max_length=2, choices=LANGUAGE_EXAM_CHOICES,
-        verbose_name='Language examination / امتحان اللغة',
+        verbose_name=gettext_lazy('Language examination'),
     )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True,
         related_name='+', on_delete=models.SET_NULL,
-        verbose_name='Created by / أُنشئ بواسطة',
+        verbose_name=gettext_lazy('Created by'),
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True,
         related_name='+', on_delete=models.SET_NULL,
-        verbose_name='Modified by / عُدّل بواسطة',
+        verbose_name=gettext_lazy('Modified by'),
     )
 
     class Meta:
         ordering = ['registration_id']
-        verbose_name = 'Exceptional Exam / الامتحان الاستثنائي'
-        verbose_name_plural = 'Exceptional Exams / الامتحانات الاستثنائية'
+        verbose_name = gettext_lazy('Exceptional Exam')
+        verbose_name_plural = gettext_lazy('Exceptional Exams')
 
     def clean(self):
         """Reject wrong Location types and combinations outside their parents."""
@@ -2758,31 +2758,23 @@ class ExceptionalExam(TimeStampedModel):
         if district is None and self.district_id:
             district = Location.objects.filter(pk=self.district_id).first()
         if self.governorate_id and (not governorate or governorate.type_id != 1):
-            errors['governorate'] = (
-                'Select a valid governorate. / اختر محافظةً صالحة.'
-            )
+            errors['governorate'] = _('Select a valid governorate.')
         if self.district_id and (not district or district.type_id != 2):
-            errors['district'] = 'Select a valid district. / اختر قضاءً صالحاً.'
+            errors['district'] = _('Select a valid district.')
         elif district and (not governorate or district.parent_id != governorate.pk):
-            errors['district'] = (
-                'Select a district in the selected governorate. / '
-                'اختر قضاءً ضمن المحافظة المحددة.'
-            )
+            errors['district'] = _('Select a district in the selected governorate.')
         # Missing legacy FKs remain readable. Form saves require all fields and
         # therefore always validate the village against both selected parents.
         if governorate and district and self.nearest_town and self.nearest_town not in dict(
             town_choices_for_locations(governorate, district)
         ):
-            errors['nearest_town'] = (
-                'Select a village in the selected district. / '
-                'اختر قريةً ضمن القضاء المحدد.'
-            )
+            errors['nearest_town'] = _('Select a village in the selected district.')
         if errors:
             raise ValidationError(errors)
 
     @property
     def display_rows(self):
-        """Bilingual labels and values used to display the saved application."""
+        """Active-language labels and values for the saved application."""
         residence = (
             location_label(self.governorate) or self.get_governorate_legacy_display() or '',
             location_label(self.district) or self.get_district_legacy_display() or '',
@@ -2800,7 +2792,7 @@ class ExceptionalExam(TimeStampedModel):
         )
 
     def __str__(self):
-        return 'Exceptional Exam / الامتحان الاستثنائي — %s' % self.registration_id
+        return '%s — %s' % (_('Exceptional Exam'), self.registration_id)
 
 
 class LegoService(TimeStampedModel):

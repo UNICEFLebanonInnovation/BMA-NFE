@@ -1,6 +1,7 @@
-"""Bilingual, parent-filtered form for MSCC exceptional-exam applications."""
+"""Translated, parent-filtered form for MSCC exceptional-exam applications."""
 
 from django import forms
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from student_registration.locations.models import Location
 
@@ -10,10 +11,10 @@ from .exceptional_exam_locations import (
 from .models import ExceptionalExam
 
 
-SELECT_PROMPT = ('', 'Select an option / اختر خياراً')
+SELECT_PROMPT = ('', _('Select an option'))
 
 
-class BilingualLocationChoiceField(forms.ModelChoiceField):
+class TranslatedLocationChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return location_label(obj)
 
@@ -21,12 +22,12 @@ class BilingualLocationChoiceField(forms.ModelChoiceField):
 class ExceptionalExamForm(forms.ModelForm):
     """Keep residence and examination choices independent of child registration."""
 
-    governorate = BilingualLocationChoiceField(
+    governorate = TranslatedLocationChoiceField(
         queryset=Location.objects.filter(type_id=1).order_by('name'),
-        label='Governorate / المحافظة', empty_label=SELECT_PROMPT[1],
+        label=pgettext_lazy('exceptional_exam', 'Governorate'), empty_label=SELECT_PROMPT[1],
     )
-    district = BilingualLocationChoiceField(
-        queryset=Location.objects.none(), label='District/Caza / القضاء',
+    district = TranslatedLocationChoiceField(
+        queryset=Location.objects.none(), label=_('District/Caza'),
         empty_label=SELECT_PROMPT[1],
     )
 
@@ -82,17 +83,10 @@ class ExceptionalExamForm(forms.ModelForm):
                 )
             field.widget.attrs['class'] = 'form-select'
             field.error_messages.update({
-                'required': 'This field is required. / هذا الحقل مطلوب.',
-                'invalid_choice': 'Select a valid option. / اختر خياراً صالحاً.',
+                'required': _('This field is required.'),
+                'invalid_choice': _('Select a valid option.'),
             })
-            field.help_text = 'Required / مطلوب'
-        self.fields['district'].help_text = (
-            'Select a governorate first. / اختر المحافظة أولاً.'
-        )
-        self.fields['nearest_town'].help_text = (
-            'Select a district first. / اختر القضاء أولاً.'
-        )
-        self.fields['grade'].help_text = (
-            'Grades 2–7 are available for both programmes. / '
-            'الصفوف من الثاني إلى السابع متاحة لكلا البرنامجين.'
-        )
+            field.help_text = _('Required')
+        self.fields['district'].help_text = _('Select a governorate first.')
+        self.fields['nearest_town'].help_text = _('Select a district first.')
+        self.fields['grade'].help_text = _('Grades 2–7 are available for both programmes.')

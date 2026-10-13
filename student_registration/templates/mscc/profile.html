@@ -102,7 +102,7 @@
                 {% if can_view_exceptional_exam %}
                 <li class="nav-item" role="presentation">
                     <button class="nav-link py-3{% if current_tab == 'exceptional_exam' %} active{% endif %}" id="exceptional-exam-tab" data-bs-toggle="tab" data-bs-target="#exceptional-exam-pane" type="button" role="tab" aria-controls="exceptional-exam-pane" aria-selected="{% if current_tab == 'exceptional_exam' %}true{% else %}false{% endif %}">
-                        <i class="bi bi-journal-check me-2" aria-hidden="true"></i> Exceptional Exam / <span lang="ar" dir="rtl">الامتحان الاستثنائي</span>
+                        <i class="bi bi-journal-check me-2" aria-hidden="true"></i> {% translate "Exceptional Exam" %}
                     </button>
                 </li>
                 {% endif %}
