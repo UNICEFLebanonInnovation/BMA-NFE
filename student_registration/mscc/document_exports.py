@@ -318,9 +318,12 @@ def build_examination_card(registration):
     from docx.oxml.ns import qn
     from docx.shared import Mm, Pt
 
+    from student_registration.mscc.card_fonts import ARABIC_CARD_FONT, embed_arabic_card_font
+
     snapshot = registration_snapshot(registration)
     values = snapshot.values
     document = Document()
+    embed_arabic_card_font(document)
     section = document.sections[0]
     section.orientation = WD_ORIENT.LANDSCAPE
     section.page_width = Mm(210)
@@ -329,10 +332,10 @@ def build_examination_card(registration):
     section.left_margin = section.right_margin = Mm(12)
     normal = document.styles['Normal']
     normal.font.name = 'Times New Roman'
-    normal.font.size = Pt(16)
+    normal.font.size = Pt(15)
     normal.font.bold = True
     normal.paragraph_format.space_after = Pt(4)
-    normal.paragraph_format.line_spacing = Pt(21)
+    normal.paragraph_format.line_spacing = Pt(20.75)
 
     borders = OxmlElement('w:pgBorders')
     borders.set(qn('w:offsetFrom'), 'page')
@@ -398,7 +401,7 @@ def build_examination_card(registration):
             return ''
         return _text(getattr(instance, 'name_en', None) or instance.name).strip()
 
-    def centred_line(text, size=16, arabic=False):
+    def centred_line(text, size=15, arabic=False):
         text = ' '.join(text.split())
         # Longer registered names and labels need smaller type rather than
         # losing characters or spilling the card onto a blank first page.
@@ -419,9 +422,9 @@ def build_examination_card(registration):
         # font.size alone applies only to Latin text in several renderers.
         properties = run._element.get_or_add_rPr()
         fonts = properties.get_or_add_rFonts()
-        fonts.set(qn('w:cs'), 'Times New Roman')
+        fonts.set(qn('w:cs'), ARABIC_CARD_FONT)
         complex_size = OxmlElement('w:szCs')
-        complex_size.set(qn('w:val'), str(size * 2))
+        complex_size.set(qn('w:val'), str(int(size * 2)))
         properties.insert_element_before(complex_size, 'w:highlight', 'w:u', 'w:rtl')
         run.font.cs_bold = True
         if arabic:
@@ -440,13 +443,15 @@ def build_examination_card(registration):
     if round_ and round_.year and str(round_.year) not in round_name:
         round_name += '/{}'.format(round_.year)
     round_label = round_name if round_name.lower().startswith('round') else 'Round ' + round_name
-    title = centred_line(round_label.strip() or 'Round', size=18)
-    title.paragraph_format.space_before = Mm(35 if snapshot.photo_data else 31)
+    title = centred_line(round_label.strip() or 'Round', size=16.5)
+    title.paragraph_format.space_before = Mm(35 if snapshot.photo_data else 31) + Pt(2)
     title.paragraph_format.line_spacing = Pt(22)
     title.paragraph_format.space_after = Pt(2)
-    heading = centred_line('الامتحان الاستثنائي لطلاب التعليم الغير نظامي', size=11, arabic=True)
+    # This Naskh face has wider letterforms than the reference's Arabic face;
+    # 9pt retains the reference heading's proportions above the 15pt details.
+    heading = centred_line('الامتحان الاستثنائي لطلاب التعليم الغير نظامي', size=9, arabic=True)
     heading.paragraph_format.line_spacing = Pt(15)
-    heading.paragraph_format.space_after = Pt(3)
+    heading.paragraph_format.space_after = Pt(4.75)
 
     partner = registration.partner
     ngo = _text((partner.short_name or partner.name) if partner else '').strip()
