@@ -12815,6 +12815,31 @@ msgctxt "exceptional_exam"
 msgid "Governorate"
 msgstr "المحافظة"
 
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "Select a programme first."
+msgstr "اختر البرنامج أولاً."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "For BLN, the grade is determined by the child's current age."
+msgstr "يُحدَّد الصف في برنامج المهارات الأساسية في القراءة والكتابة والحساب بحسب عمر الطفل الحالي."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "Grades 2–7 are available for DIRASA."
+msgstr "الصفوف من الثاني إلى السابع متاحة لبرنامج دراسة."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "BLN requires a complete, valid date of birth. Update the child's registration first."
+msgstr "يتطلب برنامج المهارات الأساسية في القراءة والكتابة والحساب تاريخ ميلاد كاملاً وصحيحاً. حدّث بيانات تسجيل الطفل أولاً."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "BLN is available for children aged 7–14."
+msgstr "برنامج المهارات الأساسية في القراءة والكتابة والحساب متاح للأطفال من عمر ٧ إلى ١٤ سنة."
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "Select the BLN grade allowed for the child's age."
+msgstr "اختر الصف المسموح به في برنامج المهارات الأساسية في القراءة والكتابة والحساب بحسب عمر الطفل."
+
 #~| msgid "Enrollment"
 #~ msgid "Confirm Enrollment"
 #~ msgstr "تأكيد التسجيل"

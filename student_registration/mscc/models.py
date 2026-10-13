@@ -2748,7 +2748,9 @@ class ExceptionalExam(TimeStampedModel):
         verbose_name_plural = gettext_lazy('Exceptional Exams')
 
     def clean(self):
-        """Reject wrong Location types and combinations outside their parents."""
+        """Reject invalid residence combinations and ineligible exam grades."""
+        from .exceptional_exam_grades import programme_grade_error
+
         super().clean()
         errors = {}
         governorate = self._state.fields_cache.get('governorate')
@@ -2769,6 +2771,17 @@ class ExceptionalExam(TimeStampedModel):
             town_choices_for_locations(governorate, district)
         ):
             errors['nearest_town'] = _('Select a village in the selected district.')
+        registration = self._state.fields_cache.get('registration')
+        if registration is None and self.registration_id:
+            try:
+                registration = self.registration
+            except Registration.DoesNotExist:
+                # Leave invalid foreign keys to the model field's validation.
+                registration = None
+        child = registration.child if registration is not None and registration.child_id else None
+        grade_error = programme_grade_error(self.programme, child, self.grade)
+        if grade_error:
+            errors['grade'] = grade_error
         if errors:
             raise ValidationError(errors)
 
