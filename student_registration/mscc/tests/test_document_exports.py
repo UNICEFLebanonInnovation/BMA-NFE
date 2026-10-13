@@ -5,7 +5,9 @@ import io
 import posixpath
 import tempfile
 import zipfile
+from pathlib import Path
 from unittest.mock import patch
+from uuid import UUID
 from xml.etree import ElementTree
 
 from PIL import Image
@@ -21,6 +23,7 @@ from student_registration.backends.models import ExportHistory
 from student_registration.child.models import Child
 from student_registration.clm.models import Disability
 from student_registration.locations.models import Center, Location, LocationType
+from student_registration.mscc.card_fonts import ARABIC_CARD_FONT
 from student_registration.mscc.document_exports import (
     build_children_workbook,
     build_examination_card,
@@ -485,6 +488,74 @@ class MSCCDocumentExportTests(TestCase):
         )
         self.assertIsNotNone(heading.find('w:pPr/w:bidi', WORD_NS))
         self.assertIsNotNone(heading.find('.//w:rtl', WORD_NS))
+
+    def test_word_card_embeds_editable_arabic_font_and_preserves_it_after_word_roundtrip(self):
+        from docx import Document
+
+        self.first_child.first_name = 'يوسف'
+        self.first_child.father_name = 'أحمد'
+        self.first_child.last_name = 'خليل'
+        self.first_child.save(update_fields=['first_name', 'father_name', 'last_name'])
+        content = build_examination_card(Registration.objects.get(pk=self.first_registration.pk))
+        roundtrip = io.BytesIO()
+        Document(io.BytesIO(content)).save(roundtrip)
+        expected_font = Path(__file__).resolve().parents[1].joinpath(
+            'fonts', 'NotoNaskhArabic-Bold.ttf',
+        ).read_bytes()
+        namespace = '{%s}' % WORD_NS['w']
+        relationship_namespace = '{%s}' % DRAWING_NS['r']
+        content_type_namespace = '{http://schemas.openxmlformats.org/package/2006/content-types}'
+
+        for document_bytes in (content, roundtrip.getvalue()):
+            with self.subTest(roundtrip=document_bytes is not content):
+                with zipfile.ZipFile(io.BytesIO(document_bytes)) as archive:
+                    font_table = ElementTree.fromstring(archive.read('word/fontTable.xml'))
+                    font = next(
+                        value for value in font_table.findall('w:font', WORD_NS)
+                        if value.get(namespace + 'name') == ARABIC_CARD_FONT
+                    )
+                    embedding = font.find('w:embedBold', WORD_NS)
+                    self.assertIsNotNone(embedding)
+                    self.assertNotIn(embedding.get(namespace + 'subsetted'), ('1', 'true'))
+                    relationships = ElementTree.fromstring(
+                        archive.read('word/_rels/fontTable.xml.rels'),
+                    )
+                    relationship = next(
+                        value for value in relationships.findall('{%s}Relationship' % RELATIONSHIP_NS)
+                        if value.get('Id') == embedding.get(relationship_namespace + 'id')
+                    )
+                    self.assertEqual(
+                        relationship.get('Type'), DRAWING_NS['r'] + '/font',
+                    )
+                    self.assertNotEqual(relationship.get('TargetMode'), 'External')
+                    font_path = posixpath.normpath(posixpath.join('word', relationship.get('Target')))
+                    self.assertTrue(font_path.startswith('word/fonts/'))
+                    self.assertTrue(font_path.endswith('.odttf'))
+                    font_bytes = archive.read(font_path)
+                    key_bytes = UUID(embedding.get(namespace + 'fontKey')).bytes[::-1]
+                    decoded_font = bytes(
+                        value ^ key_bytes[index % 16] for index, value in enumerate(font_bytes[:32])
+                    ) + font_bytes[32:]
+                    self.assertEqual(decoded_font, expected_font)
+                    content_types = ElementTree.fromstring(archive.read('[Content_Types].xml'))
+                    font_content_type = next(
+                        value for value in content_types.findall(content_type_namespace + 'Override')
+                        if value.get('PartName') == '/' + font_path
+                    )
+                    self.assertEqual(
+                        font_content_type.get('ContentType'),
+                        'application/vnd.openxmlformats-officedocument.obfuscatedFont',
+                    )
+                    document = ElementTree.fromstring(archive.read('word/document.xml'))
+                    for text in (CARD_HEADING, 'الاسم الثلاثي: يوسف أحمد خليل'):
+                        paragraph = next(
+                            value for value in document.findall('.//w:p', WORD_NS)
+                            if ''.join(node.text or '' for node in value.findall('.//w:t', WORD_NS)) == text
+                        )
+                        self.assertIsNotNone(paragraph.find('w:pPr/w:bidi', WORD_NS))
+                        self.assertIsNotNone(paragraph.find('.//w:rtl', WORD_NS))
+                        fonts = paragraph.find('.//w:rFonts', WORD_NS)
+                        self.assertEqual(fonts.get(namespace + 'cs'), font.get(namespace + 'name'))
 
     def test_excel_and_word_use_saved_edits_and_replacement_photo(self):
         self.first_child.first_name = 'Updated Rania'
