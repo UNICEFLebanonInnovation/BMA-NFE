@@ -9,6 +9,12 @@ app_name = 'mscc'
 urlpatterns = [
 
     re_path(
+        r'^profile-photo/(?P<pk>\d+)/$',
+        view=views.profile_photo,
+        name='profile_photo'
+    ),
+
+    re_path(
         r'^exceptional-exam-location-options/$',
         view=views.exceptional_exam_location_options,
         name='exceptional_exam_location_options'

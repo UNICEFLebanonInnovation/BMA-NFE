@@ -16,12 +16,11 @@
         <div class="card-body p-0">
             <div class="row g-0">
                 <div class="col-md-auto bg-primary d-flex align-items-center justify-content-center p-4" style="min-width: 150px;">
-                    <div class="text-white text-center">
+                    <div class="text-white text-center" data-profile-photo-container>
                         {% if instance.child.photo %}
-                            <img src="{{ instance.child.photo.url }}" alt="{% trans 'Child Photo' %}" class="img-fluid rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid white;">
-                        {% else %}
-                            <i class="bi bi-person-bounding-box display-3"></i>
+                            <img src="{% url 'mscc:profile_photo' instance.pk %}" alt="{% trans 'Child Photo' %}" data-profile-photo class="img-fluid rounded-circle mb-2" width="80" height="80" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid white;">
                         {% endif %}
+                        <i class="bi bi-person-bounding-box display-3{% if instance.child.photo %} d-none{% endif %}" data-profile-photo-fallback{% if instance.child.photo %} hidden{% endif %} aria-hidden="true"></i>
                         <div class="small mt-2 opacity-75">{% trans "Beneficiary" %}</div>
                     </div>
                 </div>

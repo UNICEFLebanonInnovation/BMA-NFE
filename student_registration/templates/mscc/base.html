@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% load util_tags %}
 {% load custom_tags %}
+{% load static %}
 
 {% block module_name %}NFR Sector{% endblock %}
+
+{% block modal %}
+    {{ block.super }}
+    <script src="{% static 'js/mscc/profile_photo.js' %}?v=1"></script>
+{% endblock %}
