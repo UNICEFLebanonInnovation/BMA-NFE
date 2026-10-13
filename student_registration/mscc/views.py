@@ -55,6 +55,8 @@ from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.cache import never_cache
+from django.views.decorators.vary import vary_on_cookie
 from django.utils.translation import gettext as _
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
@@ -1399,6 +1401,25 @@ def export_list_async(request):
     )
     queue_mscc_export(export_record.id, fields, file_format)
     return JsonResponse({'status': 'started', 'export_id': export_record.pk})
+
+
+@login_required
+@require_GET
+@never_cache
+@vary_on_cookie
+def profile_photo(request, pk):
+    """Display the registered child's photograph through authenticated storage."""
+    from .document_exports import load_child_photo
+
+    registrations = exceptional_exam_registrations(request.user).select_related(None).select_related('child')
+    registration = get_object_or_404(registrations, pk=pk)
+    photo_data, _ = load_child_photo(registration.child)
+    if photo_data is None:
+        raise Http404('Photograph not found.')
+    response = HttpResponse(photo_data, content_type='image/png')
+    response['Cache-Control'] = 'private, no-store'
+    response['X-Content-Type-Options'] = 'nosniff'
+    return response
 
 
 @login_required

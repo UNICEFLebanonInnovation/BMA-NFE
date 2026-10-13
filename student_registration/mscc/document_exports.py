@@ -177,8 +177,8 @@ def _date_of_birth(child):
         return ', '.join(parts)
 
 
-def _load_photo(child):
-    """Read the child's own stored image through local or remote storage."""
+def load_child_photo(child):
+    """Load the same child's image for their profile and exported documents."""
     if child is None or not child.photo:
         return None, PHOTO_MISSING
     try:
@@ -207,7 +207,7 @@ def _load_photo(child):
 def registration_snapshot(registration):
     """Read one registration's values and its linked child's photograph once."""
     child = registration.child
-    photo_data, photo_status = _load_photo(child)
+    photo_data, photo_status = load_child_photo(child)
     values = OrderedDict((
         ('registration_id', _text(registration.pk)),
         ('child_id', _text(registration.child_id)),
