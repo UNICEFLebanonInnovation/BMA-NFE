@@ -87,6 +87,12 @@ class SyncIngestView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        if body.get('contract_version', CONTRACT_VERSION) != CONTRACT_VERSION:
+            return Response(
+                {'detail': 'Unsupported replication contract_version.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         events = body.get('events')
         if not isinstance(events, list):
             return Response(
