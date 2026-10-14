@@ -44,6 +44,14 @@ $(document).ready(function() {
     // Handle Export Popup Initiation
     $(document).on('click', '.download-report-async', function(e) {
         e.preventDefault();
+        $('#fmt-xlsx').prop('checked', true);
+        if (exportModal) exportModal.show();
+    });
+
+    $(document).on('click', '.download-examination-cards', function(e) {
+        e.preventDefault();
+        $('#fmt-cards').prop('checked', true);
+        $('#export-scope').val('all');
         if (exportModal) exportModal.show();
     });
 

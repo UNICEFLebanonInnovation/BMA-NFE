@@ -33,6 +33,11 @@
             <button class="btn btn-sm btn-outline-success me-2 download-report-async" type="button">
                 <i class="bi bi-download me-2"></i> {% trans "Export" %}
             </button>
+            {% if can_bulk_download_cards %}
+            <button class="btn btn-sm btn-outline-success me-2 download-examination-cards" type="button">
+                <i class="bi bi-file-earmark-word me-2"></i> {% trans "Download Examination Cards" %}
+            </button>
+            {% endif %}
             {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner.id %}
             <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#child-registration-modal">
                 <i class="bi bi-plus-lg me-2"></i> {% trans "Add New Child" %}
@@ -148,6 +153,15 @@
                         {% trans "Excel with photographs" %}
                     </label>
                 </div>
+                {% if can_bulk_download_cards %}
+                <div class="col-12">
+                    <input type="radio" class="btn-check" name="export-format" id="fmt-cards" value="cards" aria-describedby="examination-cards-export-help">
+                    <label class="btn btn-outline-secondary w-100 py-3" for="fmt-cards">
+                        <i class="bi bi-file-earmark-word fs-2 d-block mb-1"></i>
+                        {% trans "Word examination cards (ZIP)" %}
+                    </label>
+                </div>
+                {% endif %}
             </div>
         </div>
 
@@ -155,6 +169,9 @@
             <i class="bi bi-info-circle-fill me-3 fs-5 text-info"></i>
             <div>
                 {% trans "All registered children includes every registration you can access, across rounds. Choose the current filters option to limit the export to your search. CSV does not include photographs." %}
+                {% if can_bulk_download_cards %}
+                <p class="mb-0 mt-2" id="examination-cards-export-help">{% trans "Word examination cards are downloaded together in a ZIP file. Children registered in RS are excluded." %}</p>
+                {% endif %}
             </div>
         </div>
       </div>
@@ -191,6 +208,6 @@
 {% block extra_js %}
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=23"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=24"></script>
 
 {% endblock %}
