@@ -12840,6 +12840,55 @@ msgstr "برنامج المهارات الأساسية في القراءة وا�
 msgid "Select the BLN grade allowed for the child's age."
 msgstr "اختر الصف المسموح به في برنامج المهارات الأساسية في القراءة والكتابة والحساب بحسب عمر الطفل."
 
+
+#: student_registration/mscc/views.py
+msgid "Upload Photo"
+msgstr "تحميل صورة"
+
+#: student_registration/mscc/views.py
+msgid "Back to Registration List"
+msgstr "العودة إلى قائمة التسجيل"
+
+#: student_registration/mscc/views.py
+msgid "Current Photo"
+msgstr "الصورة الحالية"
+
+#: student_registration/mscc/views.py
+msgid "Upload a valid photograph."
+msgstr "حمّل صورة صالحة."
+
+#: student_registration/mscc/views.py
+msgid "You do not have permission to upload a photograph for this child."
+msgstr "ليس لديك إذن لتحميل صورة لهذا الطفل."
+
+#: student_registration/mscc/views.py
+msgid "The photograph could not be saved. Please try again."
+msgstr "تعذّر حفظ الصورة. يرجى إعادة المحاولة."
+
+#: student_registration/mscc/views.py
+msgid "Photograph uploaded successfully."
+msgstr "تم تحميل الصورة بنجاح."
+
+#: student_registration/mscc/views.py
+msgid "Download Examination Cards"
+msgstr "تنزيل بطاقات الامتحان"
+
+#: student_registration/mscc/views.py
+msgid "Word examination cards (ZIP)"
+msgstr "بطاقات الامتحان بصيغة Word (ZIP)"
+
+#: student_registration/mscc/views.py
+msgid "Word examination cards are downloaded together in a ZIP file. Children registered in RS are excluded."
+msgstr "تُنزّل بطاقات الامتحان بصيغة Word معًا في ملف ZIP. يُستثنى الأطفال المسجلون في RS."
+
+#: student_registration/mscc/views.py
+msgid "No eligible examination cards are available to download."
+msgstr "لا توجد بطاقات امتحان مؤهلة للتنزيل."
+
+#: student_registration/mscc/views.py
+msgid "Examination cards are not available for RS registrations."
+msgstr "بطاقات الامتحان غير متاحة للمسجلين في RS."
+
 #~| msgid "Enrollment"
 #~ msgid "Confirm Enrollment"
 #~ msgstr "تأكيد التسجيل"

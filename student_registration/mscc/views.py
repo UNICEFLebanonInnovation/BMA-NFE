@@ -28,7 +28,7 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseRedirect,
 )
-from django.db.models import Count, F
+from django.db.models import BooleanField, Case, Count, F, Value, When
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db import connection, transaction
 import csv
@@ -105,6 +105,10 @@ from .serializers import (
     TeacherSerializer,
 )
 from .document_exports import build_examination_card
+from .examination_card_access import (
+    filter_examination_card_registrations, registration_can_have_examination_card,
+)
+from .photo_forms import PhotoUploadForm
 from .export_access import filter_registrations, scoped_registrations, user_can_export
 from .exceptional_exam_access import exceptional_exam_registrations, can_manage_exceptional_exam
 from .exceptional_exam_forms import ExceptionalExamForm
@@ -293,6 +297,10 @@ class ProfileView(LoginRequiredMixin,
             'can_export_examination_card': bool(
                 instance.child_id
                 and scoped_registrations(self.request.user).filter(pk=instance.pk).exists()
+                and registration_can_have_examination_card(instance)
+            ),
+            'can_upload_photo': bool(
+                can_view_exam and can_manage_exceptional_exam(self.request.user, instance)
             ),
             'new_round': new_round,
             'can_view_exceptional_exam': can_view_exam,
@@ -812,6 +820,11 @@ class MainListView(LoginRequiredMixin,
 
     filterset_class = MainFilter
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['can_bulk_download_cards'] = user_can_export(self.request.user)
+        return context
+
     def get_queryset(self):
         user = self.request.user
         center_id = user.center_id
@@ -831,7 +844,7 @@ class MainListView(LoginRequiredMixin,
             'round',
         )
               .prefetch_related('education_service')
-              .filter(deleted=False))
+              .filter(deleted=False).exclude(child_id=None))
 
         previous_registration = Registration.objects.filter(
             child_id=OuterRef('child_id'),
@@ -851,7 +864,23 @@ class MainListView(LoginRequiredMixin,
             recommended_learning_path='Progress to FE'
         )
 
+        editable_photos = Q(pk__in=[])
+        if user.is_active:
+            if user.is_staff or user.is_superuser:
+                editable_photos = Q(child_id__isnull=False)
+            elif center_id and (
+                has_group(user, 'MSCC_CENTER')
+                or (has_group(user, 'MSCC')
+                    and not has_group(user, 'MSCC_UNICEF')
+                    and not has_group(user, 'MSCC_PARTNER'))
+            ):
+                editable_photos = Q(center_id=center_id, child_id__isnull=False)
+
         qs = qs.annotate(
+            can_upload_photo=Case(
+                When(editable_photos, then=Value(True)),
+                default=Value(False), output_field=BooleanField(),
+            ),
             has_previous=Exists(previous_registration),
             _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
             is_referred_to_fe=Exists(referred_to_fe_subquery),
@@ -1288,27 +1317,32 @@ def export_list_background(request):
         return HttpResponseForbidden('An assigned MSCC export role is required.')
     filters = request.GET.dict()
     file_format = request.GET.get('format', 'csv')
-    if file_format not in ('csv', 'xlsx'):
+    if file_format not in ('csv', 'xlsx', 'cards'):
         return HttpResponseBadRequest('Unsupported export format.')
     if filters.get('export_scope', 'all') not in ('all', 'filtered'):
         return HttpResponseBadRequest('Unsupported export scope.')
     try:
-        filter_registrations(scoped_registrations(user), filters)
+        registrations = filter_registrations(scoped_registrations(user), filters)
     except ValidationError as exc:
         return HttpResponseBadRequest('; '.join(exc.messages))
+
+    if file_format == 'cards' and not filter_examination_card_registrations(
+        registrations.exclude(child_id=None)
+    ).exists():
+        return HttpResponseBadRequest(_('No eligible examination cards are available to download.'))
 
     export_record = ExportHistory.objects.create(
         export_type='NFR Sector List',
         created_by=user,
         partner_name=user.partner.name if user.partner else '',
-        file_format=file_format,
+        file_format='zip' if file_format == 'cards' else file_format,
         fields=filters
     )
-    queue_filtered_mscc_export(
-        export_record.id,
-        filters=filters,
-        file_format=file_format
-    )
+    if file_format == 'cards':
+        from .tasks import queue_examination_cards_export
+        queue_examination_cards_export(export_record.id, filters=filters)
+    else:
+        queue_filtered_mscc_export(export_record.id, filters=filters, file_format=file_format)
     return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
 
@@ -1385,22 +1419,67 @@ def export_list_async(request):
         fields = payload.get('fields') or None
     else:
         file_format = request.GET.get('format', 'csv')
-    if file_format not in ('csv', 'xlsx'):
+    if file_format not in ('csv', 'xlsx', 'cards'):
         return HttpResponseBadRequest('Unsupported export format.')
     if fields is not None and (
         not isinstance(fields, list)
         or any(not isinstance(field, str) for field in fields)
     ):
         return HttpResponseBadRequest('Export fields must be a list of names.')
+    if file_format == 'cards' and not filter_examination_card_registrations(
+        scoped_registrations(request.user).exclude(child_id=None)
+    ).exists():
+        return HttpResponseBadRequest(_('No eligible examination cards are available to download.'))
     export_record = ExportHistory.objects.create(
         export_type='NFR Sector List',
         created_by=request.user,
         partner_name=request.user.partner.name if request.user.partner else '',
         fields=fields,
-        file_format=file_format,
+        file_format='zip' if file_format == 'cards' else file_format,
     )
-    queue_mscc_export(export_record.id, fields, file_format)
+    if file_format == 'cards':
+        from .tasks import queue_examination_cards_export
+        queue_examination_cards_export(export_record.id)
+    else:
+        queue_mscc_export(export_record.id, fields, file_format)
     return JsonResponse({'status': 'started', 'export_id': export_record.pk})
+
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+@never_cache
+def photo_upload(request, pk):
+    """Replace the saved child photograph without editing registration fields."""
+    registration = get_object_or_404(exceptional_exam_registrations(request.user), pk=pk)
+    if not can_manage_exceptional_exam(request.user, registration):
+        return HttpResponseForbidden(_('You do not have permission to upload a photograph for this child.'))
+    return_to = request.POST.get('return_to', request.GET.get('return_to', 'profile'))
+    if return_to not in ('list', 'profile'):
+        return_to = 'profile'
+    form = PhotoUploadForm(
+        request.POST if request.method == 'POST' else None,
+        request.FILES if request.method == 'POST' else None,
+    )
+    if request.method == 'POST' and form.is_valid():
+        try:
+            from student_registration.child.models import Child
+            with transaction.atomic():
+                child = Child.objects.select_for_update().get(pk=registration.child_id)
+                child.photo = form.cleaned_data['photo']
+                child.save(update_fields=['photo', 'modified'])
+                registration.modified_by = request.user
+                registration.save(update_fields=['modified_by', 'modified'])
+        except Exception:
+            logger.exception('Could not save photograph for child ID %s', registration.child_id)
+            form.add_error(None, _('The photograph could not be saved. Please try again.'))
+        else:
+            messages.success(request, _('Photograph uploaded successfully.'))
+            if return_to == 'list':
+                return redirect('mscc:list')
+            return redirect('mscc:child_profile', pk=registration.pk)
+    return render(request, 'mscc/photo_upload.html', {
+        'registration': registration, 'form': form, 'return_to': return_to,
+    })
 
 
 @login_required
@@ -1429,6 +1508,8 @@ def examination_card(request, pk):
     registration = get_object_or_404(scoped_registrations(request.user), pk=pk)
     if not registration.child_id:
         raise Http404('No child is associated with this registration.')
+    if not registration_can_have_examination_card(registration):
+        raise Http404(_('Examination cards are not available for RS registrations.'))
     payload = build_examination_card(registration)
     return FileResponse(
         io.BytesIO(payload),

@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 import io
 import logging
+import tempfile
 import threading
 import uuid
 import zipfile
@@ -11,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.core.files import File
 from django.core.files.base import ContentFile
 from django.db import close_old_connections
 from django.urls import reverse
@@ -18,7 +20,10 @@ from django.urls import reverse
 from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage, send_push_to_web
 
-from .document_exports import build_children_csv, build_children_workbook
+from .document_exports import (
+    build_children_csv, build_children_workbook, build_examination_card,
+)
+from .examination_card_access import filter_examination_card_registrations
 from .export_access import filter_registrations, scoped_registrations, user_can_export
 
 logger = logging.getLogger(__name__)
@@ -155,4 +160,68 @@ def queue_filtered_mscc_export(export_id, filters=None, file_format='csv'):
         export_id,
         filters,
         file_format,
+    )
+
+
+def generate_examination_cards_export(export_id, filters=None):
+    """Store one ZIP of individual Word cards within the requester's scope.
+
+    The worker checks the current role and registration scope again, rather
+    than relying on IDs supplied by the request. Cards are generated one at
+    a time into a temporary file so the ZIP does not consume memory in
+    proportion to the complete registration list.
+    """
+    try:
+        export = ExportHistory.objects.select_related('created_by').get(pk=export_id)
+    except ExportHistory.DoesNotExist:
+        logger.error('ExportHistory with id %s does not exist', export_id)
+        return
+
+    try:
+        if not user_can_export(export.created_by):
+            raise PermissionDenied('An assigned MSCC export role is required.')
+        registrations = filter_examination_card_registrations(
+            filter_registrations(
+                scoped_registrations(export.created_by).filter(child__isnull=False),
+                filters,
+            )
+        )
+        with tempfile.TemporaryFile(mode='w+b') as output:
+            count = 0
+            with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+                for registration in registrations.iterator(chunk_size=200):
+                    archive.writestr(
+                        'examination_card_child_{}_registration_{}.docx'.format(
+                            registration.child_id, registration.pk,
+                        ),
+                        build_examination_card(registration),
+                    )
+                    count += 1
+            if not count:
+                raise ValueError('No eligible examination cards are available to download.')
+            output.seek(0)
+            file_name = ExportStorage().save(
+                'examination_cards_{}.zip'.format(uuid.uuid4()), File(output),
+            )
+        export.file_url = reverse('mscc:export_download', args=[file_name])
+        export.status = 'done'
+        export.save(update_fields=['file_url', 'status', 'modified'])
+    except Exception:
+        logger.exception('Error generating MSCC examination cards export %s', export_id)
+        export.status = 'failed'
+        export.file_url = ''
+        export.save(update_fields=['status', 'file_url', 'modified'])
+        _notify_export(export, succeeded=False)
+        return
+
+    _notify_export(export, succeeded=True)
+
+
+def queue_examination_cards_export(export_id, filters=None):
+    """Queue a ZIP containing all eligible authorised Word examination cards."""
+    return _get_executor().submit(
+        _run_with_new_db_connection,
+        generate_examination_cards_export,
+        export_id,
+        filters,
     )

@@ -1,0 +1,59 @@
+{% extends "mscc/base.html" %}
+{% load django_bootstrap5 i18n %}
+
+{% block project_title %}{% translate "Upload Photo" %}{% endblock %}
+{% block module_name %}{% translate "Upload Photo" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold mb-2">{% translate "Upload Photo" %}</h3>
+            <p class="mb-1">{{ registration.child.full_name }}</p>
+            <p class="small text-muted mb-0">{% translate "Registration ID" %}: {{ registration.pk }}</p>
+        </div>
+        {% if return_to == 'list' %}
+        <a href="{% url 'mscc:list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i> {% translate "Back to Registration List" %}
+        </a>
+        {% else %}
+        <a href="{% url 'mscc:child_profile' registration.pk %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i> {% translate "Back to Profile" %}
+        </a>
+        {% endif %}
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4" data-profile-photo-container>
+                        {% if registration.child.photo %}
+                        <img src="{% url 'mscc:profile_photo' registration.pk %}" alt="{% translate 'Child Photo' %}" data-profile-photo class="img-fluid rounded-circle" width="160" height="160" style="width: 160px; height: 160px; object-fit: cover;">
+                        {% endif %}
+                        <i class="bi bi-person-bounding-box display-1 text-primary{% if registration.child.photo %} d-none{% endif %}" data-profile-photo-fallback{% if registration.child.photo %} hidden{% endif %} aria-hidden="true"></i>
+                        <p class="text-muted small mt-2 mb-0">{% translate "Current Photo" %}</p>
+                    </div>
+                    <form method="post" action="{% url 'mscc:photo_upload' registration.pk %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="return_to" value="{{ return_to }}">
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in form.non_field_errors %}<p class="mb-0">{{ error }}</p>{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% bootstrap_field form.photo %}
+                        <div class="d-flex flex-wrap gap-2 border-top pt-4 mt-4">
+                            <button type="submit" class="btn btn-primary px-4">{% translate "Save" %}</button>
+                            {% if return_to == 'list' %}
+                            <a href="{% url 'mscc:list' %}" class="btn btn-outline-secondary">{% translate "Cancel" %}</a>
+                            {% else %}
+                            <a href="{% url 'mscc:child_profile' registration.pk %}" class="btn btn-outline-secondary">{% translate "Cancel" %}</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

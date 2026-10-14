@@ -13,6 +13,13 @@
                 <i class="bi bi-person-bounding-box text-info"></i> {% trans "View Profile" %}
             </a>
         </li>
+        {% if record.can_upload_photo %}
+        <li>
+            <a class="dropdown-item" href="{% url 'mscc:photo_upload' record.pk %}?return_to=list">
+                <i class="bi bi-camera text-primary" aria-hidden="true"></i> {% translate "Upload Photo" %}
+            </a>
+        </li>
+        {% endif %}
         {% if user|has_group:"MSCC_CENTER" and user.center %}
         <li>
             <a class="dropdown-item" href="{% url 'mscc:child_edit' record.id %}">
