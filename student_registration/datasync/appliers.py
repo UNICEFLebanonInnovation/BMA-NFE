@@ -35,6 +35,7 @@ from student_registration.attendances.models import (
 from student_registration.child.models import Child
 from student_registration.locations.models import Center
 from student_registration.mscc.models import (
+    EducationAssessment,
     EducationProgrammeAssessment,
     EducationService,
     Referral,
@@ -50,6 +51,7 @@ from .constants import (
     RESOURCE_CENTER,
     RESOURCE_CHILD,
     RESOURCE_EDUCATION_SERVICE,
+    RESOURCE_EDUCATION_ASSESSMENT,
     RESOURCE_GRADING,
     RESOURCE_REFERRAL,
     RESOURCE_REGISTRATION,
@@ -149,9 +151,10 @@ def snapshot_of(instance, attnames):
 class ApplyContext(object):
     """Per-event context threaded through the handlers."""
 
-    def __init__(self, source_system, event_id=None):
+    def __init__(self, source_system, event_id=None, source_modified=None):
         self.source_system = source_system
         self.event_id = event_id
+        self.source_modified = source_modified
 
 
 class BaseHandler(object):
@@ -346,6 +349,18 @@ class EducationServiceHandler(RegistrationChildHandler):
         return _plain(EducationService, payload, extra)
 
 
+class EducationAssessmentHandler(RegistrationChildHandler):
+    """Detailed pre/post education assessment linked to its registration."""
+
+    resource = RESOURCE_EDUCATION_ASSESSMENT
+    model = EducationAssessment
+
+    def build(self, payload, log, ctx):
+        return _plain(EducationAssessment, payload, {
+            'registration': self.registration_of(payload, log),
+        })
+
+
 class GradingHandler(RegistrationChildHandler):
     """Programme grading (pre / post / school test score sheets)."""
 
@@ -427,6 +442,7 @@ HANDLERS = {
         ChildHandler,
         RegistrationHandler,
         EducationServiceHandler,
+        EducationAssessmentHandler,
         GradingHandler,
         ReferralHandler,
         AttendanceHandler,
@@ -437,11 +453,13 @@ HANDLERS = {
 class ApplyResult(object):
     """Outcome of applying a single event."""
 
-    def __init__(self, instance=None, created=False, conflict=False, ignored_fields=None):
+    def __init__(self, instance=None, created=False, conflict=False, ignored_fields=None,
+                 stale=False):
         self.instance = instance
         self.created = created
         self.conflict = conflict
         self.ignored_fields = ignored_fields or []
+        self.stale = stale
 
 
 def _diverged(previous, current):
@@ -488,6 +506,20 @@ def apply_resource(resource, source_id, payload, log, ctx):
     for supplied_id in (payload.get('bma_id'), (payload.get('fields') or {}).get('bma_id')):
         if supplied_id is not None and normalize_bma_id(supplied_id) != source_id:
             raise ValueError('Payload bma_id must equal the event source_id')
+    # Compare the incoming version before applying embedded Child changes.
+    # One older registration event must not overwrite a newer shared Child.
+    if resource != RESOURCE_TEACHER and ctx.source_modified is not None:
+        prior = SyncedRecord.objects.select_for_update().filter(
+            source_system=ctx.source_system, resource=resource,
+            source_id=source_id, source_scope='',
+        ).first()
+        if (prior is not None and prior.last_source_modified is not None
+                and ctx.source_modified < prior.last_source_modified):
+            log.add('stale event ignored for {} #{}'.format(resource, source_id))
+            return ApplyResult(
+                instance=handler.model.objects.filter(bma_id=source_id).first(),
+                stale=True,
+            )
     values, ignored = handler.build(payload, log, ctx)
     values['bma_id'] = source_id
     identity = {'bma_id': source_id}
@@ -535,6 +567,7 @@ def apply_resource(resource, source_id, payload, log, ctx):
         'content_type': ContentType.objects.get_for_model(handler.model),
         'object_id': instance.pk,
         'last_event_id': ctx.event_id,
+        'last_source_modified': ctx.source_modified,
         'last_applied_snapshot': applied_snapshot,
         'local_fingerprint': fingerprint(applied_snapshot),
         'deleted': False,
@@ -627,6 +660,7 @@ def delete_resource(resource, source_id, log, ctx, payload=None):
         defaults={
             'content_type': ContentType.objects.get_for_model(handler.model),
             'object_id': None, 'deleted': True, 'last_event_id': ctx.event_id,
+            'last_source_modified': ctx.source_modified,
             'last_applied_snapshot': {}, 'local_fingerprint': '',
         },
     )
@@ -653,7 +687,10 @@ def apply_event(event, source_system):
     log = resolvers.ResolutionLog()
     resource = event['resource']
     source_id = event['source_id']
-    ctx = ApplyContext(source_system, event_id=event.get('event_id'))
+    ctx = ApplyContext(
+        source_system, event_id=event.get('event_id'),
+        source_modified=event.get('_parsed_source_modified'),
+    )
 
     if event.get('operation') == OPERATION_DELETE:
         removed = delete_resource(resource, source_id, log, ctx, event.get('payload'))
