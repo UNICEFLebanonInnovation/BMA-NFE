@@ -21,6 +21,7 @@ RESOURCE_CENTER = 'locations.center'
 RESOURCE_TEACHER = 'mscc.teacher'
 RESOURCE_REGISTRATION = 'mscc.registration'
 RESOURCE_EDUCATION_SERVICE = 'mscc.education_service'
+RESOURCE_EDUCATION_ASSESSMENT = 'mscc.education_assessment'
 RESOURCE_GRADING = 'mscc.education_grading'
 RESOURCE_REFERRAL = 'mscc.referral'
 RESOURCE_ATTENDANCE = 'attendances.mscc_attendance'
@@ -38,6 +39,7 @@ RESOURCE_ORDER = [
     RESOURCE_TEACHER,
     RESOURCE_REGISTRATION,
     RESOURCE_EDUCATION_SERVICE,
+    RESOURCE_EDUCATION_ASSESSMENT,
     RESOURCE_GRADING,
     RESOURCE_REFERRAL,
     RESOURCE_ATTENDANCE,
@@ -50,6 +52,7 @@ RESOURCE_LABELS = (
     (RESOURCE_TEACHER, 'Teacher'),
     (RESOURCE_REGISTRATION, 'Registration'),
     (RESOURCE_EDUCATION_SERVICE, 'Child education situation'),
+    (RESOURCE_EDUCATION_ASSESSMENT, 'Education assessment'),
     (RESOURCE_GRADING, 'Grading'),
     (RESOURCE_REFERRAL, 'Referral'),
     (RESOURCE_ATTENDANCE, 'Attendance'),

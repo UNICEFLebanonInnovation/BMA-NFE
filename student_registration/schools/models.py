@@ -734,6 +734,9 @@ class CLMRound(models.Model):
 class PartnerOrganization(models.Model):
     """Implementing partner organization and associated schools."""
 
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('Compiler partner ID'))
+
     name = models.CharField(max_length=100, unique=True)
     schools = models.ManyToManyField('School', related_name='partner_schools', blank=True)
     short_name = models.CharField(

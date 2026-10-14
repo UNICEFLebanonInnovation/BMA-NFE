@@ -9,6 +9,7 @@ RESOURCE_MODELS = (
     ('child.child', 'child', 'Child'),
     ('mscc.registration', 'mscc', 'Registration'),
     ('mscc.education_service', 'mscc', 'EducationService'),
+    ('mscc.education_assessment', 'mscc', 'EducationAssessment'),
     ('mscc.education_grading', 'mscc', 'EducationProgrammeAssessment'),
     ('mscc.referral', 'mscc', 'Referral'),
     ('attendances.mscc_attendance', 'attendances', 'MSCCAttendance'),
@@ -68,7 +69,7 @@ def backfill_bma_ids(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ('datasync', '0002_alter_syncedrecord_unique_together_and_more'),
-        ('mscc', '0017_educationprogrammeassessment_bma_id_and_more'),
+        ('mscc', '0018_educationassessment_bma_id'),
         ('locations', '0004_center_bma_id'),
         ('child', '0009_child_bma_id'),
         ('attendances', '0004_msccattendance_bma_id_and_round_fk'),

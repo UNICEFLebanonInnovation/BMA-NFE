@@ -1839,6 +1839,9 @@ class EducationRSService(TimeStampedModel):
 
 # @todo to be removed
 class EducationAssessment(TimeStampedModel):
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('BMA ID'))
+
     MODALITY = Choices(
         ('', _('----------')),
         ('Online Forms', _('Online Forms')),
