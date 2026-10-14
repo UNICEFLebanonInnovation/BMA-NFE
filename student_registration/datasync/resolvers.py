@@ -149,8 +149,15 @@ def resolve_lookup(model, key, log, create=False, extra_fields=None):
 
 
 def resolve_nationality(key, log):
-    """Resolve a nationality natural key."""
-    return resolve_lookup(Nationality, key, log)
+    """Never silently erase a child's explicitly supplied nationality."""
+    if not key:
+        return None
+    instance = resolve_lookup(Nationality, key, log)
+    if instance is None:
+        raise UnresolvedDependency(
+            'Nationality {} is missing in BMA-NFE; seed the reference table'.format(key)
+        )
+    return instance
 
 
 def resolve_id_type(key, log):
@@ -179,8 +186,50 @@ def resolve_attachment_type(key, log):
 
 
 def resolve_partner(key, log):
-    """Resolve a partner organization by its unique name."""
-    return resolve_lookup(PartnerOrganization, key, log, create=True)
+    """Use the Compiler partner ID, adopting an existing local name on first sync.
+
+    A rename of a previously mapped Compiler partner must not create a second
+    PartnerOrganization or break existing Registration foreign keys.
+    """
+    if not key:
+        return None
+    if not isinstance(key, dict) or (
+            'source_id' not in key and 'bma_id' not in key):
+        return resolve_lookup(PartnerOrganization, key, log, create=True)
+
+    bma_id = reference_bma_id(key)
+    name = _clean(key.get('name'))
+    instance = PartnerOrganization.objects.filter(bma_id=bma_id).first()
+    if instance is not None:
+        if name and instance.name != name:
+            if PartnerOrganization.objects.filter(
+                    name__iexact=name).exclude(pk=instance.pk).exists():
+                raise ValueError(
+                    'Partner name {} belongs to another record'.format(name)
+                )
+            instance.name = name
+            instance.save(update_fields=['name'])
+        return instance
+
+    if not name:
+        raise UnresolvedDependency('Compiler partner #{} has no name'.format(bma_id))
+    instance = PartnerOrganization.objects.filter(name__iexact=name).first()
+    if instance is not None:
+        if instance.bma_id not in (None, '', bma_id):
+            raise ValueError(
+                'Partner {} is mapped to another Compiler ID'.format(name)
+            )
+        instance.bma_id = bma_id
+        instance.save(update_fields=['bma_id'])
+        return instance
+    if not _create_missing_allowed():
+        raise UnresolvedDependency('Compiler partner #{} not mapped'.format(bma_id))
+    instance, created = PartnerOrganization.objects.get_or_create(
+        bma_id=bma_id, defaults={'name': name},
+    )
+    if created:
+        log.add('created PartnerOrganization {} from Compiler ID {}'.format(name, bma_id))
+    return instance
 
 
 def resolve_round(key, log):
