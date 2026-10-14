@@ -15,6 +15,7 @@ holds a replica and never pushes anything back.
 | `students.Teacher` | `mscc.teacher` | `mscc.Teacher` |
 | `mscc.Registration` | `mscc.registration` | `mscc.Registration` |
 | `mscc.EducationService` (child education situation) | `mscc.education_service` | `mscc.EducationService` |
+| `mscc.EducationAssessment` (detailed pre/post) | `mscc.education_assessment` | `mscc.EducationAssessment` |
 | `mscc.EducationProgrammeAssessment` (grading) | `mscc.education_grading` | `mscc.EducationProgrammeAssessment` |
 | `mscc.Referral` | `mscc.referral` | `mscc.Referral` |
 | `attendances.MSCCAttendance` + its child rows | `attendances.mscc_attendance` | `attendances.MSCCAttendance` + `MSCCAttendanceChild` |
@@ -23,7 +24,7 @@ holds a replica and never pushes anything back.
 registration that refers to it, and a change to a child republishes every
 registration that carries it.
 
-Scope is the whole MSCC module — every record, every partner, every round.
+Scope is the listed resources for every partner and round. Other MSCC sub-models remain out of scope until explicitly enabled.
 
 ## How a change gets across
 
@@ -37,9 +38,7 @@ Scope is the whole MSCC module — every record, every partner, every round.
    `datasync.SyncedRecord`, and reports the outcome per event.
 5. A Celery beat sweep on the Compiler re-sends anything that failed.
 
-Because the payload is built at delivery time rather than at save time, what
-arrives is always the record's latest state, and a burst of edits collapses
-into one push.
+Payloads are built at delivery time. Every committed save gets a distinct durable event ID, even while another push is in flight. Each event carries its original outbox creation timestamp; older events for an already-updated source identity are skipped, including outdated deletes. The embedded Child also has an independent source identity/version.
 
 ## The wire contract
 
@@ -110,13 +109,15 @@ Replicated records and relationships are identified as follows:
 | Child | unique `Child.bma_id`, independent of UNICEF ID |
 | Registration | unique `Registration.bma_id`, independent of child/round/centre |
 | Education service | unique `EducationService.bma_id` |
+| Detailed education assessment | unique `EducationAssessment.bma_id` |
 | Grading | unique `EducationProgrammeAssessment.bma_id` |
 | Referral | unique `Referral.bma_id` |
 | Attendance | unique `MSCCAttendance.bma_id` |
-| Partner organization | unique name — created if missing |
+| Partner organization | Compiler source ID in `PartnerOrganization.bma_id`; existing local names adopted on first sync |
 | School | CERD number, then name — never created |
 | Location (governorate / caza / cadaster) | P-code, then name — never created |
-| Nationality, ID type, disability, educational level | name — never created |
+| Nationality | name — must already exist, otherwise the event fails retryably (no silent loss) |
+| ID type, disability, educational level | name — never created |
 | Training topic, attachment type | name — created if missing |
 
 For each upsert, an existing row with the same BMA identity is updated in place;
