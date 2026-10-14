@@ -14,8 +14,11 @@ the producer sends it again instead of dropping it.
 from __future__ import unicode_literals, absolute_import, division
 
 import logging
+import uuid
 
 from django.db import transaction
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 from .appliers import UnresolvedDependency, apply_event
 from .constants import (
@@ -27,12 +30,13 @@ from .constants import (
     STATUS_SKIPPED,
     resource_sort_key,
 )
-from .models import SyncEventLog
+from .models import SyncEventLog, SyncedRecord
 from .identity import normalize_bma_id
 
 logger = logging.getLogger(__name__)
 
-REQUIRED_EVENT_KEYS = ('event_id', 'resource', 'operation', 'source_id')
+REQUIRED_EVENT_KEYS = ('event_id', 'resource', 'operation', 'source_id',
+                       'source_modified')
 
 
 class EnvelopeError(Exception):
@@ -54,6 +58,18 @@ def _validate_event(event):
         normalize_bma_id(event['source_id'])
     except ValueError as error:
         return str(error)
+    try:
+        uuid.UUID(str(event['event_id']))
+    except (ValueError, TypeError, AttributeError):
+        return 'event_id must be a UUID'
+    if not isinstance(event['source_modified'], str):
+        return 'source_modified must be an ISO timestamp'
+    try:
+        parsed = parse_datetime(event['source_modified'])
+    except ValueError:
+        parsed = None
+    if parsed is None or timezone.is_naive(parsed):
+        return 'source_modified must be an ISO timestamp with timezone'
     return None
 
 
@@ -132,7 +148,7 @@ def ingest_events(events, source_system):
             continue
 
         previous = _already_applied(event['event_id'])
-        if previous is not None and previous.status == STATUS_APPLIED:
+        if previous is not None and previous.status in (STATUS_APPLIED, STATUS_SKIPPED):
             results.append(_result(event, STATUS_SKIPPED, detail='already applied'))
             counts[STATUS_SKIPPED] += 1
             continue
@@ -151,7 +167,25 @@ def _apply_one(event, source_system, counts):
     """Apply a single validated event inside its own transaction."""
     try:
         with transaction.atomic():
+            event = dict(event)
+            event['_parsed_source_modified'] = parse_datetime(event['source_modified'])
+            if event['operation'] == OPERATION_DELETE:
+                prior = SyncedRecord.objects.select_for_update().filter(
+                    source_system=source_system, resource=event['resource'],
+                    source_id=str(event['source_id']), source_scope='',
+                ).first()
+                if (prior is not None and prior.last_source_modified is not None
+                        and event['_parsed_source_modified'] < prior.last_source_modified):
+                    detail = 'stale delete ignored'
+                    _log_event(event, source_system, STATUS_SKIPPED, detail, [])
+                    counts[STATUS_SKIPPED] += 1
+                    return _result(event, STATUS_SKIPPED, detail=detail)
             _resource, outcome, notes = apply_event(event, source_system)
+            if event['operation'] != OPERATION_DELETE and outcome.stale:
+                detail = notes or 'stale event ignored'
+                _log_event(event, source_system, STATUS_SKIPPED, detail, [])
+                counts[STATUS_SKIPPED] += 1
+                return _result(event, STATUS_SKIPPED, detail=detail)
             local_id = None
             conflict = False
             ignored = []
