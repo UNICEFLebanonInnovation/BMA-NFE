@@ -160,6 +160,16 @@ populates teacher mapping scopes from their centres. Conflicting mappings or
 mapped teachers without an identified centre stop the migration for review;
 the migration does not guess identities or merge records.
 
+If an upgrade reports that `datasync.0003_backfill_model_bma_ids` was applied
+before its dependency `mscc.0018_educationassessment_bma_id`, update to the
+corrected `claude-api-connection` branch and run `python manage.py migrate`
+again. An earlier revision changed the dependencies of the already released
+`datasync.0003` migration. Its original dependency is now restored, and the
+new `datasync.0004_backfill_educationassessment_bma_ids` migration runs the
+assessment backfill after the assessment BMA ID field exists. Normal migration
+preserves existing records and migration history; do not use `--fake`, delete
+rows from `django_migrations`, or reset the database to work around this error.
+
 For records that have never been synchronized, populate verified BMA IDs
 before the first import if they should be overwritten. Do not fill these
 columns with local primary keys unless their source identity has been verified.
