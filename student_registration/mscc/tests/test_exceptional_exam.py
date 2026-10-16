@@ -1096,7 +1096,10 @@ class ExceptionalExamWorkflowTests(TestCase):
         )
         with tempfile.TemporaryDirectory() as media_root, override_settings(
             MEDIA_ROOT=media_root,
-            DEFAULT_FILE_STORAGE='django.core.files.storage.FileSystemStorage',
+            STORAGES={
+                'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+                'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+            },
         ):
             self.child.photo.save('registered-child.png', ContentFile(portrait_bytes('red')))
             self.second_registration.child.photo.save('second-child.png', ContentFile(portrait_bytes('blue')))

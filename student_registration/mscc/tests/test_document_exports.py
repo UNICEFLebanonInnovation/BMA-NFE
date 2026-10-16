@@ -154,7 +154,13 @@ class MemoryPhotoStorage(Storage):
         return ContentFile(self.data, name=name)
 
 
-@override_settings(LANGUAGE_CODE='en', DEFAULT_FILE_STORAGE='django.core.files.storage.FileSystemStorage')
+@override_settings(
+    LANGUAGE_CODE='en',
+    STORAGES={
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    },
+)
 class MSCCDocumentExportTests(TestCase):
     @classmethod
     def setUpTestData(cls):

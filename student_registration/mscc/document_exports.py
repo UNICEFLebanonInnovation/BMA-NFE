@@ -184,11 +184,16 @@ def load_child_photo(child):
     try:
         with child.photo.open('rb') as source:
             data = source.read()
-    except Exception:
+    except Exception as exc:
         # A storage backend may raise its own network or missing-object errors,
         # rather than OSError. Report this child's image as unavailable without
-        # leaking storage URLs or replacing it with another child's picture.
-        logger.warning('Photograph unavailable for child ID %s', child.pk)
+        # leaking storage URLs or replacing it with another child's picture,
+        # naming the error type so a storage misconfiguration is easy to spot.
+        logger.warning(
+            'Photograph unavailable for child ID %s: %s while opening %s via %s',
+            child.pk, type(exc).__name__, child.photo.name,
+            type(getattr(child.photo, 'storage', None)).__name__,
+        )
         return None, PHOTO_UNAVAILABLE
     try:
         with Image.open(io.BytesIO(data)) as image:
@@ -199,8 +204,11 @@ def load_child_photo(child):
             destination = io.BytesIO()
             image.save(destination, format='PNG')
             return destination.getvalue(), PHOTO_INCLUDED
-    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError):
-        logger.warning('Photograph unavailable for child ID %s', child.pk)
+    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
+        logger.warning(
+            'Photograph unavailable for child ID %s: %s while decoding %s',
+            child.pk, type(exc).__name__, child.photo.name,
+        )
         return None, PHOTO_UNAVAILABLE
 
 
