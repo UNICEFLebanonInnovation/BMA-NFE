@@ -12619,6 +12619,10 @@ msgid "Village"
 msgstr "القرية"
 
 #: student_registration/mscc/models.py
+msgid "Place of Birth"
+msgstr "محل الولادة"
+
+#: student_registration/mscc/models.py
 msgid "Non-formal education programme"
 msgstr "البرنامج التعليمي غير النظامي"
 

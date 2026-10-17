@@ -10077,6 +10077,10 @@ msgid "Village"
 msgstr ""
 
 #: student_registration/mscc/models.py
+msgid "Place of Birth"
+msgstr ""
+
+#: student_registration/mscc/models.py
 msgid "Non-formal education programme"
 msgstr ""
 

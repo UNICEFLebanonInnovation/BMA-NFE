@@ -35,8 +35,8 @@ class ExceptionalExamForm(forms.ModelForm):
     class Meta:
         model = ExceptionalExam
         fields = (
-            'governorate', 'district', 'nearest_town', 'programme', 'grade',
-            'math_language', 'language_exam',
+            'governorate', 'district', 'nearest_town', 'place_of_birth', 'programme',
+            'grade', 'math_language', 'language_exam',
         )
 
     def __init__(self, *args, registration=None, **kwargs):
@@ -98,6 +98,13 @@ class ExceptionalExamForm(forms.ModelForm):
 
         for field in self.fields.values():
             field.required = True
+            if not isinstance(field, forms.ChoiceField):
+                # Free-text entries such as the place of birth.
+                field.widget.attrs['class'] = 'form-control'
+                field.widget.attrs.setdefault('autocomplete', 'off')
+                field.error_messages['required'] = _('This field is required.')
+                field.help_text = _('Required')
+                continue
             if not isinstance(field, forms.ModelChoiceField):
                 field.choices = (SELECT_PROMPT,) + tuple(
                     choice for choice in field.choices if choice[0] != ''

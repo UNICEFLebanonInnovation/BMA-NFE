@@ -316,8 +316,9 @@ def build_examination_card(registration):
     """Return the reference-style landscape card using the saved registration.
 
     Browser print headers and the empty overflow page in the reference are
-    not part of the card. Birthplace is intentionally blank: MSCC children
-    have no stored place-of-birth field, and residence is not birthplace.
+    not part of the card. Birthplace comes from the examination application,
+    which is the only record that stores it; residence is not birthplace, so
+    the line stays blank when no application has been saved.
     """
     from docx import Document
     from docx.enum.section import WD_ORIENT
@@ -490,7 +491,7 @@ def build_examination_card(registration):
     centred_line('NGO: ' + ngo)
     centred_line('الاسم الثلاثي: ' + values['child_full_name'], arabic=True)
     centred_line('Date of Birth: ' + birthday)
-    centred_line('Place of Birth:')
+    centred_line('Place of Birth: ' + values.get('exceptional_exam__place_of_birth', '').strip())
     centred_line('Nationality: ' + nationality)
     centred_line('Governorate: ' + governorate)
     last_line = centred_line('Physical difficulties: ' + disability)

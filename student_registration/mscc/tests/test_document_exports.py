@@ -28,7 +28,7 @@ from student_registration.mscc.document_exports import (
     build_children_workbook,
     build_examination_card,
 )
-from student_registration.mscc.models import Registration, Round
+from student_registration.mscc.models import ExceptionalExam, Registration, Round
 from student_registration.mscc.tasks import (
     _generate_filtered_mscc_export,
     _generate_mscc_export,
@@ -420,6 +420,20 @@ class MSCCDocumentExportTests(TestCase):
         namespace = '{http://purl.org/dc/elements/1.1/}'
         self.assertIn('Child {}'.format(self.first_child.pk), properties.find(namespace + 'title').text)
         self.assertIn(str(registration.pk), properties.find(namespace + 'subject').text)
+
+    def test_word_card_and_excel_use_the_place_of_birth_from_the_examination_application(self):
+        ExceptionalExam.objects.create(
+            registration=self.first_registration, governorate=self.governorate,
+            district=self.district, nearest_town='achrafieh', place_of_birth='بيروت',
+            programme='BLN', grade='2', math_language='ar', language_exam='en',
+        )
+        registration = Registration.objects.get(pk=self.first_registration.pk)
+        text, _ = word_text_and_photos(build_examination_card(registration))
+        self.assertEqual(card_field(text, 'Place of Birth'), 'بيروت')
+        row = workbook_rows(build_children_workbook(
+            Registration.objects.filter(pk=self.first_registration.pk),
+        ))[0][1]
+        self.assertEqual(row['Exceptional Exam - Place of Birth'], 'بيروت')
 
     def test_word_card_leaves_unrecorded_fields_blank_and_preserves_partial_birthdate(self):
         registration = Registration.objects.get(pk=self.second_registration.pk)
