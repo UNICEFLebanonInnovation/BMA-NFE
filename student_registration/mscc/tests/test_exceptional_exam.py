@@ -45,7 +45,7 @@ from student_registration.students.models import Nationality
 
 
 REQUIRED_FIELDS = (
-    'governorate', 'district', 'nearest_town', 'programme', 'grade',
+    'governorate', 'district', 'nearest_town', 'place_of_birth', 'programme', 'grade',
     'math_language', 'language_exam',
 )
 
@@ -312,7 +312,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def exam_data(self, **updates):
         data = {
             'governorate': self.governorate.pk, 'district': self.district.pk,
-            'nearest_town': 'achrafieh',
+            'nearest_town': 'achrafieh', 'place_of_birth': 'Beirut',
             'programme': 'BLN', 'grade': '2', 'math_language': 'ar', 'language_exam': 'en',
         }
         data.update(updates)

@@ -2715,6 +2715,10 @@ class ExceptionalExam(TimeStampedModel):
         max_length=100, choices=TOWN_CHOICES,
         verbose_name=gettext_lazy('Village'),
     )
+    place_of_birth = models.CharField(
+        max_length=100, blank=True, default='',
+        verbose_name=gettext_lazy('Place of Birth'),
+    )
     programme = models.CharField(
         max_length=6, choices=PROGRAMME_CHOICES,
         verbose_name=gettext_lazy('Non-formal education programme'),
@@ -2793,9 +2797,10 @@ class ExceptionalExam(TimeStampedModel):
             location_label(self.district) or self.get_district_legacy_display() or '',
             self.get_nearest_town_display(),
         )
-        fields = ('governorate', 'district', 'nearest_town', 'programme', 'grade',
-                  'math_language', 'language_exam')
+        fields = ('governorate', 'district', 'nearest_town', 'place_of_birth', 'programme',
+                  'grade', 'math_language', 'language_exam')
         values = residence + (
+            self.place_of_birth or '',
             self.get_programme_display(), self.get_grade_display(),
             self.get_math_language_display(), self.get_language_exam_display(),
         )
