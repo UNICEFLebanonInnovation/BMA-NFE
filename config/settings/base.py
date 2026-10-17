@@ -465,7 +465,44 @@ AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
 AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
 AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_blob.AzureBlobStorage' # Updated for newer django-storages
+# Uploaded files (child photographs, consent documents) may live in their own
+# private container; by default they share the exports container.
+AZURE_MEDIA_CONTAINER = env('AZURE_MEDIA_CONTAINER', default=AZURE_CONTAINER)
+# File URLs are signed for this long, so templates can show uploaded images
+# from a private container without making the blobs public.
+AZURE_URL_EXPIRATION_SECS = env.int('AZURE_URL_EXPIRATION_SECS', default=3600)
+
+
+def _azure_storage_configured(account_key):
+    """Mirror ExportStorage: only a real base64 account key selects Azure."""
+    import base64
+    import binascii
+    try:
+        base64.b64decode(account_key or '', validate=True)
+    except (binascii.Error, ValueError):
+        return False
+    return bool(account_key)
+
+
+# Django 5.1 removed DEFAULT_FILE_STORAGE; without this STORAGES entry every
+# FileField and ImageField silently falls back to the local filesystem
+# (MEDIA_ROOT), which is wiped on each container deployment and cannot be
+# read by a local server connected to the shared database. Without Azure
+# credentials (local development) the filesystem remains the default.
+STORAGES = {
+    'default': {
+        'BACKEND': 'storages.backends.azure_storage.AzureStorage',
+        'OPTIONS': {
+            'azure_container': AZURE_MEDIA_CONTAINER,
+            'expiration_secs': AZURE_URL_EXPIRATION_SECS,
+        },
+    } if _azure_storage_configured(AZURE_ACCOUNT_KEY) else {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
 DEFAULT_FILE_FORMAT = 'xlsx'
 DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'

@@ -184,11 +184,16 @@ def load_child_photo(child):
     try:
         with child.photo.open('rb') as source:
             data = source.read()
-    except Exception:
+    except Exception as exc:
         # A storage backend may raise its own network or missing-object errors,
         # rather than OSError. Report this child's image as unavailable without
-        # leaking storage URLs or replacing it with another child's picture.
-        logger.warning('Photograph unavailable for child ID %s', child.pk)
+        # leaking storage URLs or replacing it with another child's picture,
+        # naming the error type so a storage misconfiguration is easy to spot.
+        logger.warning(
+            'Photograph unavailable for child ID %s: %s while opening %s via %s',
+            child.pk, type(exc).__name__, child.photo.name,
+            type(getattr(child.photo, 'storage', None)).__name__,
+        )
         return None, PHOTO_UNAVAILABLE
     try:
         with Image.open(io.BytesIO(data)) as image:
@@ -199,8 +204,11 @@ def load_child_photo(child):
             destination = io.BytesIO()
             image.save(destination, format='PNG')
             return destination.getvalue(), PHOTO_INCLUDED
-    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError):
-        logger.warning('Photograph unavailable for child ID %s', child.pk)
+    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
+        logger.warning(
+            'Photograph unavailable for child ID %s: %s while decoding %s',
+            child.pk, type(exc).__name__, child.photo.name,
+        )
         return None, PHOTO_UNAVAILABLE
 
 
@@ -308,8 +316,9 @@ def build_examination_card(registration):
     """Return the reference-style landscape card using the saved registration.
 
     Browser print headers and the empty overflow page in the reference are
-    not part of the card. Birthplace is intentionally blank: MSCC children
-    have no stored place-of-birth field, and residence is not birthplace.
+    not part of the card. Birthplace comes from the examination application,
+    which is the only record that stores it; residence is not birthplace, so
+    the line stays blank when no application has been saved.
     """
     from docx import Document
     from docx.enum.section import WD_ORIENT
@@ -482,7 +491,7 @@ def build_examination_card(registration):
     centred_line('NGO: ' + ngo)
     centred_line('الاسم الثلاثي: ' + values['child_full_name'], arabic=True)
     centred_line('Date of Birth: ' + birthday)
-    centred_line('Place of Birth:')
+    centred_line('Place of Birth: ' + values.get('exceptional_exam__place_of_birth', '').strip())
     centred_line('Nationality: ' + nationality)
     centred_line('Governorate: ' + governorate)
     last_line = centred_line('Physical difficulties: ' + disability)
