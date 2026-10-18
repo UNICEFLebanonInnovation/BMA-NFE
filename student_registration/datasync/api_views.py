@@ -76,6 +76,7 @@ class SyncIngestView(APIView):
                 'enabled': getattr(settings, 'DATASYNC_INGEST_ENABLED', True),
                 'path': 'events/',
                 'atomic_with_registration': True,
+                'verified_reuse': True,
                 'max_bytes': getattr(settings, 'DATASYNC_PHOTO_MAX_BYTES', 5 * 1024 * 1024),
             },
         })

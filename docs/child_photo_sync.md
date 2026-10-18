@@ -15,10 +15,12 @@ Compiler save
   -> Compiler marks the same outbox event sent
 ```
 
-There is no separate photo upload request or separate photo run. Metadata-only
-requests use JSON. A registration with an image uses multipart with a JSON
-`envelope` and the file in that same request. Registrations are delivered one
-at a time to bound image-upload memory. Other records can use normal batches.
+Metadata-only requests use JSON. New/changed images use multipart with a JSON
+`envelope` and the file in the same registration request. Known source image
+versions first verify NFE's existing copy without an attachment. A missing or
+edited NFE copy requests bytes; the same event immediately continues with its
+file attached. Each request contains one registration, with a default shared
+limit of four concurrent deliveries. Dependency stages remain ordered.
 The former `/api/sync/photos/child/` route has been removed. Previously queued
 `child.photo` jobs are converted to registration events in the same dispatcher;
 new saves do not create photo-only jobs.
@@ -127,8 +129,11 @@ Registration.student_old -> Student.id -> Student.std_image -> source image
 ```
 
 `std_image` contains a relative storage name such as `profiles/example.png`.
-The worker opens the image through Django storage using Compiler's own Azure
-credentials. It does not pass public/signed Azure URLs or storage keys to NFE.
+The worker fingerprints photo versions through existing Django storage using
+Compiler's own Azure credentials. Cached versions avoid another image download
+and upload when NFE verifies that its actual copy still matches. Blob metadata
+may still be read to check for source changes. It does not pass public/signed
+Azure URLs or storage keys to NFE.
 The request carries a bounded image file, checksum and photo descriptor alongside
 the registration and child data. Updating the linked Student's photo requeues
 the same normal registration pipeline. No second button or photo request runs.
@@ -166,6 +171,9 @@ images do not create another destination file. An explicitly cleared photo
 clears only a photo previously managed by sync. Previous files remain subject
 to the storage operator's retention policy. This covers child profile photos;
 teacher files and identity/birth/UNHCR scans are not added to this scope.
+
+See `docs/sync_photo_performance.md` for fingerprint caching, verified reuse,
+connection pooling, the PostgreSQL concurrency guards and deployment settings.
 
 ## Staging verification
 

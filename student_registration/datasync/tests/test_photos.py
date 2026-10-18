@@ -89,6 +89,57 @@ class PhotoIngestTests(TestCase):
         self.assertEqual(self.post(self.body(day=2)).data['status'], 'applied')
         self.assertEqual(len(list(Path(self.temp.name).rglob('*.png'))), 1)
 
+    def test_verified_reuse_sends_no_file_and_preserves_the_existing_copy(self):
+        self.assertEqual(self.post(self.body()).data['status'], 'applied')
+        body = self.body(day=2, action='verify')
+        body.pop('photo')
+        with patch.object(self.storage, 'save', wraps=self.storage.save) as save:
+            response = self.post(body)
+        self.assertEqual(response.data['status'], 'applied', response.data)
+        self.assertIn('no image transfer', response.data['detail'])
+        save.assert_not_called()
+
+    def test_verify_missing_photo_requests_bytes_without_committing_metadata(self):
+        from student_registration.mscc.models import Registration
+        from ..models import SyncEventLog
+        body = self.body(action='verify')
+        body.pop('photo')
+        response = self.post(body)
+        self.assertTrue(response.data['photo_upload_required'])
+        self.child.refresh_from_db()
+        self.assertEqual(self.child.first_name, 'Test child')
+        self.assertFalse(Registration.objects.exists())
+        self.assertFalse(SyncEventLog.objects.filter(event_id=body['event_id']).exists())
+        body['action'] = 'put'
+        body['photo'] = SimpleUploadedFile('photo.png', image_bytes())
+        self.assertEqual(self.post(body).data['status'], 'applied')
+
+    def test_reuse_detects_an_in_place_local_edit_and_full_upload_restores_source(self):
+        self.assertEqual(self.post(self.body()).data['status'], 'applied')
+        self.child.refresh_from_db()
+        Path(self.storage.path(self.child.photo.name)).write_bytes(image_bytes('green'))
+        body = self.body(day=2, action='verify')
+        body.pop('photo')
+        self.assertTrue(self.post(body).data['photo_upload_required'])
+        body['action'] = 'put'
+        body['photo'] = SimpleUploadedFile('photo.png', image_bytes())
+        response = self.post(body)
+        self.assertEqual(response.data['status'], 'applied')
+        self.assertTrue(response.data['conflict'])
+        self.child.refresh_from_db()
+        with self.child.photo.open('rb') as stream:
+            self.assertEqual(stream.read(), image_bytes())
+
+    def test_verify_storage_outage_does_not_request_unnecessary_upload(self):
+        self.assertEqual(self.post(self.body()).data['status'], 'applied')
+        body = self.body(day=2, action='verify')
+        body.pop('photo')
+        with patch.object(self.storage, 'open', side_effect=OSError('unmounted')):
+            response = self.post(body)
+        self.assertEqual(response.data['status'], 'failed')
+        self.assertTrue(response.data['retryable'])
+        self.assertNotIn('photo_upload_required', response.data)
+
     def test_database_failure_after_file_write_rolls_back_and_cleans_new_file(self):
         from django.db import IntegrityError
         from student_registration.mscc.models import Registration

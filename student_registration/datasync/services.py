@@ -30,6 +30,7 @@ from .constants import (
 )
 from .models import SyncEventLog
 from .identity import StaleEvent, normalize_bma_id, source_timestamp
+from .photos import PhotoUploadRequired
 
 logger = logging.getLogger(__name__)
 
@@ -235,6 +236,13 @@ def _apply_one(event, source_system, counts, uploads=None):
         _log_event(event, source_system, STATUS_SKIPPED, detail, [])
         counts[STATUS_SKIPPED] += 1
         return _result(event, STATUS_SKIPPED, detail=detail)
+    except PhotoUploadRequired as error:
+        # Negotiation rolls back all metadata; the same event continues with
+        # its image attached. This is not an applied event or a failed attempt.
+        counts[STATUS_FAILED] += 1
+        result = _result(event, STATUS_FAILED, detail=str(error), retryable=True)
+        result['photo_upload_required'] = True
+        return result
     except UnresolvedDependency as error:
         detail = str(error)
         _log_event(event, source_system, STATUS_FAILED, detail, [])

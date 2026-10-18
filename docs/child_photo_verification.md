@@ -6,7 +6,16 @@ reference are acknowledged only after the complete receiver transaction succeeds
 
 ## Verified behavior
 
-The combined regression suite passes 145 tests using isolated test storage.
+Regression checks use isolated PostgreSQL, generated images and test storage.
+
+The saved implementation passes 161 combined sync/transport/concurrency tests
+and seven existing Compiler outbox delivery tests. A local HTTP exercise also
+transferred four initial photos, reused them without another source image read,
+repaired an in-place destination edit, restored a deleted file and displayed the
+saved image. A batch of 200 repeated registration updates completed in 33.69
+seconds with zero uploaded image bytes, zero source image reads and a peak of
+four concurrent requests. These timings use local files and localhost services;
+they are not deployed Azure throughput measurements.
 
 - BMA IDs resolve existing records and prevent duplicate child/registration rows.
 - Dependency ordering covers rounds, centers, registrations, education services,
@@ -23,6 +32,11 @@ The combined regression suite passes 145 tests using isolated test storage.
   timestamps, explicit Yes/No overwrite text and the receiver's result.
 - Timestamp handling is verified with both timezone-aware and naive database
   settings.
+- Known photo versions avoid source image reads and file uploads when NFE's
+  current copy verifies correctly. Missing/edited images request bytes and are
+  repaired within the same event and delivery attempt.
+- Transport checks exercise actual TCP keep-alive; concurrency checks use
+  independent PostgreSQL connections for slot, event and child exclusion.
 
 ## Storage configuration
 
