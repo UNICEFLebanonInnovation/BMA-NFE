@@ -18,6 +18,7 @@ from student_registration.attendances.models import (
 )
 from student_registration.child.models import Child
 from student_registration.locations.models import Center
+from student_registration.schools.models import PartnerOrganization
 from student_registration.mscc.models import (
     EducationService,
     Referral,
@@ -177,6 +178,35 @@ class IngestServiceTests(TestCase):
             conflict.diverged_fields['have_labour'],
             {'synced': 'No', 'local': 'Yes - Night Shift'},
         )
+
+    def test_embedded_child_local_edit_sets_registration_conflict(self):
+        ingest_events([event(RESOURCE_REGISTRATION, 1234, registration_payload())],
+                      SOURCE_SYSTEM_COMPILER)
+        child = Child.objects.get(bma_id='900')
+        child.first_name = 'NFE local name'
+        child.save()
+        result = ingest_events([event(RESOURCE_REGISTRATION, 1234, registration_payload())],
+                               SOURCE_SYSTEM_COMPILER)['results'][0]
+        self.assertTrue(result['conflict'], result)
+        child.refresh_from_db()
+        self.assertEqual(child.first_name, 'Lina')
+
+    def test_replay_keeps_original_id_and_conflict_after_later_updates(self):
+        ingest_events([event(RESOURCE_REGISTRATION, 1234, registration_payload())],
+                      SOURCE_SYSTEM_COMPILER)
+        registration = Registration.objects.get()
+        registration.have_labour = 'Yes - Night Shift'
+        registration.save()
+        wire = event(RESOURCE_REGISTRATION, 1234, registration_payload())
+        original = ingest_events([wire], SOURCE_SYSTEM_COMPILER)['results'][0]
+        self.assertTrue(original['conflict'])
+        ingest_events([event(RESOURCE_REGISTRATION, 1234, registration_payload())],
+                      SOURCE_SYSTEM_COMPILER)
+        replay = ingest_events([wire], SOURCE_SYSTEM_COMPILER)['results'][0]
+        self.assertEqual(replay['status'], 'skipped')
+        self.assertEqual(replay['local_id'], original['local_id'])
+        self.assertTrue(replay['conflict'])
+        self.assertIn(original['detail'], replay['detail'])
 
     def test_untouched_replica_records_no_conflict(self):
         ingest_events(
@@ -486,6 +516,7 @@ class BmaIdMatchingTests(TestCase):
             self.assertEqual(self.child.first_name, 'Local name')
 
             Center.objects.create(bma_id='42', name='New centre', p_code='LB-9999')
+            PartnerOrganization.objects.create(bma_id='7', name='Partner One')
             second = ingest_events([wire], SOURCE_SYSTEM_COMPILER)
 
         self.assertEqual(second['applied'], 1, second['results'])

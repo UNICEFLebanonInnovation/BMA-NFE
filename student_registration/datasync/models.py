@@ -41,6 +41,21 @@ EVENT_STATUS = (
 )
 
 
+class SyncedChildPhoto(TimeStampedModel):
+    """Independent photo version: demographic updates never reset its ordering."""
+
+    source_system = models.CharField(max_length=50)
+    source_id = models.CharField(max_length=64)
+    child = models.ForeignKey('child.Child', null=True, on_delete=models.SET_NULL)
+    last_event_id = models.UUIDField(null=True)
+    source_modified = models.DateTimeField(null=True)
+    sha256 = models.CharField(max_length=64, blank=True)
+    storage_name = models.CharField(max_length=500, blank=True)
+
+    class Meta:
+        unique_together = ('source_system', 'source_id')
+
+
 class SyncedRecord(TimeStampedModel):
     """Link between a Compiler record and the local object replicating it."""
 
@@ -164,6 +179,10 @@ class SyncEventLog(models.Model):
         auto_now_add=True,
         db_index=True,
         verbose_name=_('Received at')
+    )
+    applied_result = JSONField(
+        default=dict, blank=True,
+        verbose_name=_('Original event result'),
     )
 
     class Meta:

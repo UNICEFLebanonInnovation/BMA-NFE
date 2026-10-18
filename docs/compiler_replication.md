@@ -162,7 +162,7 @@ the migration does not guess identities or merge records.
 
 If an upgrade reports that `datasync.0003_backfill_model_bma_ids` was applied
 before its dependency `mscc.0018_educationassessment_bma_id`, update to the
-corrected `claude-api-connection` branch and run `python manage.py migrate`
+updated receiver code and run `python manage.py migrate`
 again. An earlier revision changed the dependencies of the already released
 `datasync.0003` migration. Its original dependency is now restored, and the
 new `datasync.0004_backfill_educationassessment_bma_ids` migration runs the

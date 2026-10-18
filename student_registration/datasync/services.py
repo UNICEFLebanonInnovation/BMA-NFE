@@ -16,9 +16,7 @@ from __future__ import unicode_literals, absolute_import, division
 import logging
 import uuid
 
-from django.db import transaction
-from django.utils import timezone
-from django.utils.dateparse import parse_datetime
+from django.db import OperationalError, transaction
 
 from .appliers import UnresolvedDependency, apply_event
 from .constants import (
@@ -30,13 +28,12 @@ from .constants import (
     STATUS_SKIPPED,
     resource_sort_key,
 )
-from .models import SyncEventLog, SyncedRecord
-from .identity import normalize_bma_id
+from .models import SyncEventLog
+from .identity import StaleEvent, normalize_bma_id, source_timestamp
 
 logger = logging.getLogger(__name__)
 
-REQUIRED_EVENT_KEYS = ('event_id', 'resource', 'operation', 'source_id',
-                       'source_modified')
+REQUIRED_EVENT_KEYS = ('event_id', 'resource', 'operation', 'source_id')
 
 
 class EnvelopeError(Exception):
@@ -56,20 +53,12 @@ def _validate_event(event):
         return 'unknown operation "{}"'.format(event['operation'])
     try:
         normalize_bma_id(event['source_id'])
+        uuid.UUID(str(event['event_id']))
+        source_timestamp(event.get('source_modified'))
+        if not isinstance(event.get('payload', {}), dict):
+            return 'payload must be an object'
     except ValueError as error:
         return str(error)
-    try:
-        uuid.UUID(str(event['event_id']))
-    except (ValueError, TypeError, AttributeError):
-        return 'event_id must be a UUID'
-    if not isinstance(event['source_modified'], str):
-        return 'source_modified must be an ISO timestamp'
-    try:
-        parsed = parse_datetime(event['source_modified'])
-    except ValueError:
-        parsed = None
-    if parsed is None or timezone.is_naive(parsed):
-        return 'source_modified must be an ISO timestamp with timezone'
     return None
 
 
@@ -94,8 +83,23 @@ def _already_applied(event_id):
     return SyncEventLog.objects.filter(event_id=event_id).first()
 
 
-def _log_event(event, source_system, status, detail, ignored_fields):
+def _log_event(event, source_system, status, detail, ignored_fields, applied_result=None):
     """Record the outcome of an event, tolerating a duplicate event id."""
+    # A late failed attempt must not replace another delivery's committed result.
+    with transaction.atomic():
+        SyncEventLog.objects.get_or_create(
+            event_id=event['event_id'],
+            defaults={'source_system': source_system, 'resource': event['resource'],
+                      'source_id': str(event['source_id']),
+                      'operation': event['operation'], 'status': STATUS_FAILED},
+        )
+        previous = SyncEventLog.objects.select_for_update().get(event_id=event['event_id'])
+        if previous.status in (STATUS_APPLIED, STATUS_SKIPPED):
+            return
+        _write_event_log(event, source_system, status, detail, ignored_fields, applied_result)
+
+
+def _write_event_log(event, source_system, status, detail, ignored_fields, applied_result=None):
     SyncEventLog.objects.update_or_create(
         event_id=event['event_id'],
         defaults={
@@ -107,11 +111,34 @@ def _log_event(event, source_system, status, detail, ignored_fields):
             'detail': detail or '',
             'ignored_fields': ignored_fields or [],
             'payload': event.get('payload') or {},
+            'applied_result': applied_result or {},
         },
     )
 
 
-def ingest_events(events, source_system):
+def _replayed_result(event, previous):
+    """Retries retain the original local ID, conflict flag and event notes."""
+    from .models import SyncConflict, SyncedRecord
+    cached = previous.applied_result or {}
+    local_id = cached.get('local_id')
+    if not cached:
+        # Older logs have no receipt; recover only what their audit can prove.
+        local_id = SyncedRecord.objects.filter(
+            source_system=previous.source_system, resource=previous.resource,
+            source_id=previous.source_id, last_event_id=previous.event_id,
+        ).values_list('object_id', flat=True).first()
+    conflict = bool(cached.get('conflict')) or SyncConflict.objects.filter(
+        event_id=previous.event_id,
+        synced_record__source_system=previous.source_system,
+    ).exists()
+    prefix = 'already applied' if previous.status == STATUS_APPLIED else 'already processed'
+    detail = '; '.join(part for part in (prefix, cached.get('detail', previous.detail)) if part)
+    return _result(event, STATUS_SKIPPED, detail=detail, local_id=local_id,
+                   conflict=conflict,
+                   ignored_fields=cached.get('ignored_fields', previous.ignored_fields))
+
+
+def ingest_events(events, source_system, uploads=None):
     """Apply a batch of events and report what happened to each one.
 
     Args:
@@ -149,11 +176,11 @@ def ingest_events(events, source_system):
 
         previous = _already_applied(event['event_id'])
         if previous is not None and previous.status in (STATUS_APPLIED, STATUS_SKIPPED):
-            results.append(_result(event, STATUS_SKIPPED, detail='already applied'))
+            results.append(_replayed_result(event, previous))
             counts[STATUS_SKIPPED] += 1
             continue
 
-        results.append(_apply_one(event, source_system, counts))
+        results.append(_apply_one(event, source_system, counts, uploads))
 
     return {
         'applied': counts[STATUS_APPLIED],
@@ -163,29 +190,27 @@ def ingest_events(events, source_system):
     }
 
 
-def _apply_one(event, source_system, counts):
+def _apply_one(event, source_system, counts, uploads=None):
     """Apply a single validated event inside its own transaction."""
+    saved_files = []
+    committed = False
     try:
         with transaction.atomic():
-            event = dict(event)
-            event['_parsed_source_modified'] = parse_datetime(event['source_modified'])
-            if event['operation'] == OPERATION_DELETE:
-                prior = SyncedRecord.objects.select_for_update().filter(
-                    source_system=source_system, resource=event['resource'],
-                    source_id=str(event['source_id']), source_scope='',
-                ).first()
-                if (prior is not None and prior.last_source_modified is not None
-                        and event['_parsed_source_modified'] < prior.last_source_modified):
-                    detail = 'stale delete ignored'
-                    _log_event(event, source_system, STATUS_SKIPPED, detail, [])
-                    counts[STATUS_SKIPPED] += 1
-                    return _result(event, STATUS_SKIPPED, detail=detail)
-            _resource, outcome, notes = apply_event(event, source_system)
-            if event['operation'] != OPERATION_DELETE and outcome.stale:
-                detail = notes or 'stale event ignored'
-                _log_event(event, source_system, STATUS_SKIPPED, detail, [])
+            # Serialize repeated deliveries before either can mutate business rows.
+            SyncEventLog.objects.get_or_create(
+                event_id=event['event_id'],
+                defaults={'source_system': source_system, 'resource': event['resource'],
+                          'source_id': str(event['source_id']),
+                          'operation': event['operation'], 'status': STATUS_FAILED},
+            )
+            previous = SyncEventLog.objects.select_for_update().get(event_id=event['event_id'])
+            if previous.status in (STATUS_APPLIED, STATUS_SKIPPED):
                 counts[STATUS_SKIPPED] += 1
-                return _result(event, STATUS_SKIPPED, detail=detail)
+                return _replayed_result(event, previous)
+            _resource, outcome, notes = apply_event(event, source_system)
+            from .photos import apply_registration_photo
+            photo_note = apply_registration_photo(event, source_system, uploads, saved_files)
+            notes = '; '.join(note for note in (notes, photo_note) if note)
             local_id = None
             conflict = False
             ignored = []
@@ -193,16 +218,34 @@ def _apply_one(event, source_system, counts):
                 detail = notes or ('deleted' if outcome else 'nothing to delete')
             else:
                 local_id = outcome.instance.pk if outcome.instance else None
-                conflict = outcome.conflict
+                from .models import SyncConflict
+                conflict = outcome.conflict or SyncConflict.objects.filter(
+                    event_id=event['event_id'],
+                    synced_record__source_system=source_system,
+                ).exists()
                 ignored = outcome.ignored_fields
-                detail = notes
-            _log_event(event, source_system, STATUS_APPLIED, detail, ignored)
+                action = 'Created record in BMA-NFE' if outcome.created else 'Updated existing record in BMA-NFE'
+                detail = '; '.join(part for part in (action, notes) if part)
+            receipt = _result(event, STATUS_APPLIED, detail=detail, local_id=local_id,
+                              conflict=conflict, ignored_fields=ignored)
+            _log_event(event, source_system, STATUS_APPLIED, detail, ignored, receipt)
+        committed = True
+    except StaleEvent as error:
+        detail = str(error)
+        _log_event(event, source_system, STATUS_SKIPPED, detail, [])
+        counts[STATUS_SKIPPED] += 1
+        return _result(event, STATUS_SKIPPED, detail=detail)
     except UnresolvedDependency as error:
         detail = str(error)
         _log_event(event, source_system, STATUS_FAILED, detail, [])
         counts[STATUS_FAILED] += 1
         logger.info('datasync: deferring %s#%s (%s)',
                     event.get('resource'), event.get('source_id'), detail)
+        return _result(event, STATUS_FAILED, detail=detail, retryable=True)
+    except OperationalError as error:
+        detail = 'Temporary database failure: {}'.format(error)
+        _log_event(event, source_system, STATUS_FAILED, detail, [])
+        counts[STATUS_FAILED] += 1
         return _result(event, STATUS_FAILED, detail=detail, retryable=True)
     except Exception as error:  # noqa: BLE001 - one bad row must not stop the batch
         detail = '{}: {}'.format(error.__class__.__name__, error)
@@ -211,6 +254,14 @@ def _apply_one(event, source_system, counts):
         logger.exception('datasync: failed to apply %s#%s',
                          event.get('resource'), event.get('source_id'))
         return _result(event, STATUS_FAILED, detail=detail, retryable=False)
+
+    finally:
+        if not committed:
+            for storage, name in saved_files:
+                try:
+                    storage.delete(name)
+                except Exception:
+                    logger.warning('datasync: orphan photo requires storage cleanup')
 
     counts[STATUS_APPLIED] += 1
     return _result(

@@ -5,15 +5,13 @@ import os
 import io
 import re
 import logging
-import base64
-import binascii
 
 from pathlib import Path
 from time import mktime
 
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import storages
+from django.core.files.utils import validate_file_name
 from django.http import FileResponse, HttpResponse
-from storages.backends.azure_storage import AzureStorage
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -34,43 +32,32 @@ class MyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class _AzureExportStorage(AzureStorage):
-    location = "export"
-
-
 class ExportStorage:
-    """Storage wrapper for exported files with Azure-to-local fallback."""
+    """Keep generated exports in the same configured storage as uploaded media."""
 
     location = "export"
 
     def __init__(self):
-        self._storage = self._build_storage()
+        self._storage = storages['default']
 
-    def _build_storage(self):
-        account_key = getattr(settings, 'AZURE_ACCOUNT_KEY', '') or os.getenv('AZURE_ACCOUNT_KEY', '')
-        if account_key:
-            try:
-                base64.b64decode(account_key, validate=True)
-                return _AzureExportStorage()
-            except (binascii.Error, ValueError):
-                logger.debug('Invalid AZURE_ACCOUNT_KEY format; falling back to local export storage.')
-
-        export_root = os.path.join(settings.MEDIA_ROOT, self.location)
-        os.makedirs(export_root, exist_ok=True)
-        return FileSystemStorage(location=export_root, base_url=f"{settings.MEDIA_URL}{self.location}/")
+    def _key(self, name):
+        name = str(name).replace('\\', '/')
+        validate_file_name(name, allow_relative_path=True)
+        return self.location + '/' + name
 
     def save(self, name, content):
-        return self._storage.save(name, content)
+        stored = self._storage.save(self._key(name), content)
+        return stored.removeprefix(self.location + '/')
 
     def open(self, name, mode='rb'):
-        return self._storage.open(name, mode)
+        return self._storage.open(self._key(name), mode)
 
     def delete(self, name):
-        return self._storage.delete(name)
+        return self._storage.delete(self._key(name))
 
 
 def download_file(file_name, returned_file_name, content_type="application/octet-stream", delete_after=True):
-    """Retrieve a file from Azure storage and return it as an HTTP response."""
+    """Retrieve an export from configured storage and return it as a response."""
 
     storage = ExportStorage()
     try:

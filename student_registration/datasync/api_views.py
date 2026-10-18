@@ -4,6 +4,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 import logging
+import json
 
 from django.conf import settings
 from rest_framework import status
@@ -11,6 +12,7 @@ from rest_framework.authentication import (
     SessionAuthentication,
     TokenAuthentication,
 )
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -58,6 +60,7 @@ class SyncIngestView(APIView):
     replicated yet and the producer should send the event again.
     """
 
+    parser_classes = (JSONParser, MultiPartParser, FormParser)
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (IsSyncClient,)
 
@@ -69,6 +72,12 @@ class SyncIngestView(APIView):
             'resources': RESOURCE_ORDER,
             'max_batch_size': _max_batch_size(),
             'allowed_source_systems': _allowed_source_systems(),
+            'child_photo_sync': {
+                'enabled': getattr(settings, 'DATASYNC_INGEST_ENABLED', True),
+                'path': 'events/',
+                'atomic_with_registration': True,
+                'max_bytes': getattr(settings, 'DATASYNC_PHOTO_MAX_BYTES', 5 * 1024 * 1024),
+            },
         })
 
     def post(self, request):
@@ -80,17 +89,23 @@ class SyncIngestView(APIView):
             )
 
         body = request.data if isinstance(request.data, dict) else {}
+        if 'envelope' in body:
+            try:
+                body = json.loads(body['envelope'])
+            except (ValueError, TypeError):
+                return Response({'detail': 'Invalid JSON envelope'}, status=400)
+            if not isinstance(body, dict):
+                return Response({'detail': 'Envelope must be an object'}, status=400)
+        if body.get('contract_version', CONTRACT_VERSION) != CONTRACT_VERSION:
+            return Response(
+                {'detail': 'Unsupported contract_version; expected {}.'.format(CONTRACT_VERSION)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         source_system = body.get('source_system') or SOURCE_SYSTEM_COMPILER
         if source_system not in _allowed_source_systems():
             return Response(
                 {'detail': 'Unknown source system "{}".'.format(source_system)},
                 status=status.HTTP_403_FORBIDDEN,
-            )
-
-        if body.get('contract_version', CONTRACT_VERSION) != CONTRACT_VERSION:
-            return Response(
-                {'detail': 'Unsupported replication contract_version.'},
-                status=status.HTTP_400_BAD_REQUEST,
             )
 
         events = body.get('events')
@@ -110,7 +125,7 @@ class SyncIngestView(APIView):
             )
 
         try:
-            outcome = ingest_events(events, source_system)
+            outcome = ingest_events(events, source_system, uploads=request.FILES)
         except EnvelopeError as error:
             return Response({'detail': str(error)}, status=status.HTTP_400_BAD_REQUEST)
 

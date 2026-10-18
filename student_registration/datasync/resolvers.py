@@ -149,14 +149,10 @@ def resolve_lookup(model, key, log, create=False, extra_fields=None):
 
 
 def resolve_nationality(key, log):
-    """Never silently erase a child's explicitly supplied nationality."""
-    if not key:
-        return None
+    """Resolve a nationality natural key."""
     instance = resolve_lookup(Nationality, key, log)
-    if instance is None:
-        raise UnresolvedDependency(
-            'Nationality {} is missing in BMA-NFE; seed the reference table'.format(key)
-        )
+    if key is not None and instance is None:
+        raise UnresolvedDependency('Nationality reference is not configured locally: {}'.format(key))
     return instance
 
 
@@ -186,50 +182,32 @@ def resolve_attachment_type(key, log):
 
 
 def resolve_partner(key, log):
-    """Use the Compiler partner ID, adopting an existing local name on first sync.
-
-    A rename of a previously mapped Compiler partner must not create a second
-    PartnerOrganization or break existing Registration foreign keys.
-    """
-    if not key:
+    """Resolve a partner by BMA ID; never adopt a row by its display name."""
+    if key is None:
         return None
-    if not isinstance(key, dict) or (
-            'source_id' not in key and 'bma_id' not in key):
-        return resolve_lookup(PartnerOrganization, key, log, create=True)
-
     bma_id = reference_bma_id(key)
-    name = _clean(key.get('name'))
     instance = PartnerOrganization.objects.filter(bma_id=bma_id).first()
+    data = key if isinstance(key, dict) else {}
+    name = _clean(data.get('name'))
     if instance is not None:
-        if name and instance.name != name:
-            if PartnerOrganization.objects.filter(
-                    name__iexact=name).exclude(pk=instance.pk).exists():
-                raise ValueError(
-                    'Partner name {} belongs to another record'.format(name)
-                )
-            instance.name = name
-            instance.save(update_fields=['name'])
-        return instance
-
+        if not name:
+            return instance
+    elif not _create_missing_allowed():
+        raise UnresolvedDependency('BMA partner #{} has not arrived yet'.format(bma_id))
     if not name:
-        raise UnresolvedDependency('Compiler partner #{} has no name'.format(bma_id))
-    instance = PartnerOrganization.objects.filter(name__iexact=name).first()
-    if instance is not None:
-        if instance.bma_id not in (None, '', bma_id):
-            raise ValueError(
-                'Partner {} is mapped to another Compiler ID'.format(name)
-            )
-        instance.bma_id = bma_id
-        instance.save(update_fields=['bma_id'])
-        return instance
-    if not _create_missing_allowed():
-        raise UnresolvedDependency('Compiler partner #{} not mapped'.format(bma_id))
-    instance, created = PartnerOrganization.objects.get_or_create(
-        bma_id=bma_id, defaults={'name': name},
-    )
-    if created:
-        log.add('created PartnerOrganization {} from Compiler ID {}'.format(name, bma_id))
-    return instance
+        raise UnresolvedDependency('New BMA partner #{} requires its name'.format(bma_id))
+    # Import here to avoid the handlers/resolvers module import cycle.
+    from .appliers import ApplyContext, apply_resource
+    from .constants import RESOURCE_PARTNER
+    from .identity import source_timestamp
+
+    ctx = getattr(log, 'context', ApplyContext(SOURCE_SYSTEM_COMPILER))
+    if 'source_modified' in data:
+        ctx = ApplyContext(ctx.source_system, ctx.event_id,
+                           source_timestamp(data['source_modified']), ctx.resource)
+    outcome = apply_resource(RESOURCE_PARTNER, bma_id,
+                             {'fields': {'name': name}}, log, ctx)
+    return outcome.instance
 
 
 def resolve_round(key, log):

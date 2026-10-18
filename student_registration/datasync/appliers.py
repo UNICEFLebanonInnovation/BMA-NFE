@@ -34,6 +34,7 @@ from student_registration.attendances.models import (
 )
 from student_registration.child.models import Child
 from student_registration.locations.models import Center
+from student_registration.schools.models import PartnerOrganization
 from student_registration.mscc.models import (
     EducationAssessment,
     EducationProgrammeAssessment,
@@ -56,10 +57,12 @@ from .constants import (
     RESOURCE_REFERRAL,
     RESOURCE_REGISTRATION,
     RESOURCE_ROUND,
+    RESOURCE_PARTNER,
     RESOURCE_TEACHER,
 )
 from .models import SyncConflict, SyncedRecord
-from .identity import UnresolvedDependency, normalize_bma_id, reference_bma_id
+from .identity import (StaleEvent, UnresolvedDependency, normalize_bma_id,
+                       reference_bma_id, source_timestamp)
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +112,8 @@ def plain_field_names(model):
             continue
         if field.is_relation or field.auto_created:
             continue
+        if isinstance(field, django_models.FileField):
+            continue  # Files use the authenticated upload endpoint, never JSON paths.
         if field.name in NEVER_COPIED:
             continue
         names.add(field.name)
@@ -151,10 +156,11 @@ def snapshot_of(instance, attnames):
 class ApplyContext(object):
     """Per-event context threaded through the handlers."""
 
-    def __init__(self, source_system, event_id=None, source_modified=None):
+    def __init__(self, source_system, event_id=None, source_modified=None, resource=None):
         self.source_system = source_system
         self.event_id = event_id
         self.source_modified = source_modified
+        self.resource = resource
 
 
 class BaseHandler(object):
@@ -190,6 +196,16 @@ def _plain(model, payload, extra=None):
     values, ignored = split_fields(model, payload.get('fields'))
     values.update(extra or {})
     return values, ignored
+
+
+class PartnerHandler(BaseHandler):
+    """Standalone partner updates also propagate changes without registrations."""
+
+    resource = RESOURCE_PARTNER
+    model = PartnerOrganization
+
+    def build(self, payload, log, ctx):
+        return _plain(PartnerOrganization, payload)
 
 
 class RoundHandler(BaseHandler):
@@ -350,7 +366,7 @@ class EducationServiceHandler(RegistrationChildHandler):
 
 
 class EducationAssessmentHandler(RegistrationChildHandler):
-    """Detailed pre/post education assessment linked to its registration."""
+    """Education development assessments, separate from programme grading."""
 
     resource = RESOURCE_EDUCATION_ASSESSMENT
     model = EducationAssessment
@@ -436,6 +452,7 @@ class AttendanceHandler(BaseHandler):
 HANDLERS = {
     handler.resource: handler()
     for handler in (
+        PartnerHandler,
         RoundHandler,
         CenterHandler,
         TeacherHandler,
@@ -453,13 +470,11 @@ HANDLERS = {
 class ApplyResult(object):
     """Outcome of applying a single event."""
 
-    def __init__(self, instance=None, created=False, conflict=False, ignored_fields=None,
-                 stale=False):
+    def __init__(self, instance=None, created=False, conflict=False, ignored_fields=None):
         self.instance = instance
         self.created = created
         self.conflict = conflict
         self.ignored_fields = ignored_fields or []
-        self.stale = stale
 
 
 def _diverged(previous, current):
@@ -506,27 +521,9 @@ def apply_resource(resource, source_id, payload, log, ctx):
     for supplied_id in (payload.get('bma_id'), (payload.get('fields') or {}).get('bma_id')):
         if supplied_id is not None and normalize_bma_id(supplied_id) != source_id:
             raise ValueError('Payload bma_id must equal the event source_id')
-    # Compare the incoming version before applying embedded Child changes.
-    # One older registration event must not overwrite a newer shared Child.
-    if resource != RESOURCE_TEACHER and ctx.source_modified is not None:
-        prior = SyncedRecord.objects.select_for_update().filter(
-            source_system=ctx.source_system, resource=resource,
-            source_id=source_id, source_scope='',
-        ).first()
-        if (prior is not None and prior.last_source_modified is not None
-                and ctx.source_modified < prior.last_source_modified):
-            log.add('stale event ignored for {} #{}'.format(resource, source_id))
-            return ApplyResult(
-                instance=handler.model.objects.filter(bma_id=source_id).first(),
-                stale=True,
-            )
-    values, ignored = handler.build(payload, log, ctx)
-    values['bma_id'] = source_id
-    identity = {'bma_id': source_id}
     source_scope = ''
     if resource == RESOURCE_TEACHER:
-        identity['center'] = values['center']
-        source_scope = values['center'].bma_id
+        source_scope = reference_bma_id(payload.get('center'))
 
     mapping_lookup = {
         'source_system': ctx.source_system,
@@ -534,6 +531,29 @@ def apply_resource(resource, source_id, payload, log, ctx):
         'source_id': source_id,
         'source_scope': source_scope,
     }
+    # Lock the durable identity first, including first deliveries and tombstones.
+    # Build may write an embedded child or references, so check age before it.
+    SyncedRecord.objects.get_or_create(**mapping_lookup)
+    record = SyncedRecord.objects.select_for_update().get(**mapping_lookup)
+    timestamp = ctx.source_modified
+    if resource == RESOURCE_CHILD and 'source_modified' in payload:
+        timestamp = source_timestamp(payload['source_modified'])
+    if record.last_source_modified is not None:
+        if timestamp is None:
+            raise ValueError('source_modified is required for an already versioned record')
+        if timestamp < record.last_source_modified:
+            if resource == ctx.resource:
+                raise StaleEvent('older than the last applied source_modified')
+            # Another registration can contain an older copy of the same child.
+            if record.local_object is None:
+                raise UnresolvedDependency('Referenced {} was deleted by a newer event'.format(resource))
+            log.add('older embedded {} ignored'.format(resource))
+            return ApplyResult(instance=record.local_object)
+    values, ignored = handler.build(payload, log, ctx)
+    values['bma_id'] = source_id
+    identity = {'bma_id': source_id}
+    if resource == RESOURCE_TEACHER:
+        identity['center'] = values['center']
     instance = handler.model.objects.select_for_update().filter(**identity).first()
     created = False
     if instance is None:
@@ -541,11 +561,10 @@ def apply_resource(resource, source_id, payload, log, ctx):
         instance, created = handler.model.objects.get_or_create(**identity, defaults=values)
         if not created:
             instance = handler.model.objects.select_for_update().get(pk=instance.pk)
-    record = SyncedRecord.objects.select_for_update().filter(**mapping_lookup).first()
     if record is not None and record.local_object is not None:
         if record.object_id != instance.pk:
             raise ValueError('Sync mapping disagrees with the model BMA ID; review the mapping')
-    if not created and record is None:
+    if not created and record.object_id is None and not record.deleted:
         log.add('adopted existing {} #{} by BMA ID'.format(handler.model.__name__, instance.pk))
 
     attnames = _attnames_for(handler.model, sorted(values.keys()))
@@ -567,7 +586,7 @@ def apply_resource(resource, source_id, payload, log, ctx):
         'content_type': ContentType.objects.get_for_model(handler.model),
         'object_id': instance.pk,
         'last_event_id': ctx.event_id,
-        'last_source_modified': ctx.source_modified,
+        'last_source_modified': timestamp,
         'last_applied_snapshot': applied_snapshot,
         'local_fingerprint': fingerprint(applied_snapshot),
         'deleted': False,
@@ -639,12 +658,19 @@ def delete_resource(resource, source_id, log, ctx, payload=None):
             raise UnresolvedDependency('BMA center #{} has not arrived yet'.format(center_id))
         identity['center'] = center
         source_scope = center_id
-    record = SyncedRecord.objects.select_for_update().filter(
+    mapping_lookup = dict(
         source_system=ctx.source_system,
         resource=resource,
         source_id=source_id,
         source_scope=source_scope,
-    ).first()
+    )
+    SyncedRecord.objects.get_or_create(**mapping_lookup)
+    record = SyncedRecord.objects.select_for_update().get(**mapping_lookup)
+    if record.last_source_modified is not None:
+        if ctx.source_modified is None:
+            raise ValueError('source_modified is required for an already versioned record')
+        if ctx.source_modified < record.last_source_modified:
+            raise StaleEvent('delete older than the last applied source_modified')
     handler = HANDLERS[resource]
     instance = handler.model.objects.select_for_update().filter(**identity).first()
     if record is not None and record.local_object is not None:
@@ -687,10 +713,10 @@ def apply_event(event, source_system):
     log = resolvers.ResolutionLog()
     resource = event['resource']
     source_id = event['source_id']
-    ctx = ApplyContext(
-        source_system, event_id=event.get('event_id'),
-        source_modified=event.get('_parsed_source_modified'),
-    )
+    ctx = ApplyContext(source_system, event_id=event.get('event_id'),
+                       source_modified=source_timestamp(event.get('source_modified')),
+                       resource=resource)
+    log.context = ctx
 
     if event.get('operation') == OPERATION_DELETE:
         removed = delete_resource(resource, source_id, log, ctx, event.get('payload'))

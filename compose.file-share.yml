@@ -1,0 +1,26 @@
+# Apply with production.yml after mounting the provided file share on the VM.
+# DEPLOYMENT: set NFE_FILE_SHARE_HOST_PATH to the real VM mount, not a local folder.
+services:
+  django:
+    environment:
+      NFE_FILE_SHARE_ROOT: /mnt/nfe-media
+      MEDIA_ROOT: /mnt/nfe-media
+      NFE_MEDIA_STORAGE_BACKEND: student_registration.media_storage.VMFileShareStorage
+    volumes: &nfe_media
+      - type: bind
+        source: ${NFE_FILE_SHARE_HOST_PATH:?Set NFE_FILE_SHARE_HOST_PATH to the mounted VM share}
+        target: /mnt/nfe-media
+        bind:
+          create_host_path: false
+  celeryworker:
+    environment:
+      NFE_FILE_SHARE_ROOT: /mnt/nfe-media
+      MEDIA_ROOT: /mnt/nfe-media
+      NFE_MEDIA_STORAGE_BACKEND: student_registration.media_storage.VMFileShareStorage
+    volumes: *nfe_media
+  celerybeat:
+    environment:
+      NFE_FILE_SHARE_ROOT: /mnt/nfe-media
+      MEDIA_ROOT: /mnt/nfe-media
+      NFE_MEDIA_STORAGE_BACKEND: student_registration.media_storage.VMFileShareStorage
+    volumes: *nfe_media

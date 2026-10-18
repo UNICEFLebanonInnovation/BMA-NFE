@@ -10,7 +10,7 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.contrib import admin
 
-from .models import SyncConflict, SyncedRecord, SyncEventLog
+from .models import SyncConflict, SyncedRecord, SyncEventLog, SyncedChildPhoto
 
 
 class ReadOnlyAdmin(admin.ModelAdmin):
@@ -20,6 +20,15 @@ class ReadOnlyAdmin(admin.ModelAdmin):
         return False
 
     def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(SyncedChildPhoto)
+class SyncedChildPhotoAdmin(ReadOnlyAdmin):
+    list_display = ('source_system', 'source_id', 'child_id', 'source_modified', 'modified')
+    search_fields = ('source_id', 'sha256')
+
+    def has_delete_permission(self, request, obj=None):
         return False
 
 

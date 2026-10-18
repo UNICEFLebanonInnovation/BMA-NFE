@@ -68,6 +68,7 @@ class BmaIdMigrationTests(TransactionTestCase):
         ]
         for name, resource, source_id in (
             ('EducationService', 'mscc.education_service', 'service-10'),
+            ('EducationAssessment', 'mscc.education_assessment', 'assessment-13'),
             ('EducationProgrammeAssessment', 'mscc.education_grading', 'grading-11'),
             ('Referral', 'mscc.referral', 'referral-12'),
         ):

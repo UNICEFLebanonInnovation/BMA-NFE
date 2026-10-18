@@ -5,6 +5,30 @@ class UnresolvedDependency(Exception):
     """A referenced BMA record must arrive before this event can be applied."""
 
 
+class StaleEvent(Exception):
+    """An older event must not change a more recently synchronized record."""
+
+
+def source_timestamp(value):
+    """Read an optional timezone-aware ISO 8601 source modification time."""
+    from django.utils.dateparse import parse_datetime
+    from django.utils.timezone import is_naive
+
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise ValueError('source_modified must be an ISO 8601 timestamp')
+    timestamp = parse_datetime(value)
+    if timestamp is None or is_naive(timestamp):
+        raise ValueError('source_modified must include a timezone')
+    from django.conf import settings
+    from django.utils.timezone import get_default_timezone, make_naive
+    if not settings.USE_TZ:
+        # Match DateTimeField values returned by this project's database.
+        timestamp = make_naive(timestamp, get_default_timezone())
+    return timestamp
+
+
 def normalize_bma_id(value):
     """Normalize integer/string IDs while rejecting missing or invalid keys."""
     if isinstance(value, bool) or not isinstance(value, (str, int)):

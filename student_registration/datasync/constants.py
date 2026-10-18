@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """Shared vocabulary for the Compiler -> BMA-NFE replication channel.
 
-This module is deliberately dependency free and is kept byte-for-byte
-identical in the Compiler repository (``student_registration/datasync/
-constants.py``). Both sides of the integration import it so that the
-resource names, operations and ordering rules can never drift apart.
+This module is deliberately dependency free. Resource names shared with the
+Compiler must agree with its contract. The optional schools.partner receiver
+resource is advertised by the capability endpoint; its publisher must opt in.
 """
 
 from __future__ import unicode_literals
@@ -17,6 +16,7 @@ SOURCE_SYSTEM_COMPILER = 'compiler'
 CONTRACT_VERSION = '1.0'
 
 RESOURCE_ROUND = 'mscc.round'
+RESOURCE_PARTNER = 'schools.partner'
 RESOURCE_CENTER = 'locations.center'
 RESOURCE_TEACHER = 'mscc.teacher'
 RESOURCE_REGISTRATION = 'mscc.registration'
@@ -34,6 +34,7 @@ RESOURCE_CHILD = 'child.child'
 #: be written once its centre exists, an education service only once its
 #: registration exists, and so on.
 RESOURCE_ORDER = [
+    RESOURCE_PARTNER,
     RESOURCE_ROUND,
     RESOURCE_CENTER,
     RESOURCE_TEACHER,
@@ -47,6 +48,7 @@ RESOURCE_ORDER = [
 
 #: Human readable labels, used by the Django admin on both sides.
 RESOURCE_LABELS = (
+    (RESOURCE_PARTNER, 'Partner'),
     (RESOURCE_ROUND, 'Round'),
     (RESOURCE_CENTER, 'Center'),
     (RESOURCE_TEACHER, 'Teacher'),
