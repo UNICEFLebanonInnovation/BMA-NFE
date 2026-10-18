@@ -62,6 +62,8 @@ class Location(MPTTModel):
 
 
 class Center(TimeStampedModel):
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('BMA ID'))
     # from student_registration.schools.models import PartnerOrganization
     TYPE = Choices(
         ('Municipality', _('Municipality')),

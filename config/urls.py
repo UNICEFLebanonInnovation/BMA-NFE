@@ -80,6 +80,11 @@ urlpatterns = [
     re_path(r'^api/schema/redoc/$', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     re_path(r'^api/save-fcm-token/$', save_fcm_token, name='save_fcm_token'),
+
+    # Inbound replication of MSCC data pushed by the Compiler.
+    re_path(r'^api/sync/', include('student_registration.datasync.urls',
+                                   namespace='datasync')),
+
     re_path(r'^api/', include(api.urls)),
     re_path(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file"),
     re_path(r"^i18n/", include("django.conf.urls.i18n")),
