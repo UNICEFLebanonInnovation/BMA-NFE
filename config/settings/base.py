@@ -472,33 +472,43 @@ AZURE_MEDIA_CONTAINER = env('AZURE_MEDIA_CONTAINER', default=AZURE_CONTAINER)
 # from a private container without making the blobs public.
 AZURE_URL_EXPIRATION_SECS = env.int('AZURE_URL_EXPIRATION_SECS', default=3600)
 
+from config.settings import media_storage  # noqa: E402
 
-def _azure_storage_configured(account_key):
-    """Mirror ExportStorage: only a real base64 account key selects Azure."""
-    import base64
-    import binascii
-    try:
-        base64.b64decode(account_key or '', validate=True)
-    except (binascii.Error, ValueError):
-        return False
-    return bool(account_key)
-
+# Ministry deployments keep uploads on a local SFTP server instead of Azure.
+# Files are stored under SFTP_STORAGE_ROOT with the same relative names the
+# database holds, and read back through the same connection.
+SFTP_STORAGE_HOST = env('SFTP_STORAGE_HOST', default='')
+SFTP_STORAGE_ROOT = env('SFTP_STORAGE_ROOT', default='')
+SFTP_STORAGE_PARAMS = media_storage.sftp_params(
+    username=env('SFTP_STORAGE_USERNAME', default=''),
+    password=env('SFTP_STORAGE_PASSWORD', default=''),
+    key_file=env('SFTP_STORAGE_KEY_FILE', default=''),
+    port=env('SFTP_STORAGE_PORT', default=''),
+    timeout=env('SFTP_STORAGE_TIMEOUT', default=''),
+)
+SFTP_KNOWN_HOST_FILE = env('SFTP_KNOWN_HOST_FILE', default=None)
+# 'sftp', 'azure' or 'filesystem'. Left empty, the SFTP host, then a valid
+# Azure key, then the local filesystem are tried in that order.
+MEDIA_STORAGE_BACKEND = media_storage.select_backend(
+    explicit=env('MEDIA_STORAGE_BACKEND', default=''),
+    sftp_host=SFTP_STORAGE_HOST,
+    azure_account_key=AZURE_ACCOUNT_KEY,
+)
 
 # Django 5.1 removed DEFAULT_FILE_STORAGE; without this STORAGES entry every
 # FileField and ImageField silently falls back to the local filesystem
 # (MEDIA_ROOT), which is wiped on each container deployment and cannot be
-# read by a local server connected to the shared database. Without Azure
-# credentials (local development) the filesystem remains the default.
+# read by a local server connected to the shared database.
 STORAGES = {
-    'default': {
-        'BACKEND': 'storages.backends.azure_storage.AzureStorage',
-        'OPTIONS': {
-            'azure_container': AZURE_MEDIA_CONTAINER,
-            'expiration_secs': AZURE_URL_EXPIRATION_SECS,
-        },
-    } if _azure_storage_configured(AZURE_ACCOUNT_KEY) else {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
-    },
+    'default': media_storage.media_storage(
+        MEDIA_STORAGE_BACKEND,
+        sftp_host=SFTP_STORAGE_HOST,
+        sftp_root=SFTP_STORAGE_ROOT,
+        sftp_connect=SFTP_STORAGE_PARAMS,
+        sftp_known_host_file=SFTP_KNOWN_HOST_FILE,
+        azure_container=AZURE_MEDIA_CONTAINER,
+        azure_url_expiry=AZURE_URL_EXPIRATION_SECS,
+    ),
     'staticfiles': {
         'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
     },
