@@ -444,10 +444,7 @@ class Teacher(TimeStampedModel):
 
 class Registration(TimeStampedModel):
 
-    NFE_PROGRAMMES = Choices(
-        ('BLN', _('Basic Literacy and Numeracy (BLN)')),
-        ('DIRASA', _('DIRASA')),
-    )
+    NFE_PROGRAMMES = Choices(*PROGRAMME_CHOICES)
 
     YES_NO = Choices(
         ('', _('----------')),
@@ -544,7 +541,7 @@ class Registration(TimeStampedModel):
         verbose_name=_('Child')
     )
     nfe_programme = models.CharField(
-        max_length=6,
+        max_length=20,
         choices=NFE_PROGRAMMES,
         blank=True,
         null=True,
@@ -734,6 +731,15 @@ class Registration(TimeStampedModel):
         if program:
             result = program.education_program
         return result
+
+    def get_nfe_programme_display(self):
+        historical_labels = {
+            'BLN': gettext_lazy('Basic Literacy and Numeracy (BLN)'),
+            'DIRASA': gettext_lazy('DIRASA'),
+        }
+        return dict(PROGRAMME_CHOICES).get(
+            self.nfe_programme, historical_labels.get(self.nfe_programme, self.nfe_programme),
+        )
 
     @property
     def class_section(self):

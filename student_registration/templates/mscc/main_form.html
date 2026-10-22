@@ -122,7 +122,7 @@
                         </li>
                     </ul>
 
-                    <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" data-location-options-url="{% url 'mscc:child_location_options' %}" enctype="multipart/form-data" novalidate>
+                    <form method="post" autocomplete="off" action="{{ form.helper.form_action }}" id="registrationForm" data-location-options-url="{% url 'mscc:child_location_options' %}" data-village-options-url="{% url 'mscc:child_location_options' %}" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
                         {% for h in form.hidden_fields %}{{ h }}{% endfor %}
 
@@ -139,6 +139,9 @@
                                 <div class="col-md-4">{{ form.child_birthday_month|as_crispy_field }}</div>
                                 <div class="col-md-4">{{ form.child_birthday_year|as_crispy_field }}</div>
 
+                                <div class="col-md-6">{{ form.child_country_of_birth|as_crispy_field }}</div>
+                                <div class="col-md-6">{{ form.child_place_of_birth|as_crispy_field }}</div>
+
                                 <div class="col-md-6">{{ form.child_gender|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_mother_fullname|as_crispy_field }}</div>
 
@@ -154,10 +157,7 @@
                                 <div class="col-md-6">{{ form.child_governorate|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_district|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_cadaster|as_crispy_field }}</div>
-                                <div class="col-md-6">{{ form.child_municipality|as_crispy_field }}</div>
                                 <div class="col-md-6">{{ form.child_village|as_crispy_field }}</div>
-                                <div class="col-md-6">{{ form.child_street|as_crispy_field }}</div>
-                                <div class="col-md-6">{{ form.child_building_camp|as_crispy_field }}</div>
                                 <div class="col-12">
                                     <div id="residential-location-error" class="alert alert-danger d-none mb-0" role="alert">
                                         {% trans "Could not load address options. Please try again." %}
@@ -198,6 +198,14 @@
                                                 <label class="small text-muted d-block">{% trans "DOB" %}</label>
                                                 <span id="summary-dob" class="fw-medium text-dark">-</span>
                                             </div>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "Country of Birth" %}</label>
+                                                <span id="summary-birth-country" class="fw-medium text-dark">-</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="small text-muted d-block">{% trans "Place of Birth" %}</label>
+                                                <span id="summary-birthplace" class="fw-medium text-dark">-</span>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-6">
                                                     <label class="small text-muted d-block">{% trans "Nationality" %}</label>
@@ -218,7 +226,7 @@
                                                 <span id="summary-phone" class="fw-medium text-dark">-</span>
                                             </div>
                                             <div class="mb-2">
-                                                <label class="small text-muted d-block">{% trans "Type of NFE Programme" %}</label>
+                                                <label class="small text-muted d-block">{% trans "Non-formal education programme" %}</label>
                                                 <span id="summary-programme" class="fw-medium text-dark">-</span>
                                             </div>
                                             <div>
@@ -269,7 +277,7 @@
         window.isAddPage = function() { return {% if not form.instance.id %}true{% else %}false{% endif %}; };
     </script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=47"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=48"></script>
     <script type="text/javascript">
         $(function() {
             let currentStep = 1;
@@ -278,11 +286,13 @@
             function updateSummary() {
                 $('#summary-name').text(`${$('#id_child_first_name').val()} ${$('#id_child_father_name').val()} ${$('#id_child_last_name').val()}`);
                 $('#summary-dob').text(`${$('#id_child_birthday_day').val()}/${$('#id_child_birthday_month').val()}/${$('#id_child_birthday_year').val()}`);
+                $('#summary-birth-country').text($('#id_child_country_of_birth option:selected').text() || '-');
+                $('#summary-birthplace').text($('#id_child_place_of_birth').val() || '-');
                 $('#summary-nat').text($('#id_child_nationality option:selected').text());
                 $('#summary-gender').text($('#id_child_gender').val());
                 $('#summary-phone').text($('#id_first_phone_number').val() || '{% trans "Not provided" %}');
                 $('#summary-programme').text($('#id_nfe_programme option:selected').text());
-                const addressFields = ['child_governorate', 'child_district', 'child_municipality', 'child_village', 'child_street', 'child_building_camp', 'child_cadaster'];
+                const addressFields = ['child_governorate', 'child_district', 'child_village', 'child_cadaster'];
                 $('#summary-address').text(addressFields.map(field => {
                     const input = $(`#id_${field}`);
                     if (!input.val()) return '';

@@ -37,6 +37,8 @@ class ChildSerializer(serializers.ModelSerializer):
             'birthday_month',
             'birthday_day',
             'birthday',
+            'country_of_birth',
+            'place_of_birth',
             'p_code',
             'address',
             'governorate',

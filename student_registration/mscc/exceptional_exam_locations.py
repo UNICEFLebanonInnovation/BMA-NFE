@@ -97,6 +97,36 @@ def town_choices_for_locations(governorate, district):
     return town_choices(*catalog_location_codes(governorate, district))
 
 
+def registered_village_code(governorate, district, value):
+    """Resolve a stored code or an unambiguous legacy name within its district."""
+    value = str(value or '').strip()
+    choices = dict(town_choices_for_locations(governorate, district))
+    if value in choices:
+        return value
+    if not value:
+        return ''
+    governorate_code, district_code = catalog_location_codes(governorate, district)
+    towns = RESIDENCE_CATALOG.get(governorate_code, {}).get('districts', {}).get(
+        district_code, {},
+    ).get('towns', ())
+    normalized_value = normalized_name(value)
+    matches = [
+        code for code, label in towns
+        if normalized_value in {
+            normalized_name(name) for name in (label,) + tuple(label.split(' / '))
+        }
+    ]
+    return matches[0] if len(matches) == 1 else ''
+
+
+def village_label_for_locations(governorate, district, value):
+    """Display a registration village in the active language, retaining legacy text."""
+    code = registered_village_code(governorate, district, value)
+    if code:
+        return str(dict(town_choices_for_locations(governorate, district))[code])
+    return str(value or '').strip()
+
+
 def positive_location_id(value):
     try:
         location_id = int(getattr(value, 'pk', value))

@@ -23,17 +23,20 @@ from student_registration.students.models import Nationality
 ADDRESS = {
     'child_governorate': 'بيروت',
     'child_district': 'بيروت',
-    'child_municipality': 'بلدية بيروت',
-    'child_village': 'الحمرا',
-    'child_street': 'شارع 12',
-    'child_building_camp': 'مبنى الأمل 2 / طابق 3',
+    'child_village': 'achrafieh',
     'child_cadaster': 'منطقة رأس بيروت العقارية',
 }
+BIRTH_DETAILS = {
+    'child_country_of_birth': 'LB',
+    'child_place_of_birth': 'بيروت',
+}
+PROGRAMMES = ('BLN Level 1', 'BLN Level 2', 'BLN Level 3')
 
 LOCATION_FIELDS = ('child_governorate', 'child_district', 'child_cadaster')
 
 REMOVED_FIELDS = {
     'informed_consent', 'child_p_code', 'child_address',
+    'child_municipality', 'child_street', 'child_building_camp',
     'source_of_identification', 'source_of_identification_specify',
     'partner_unique_number', 'child_living_arrangement',
     'child_marital_status', 'child_have_children', 'child_children_number',
@@ -159,8 +162,9 @@ class MSCCRegistrationWorkflowTests(TestCase):
             'child_birthday_day': '12',
             'child_disability': str(self.disability.pk),
             'first_phone_number': '70-123456',
-            'nfe_programme': 'BLN',
+            'nfe_programme': 'BLN Level 1',
             **self.address,
+            **BIRTH_DETAILS,
         }
         data.update(updates)
         return data
@@ -245,10 +249,16 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertEqual(data['child_governorate'], self.governorate.pk)
         self.assertEqual(data['child_district'], self.district.pk)
         self.assertEqual(data['child_cadaster'], self.cadaster.pk)
+        self.assertEqual(data['child_village'], 'achrafieh')
+        for field, value in BIRTH_DETAILS.items():
+            self.assertEqual(data[field], value)
 
         form = MSCCRegistrationForm(instance=registration)
         for field in LOCATION_FIELDS:
             self.assertEqual(str(form[field].value()), self.address[field])
+        self.assertEqual(form['child_village'].value(), 'achrafieh')
+        for field, value in BIRTH_DETAILS.items():
+            self.assertEqual(form[field].value(), value)
         self.assertEqual(list(form.fields['child_district'].queryset), [self.district])
         self.assertEqual(list(form.fields['child_cadaster'].queryset), [self.cadaster])
 
@@ -269,6 +279,15 @@ class MSCCRegistrationWorkflowTests(TestCase):
             'child_district': self.other_district.pk,
             'child_cadaster': self.other_cadaster.pk,
         }, partial=True)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('child_village', serializer.errors)
+
+        serializer = MSCCRegistrationSerializer(registration, data={
+            'child_governorate': self.other_governorate.pk,
+            'child_district': self.other_district.pk,
+            'child_cadaster': self.other_cadaster.pk,
+            'child_village': 'jdeideh',
+        }, partial=True)
         self.assertTrue(serializer.is_valid(), serializer.errors)
 
     def test_edit_can_move_child_to_a_different_complete_location_hierarchy(self):
@@ -278,7 +297,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
         response = self.client.post(url, self.registration_data(
             child_governorate=str(self.other_governorate.pk),
             child_district=str(self.other_district.pk),
-            child_village=self.other_cadaster.name,
+            child_village='jdeideh',
             child_cadaster=str(self.other_cadaster.pk),
         ))
 
@@ -287,6 +306,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertEqual(registration.child.governorate, self.other_governorate)
         self.assertEqual(registration.child.district, self.other_district)
         self.assertEqual(registration.child.cadaster, self.other_cadaster)
+        self.assertEqual(registration.child.village, 'jdeideh')
         response = self.client.get(url)
         form = response.context['form']
         self.assertEqual(list(form.fields['child_district'].queryset), [self.other_district])
@@ -304,39 +324,28 @@ class MSCCRegistrationWorkflowTests(TestCase):
                     [str(location.pk)],
                 )
 
-    def test_arbitrary_village_text_is_accepted_and_saved(self):
-        village = '  قرية مكتوبة يدوياً وغير مدرجة في المواقع  '
-        data = self.registration_data(child_village=village)
-        form = MSCCRegistrationForm(data=data)
+    def test_arbitrary_or_other_district_village_is_rejected_without_saving(self):
+        for village in ('قرية غير مدرجة في المواقع', 'jdeideh'):
+            with self.subTest(village=village):
+                data = self.registration_data(child_village=village)
+                form = MSCCRegistrationForm(data=data)
+                self.assertFalse(form.is_valid())
+                self.assertIn('child_village', form.errors)
+                serializer = MSCCRegistrationSerializer(data=data)
+                self.assertFalse(serializer.is_valid())
+                self.assertIn('child_village', serializer.errors)
 
-        self.assertTrue(form.is_valid(), form.errors.as_json())
-        self.assertEqual(form.cleaned_data['child_village'], village.strip())
+                response = self.client.post(reverse('mscc:child_add'), data)
 
-        response = self.client.post(reverse('mscc:child_add'), data)
+                self.assertEqual(response.status_code, 200)
+                self.assertIn('child_village', response.context['form'].errors)
+                self.assertFalse(Registration.objects.exists())
+                self.assertFalse(Child.objects.exists())
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Registration.objects.get().child.village, village.strip())
-
-    def test_free_text_village_is_preserved_when_the_registration_address_changes(self):
+    def test_changing_district_requires_selecting_a_village_in_the_new_district(self):
         registration = self.create_registration()
         child = registration.child
-        child.village = 'Legacy village absent from the location catalogue'
-        child.save(update_fields=['village'])
         url = reverse('mscc:child_edit', args=[registration.pk])
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['form']['child_village'].value(), child.village)
-
-        response = self.client.post(url, self.registration_data(
-            child_village=child.village, child_street='Updated legacy street',
-        ))
-
-        self.assertEqual(response.status_code, 302)
-        child.refresh_from_db()
-        self.assertEqual(child.village, 'Legacy village absent from the location catalogue')
-        self.assertEqual(child.street, 'Updated legacy street')
-
         moved_data = self.registration_data(
             child_governorate=str(self.other_governorate.pk),
             child_district=str(self.other_district.pk),
@@ -344,8 +353,17 @@ class MSCCRegistrationWorkflowTests(TestCase):
             child_village=child.village,
         )
         form = MSCCRegistrationForm(data=moved_data, instance=registration)
-        self.assertTrue(form.is_valid(), form.errors.as_json())
+        self.assertFalse(form.is_valid())
+        self.assertIn('child_village', form.errors)
 
+        response = self.client.post(url, moved_data)
+
+        self.assertEqual(response.status_code, 200)
+        child.refresh_from_db()
+        self.assertEqual(child.district_id, self.district.pk)
+        self.assertEqual(child.village, 'achrafieh')
+
+        moved_data['child_village'] = 'jdeideh'
         response = self.client.post(url, moved_data)
 
         self.assertEqual(response.status_code, 302)
@@ -353,8 +371,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertEqual(child.governorate_id, self.other_governorate.pk)
         self.assertEqual(child.district_id, self.other_district.pk)
         self.assertEqual(child.cadaster_id, self.other_cadaster.pk)
-        self.assertEqual(child.village, 'Legacy village absent from the location catalogue')
-        self.assertEqual(child.street, self.address['child_street'])
+        self.assertEqual(child.village, 'jdeideh')
 
     def test_location_option_endpoint_returns_typed_direct_children(self):
         url = reverse('mscc:child_location_options')
@@ -374,11 +391,32 @@ class MSCCRegistrationWorkflowTests(TestCase):
 
     def test_location_option_endpoint_has_no_choices_before_parent_is_selected(self):
         url = reverse('mscc:child_location_options')
-        for location_type in (2, 3):
+        for location_type in (2, 3, 'village'):
             with self.subTest(location_type=location_type):
                 response = self.client.get(url, {'type': location_type})
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(response.json(), {'results': []})
+
+    def test_village_options_use_district_catalogue_for_mscc_users_without_a_centre(self):
+        self.assertIsNone(self.user.center_id)
+        url = reverse('mscc:child_location_options')
+        for district, included, excluded in (
+            (self.district, 'achrafieh', 'jdeideh'),
+            (self.other_district, 'jdeideh', 'achrafieh'),
+        ):
+            with self.subTest(district=district.pk):
+                response = self.client.get(url, {'type': 'village', 'parent': district.pk})
+
+                self.assertEqual(response.status_code, 200)
+                choices = {item['id']: item['text'] for item in response.json()['results']}
+                self.assertIn(included, choices)
+                self.assertNotIn(excluded, choices)
+
+        with self.settings(LANGUAGE_CODE='ar'):
+            response = self.client.get(url, {'type': 'village', 'parent': self.district.pk})
+        self.assertEqual(response.status_code, 200)
+        choices = {item['id']: item['text'] for item in response.json()['results']}
+        self.assertEqual(choices['achrafieh'], 'الأشرفية')
 
     def test_location_option_endpoint_rejects_invalid_types_and_parents(self):
         url = reverse('mscc:child_location_options')
@@ -390,6 +428,11 @@ class MSCCRegistrationWorkflowTests(TestCase):
             {'type': 2, 'parent': 999999999},
             {'type': 2, 'parent': self.district.pk},
             {'type': 3, 'parent': self.governorate.pk},
+            {'type': 'village', 'parent': 'invalid'},
+            {'type': 'village', 'parent': 999999999},
+            {'type': 'village', 'parent': self.governorate.pk},
+            {'type': 'village', 'parent': self.cadaster.pk},
+            {'type': 'village', 'parent': self.orphan_district.pk},
         ):
             with self.subTest(params=params):
                 response = self.client.get(url, params)
@@ -414,9 +457,10 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertFalse(REMOVED_FIELDS.intersection(form.fields))
         self.assertTrue(form.fields['first_phone_number'].required)
         self.assertTrue(set(ADDRESS).issubset(form.fields))
+        self.assertTrue(set(BIRTH_DETAILS).issubset(form.fields))
 
-    def test_each_address_field_and_programme_require_a_nonblank_value(self):
-        for field in (*ADDRESS, 'nfe_programme'):
+    def test_each_address_birth_field_and_programme_require_a_nonblank_value(self):
+        for field in (*ADDRESS, *BIRTH_DETAILS, 'nfe_programme'):
             for value in (None, '', '   '):
                 with self.subTest(field=field, value=value):
                     data = self.registration_data()
@@ -429,15 +473,15 @@ class MSCCRegistrationWorkflowTests(TestCase):
                     self.assertFalse(form.is_valid())
                     self.assertIn(field, form.errors)
 
-    def test_bln_and_dirasa_are_the_only_nonblank_programme_choices(self):
+    def test_three_bln_levels_are_the_only_nonblank_programme_choices(self):
         form = MSCCRegistrationForm()
 
         self.assertTrue(form.fields['nfe_programme'].required)
         self.assertEqual(
             {value for value, label in form.fields['nfe_programme'].choices if value},
-            {'BLN', 'DIRASA'},
+            set(PROGRAMMES),
         )
-        for programme in ('BLN', 'DIRASA'):
+        for programme in PROGRAMMES:
             with self.subTest(programme=programme):
                 form = MSCCRegistrationForm(
                     data=self.registration_data(nfe_programme=programme),
@@ -445,10 +489,35 @@ class MSCCRegistrationWorkflowTests(TestCase):
                 self.assertTrue(form.is_valid(), form.errors.as_json())
 
     def test_invalid_programme_is_rejected(self):
-        form = MSCCRegistrationForm(data=self.registration_data(nfe_programme='ALP'))
+        for programme in ('ALP', 'BLN', 'DIRASA', 'BLN Level 4'):
+            with self.subTest(programme=programme):
+                data = self.registration_data(nfe_programme=programme)
+                form = MSCCRegistrationForm(data=data)
+                self.assertFalse(form.is_valid())
+                self.assertIn('nfe_programme', form.errors)
+                serializer = MSCCRegistrationSerializer(data=data)
+                self.assertFalse(serializer.is_valid())
+                self.assertIn('nfe_programme', serializer.errors)
 
-        self.assertFalse(form.is_valid())
-        self.assertIn('nfe_programme', form.errors)
+    def test_country_choices_and_place_of_birth_length_are_enforced(self):
+        field = MSCCRegistrationForm().fields['child_country_of_birth']
+        self.assertEqual({value for value, label in field.choices if value}, {'LB', 'SY', 'OTHER'})
+        for country in ('LB', 'SY', 'OTHER'):
+            with self.subTest(country=country):
+                form = MSCCRegistrationForm(data=self.registration_data(child_country_of_birth=country))
+                self.assertTrue(form.is_valid(), form.errors.as_json())
+        for updates, error in (
+            ({'child_country_of_birth': 'invalid'}, 'child_country_of_birth'),
+            ({'child_place_of_birth': 'A' * 101}, 'child_place_of_birth'),
+        ):
+            with self.subTest(updates=updates):
+                data = self.registration_data(**updates)
+                form = MSCCRegistrationForm(data=data)
+                self.assertFalse(form.is_valid())
+                self.assertIn(error, form.errors)
+                serializer = MSCCRegistrationSerializer(data=data)
+                self.assertFalse(serializer.is_valid())
+                self.assertIn(error, serializer.errors)
 
     def test_remaining_birthdate_and_phone_validation_is_enforced(self):
         for updates, error in (
@@ -462,7 +531,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
                 self.assertIn(error, form.errors)
 
     def test_serializer_also_rejects_missing_address_and_invalid_programme(self):
-        for field in ADDRESS:
+        for field in (*ADDRESS, *BIRTH_DETAILS):
             with self.subTest(field=field):
                 data = self.registration_data()
                 del data[field]
@@ -476,8 +545,8 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn('nfe_programme', serializer.errors)
 
-    def test_create_saves_separate_address_fields_and_both_programme_options(self):
-        for programme in ('BLN', 'DIRASA'):
+    def test_create_saves_address_birth_details_and_all_three_programme_options(self):
+        for programme in PROGRAMMES:
             with self.subTest(programme=programme):
                 response = self.client.post(
                     reverse('mscc:child_add'),
@@ -491,6 +560,10 @@ class MSCCRegistrationWorkflowTests(TestCase):
                 )
                 self.assertEqual(registration.nfe_programme, programme)
                 self.assertEqual(registration.child.first_phone_number, '70-123456')
+                for field, value in BIRTH_DETAILS.items():
+                    self.assertEqual(getattr(registration.child, field[6:]), value)
+                for field in ('municipality', 'street', 'building_camp'):
+                    self.assertIsNone(getattr(registration.child, field))
                 for field, value in self.address.items():
                     saved = getattr(registration.child, field[6:])
                     if field in LOCATION_FIELDS:
@@ -499,8 +572,8 @@ class MSCCRegistrationWorkflowTests(TestCase):
                     else:
                         self.assertEqual(saved, value)
 
-        self.assertEqual(Registration.objects.count(), 2)
-        self.assertEqual(Child.objects.count(), 2)
+        self.assertEqual(Registration.objects.count(), 3)
+        self.assertEqual(Child.objects.count(), 3)
 
     def test_missing_mandatory_address_does_not_create_a_partial_record(self):
         data = self.registration_data()
@@ -513,7 +586,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertFalse(Registration.objects.exists())
         self.assertFalse(Child.objects.exists())
 
-    def test_edit_roundtrip_prefills_and_updates_address_programme_and_phone(self):
+    def test_edit_roundtrip_prefills_and_updates_birth_details_programme_and_phone(self):
         registration = self.create_registration()
         url = reverse('mscc:child_edit', args=[registration.pk])
 
@@ -523,20 +596,24 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertFalse(form.is_bound)
         for field, value in self.address.items():
             self.assertEqual(str(form[field].value()), value)
+        for field, value in BIRTH_DETAILS.items():
+            self.assertEqual(form[field].value(), value)
         self.assertEqual(list(form.fields['child_district'].queryset), [self.district])
         self.assertEqual(list(form.fields['child_cadaster'].queryset), [self.cadaster])
-        self.assertEqual(form['nfe_programme'].value(), 'BLN')
+        self.assertEqual(form['nfe_programme'].value(), 'BLN Level 1')
 
         response = self.client.post(url, self.registration_data(
-            child_street='شارع 24', child_building_camp='مخيم 7',
-            nfe_programme='DIRASA', first_phone_number='71-654321',
+            child_country_of_birth='SY', child_place_of_birth='دمشق',
+            child_village='ras_beirut',
+            nfe_programme='BLN Level 2', first_phone_number='71-654321',
         ))
 
         self.assertEqual(response.status_code, 302)
         registration.refresh_from_db()
-        self.assertEqual(registration.nfe_programme, 'DIRASA')
-        self.assertEqual(registration.child.street, 'شارع 24')
-        self.assertEqual(registration.child.building_camp, 'مخيم 7')
+        self.assertEqual(registration.nfe_programme, 'BLN Level 2')
+        self.assertEqual(registration.child.country_of_birth, 'SY')
+        self.assertEqual(registration.child.place_of_birth, 'دمشق')
+        self.assertEqual(registration.child.village, 'ras_beirut')
         self.assertEqual(registration.child.first_phone_number, '71-654321')
         self.assertEqual(Registration.objects.count(), 1)
         self.assertEqual(Child.objects.count(), 1)
@@ -546,6 +623,8 @@ class MSCCRegistrationWorkflowTests(TestCase):
         child = registration.child
         existing_child_values = {
             'address': 'Legacy full address', 'p_code': 'LB-01-001',
+            'municipality': 'Saved municipality', 'street': 'Saved street',
+            'building_camp': 'Saved building or camp',
             'governorate_legacy': 'Original governorate text',
             'district_legacy': 'Original district text',
             'cadaster_legacy': 'Original cadaster text',
@@ -573,7 +652,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
             setattr(registration, name, value)
         registration.save()
 
-        data = self.registration_data(nfe_programme='DIRASA')
+        data = self.registration_data(nfe_programme='BLN Level 2')
         data.update({name: 'forged value' for name in REMOVED_FIELDS})
         data['informed_consent'] = SimpleUploadedFile('forged.txt', b'forged consent')
 
@@ -584,7 +663,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 302)
         registration.refresh_from_db()
         child.refresh_from_db()
-        self.assertEqual(registration.nfe_programme, 'DIRASA')
+        self.assertEqual(registration.nfe_programme, 'BLN Level 2')
         for name, value in existing_child_values.items():
             with self.subTest(child_field=name):
                 self.assertEqual(getattr(child, name), value)
@@ -592,6 +671,37 @@ class MSCCRegistrationWorkflowTests(TestCase):
             with self.subTest(registration_field=name):
                 self.assertEqual(str(registration.informed_consent) if name == 'informed_consent'
                                  else getattr(registration, name), value)
+
+    def test_partial_serializer_preserves_legacy_details_and_ignores_removed_address_writes(self):
+        registration = self.create_registration()
+        child = registration.child
+        existing = {
+            'village': 'Unlisted legacy village',
+            'country_of_birth': None, 'place_of_birth': None,
+            'municipality': 'Saved municipality', 'street': 'Saved street',
+            'building_camp': 'Saved building or camp',
+        }
+        for field, value in existing.items():
+            setattr(child, field, value)
+        child.save(update_fields=list(existing))
+        serializer = MSCCRegistrationSerializer(registration, data={
+            'first_phone_number': '71-654321',
+            'child_municipality': 'Forged municipality',
+            'child_street': 'Forged street',
+            'child_building_camp': 'Forged building',
+        }, partial=True)
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        serializer.save()
+
+        child.refresh_from_db()
+        self.assertEqual(child.first_phone_number, '71-654321')
+        for field, value in existing.items():
+            with self.subTest(field=field):
+                self.assertEqual(getattr(child, field), value)
+        representation = MSCCRegistrationSerializer(registration).data
+        for field in ('municipality', 'street', 'building_camp'):
+            self.assertEqual(representation['child_' + field], existing[field])
 
     def test_legacy_records_can_remain_null_until_registration_is_edited(self):
         child = Child.objects.create(
@@ -605,7 +715,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
         registration.refresh_from_db()
 
         self.assertIsNone(registration.nfe_programme)
-        for field in ADDRESS:
+        for field in (*ADDRESS, *BIRTH_DETAILS):
             self.assertIsNone(getattr(child, field[6:]))
 
         response = self.client.get(reverse('mscc:child_edit', args=[registration.pk]))
@@ -616,6 +726,8 @@ class MSCCRegistrationWorkflowTests(TestCase):
         self.assertEqual(form['child_first_name'].value(), 'Legacy')
         self.assertFalse(form['nfe_programme'].value())
         self.assertFalse(form['child_governorate'].value())
+        for field in BIRTH_DETAILS:
+            self.assertFalse(form[field].value())
 
     def test_rendered_registration_omits_sections_and_has_required_new_controls(self):
         response = self.client.get(reverse('mscc:child_add'))
@@ -625,14 +737,14 @@ class MSCCRegistrationWorkflowTests(TestCase):
         controls = rendered.controls
         self.assertFalse(REMOVED_FIELDS.intersection(controls))
         self.assertIn('first_phone_number', controls)
-        for field in (*ADDRESS, 'nfe_programme'):
+        for field in (*ADDRESS, *BIRTH_DETAILS, 'nfe_programme'):
             with self.subTest(field=field):
                 self.assertIn(field, controls)
                 self.assertIn('required', controls[field])
-        for field in LOCATION_FIELDS:
+        for field in (*LOCATION_FIELDS, 'child_village', 'child_country_of_birth'):
             self.assertEqual(rendered.tags[field], 'select')
-        self.assertEqual(rendered.tags['child_village'], 'input')
-        self.assertEqual(controls['child_village']['type'], 'text')
+        self.assertEqual(rendered.tags['child_place_of_birth'], 'input')
+        self.assertEqual(controls['child_place_of_birth']['type'], 'text')
         self.assertNotContains(response, 'Identification Documentation')
         self.assertNotContains(response, 'Labour &amp; Vulnerability')
 
@@ -654,7 +766,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
         ):
             with self.subTest(field=field):
                 self.assertIn(field, form.fields)
-        self.assertFalse(set(ADDRESS).intersection(form.fields))
+        self.assertFalse(set((*ADDRESS, *BIRTH_DETAILS)).intersection(form.fields))
         self.assertNotIn('nfe_programme', form.fields)
         self.assertTrue(form.fields['have_labour'].required)
 

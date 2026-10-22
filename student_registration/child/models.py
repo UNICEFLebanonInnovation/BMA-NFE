@@ -7,7 +7,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django.db.models import JSONField
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, gettext_lazy
 
 from student_registration.students.models import Nationality, IDType
 from student_registration.clm.models import Disability, EducationalLevel
@@ -158,8 +158,19 @@ class Child(TimeStampedModel):
         null=True,
         verbose_name=_('Registered child Home Address')
     )
+    country_of_birth = models.CharField(
+        max_length=5, blank=True, null=True,
+        choices=(('LB', gettext_lazy('Lebanon')), ('SY', gettext_lazy('Syria')),
+                 ('OTHER', gettext_lazy('Other'))),
+        verbose_name=gettext_lazy('Country of Birth'),
+    )
+    place_of_birth = models.CharField(
+        max_length=100, blank=True, null=True,
+        verbose_name=gettext_lazy('Place of Birth'),
+        help_text=gettext_lazy('Place of birth similar in the Official ID'),
+    )
     # Legacy registrations may not have a structured address yet. New MSCC
-    # registrations require all seven components through their registration form.
+    # registrations validate the current address fields through their form.
     governorate_legacy = models.CharField(
         max_length=255, blank=True, null=True, verbose_name=_('Governorate (محافظة)')
     )
@@ -534,6 +545,12 @@ class Child(TimeStampedModel):
     )
 
     cash_programmes = JSONField(default=dict)
+
+    @property
+    def village_display(self):
+        from student_registration.mscc.exceptional_exam_locations import village_label_for_locations
+
+        return village_label_for_locations(self.governorate, self.district, self.village)
 
     def __str__(self):
         if not self.first_name:

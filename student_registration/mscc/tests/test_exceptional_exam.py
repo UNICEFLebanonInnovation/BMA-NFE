@@ -49,8 +49,11 @@ REQUIRED_FIELDS = (
     'programme', 'grade', 'math_language', 'language_exam',
 )
 REGISTRATION_RESIDENCE_FIELDS = ('governorate', 'district')
+REGISTRATION_SOURCE_FIELDS = (
+    'programme', 'governorate', 'district', 'nearest_town', 'country_of_birth', 'place_of_birth',
+)
 EDITABLE_REQUIRED_FIELDS = tuple(
-    name for name in REQUIRED_FIELDS if name not in REGISTRATION_RESIDENCE_FIELDS
+    name for name in REQUIRED_FIELDS if name not in REGISTRATION_SOURCE_FIELDS
 )
 EXPLICIT_PROGRAMME_GRADES = (
     ('BLN Level 1', '2'), ('BLN Level 2', '3'), ('BLN Level 3', '4'),
@@ -227,12 +230,13 @@ class ExceptionalExamWorkflowTests(TestCase):
             birthday_year=str(date.today().year - 8), birthday_month='1', birthday_day='1',
             first_phone_number='70-123456', street='Original residential street',
             governorate=cls.governorate, district=cls.district,
+            village='achrafieh', country_of_birth='LB', place_of_birth='Beirut',
         )
         cls.round = Round.objects.create(name='Exam registration round', year=2026, current_year=True)
         cls.other_round = Round.objects.create(name='Previous registration round', year=2025)
         cls.registration = Registration.objects.create(
             child=cls.child, partner=cls.partner, center=cls.center, round=cls.round,
-            nfe_programme='BLN', source_of_identification='Other Sources',
+            nfe_programme='BLN Level 1', source_of_identification='Other Sources',
         )
         cls.education_service = EducationService.objects.create(
             registration=cls.registration, education_program='BLN Level 1',
@@ -241,15 +245,17 @@ class ExceptionalExamWorkflowTests(TestCase):
             child=Child.objects.create(
                 first_name='Second', last_name='Child',
                 governorate=cls.governorate, district=cls.district,
+                village='achrafieh', country_of_birth='LB', place_of_birth='Beirut',
             ),
-            partner=cls.partner, center=cls.second_center, nfe_programme='DIRASA',
+            partner=cls.partner, center=cls.second_center, nfe_programme='BLN Level 1',
         )
         cls.outside_registration = Registration.objects.create(
             child=Child.objects.create(
                 first_name='Outside', last_name='Child',
                 governorate=cls.governorate, district=cls.district,
+                village='achrafieh', country_of_birth='LB', place_of_birth='Beirut',
             ),
-            partner=cls.other_partner, center=cls.outside_center, nfe_programme='DIRASA',
+            partner=cls.other_partner, center=cls.outside_center, nfe_programme='BLN Level 1',
         )
         cls.deleted_registration = Registration.objects.create(
             child=cls.child, partner=cls.partner, center=cls.center, deleted=True,
@@ -305,10 +311,24 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.education_service.education_program = program
         self.education_service.save(update_fields=['education_program'])
 
-    def set_registered_residence(self, governorate, district):
+    def set_registered_residence(self, governorate, district, village=None):
         self.child.governorate = governorate
         self.child.district = district
-        self.child.save(update_fields=('governorate', 'district'))
+        fields = ['governorate', 'district']
+        if village is not None:
+            self.child.village = village
+            fields.append('village')
+        self.child.save(update_fields=fields)
+        self.registration.refresh_from_db()
+
+    def set_registered_details(self, programme=None, **child_details):
+        if programme is not None:
+            self.registration.nfe_programme = programme
+            self.registration.save(update_fields=['nfe_programme'])
+        for name, value in child_details.items():
+            setattr(self.child, name, value)
+        if child_details:
+            self.child.save(update_fields=list(child_details))
         self.registration.refresh_from_db()
 
     def create_exam(self, registration=None, **updates):
@@ -321,88 +341,81 @@ class ExceptionalExamWorkflowTests(TestCase):
             **data,
         )
 
-    def test_get_uses_saved_education_program_without_an_extra_level_question(self):
+    def test_get_uses_required_registration_details_without_an_extra_level_question(self):
+        self.set_education_program('BLN Level 3')
         response = self.client.get(self.exam_url())
         self.assertEqual(response.status_code, 200)
         form = response.context['form']
         self.assertEqual(form['programme'].value(), 'BLN Level 1')
         self.assertEqual(form['grade'].value(), '2')
         self.assertEqual(tuple(value for value, _ in form.fields['grade'].choices if value), ('2',))
-        self.assertEqual(
-            set(form.grade_choices_by_programme),
-            {'', 'BLN Level 1', 'BLN Level 2', 'BLN Level 3'},
-        )
         for programme, grade in EXPLICIT_PROGRAMME_GRADES:
             self.assertEqual(
-                tuple(option['id'] for option in form.grade_choices_by_programme[programme]),
-                (grade,),
+                tuple(option['id'] for option in form.grade_choices_by_programme[programme]), (grade,),
             )
         self.assertEqual(form['governorate'].value(), self.governorate.pk)
         self.assertEqual(form['district'].value(), self.district.pk)
-        self.assertIn(form['country_of_birth'].value(), ('', None))
+        self.assertEqual(form['nearest_town'].value(), 'achrafieh')
+        self.assertEqual(form['country_of_birth'].value(), 'LB')
+        self.assertEqual(form['place_of_birth'].value(), 'Beirut')
         self.assertEqual(set(form.fields), set(REQUIRED_FIELDS))
+        self.assertTrue(form.registration_details_valid)
         self.assertNotIn('bln_level', form.fields)
         self.assertNotIn('bln_level', {field.name for field in ExceptionalExam._meta.fields})
         self.assertNotContains(response, 'id_bln_level')
-        for field in form.fields.values():
+        for name, field in form.fields.items():
             self.assertTrue(field.required)
+            self.assertEqual(field.disabled, name in REGISTRATION_SOURCE_FIELDS)
             self.assertRegex(str(field.label), '[A-Za-z]')
             self.assertNotRegex(str(field.label), '[\u0600-\u06ff]')
         self.assertFalse(ExceptionalExam.objects.exists())
 
-    def test_explicit_bln_programmes_save_and_reload_without_an_education_service(self):
+    def test_registered_bln_levels_save_and_reload_without_an_education_service(self):
         EducationService.objects.filter(registration=self.registration).delete()
         for programme, grade in EXPLICIT_PROGRAMME_GRADES:
             with self.subTest(programme=programme):
-                response = self.client.post(self.exam_url(), self.exam_data(
-                    programme=programme, grade=grade,
-                ))
+                self.set_registered_details(programme=programme)
+                response = self.client.post(self.exam_url(), self.exam_data(grade=grade))
                 self.assertEqual(response.status_code, 302)
                 exam = ExceptionalExam.objects.get(registration=self.registration)
                 self.assertEqual((exam.programme, exam.grade), (programme, grade))
                 exam.full_clean()
-                edit = self.client.get(self.exam_url())
-                form = edit.context['form']
+                form = self.client.get(self.exam_url()).context['form']
                 self.assertEqual(form['programme'].value(), programme)
                 self.assertEqual(form['grade'].value(), grade)
-                self.assertEqual(
-                    tuple(value for value, _ in form.fields['grade'].choices if value),
-                    (grade,),
-                )
+                self.assertEqual(tuple(value for value, _ in form.fields['grade'].choices if value), (grade,))
                 self.assertNotIn('bln_level', form.fields)
-                self.assertNotIn('bln_level', {field.name for field in exam._meta.fields})
 
-    def test_explicit_bln_programmes_reject_mismatched_grades_in_form_model_and_post(self):
+    def test_registered_bln_levels_reject_mismatched_grades_in_form_model_and_post(self):
         for programme, allowed_grade in EXPLICIT_PROGRAMME_GRADES:
+            self.set_registered_details(programme=programme)
             for grade in {'1', '2', '3', '4', '5', '6', '7', '8'} - {allowed_grade}:
                 with self.subTest(programme=programme, grade=grade):
                     data = self.exam_data(programme=programme, grade=grade)
                     form = ExceptionalExamForm(data=data, registration=self.registration)
                     self.assertFalse(form.is_valid())
                     self.assertIn('grade', form.errors)
-                    for parent in ('governorate', 'district'):
+                    for parent in REGISTRATION_RESIDENCE_FIELDS:
                         data[parent + '_id'] = data.pop(parent)
                     exam = ExceptionalExam(registration=self.registration, **data)
                     with self.assertRaises(ValidationError) as error:
                         exam.full_clean()
                     self.assertIn('grade', error.exception.message_dict)
             wrong_grade = next(grade for grade in ('2', '3', '4') if grade != allowed_grade)
-            response = self.client.post(self.exam_url(), self.exam_data(
-                programme=programme, grade=wrong_grade,
-            ))
+            response = self.client.post(self.exam_url(), self.exam_data(programme=programme, grade=wrong_grade))
             self.assertEqual(response.status_code, 200)
             self.assertIn('grade', response.context['form'].errors)
             self.assertFalse(ExceptionalExam.objects.exists())
 
-    def test_explicit_programme_selection_controls_grade_without_rewriting_saved_service(self):
+    def test_registered_programme_controls_grade_despite_forged_programme_and_service(self):
         self.set_education_program('BLN Level 3')
         rejected = self.client.post(self.exam_url(), self.exam_data(
-            programme='BLN Level 1', grade='4', education_program='BLN Level 3', bln_level='3',
+            programme='BLN Level 3', grade='4', education_program='BLN Level 3', bln_level='3',
         ))
         self.assertEqual(rejected.status_code, 200)
         self.assertIn('grade', rejected.context['form'].errors)
         accepted = self.client.post(self.exam_url(), self.exam_data(
-            programme='BLN Level 1', grade='2', education_program='BLN Level 3', bln_level='3',
+            programme='BLN Level 3', grade='2', education_program='BLN Level 3', bln_level='3',
         ))
         self.assertEqual(accepted.status_code, 302)
         exam = ExceptionalExam.objects.get(registration=self.registration)
@@ -410,9 +423,10 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.education_service.refresh_from_db()
         self.registration.refresh_from_db()
         self.assertEqual(self.education_service.education_program, 'BLN Level 3')
-        self.assertEqual(self.registration.nfe_programme, 'BLN')
+        self.assertEqual(self.registration.nfe_programme, 'BLN Level 1')
 
     def test_explicit_bln_programmes_do_not_depend_on_age_or_birthdate(self):
+        self.set_registered_details(programme='BLN Level 2')
         for birthday in ('', str(date.today().year - 6), str(date.today().year - 15)):
             self.child.birthday_year = birthday
             self.child.save(update_fields=['birthday_year'])
@@ -425,6 +439,7 @@ class ExceptionalExamWorkflowTests(TestCase):
                 self.assertEqual((exam.programme, exam.grade), ('BLN Level 2', '3'))
 
     def test_explicit_bln_programme_labels_follow_the_ui_language_on_edit_and_profile(self):
+        self.set_registered_details(programme='BLN Level 2')
         exam = self.create_exam(programme='BLN Level 2', grade='3')
         for language, programme_label, grade_label in (
             ('en', 'BLN Level 2', 'Grade 3'),
@@ -446,21 +461,17 @@ class ExceptionalExamWorkflowTests(TestCase):
                 self.assertContains(profile, programme_label)
                 self.assertContains(profile, grade_label)
 
-    def test_new_bln_application_uses_only_the_latest_saved_education_program(self):
-        for program, grade in (
-            ('BLN Level 1', '2'), ('BLN Level 2', '3'), ('BLN Level 3', '4'),
-            ('YBLN Level 1', ''), ('ALP Level 1', ''), ('', ''),
-        ):
-            with self.subTest(program=program):
-                EducationService.objects.create(registration=self.registration, education_program=program)
+    def test_new_application_uses_registration_programme_despite_education_service_changes(self):
+        self.set_registered_details(programme='BLN Level 2')
+        for programme in ('BLN Level 1', 'BLN Level 3', 'YBLN Level 1', 'ALP Level 1', ''):
+            with self.subTest(service_programme=programme):
+                EducationService.objects.create(registration=self.registration, education_program=programme)
                 form = ExceptionalExamForm(registration=self.registration)
-                self.assertEqual(form['programme'].value() or '', program if grade else '')
-                allowed = tuple(code for code, _ in form.fields['grade'].choices if code)
-                self.assertEqual(allowed, (grade,) if grade else ())
-                self.assertNotIn('bln_level', form.fields)
+                self.assertEqual(form['programme'].value(), 'BLN Level 2')
+                self.assertEqual(tuple(code for code, _ in form.fields['grade'].choices if code), ('3',))
         EducationService.objects.filter(registration=self.registration).delete()
         form = ExceptionalExamForm(registration=self.registration)
-        self.assertEqual(tuple(code for code, _ in form.fields['grade'].choices if code), ())
+        self.assertEqual((form['programme'].value(), form['grade'].value()), ('BLN Level 2', '3'))
 
     def test_form_labels_help_and_options_follow_the_selected_ui_language(self):
         expected = {
@@ -546,7 +557,7 @@ class ExceptionalExamWorkflowTests(TestCase):
             self.set_language(language)
             for field, value, message in (
                 ('math_language', '', required_message),
-                ('programme', 'ALP', invalid_message),
+                ('language_exam', 'ar', invalid_message),
             ):
                 with self.subTest(language=language, field=field):
                     response = self.client.post(self.exam_url(), self.exam_data(**{field: value}))
@@ -574,37 +585,41 @@ class ExceptionalExamWorkflowTests(TestCase):
                 self.assertEqual(response.context['form']['grade'].value(), '2')
         self.assertEqual(ExceptionalExam.objects.count(), 1)
 
-    def test_legacy_programmes_cannot_be_submitted_or_validated(self):
+    def test_legacy_registered_programmes_require_registration_update_and_cannot_be_forged(self):
         for programme in ('BLN', 'DIRASA'):
-            for grade in ('2', '3', '4'):
-                with self.subTest(programme=programme, grade=grade):
-                    data = self.exam_data(programme=programme, grade=grade)
-                    form = ExceptionalExamForm(data=data, registration=self.registration)
-                    self.assertFalse(form.is_valid())
-                    self.assertIn('programme', form.errors)
-                    response = self.client.post(self.exam_url(), data)
-                    self.assertEqual(response.status_code, 200)
-                    self.assertIn('programme', response.context['form'].errors)
-                    for parent in REGISTRATION_RESIDENCE_FIELDS:
-                        data[parent + '_id'] = data.pop(parent)
-                    exam = ExceptionalExam(registration=self.registration, **data)
-                    with self.assertRaises(ValidationError) as error:
-                        exam.full_clean()
-                    self.assertIn('programme', error.exception.message_dict)
+            with self.subTest(programme=programme):
+                self.set_registered_details(programme=programme)
+                data = self.exam_data(programme='BLN Level 1')
+                response = self.client.post(self.exam_url(), data)
+                self.assertEqual(response.status_code, 200)
+                form = response.context['form']
+                self.assertIn('programme', form.errors)
+                self.assertFalse(form.registration_details_valid)
+                self.assertIn("Complete the required programme, address, and birth details in the child's registration first.", form.errors['programme'])
+                data['programme'] = programme
+                for parent in REGISTRATION_RESIDENCE_FIELDS:
+                    data[parent + '_id'] = data.pop(parent)
+                exam = ExceptionalExam(registration=self.registration, **data)
+                with self.assertRaises(ValidationError) as error:
+                    exam.full_clean()
+                self.assertIn('programme', error.exception.message_dict)
         self.assertFalse(ExceptionalExam.objects.exists())
 
-    def test_missing_or_unsupported_saved_service_leaves_new_programme_unselected(self):
-        for programme in ('', 'YBLN Level 1', 'ALP Level 1', 'RS Grade 2'):
-            EducationService.objects.create(registration=self.registration, education_program=programme)
-            with self.subTest(service_programme=programme):
-                form = ExceptionalExamForm(registration=self.registration)
+    def test_missing_or_unsupported_registered_programme_has_no_service_or_exam_fallback(self):
+        exam = self.create_exam()
+        self.set_education_program('BLN Level 2')
+        for programme in ('', 'BLN', 'DIRASA', 'ALP', 'BLN Level 4'):
+            self.set_registered_details(programme=programme)
+            with self.subTest(registration_programme=programme):
+                response = self.client.get(self.exam_url())
+                form = response.context['form']
                 self.assertIn(form['programme'].value(), ('', None))
                 self.assertEqual(tuple(code for code, _ in form.fields['grade'].choices if code), ())
-                response = self.client.post(self.exam_url(), self.exam_data())
-                self.assertEqual(response.status_code, 302)
-        EducationService.objects.filter(registration=self.registration).delete()
-        form = ExceptionalExamForm(registration=self.registration)
-        self.assertIn(form['programme'].value(), ('', None))
+                posted = self.client.post(self.exam_url(), self.exam_data())
+                self.assertEqual(posted.status_code, 200)
+                self.assertIn('programme', posted.context['form'].errors)
+                exam.refresh_from_db()
+                self.assertEqual((exam.programme, exam.grade), ('BLN Level 1', '2'))
 
 
 
@@ -627,19 +642,21 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(self.education_service.education_program, 'BLN Level 1')
         self.assertEqual(self.child.birthday_year, str(date.today().year - 8))
 
-    def test_saved_exam_selection_takes_precedence_when_education_service_changes(self):
+    def test_registration_programme_change_updates_edit_but_not_saved_exam_until_valid_save(self):
         exam = self.create_exam()
-        EducationService.objects.create(registration=self.registration, education_program='BLN Level 3')
+        self.set_registered_details(programme='BLN Level 3')
         edit = self.client.get(self.exam_url())
-        self.assertEqual(edit.context['form']['programme'].value(), 'BLN Level 1')
-        self.assertEqual(tuple(code for code, _ in edit.context['form'].fields['grade'].choices if code), ('2',))
+        self.assertEqual(edit.context['form']['programme'].value(), 'BLN Level 3')
+        self.assertEqual(edit.context['form']['grade'].value(), '4')
+        self.assertEqual(tuple(code for code, _ in edit.context['form'].fields['grade'].choices if code), ('4',))
         exam.refresh_from_db()
         self.assertEqual((exam.programme, exam.grade), ('BLN Level 1', '2'))
-        rejected = self.client.post(self.exam_url(), self.exam_data(grade='4', bln_level='3'))
+        rejected = self.client.post(self.exam_url(), self.exam_data(programme='BLN Level 1', grade='2'))
         self.assertEqual(rejected.status_code, 200)
+        self.assertIn('grade', rejected.context['form'].errors)
         exam.refresh_from_db()
-        self.assertEqual(exam.grade, '2')
-        saved = self.client.post(self.exam_url(), self.exam_data(programme='BLN Level 3', grade='4'))
+        self.assertEqual((exam.programme, exam.grade), ('BLN Level 1', '2'))
+        saved = self.client.post(self.exam_url(), self.exam_data(programme='BLN Level 1', grade='4'))
         self.assertEqual(saved.status_code, 302)
         exam.refresh_from_db()
         self.assertEqual((exam.programme, exam.grade), ('BLN Level 3', '4'))
@@ -654,38 +671,36 @@ class ExceptionalExamWorkflowTests(TestCase):
                 self.assertIn(field, response.context['form'].errors)
                 self.assertFalse(ExceptionalExam.objects.exists())
 
-    def test_required_fields_render_browser_validation_and_reject_whitespace_birthplace(self):
+    def test_required_fields_render_browser_validation_and_blank_registered_birthplace_blocks_save(self):
         form = ExceptionalExamForm(registration=self.registration)
-        for field in EDITABLE_REQUIRED_FIELDS:
+        for field in REQUIRED_FIELDS:
             with self.subTest(field=field):
                 self.assertIn('required', form[field].as_widget())
-        for field in REGISTRATION_RESIDENCE_FIELDS:
+        for field in REGISTRATION_SOURCE_FIELDS:
             with self.subTest(readonly_field=field):
                 self.assertTrue(form.fields[field].disabled)
                 self.assertIn('disabled', form[field].as_widget())
-        response = self.client.post(self.exam_url(), self.exam_data(place_of_birth='   '))
+        self.set_registered_details(place_of_birth='   ')
+        response = self.client.post(self.exam_url(), self.exam_data(place_of_birth='Forged valid place'))
         self.assertEqual(response.status_code, 200)
         self.assertIn('place_of_birth', response.context['form'].errors)
         self.assertFalse(ExceptionalExam.objects.exists())
 
-    def test_country_of_birth_saves_the_selected_country_without_inference(self):
+    def test_country_of_birth_copies_registered_country_without_inference_or_post_override(self):
         for country in ('LB', 'SY', 'OTHER'):
             with self.subTest(country=country):
-                response = self.client.post(self.exam_url(), self.exam_data(country_of_birth=country))
+                self.set_registered_details(country_of_birth=country)
+                response = self.client.post(self.exam_url(), self.exam_data(country_of_birth='JO'))
                 self.assertEqual(response.status_code, 302)
                 exam = ExceptionalExam.objects.get(registration=self.registration)
                 self.assertEqual(exam.country_of_birth, country)
                 self.assertEqual(exam.place_of_birth, 'Beirut')
 
-    def test_invalid_choices_and_wrong_residence_parents_are_rejected(self):
-        invalid_choices = (
-            ('nearest_town', 'jounieh'), ('nearest_town', 'unknown'),
-            ('country_of_birth', 'JO'), ('country_of_birth', 'Lebanon'),
-            ('programme', 'BLN'), ('programme', 'DIRASA'), ('programme', 'ALP'), ('programme', 'BLN Level 0'), ('programme', 'BLN Level 4'),
+    def test_invalid_editable_exam_choices_are_rejected(self):
+        for field, value in (
             ('grade', '1'), ('grade', '5'), ('grade', '6'), ('grade', '7'), ('grade', '8'),
             ('math_language', 'de'), ('language_exam', 'ar'),
-        )
-        for field, value in invalid_choices:
+        ):
             with self.subTest(field=field, value=value):
                 response = self.client.post(self.exam_url(), self.exam_data(**{field: value}))
                 self.assertEqual(response.status_code, 200)
@@ -712,53 +727,67 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(form.fields['district'].label_from_instance(self.district), 'Beirut')
         self.assertEqual(str(form.fields['nearest_town'].label), 'Village')
 
-    def test_submitted_readonly_residence_values_are_ignored(self):
+    def test_all_six_submitted_readonly_registration_details_are_ignored(self):
         for updates in (
-            {'governorate': self.other_governorate.pk, 'district': self.keserwan.pk},
-            {'governorate': 'unknown', 'district': 'not-an-id'},
-            {'governorate': self.district.pk, 'district': self.cadaster.pk},
-            {'governorate': '', 'district': ''},
+            {'programme': 'BLN Level 3', 'governorate': self.other_governorate.pk,
+             'district': self.keserwan.pk, 'nearest_town': 'jounieh',
+             'country_of_birth': 'SY', 'place_of_birth': 'Damascus'},
+            dict.fromkeys(REGISTRATION_SOURCE_FIELDS, 'unknown'),
+            dict.fromkeys(REGISTRATION_SOURCE_FIELDS, ''),
         ):
             with self.subTest(updates=updates):
                 response = self.client.post(self.exam_url(), self.exam_data(**updates))
                 self.assertEqual(response.status_code, 302)
                 exam = ExceptionalExam.objects.get(registration=self.registration)
                 self.assertEqual(
-                    (exam.governorate_id, exam.district_id),
-                    (self.governorate.pk, self.district.pk),
+                    (exam.programme, exam.governorate_id, exam.district_id, exam.nearest_town,
+                     exam.country_of_birth, exam.place_of_birth),
+                    ('BLN Level 1', self.governorate.pk, self.district.pk, 'achrafieh', 'LB', 'Beirut'),
                 )
                 self.child.refresh_from_db()
-                self.assertEqual(self.child.governorate_id, self.governorate.pk)
-                self.assertEqual(self.child.district_id, self.district.pk)
+                self.registration.refresh_from_db()
+                self.assertEqual(self.registration.nfe_programme, 'BLN Level 1')
+                self.assertEqual((self.child.village, self.child.country_of_birth, self.child.place_of_birth),
+                                 ('achrafieh', 'LB', 'Beirut'))
 
-    def test_readonly_residence_is_filled_without_posted_parent_fields(self):
+    def test_all_six_readonly_details_are_filled_when_omitted_from_post(self):
         data = self.exam_data()
-        for field in REGISTRATION_RESIDENCE_FIELDS:
+        for field in REGISTRATION_SOURCE_FIELDS:
             del data[field]
+        self.assertEqual(set(data), set(EDITABLE_REQUIRED_FIELDS))
         response = self.client.post(self.exam_url(), data)
         self.assertEqual(response.status_code, 302)
         exam = ExceptionalExam.objects.get(registration=self.registration)
         self.assertEqual(
-            (exam.governorate_id, exam.district_id),
-            (self.governorate.pk, self.district.pk),
+            (exam.programme, exam.governorate_id, exam.district_id, exam.nearest_town,
+             exam.country_of_birth, exam.place_of_birth),
+            ('BLN Level 1', self.governorate.pk, self.district.pk, 'achrafieh', 'LB', 'Beirut'),
         )
 
-    def test_forged_parents_cannot_enable_a_village_in_another_district(self):
+    def test_forged_residence_cannot_override_registered_village(self):
         response = self.client.post(self.exam_url(), self.exam_data(
-            governorate=self.other_governorate.pk, district=self.keserwan.pk,
-            nearest_town='jounieh',
+            governorate=self.other_governorate.pk, district=self.keserwan.pk, nearest_town='jounieh',
         ))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('nearest_town', response.context['form'].errors)
-        self.assertFalse(ExceptionalExam.objects.exists())
+        self.assertEqual(response.status_code, 302)
+        exam = ExceptionalExam.objects.get(registration=self.registration)
+        self.assertEqual((exam.governorate_id, exam.district_id, exam.nearest_town),
+                         (self.governorate.pk, self.district.pk, 'achrafieh'))
 
-    def test_readonly_parent_values_override_untrusted_initial_values(self):
-        form = ExceptionalExamForm(registration=self.registration, initial={
-            'governorate': self.other_governorate.pk, 'district': self.keserwan.pk,
-        })
-        self.assertEqual(form['governorate'].value(), self.governorate.pk)
-        self.assertEqual(form['district'].value(), self.district.pk)
-        self.assertEqual(tuple(form.fields['district'].queryset), (self.district,))
+    def test_all_readonly_details_override_untrusted_initial_values(self):
+        for data in (None, self.exam_data()):
+            with self.subTest(bound=data is not None):
+                form = ExceptionalExamForm(registration=self.registration, data=data, initial={
+                    'programme': 'BLN Level 3',
+                    'governorate': self.other_governorate.pk, 'district': self.keserwan.pk,
+                    'nearest_town': 'jounieh', 'country_of_birth': 'SY', 'place_of_birth': 'Damascus',
+                })
+                self.assertEqual(
+                    tuple(form[field].value() for field in REGISTRATION_SOURCE_FIELDS),
+                    ('BLN Level 1', self.governorate.pk, self.district.pk, 'achrafieh', 'LB', 'Beirut'),
+                )
+                self.assertEqual(tuple(form.fields['district'].queryset), (self.district,))
+                if data is not None:
+                    self.assertTrue(form.is_valid(), form.errors.as_json())
 
     def test_missing_or_invalid_registered_residence_cannot_be_filled_by_post(self):
         for governorate, district in (
@@ -772,28 +801,57 @@ class ExceptionalExamWorkflowTests(TestCase):
                 self.assertEqual(response.status_code, 200)
                 form = response.context['form']
                 self.assertFalse(form.registration_residence_valid)
+                self.assertFalse(form.registration_details_valid)
                 self.assertTrue(set(form.errors).intersection(REGISTRATION_RESIDENCE_FIELDS))
                 self.assertIn(
-                    "Update the governorate and district in the child's registration first.",
-                    [message for name in REGISTRATION_RESIDENCE_FIELDS
-                     for message in form.errors.get(name, [])],
+                    "Complete the required programme, address, and birth details in the child's registration first.",
+                    [message for name in REGISTRATION_RESIDENCE_FIELDS for message in form.errors.get(name, [])],
+                )
+                self.assertContains(response, reverse('mscc:child_edit', args=[self.registration.pk]))
+                self.assertFalse(ExceptionalExam.objects.exists())
+
+    def test_missing_or_invalid_registered_birth_and_village_details_cannot_be_filled_by_post(self):
+        for child_field, exam_field, value in (
+            ('village', 'nearest_town', ''), ('village', 'nearest_town', 'unknown'),
+            ('village', 'nearest_town', 'jounieh'),
+            ('country_of_birth', 'country_of_birth', ''), ('country_of_birth', 'country_of_birth', 'JO'),
+            ('place_of_birth', 'place_of_birth', ''), ('place_of_birth', 'place_of_birth', '   '),
+        ):
+            with self.subTest(field=child_field, value=value):
+                self.set_registered_details(village='achrafieh', country_of_birth='LB', place_of_birth='Beirut')
+                self.set_registered_details(**{child_field: value})
+                response = self.client.post(self.exam_url(), self.exam_data())
+                self.assertEqual(response.status_code, 200)
+                form = response.context['form']
+                self.assertFalse(form.registration_details_valid)
+                self.assertIn(exam_field, form.errors)
+                self.assertIn(
+                    "Complete the required programme, address, and birth details in the child's registration first.",
+                    form.errors[exam_field],
                 )
                 self.assertFalse(ExceptionalExam.objects.exists())
 
-    def test_repeated_document_villages_are_valid_only_in_the_registered_district(self):
+    def test_repeated_registered_villages_are_valid_only_in_the_registered_district(self):
         for district in (self.baabda, self.aley):
             with self.subTest(district=district.pk):
-                self.set_registered_residence(self.other_governorate, district)
-                form = ExceptionalExamForm(
-                    registration=self.registration, data=self.exam_data(nearest_town='aley'),
-                )
+                self.set_registered_residence(self.other_governorate, district, village='aley')
+                form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(nearest_town='unknown'))
                 self.assertTrue(form.is_valid(), form.errors.as_json())
-        self.set_registered_residence(self.other_governorate, self.keserwan)
-        form = ExceptionalExamForm(
-            registration=self.registration, data=self.exam_data(nearest_town='aley'),
-        )
+                self.assertEqual(form.cleaned_data['nearest_town'], 'aley')
+        self.set_registered_residence(self.other_governorate, self.keserwan, village='aley')
+        form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(nearest_town='jounieh'))
         self.assertFalse(form.is_valid())
         self.assertIn('nearest_town', form.errors)
+
+    def test_exact_legacy_registered_village_labels_are_normalized_without_rewriting_registration(self):
+        for label in ('Achrafieh', 'الأشرفية', 'Achrafieh / الأشرفية'):
+            with self.subTest(label=label):
+                self.set_registered_details(village=label)
+                form = ExceptionalExamForm(registration=self.registration, data=self.exam_data())
+                self.assertTrue(form.is_valid(), form.errors.as_json())
+                self.assertEqual(form.cleaned_data['nearest_town'], 'achrafieh')
+                self.child.refresh_from_db()
+                self.assertEqual(self.child.village, label)
 
     def test_district_options_use_existing_location_ids_and_correct_parent(self):
         url = reverse('mscc:exceptional_exam_location_options')
@@ -880,7 +938,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         district = Location.objects.create(
             name='بعلبك', name_en='Baalbek', type_id=2, parent=governorate,
         )
-        self.set_registered_residence(governorate, district)
+        self.set_registered_residence(governorate, district, village='douris')
         form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='douris',
         ))
@@ -894,7 +952,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_village_lookup_matches_existing_governorate_alias_and_district_separator(self):
         governorate = Location.objects.create(name='الشمال', name_en='North', type_id=1)
         district = Location.objects.create(name='المنية الضنية', type_id=2, parent=governorate)
-        self.set_registered_residence(governorate, district)
+        self.set_registered_residence(governorate, district, village='minnieh')
         form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='minnieh',
         ))
@@ -908,7 +966,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_standalone_existing_hermel_governorate_can_use_the_document_hermel_villages(self):
         governorate = Location.objects.create(name='الهرمل', name_en='Hermel', type_id=1)
         district = Location.objects.create(name='الهرمل', name_en='Hermel', type_id=2, parent=governorate)
-        self.set_registered_residence(governorate, district)
+        self.set_registered_residence(governorate, district, village='qasr')
         form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='qasr',
         ))
@@ -1046,51 +1104,44 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertNotIn('Exceptional Exam - BLN level', csv_rows[0])
         edit = self.client.get(self.exam_url())
         self.assertNotIn('bln_level', edit.context['form'].fields)
-        self.assertIn(edit.context['form']['country_of_birth'].value(), ('', None))
-        self.assertEqual(tuple(value for value, _ in edit.context['form'].fields['grade'].choices if value), ())
-        self.assertIn(edit.context['form']['programme'].value(), ('', None))
+        self.assertEqual(edit.context['form']['country_of_birth'].value(), 'LB')
+        self.assertEqual(edit.context['form']['programme'].value(), 'BLN Level 1')
+        self.assertEqual(edit.context['form']['grade'].value(), '2')
         exam.refresh_from_db()
         self.assertEqual((exam.grade, exam.country_of_birth), ('7', ''))
-        for updates in ({'grade': '7'}, {'country_of_birth': ''}, {'place_of_birth': ''}):
-            with self.subTest(invalid_edit=updates):
-                invalid_edit = self.client.post(self.exam_url(), self.exam_data(**updates))
-                self.assertEqual(invalid_edit.status_code, 200)
-                exam.refresh_from_db()
-                self.assertEqual((exam.grade, exam.country_of_birth), ('7', ''))
-        self.set_education_program('BLN Level 3')
-        valid_edit = self.client.post(self.exam_url(), self.exam_data(programme='BLN Level 3', grade='4', country_of_birth='SY'))
-        self.assertEqual(valid_edit.status_code, 302)
+        invalid = self.client.post(self.exam_url(), self.exam_data(grade='7'))
+        self.assertEqual(invalid.status_code, 200)
         exam.refresh_from_db()
-        self.assertEqual((exam.grade, exam.country_of_birth), ('4', 'SY'))
+        self.assertEqual((exam.grade, exam.country_of_birth), ('7', ''))
+        valid = self.client.post(self.exam_url(), self.exam_data(programme='BLN', country_of_birth='SY'))
+        self.assertEqual(valid.status_code, 302)
+        exam.refresh_from_db()
+        self.assertEqual((exam.programme, exam.grade, exam.country_of_birth, exam.place_of_birth),
+                         ('BLN Level 1', '2', 'LB', 'Beirut'))
 
-    def test_legacy_programmes_remain_readable_but_require_a_current_level_on_edit(self):
+    def test_legacy_programmes_remain_readable_and_registration_must_be_completed_before_edit(self):
         for programme, english, arabic in (
             ('BLN', 'Basic Literacy and Numeracy (BLN)', 'برنامج المهارات الأساسية في القراءة والكتابة والحساب (BLN)'),
             ('DIRASA', 'DIRASA', 'دراسة'),
         ):
             with self.subTest(legacy_programme=programme):
+                self.set_registered_details(programme=programme)
                 exam = self.create_exam(programme=programme, grade='4')
                 for language, label in (('en', english), ('ar', arabic)):
                     with translation.override(language):
                         self.assertEqual(str(exam.get_programme_display()), label)
-                profile = self.client.get(
-                    reverse('mscc:child_profile', args=[self.registration.pk]),
-                    {'current_tab': 'exceptional_exam'},
-                )
+                profile = self.client.get(reverse('mscc:child_profile', args=[self.registration.pk]),
+                                          {'current_tab': 'exceptional_exam'})
                 self.assertContains(profile, english)
                 edit = self.client.get(self.exam_url())
-                form = edit.context['form']
-                self.assertIn(form['programme'].value(), ('', None))
-                self.assertEqual(
-                    tuple(code for code, _ in form.fields['programme'].choices if code),
-                    tuple(code for code, _ in EXPLICIT_PROGRAMME_GRADES),
-                )
-                exam.refresh_from_db()
-                self.assertEqual((exam.programme, exam.grade), (programme, '4'))
-                invalid = self.client.post(self.exam_url(), self.exam_data(programme=programme, grade='4'))
+                self.assertIn(edit.context['form']['programme'].value(), ('', None))
+                invalid = self.client.post(self.exam_url(), self.exam_data(programme='BLN Level 3', grade='4'))
                 self.assertEqual(invalid.status_code, 200)
                 self.assertIn('programme', invalid.context['form'].errors)
-                accepted = self.client.post(self.exam_url(), self.exam_data(programme='BLN Level 3', grade='4'))
+                exam.refresh_from_db()
+                self.assertEqual((exam.programme, exam.grade), (programme, '4'))
+                self.set_registered_details(programme='BLN Level 3')
+                accepted = self.client.post(self.exam_url(), self.exam_data(programme=programme, grade='4'))
                 self.assertEqual(accepted.status_code, 302)
                 exam.refresh_from_db()
                 self.assertEqual((exam.programme, exam.grade), ('BLN Level 3', '4'))
@@ -1111,7 +1162,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(exam.modified_by_id, self.center_user.pk)
         self.registration.refresh_from_db()
         self.child.refresh_from_db()
-        self.assertEqual(self.registration.nfe_programme, 'BLN')
+        self.assertEqual(self.registration.nfe_programme, 'BLN Level 1')
         self.assertEqual(self.registration.source_of_identification, 'Other Sources')
         self.assertEqual(self.child.street, 'Original residential street')
         self.assertEqual(self.child.first_phone_number, '70-123456')
@@ -1121,90 +1172,87 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_edit_reuses_one_record_and_preserves_original_creator(self):
         exam = self.create_exam()
         self.client.force_login(self.other_editor)
-        self.set_registered_residence(self.other_governorate, self.keserwan)
+        self.set_registered_residence(self.other_governorate, self.keserwan, village='jounieh')
+        self.set_registered_details(programme='BLN Level 3')
         response = self.client.post(self.exam_url(), self.exam_data(
-            programme='BLN Level 3', grade='4', math_language='fr', language_exam='fr',
-            governorate=self.other_governorate.pk, district=self.keserwan.pk,
-            nearest_town='jounieh',
+            programme='BLN Level 1', grade='4', math_language='fr', language_exam='fr',
         ))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(ExceptionalExam.objects.count(), 1)
         exam.refresh_from_db()
         self.assertEqual(exam.created_by_id, self.center_user.pk)
         self.assertEqual(exam.modified_by_id, self.other_editor.pk)
-        self.assertEqual(exam.grade, '4')
-        self.assertEqual(exam.programme, 'BLN Level 3')
-        self.assertEqual(exam.nearest_town, 'jounieh')
+        self.assertEqual((exam.grade, exam.programme, exam.nearest_town), ('4', 'BLN Level 3', 'jounieh'))
         self.registration.refresh_from_db()
-        self.assertEqual(self.registration.nfe_programme, 'BLN')
+        self.assertEqual(self.registration.nfe_programme, 'BLN Level 3')
 
-    def test_edit_uses_registered_parents_instead_of_stored_exam_residence(self):
-        self.set_education_program('BLN Level 3')
+    def test_edit_uses_all_current_registered_details_instead_of_stored_exam_snapshot(self):
         exam = self.create_exam(
             governorate=self.other_governorate.pk, district=self.keserwan.pk,
             nearest_town='jounieh', programme='BLN Level 3', grade='4',
+            country_of_birth='SY', place_of_birth='Damascus',
         )
-        response = self.client.get(self.exam_url())
-        self.assertEqual(response.status_code, 200)
-        form = response.context['form']
-        self.assertEqual(form['governorate'].value(), self.governorate.pk)
-        self.assertEqual(form['district'].value(), self.district.pk)
-        self.assertTrue(form.fields['governorate'].disabled)
-        self.assertTrue(form.fields['district'].disabled)
-        for field in EDITABLE_REQUIRED_FIELDS:
-            if field != 'nearest_town':
-                self.assertEqual(form[field].value(), getattr(exam, field))
+        form = self.client.get(self.exam_url()).context['form']
+        self.assertEqual(
+            tuple(form[field].value() for field in REGISTRATION_SOURCE_FIELDS),
+            ('BLN Level 1', self.governorate.pk, self.district.pk, 'achrafieh', 'LB', 'Beirut'),
+        )
+        self.assertEqual(form['grade'].value(), '2')
+        self.assertTrue(all(form.fields[field].disabled for field in REGISTRATION_SOURCE_FIELDS))
         self.assertEqual(tuple(form.fields['district'].queryset), (self.district,))
         self.assertIn(('achrafieh', 'Achrafieh'), tuple(form.fields['nearest_town'].choices))
         self.assertNotIn('jounieh', dict(form.fields['nearest_town'].choices))
         exam.refresh_from_db()
-        self.assertEqual(
-            (exam.governorate_id, exam.district_id, exam.nearest_town),
-            (self.other_governorate.pk, self.keserwan.pk, 'jounieh'),
-        )
-        rejected = self.client.post(self.exam_url(), self.exam_data(programme='BLN Level 3', nearest_town='jounieh', grade='4'))
+        self.assertEqual((exam.programme, exam.nearest_town, exam.country_of_birth, exam.place_of_birth),
+                         ('BLN Level 3', 'jounieh', 'SY', 'Damascus'))
+        rejected = self.client.post(self.exam_url(), self.exam_data(grade='4'))
         self.assertEqual(rejected.status_code, 200)
-        self.assertIn('nearest_town', rejected.context['form'].errors)
-        accepted = self.client.post(self.exam_url(), self.exam_data(programme='BLN Level 3', nearest_town='achrafieh', grade='4'))
+        self.assertIn('grade', rejected.context['form'].errors)
+        exam.refresh_from_db()
+        self.assertEqual((exam.programme, exam.nearest_town, exam.country_of_birth, exam.place_of_birth),
+                         ('BLN Level 3', 'jounieh', 'SY', 'Damascus'))
+        accepted = self.client.post(self.exam_url(), self.exam_data(
+            programme='BLN Level 3', nearest_town='jounieh', country_of_birth='SY', place_of_birth='Damascus',
+        ))
         self.assertEqual(accepted.status_code, 302)
         exam.refresh_from_db()
-        self.assertEqual(
-            (exam.governorate_id, exam.district_id, exam.nearest_town),
-            (self.governorate.pk, self.district.pk, 'achrafieh'),
-        )
+        self.assertEqual((exam.programme, exam.nearest_town, exam.country_of_birth, exam.place_of_birth),
+                         ('BLN Level 1', 'achrafieh', 'LB', 'Beirut'))
 
-    def test_registered_address_change_updates_readonly_parents_and_village_choices(self):
+    def test_registered_address_change_updates_readonly_village_and_birth_details(self):
         exam = self.create_exam()
-        self.set_registered_residence(self.other_governorate, self.keserwan)
-        response = self.client.get(self.exam_url())
-        form = response.context['form']
+        self.set_registered_residence(self.other_governorate, self.keserwan, village='jounieh')
+        self.set_registered_details(country_of_birth='OTHER', place_of_birth='Paris')
+        form = self.client.get(self.exam_url()).context['form']
         self.assertEqual(form['governorate'].value(), self.other_governorate.pk)
         self.assertEqual(form['district'].value(), self.keserwan.pk)
+        self.assertEqual(form['nearest_town'].value(), 'jounieh')
+        self.assertEqual((form['country_of_birth'].value(), form['place_of_birth'].value()), ('OTHER', 'Paris'))
         self.assertIn('jounieh', dict(form.fields['nearest_town'].choices))
         self.assertNotIn('achrafieh', dict(form.fields['nearest_town'].choices))
         exam.refresh_from_db()
-        self.assertEqual(exam.nearest_town, 'achrafieh')
-        rejected = self.client.post(self.exam_url(), self.exam_data())
-        self.assertEqual(rejected.status_code, 200)
-        self.assertIn('nearest_town', rejected.context['form'].errors)
-        accepted = self.client.post(self.exam_url(), self.exam_data(nearest_town='jounieh'))
+        self.assertEqual((exam.nearest_town, exam.country_of_birth, exam.place_of_birth), ('achrafieh', 'LB', 'Beirut'))
+        accepted = self.client.post(self.exam_url(), self.exam_data())
         self.assertEqual(accepted.status_code, 302)
         exam.refresh_from_db()
         self.assertEqual(
-            (exam.governorate_id, exam.district_id, exam.nearest_town),
-            (self.other_governorate.pk, self.keserwan.pk, 'jounieh'),
+            (exam.governorate_id, exam.district_id, exam.nearest_town, exam.country_of_birth, exam.place_of_birth),
+            (self.other_governorate.pk, self.keserwan.pk, 'jounieh', 'OTHER', 'Paris'),
         )
 
-    def test_invalid_village_edit_keeps_the_existing_answers(self):
+    def test_invalid_registered_village_edit_keeps_existing_answers_until_registration_is_fixed(self):
         exam = self.create_exam()
-        response = self.client.post(self.exam_url(), self.exam_data(
-            district=self.baabda.pk, nearest_town='jounieh',
-        ))
+        self.set_registered_residence(self.other_governorate, self.keserwan)
+        response = self.client.post(self.exam_url(), self.exam_data(nearest_town='jounieh'))
         self.assertEqual(response.status_code, 200)
         self.assertIn('nearest_town', response.context['form'].errors)
         exam.refresh_from_db()
-        self.assertEqual(exam.district_id, self.district.pk)
-        self.assertEqual(exam.nearest_town, 'achrafieh')
+        self.assertEqual((exam.district_id, exam.nearest_town), (self.district.pk, 'achrafieh'))
+        self.set_registered_details(village='jounieh')
+        accepted = self.client.post(self.exam_url(), self.exam_data())
+        self.assertEqual(accepted.status_code, 302)
+        exam.refresh_from_db()
+        self.assertEqual((exam.district_id, exam.nearest_town), (self.keserwan.pk, 'jounieh'))
         self.assertEqual(ExceptionalExam.objects.count(), 1)
 
     def test_each_round_registration_has_its_own_exam_but_duplicates_are_prohibited(self):

@@ -12173,3 +12173,11 @@ msgstr ""
 #: student_registration/mscc/exceptional_exam_grades.py
 msgid "Select the grade allowed for the selected BLN programme level."
 msgstr ""
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Programme, address, and birth details are taken from the child's registration."
+msgstr ""
+
+#: student_registration/mscc/exceptional_exam_forms.py
+msgid "Complete the required programme, address, and birth details in the child's registration first."
+msgstr ""
