@@ -12,11 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='exceptionalexam',
-            name='bln_level',
-            field=models.CharField(blank=True, choices=[('1', 'BLN Level 1'), ('2', 'BLN Level 2'), ('3', 'BLN Level 3')], default='', max_length=1, verbose_name='BLN level'),
-        ),
-        migrations.AddField(
-            model_name='exceptionalexam',
             name='country_of_birth',
             field=models.CharField(choices=[('LB', 'Lebanon'), ('SY', 'Syria'), ('OTHER', 'Other')], default='', max_length=5, verbose_name='Country of Birth'),
         ),
