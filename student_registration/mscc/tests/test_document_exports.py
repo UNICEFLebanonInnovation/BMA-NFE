@@ -429,12 +429,12 @@ class MSCCDocumentExportTests(TestCase):
         ))[0][1]
         self.assertEqual(row['Exceptional Exam - Place of Birth'], 'بيروت')
 
-    def test_card_and_workbook_include_saved_birth_country_and_bln_level(self):
+    def test_card_and_workbook_include_saved_birth_country_without_an_exam_level_field(self):
         exam = ExceptionalExam.objects.create(
             registration=self.first_registration, governorate=self.governorate,
             district=self.district, nearest_town='achrafieh',
             country_of_birth='SY', place_of_birth='دمشق',
-            programme='BLN', bln_level='3', grade='4',
+            programme='BLN', grade='4',
             math_language='ar', language_exam='en',
         )
         registration = Registration.objects.get(pk=self.first_registration.pk)
@@ -449,7 +449,7 @@ class MSCCDocumentExportTests(TestCase):
         ))[0][1]
         self.assertEqual(row['Exceptional Exam - Country of Birth'], exam.get_country_of_birth_display())
         self.assertEqual(row['Exceptional Exam - Place of Birth'], 'دمشق')
-        self.assertEqual(row['Exceptional Exam - BLN level'], exam.get_bln_level_display())
+        self.assertNotIn('Exceptional Exam - BLN level', row)
         self.assertEqual(row['Exceptional Exam - Grade applying for the examination'], exam.get_grade_display())
 
     def test_word_card_leaves_unrecorded_fields_blank_and_preserves_partial_birthdate(self):

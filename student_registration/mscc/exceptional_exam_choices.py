@@ -345,12 +345,6 @@ PROGRAMME_CHOICES = (
     ('DIRASA', _('DIRASA')),
 )
 
-BLN_LEVEL_CHOICES = (
-    ('1', _('BLN Level 1')),
-    ('2', _('BLN Level 2')),
-    ('3', _('BLN Level 3')),
-)
-
 COUNTRY_OF_BIRTH_CHOICES = (
     ('LB', _('Lebanon')),
     ('SY', _('Syria')),

@@ -6,13 +6,11 @@
         if (!form) return;
 
         var programme = form.elements.programme;
-        var blnLevel = form.elements.bln_level;
-        var blnLevelField = document.getElementById('exceptional-exam-bln-level-field');
         var grade = form.elements.grade;
         var choicesData = document.getElementById('exceptional-exam-grade-choices');
         var helpData = document.getElementById('exceptional-exam-grade-help');
         var gradeField = document.getElementById('exceptional-exam-grade-field');
-        if (!programme || !blnLevel || !blnLevelField || !grade || !choicesData || !helpData || !gradeField) return;
+        if (!programme || !grade || !choicesData || !helpData || !gradeField) return;
 
         var choicesByProgramme;
         var helpByProgramme;
@@ -36,14 +34,8 @@
 
         function updateGrades() {
             var isBLN = programme.value === 'BLN';
-            blnLevelField.hidden = !isBLN;
-            blnLevel.disabled = !isBLN;
-            blnLevel.required = isBLN;
-            if (!isBLN) blnLevel.value = '';
-
-            // The server defines the grade allowed for each selected BLN level.
-            var choiceKey = isBLN && blnLevel.value ? 'BLN:' + blnLevel.value : programme.value;
-            var choices = choicesByProgramme[choiceKey] || [];
+            // The server derives the BLN grade from the saved Education Service Program.
+            var choices = choicesByProgramme[programme.value] || [];
             if (!Array.isArray(choices)) return;
             var previousGrade = grade.value;
             grade.innerHTML = '';
@@ -59,15 +51,14 @@
                 grade.value = String(choices[0].id);
             }
 
-            var message = helpByProgramme[choiceKey] || helpByProgramme[''] || '';
+            var message = helpByProgramme[programme.value] || helpByProgramme[''] || '';
             if (help) help.textContent = message;
-            // A BLN level must be selected before the required grade is available.
+            // Keep missing Education Service information visible to browser validation.
             grade.disabled = false;
             grade.setCustomValidity(isBLN && !choices.length ? message : '');
         }
 
         programme.addEventListener('change', updateGrades);
-        blnLevel.addEventListener('change', updateGrades);
         updateGrades();
     }
 

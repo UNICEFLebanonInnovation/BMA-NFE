@@ -36,7 +36,7 @@ class ExceptionalExamForm(forms.ModelForm):
         model = ExceptionalExam
         fields = (
             'governorate', 'district', 'nearest_town', 'country_of_birth',
-            'place_of_birth', 'programme', 'bln_level', 'grade', 'math_language',
+            'place_of_birth', 'programme', 'grade', 'math_language',
             'language_exam',
         )
 
@@ -51,13 +51,6 @@ class ExceptionalExamForm(forms.ModelForm):
         # address and programme. Selecting an exam residence never rewrites it.
         if not self.is_bound and not self.instance.pk and registration is not None:
             self.initial.setdefault('programme', registration.nfe_programme)
-            if self.initial.get('programme') == 'BLN':
-                # A prior age-derived examination grade does not establish the
-                # child's enrolled level. Only an exact saved service does.
-                levels = {'BLN Level 1': '1', 'BLN Level 2': '2', 'BLN Level 3': '3'}
-                level = levels.get(registration.education_program)
-                if level:
-                    self.initial.setdefault('bln_level', level)
             child = registration.child if registration.child_id else None
             governorate = child.governorate if child and child.governorate_id else None
             district = child.district if child and child.district_id else None
@@ -73,12 +66,9 @@ class ExceptionalExamForm(forms.ModelForm):
             return self.initial.get(name, '')
 
         programme = selected('programme')
-        if self.is_bound and programme == 'DIRASA':
-            # Ignore a stale or malicious BLN level when applying for DIRASA.
-            # Copy the input so the request's original data remains intact.
-            self.data = self.data.copy()
-            self.data[self.add_prefix('bln_level')] = ''
-        bln_level = selected('bln_level')
+        # The registration comes from the authorized URL, and its latest saved
+        # service is authoritative. Submitted programme levels cannot replace it.
+        education_program = registration.education_program if registration and registration.pk else ''
 
         governorate_id = positive_location_id(selected('governorate'))
         governorate = Location.objects.filter(pk=governorate_id, type_id=1).first()
@@ -92,30 +82,22 @@ class ExceptionalExamForm(forms.ModelForm):
         district = district_queryset.filter(pk=district_id).first()
         self.fields['nearest_town'].choices = town_choices_for_locations(governorate, district)
 
-        programmes_and_levels = {
-            '': ('', ''),
-            'BLN': ('BLN', ''),
-            'BLN:1': ('BLN', '1'),
-            'BLN:2': ('BLN', '2'),
-            'BLN:3': ('BLN', '3'),
-            'DIRASA': ('DIRASA', ''),
-        }
         self.grade_choices_by_programme = {
-            key: [
+            code: [
                 {'id': value, 'text': str(label)}
-                for value, label in programme_grade_choices(code, level)
+                for value, label in programme_grade_choices(code, education_program)
             ]
-            for key, (code, level) in programmes_and_levels.items()
+            for code in ('', 'BLN', 'DIRASA')
         }
         self.grade_help_by_programme = {
-            key: str(programme_grade_help(code, level))
-            for key, (code, level) in programmes_and_levels.items()
+            code: str(programme_grade_help(code, education_program))
+            for code in ('', 'BLN', 'DIRASA')
         }
-        grade_choices = programme_grade_choices(programme, bln_level)
+        grade_choices = programme_grade_choices(programme, education_program)
         self.fields['grade'].choices = grade_choices
         if not self.is_bound and programme == 'BLN' and len(grade_choices) == 1:
-            # Showing the grade for an explicit level does not change the
-            # stored examination application until it is saved.
+            # A service may have changed since the last application. Display
+            # the current eligible grade without rewriting the saved answer.
             self.initial['grade'] = grade_choices[0][0]
 
         for field in self.fields.values():
@@ -140,13 +122,11 @@ class ExceptionalExamForm(forms.ModelForm):
         self.fields['district'].help_text = _('Select a governorate first.')
         self.fields['nearest_town'].help_text = _('Select a district first.')
         self.fields['place_of_birth'].help_text = _('Place of birth similar in the Official ID')
-        self.fields['bln_level'].required = programme == 'BLN'
-        self.fields['bln_level'].help_text = _('Required for BLN.')
-        self.fields['grade'].help_text = programme_grade_help(programme, bln_level)
+        self.fields['grade'].help_text = programme_grade_help(programme, education_program)
         if programme == 'BLN':
             if not grade_choices:
-                self.fields['grade'].error_messages['required'] = programme_grade_help(programme, bln_level)
+                self.fields['grade'].error_messages['required'] = programme_grade_help(programme, education_program)
             self.fields['grade'].error_messages['invalid_choice'] = (
-                _('Select the grade allowed for the selected BLN level.')
-                if grade_choices else programme_grade_help(programme, bln_level)
+                _('Select the BLN grade allowed by the Program saved in Education Service.')
+                if grade_choices else programme_grade_help(programme, education_program)
             )

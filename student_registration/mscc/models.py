@@ -23,7 +23,6 @@ from .exceptional_exam_choices import (
     DISTRICT_CHOICES,
     TOWN_CHOICES,
     PROGRAMME_CHOICES,
-    BLN_LEVEL_CHOICES,
     COUNTRY_OF_BIRTH_CHOICES,
     GRADE_CHOICES,
     MATH_LANGUAGE_CHOICES,
@@ -2730,10 +2729,6 @@ class ExceptionalExam(TimeStampedModel):
         max_length=6, choices=PROGRAMME_CHOICES,
         verbose_name=gettext_lazy('Non-formal education programme'),
     )
-    bln_level = models.CharField(
-        max_length=1, choices=BLN_LEVEL_CHOICES, blank=True, default='',
-        verbose_name=gettext_lazy('BLN level'),
-    )
     grade = models.CharField(
         max_length=1, choices=GRADE_CHOICES,
         verbose_name=gettext_lazy('Grade applying for the examination'),
@@ -2786,9 +2781,15 @@ class ExceptionalExam(TimeStampedModel):
             town_choices_for_locations(governorate, district)
         ):
             errors['nearest_town'] = _('Select a village in the selected district.')
-        if self.programme == 'BLN' and not self.bln_level:
-            errors['bln_level'] = gettext_lazy('This field is required.')
-        grade_error = programme_grade_error(self.programme, self.bln_level, self.grade)
+        registration = self._state.fields_cache.get('registration')
+        if registration is None and self.registration_id:
+            try:
+                registration = self.registration
+            except Registration.DoesNotExist:
+                # Let foreign-key validation report an unknown registration.
+                registration = None
+        education_program = registration.education_program if registration and registration.pk else ''
+        grade_error = programme_grade_error(self.programme, education_program, self.grade)
         if grade_error:
             errors['grade'] = grade_error
         if errors:
@@ -2803,17 +2804,16 @@ class ExceptionalExam(TimeStampedModel):
             self.get_nearest_town_display(),
         )
         fields = ('governorate', 'district', 'nearest_town', 'country_of_birth',
-                  'place_of_birth', 'programme', 'bln_level', 'grade',
+                  'place_of_birth', 'programme', 'grade',
                   'math_language', 'language_exam')
         values = residence + (
             self.get_country_of_birth_display(), self.place_of_birth or '',
-            self.get_programme_display(), self.get_bln_level_display(), self.get_grade_display(),
+            self.get_programme_display(), self.get_grade_display(),
             self.get_math_language_display(), self.get_language_exam_display(),
         )
         return tuple(
             (self._meta.get_field(name).verbose_name, value)
             for name, value in zip(fields, values)
-            if name != 'bln_level' or self.programme == 'BLN'
         )
 
     def get_grade_display(self):

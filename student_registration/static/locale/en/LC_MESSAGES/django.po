@@ -12127,22 +12127,6 @@ msgid "Syria"
 msgstr ""
 
 #: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
-msgid "BLN level"
-msgstr ""
-
-#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
-msgid "Select a BLN level first."
-msgstr ""
-
-#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
-msgid "For BLN, the grade is determined by the selected BLN level."
-msgstr ""
-
-#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
-msgid "Select the grade allowed for the selected BLN level."
-msgstr ""
-
-#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
 msgid "Grades 2–4 are available for DIRASA."
 msgstr ""
 
@@ -12150,6 +12134,14 @@ msgstr ""
 msgid "Place of birth similar in the Official ID"
 msgstr ""
 
-#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
-msgid "Required for BLN."
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "For BLN, the grade is determined by the Program saved in Education Service."
+msgstr ""
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "Select the BLN grade allowed by the Program saved in Education Service."
+msgstr ""
+
+#: student_registration/mscc/exceptional_exam_grades.py
+msgid "BLN requires a Program of BLN Level 1, BLN Level 2, or BLN Level 3 in Education Service. Update Education Service first."
 msgstr ""

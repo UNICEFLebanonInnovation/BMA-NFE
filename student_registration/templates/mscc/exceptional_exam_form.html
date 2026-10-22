@@ -71,7 +71,6 @@
                         <div class="mb-4">{% bootstrap_field form.country_of_birth %}</div>
                         <div class="mb-4">{% bootstrap_field form.place_of_birth %}</div>
                         <div class="mb-4">{% bootstrap_field form.programme %}</div>
-                        <div class="mb-4" id="exceptional-exam-bln-level-field"{% if form.programme.value != 'BLN' %} hidden{% endif %}>{% bootstrap_field form.bln_level %}</div>
                         <div class="mb-4" id="exceptional-exam-grade-field">{% bootstrap_field form.grade %}</div>
                         <div class="mb-4">{% bootstrap_field form.math_language %}</div>
                         <div class="mb-4">{% bootstrap_field form.language_exam %}</div>
@@ -88,5 +87,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=5"></script>
+<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=6"></script>
 {% endblock %}

@@ -7,7 +7,7 @@ from django.test import TransactionTestCase
 
 class ExceptionalExamRequirementsMigrationTests(TransactionTestCase):
     migrate_from = ('mscc', '0024_exceptionalexam_place_of_birth')
-    migrate_to = ('mscc', '0025_exceptional_exam_birth_country_bln_level')
+    migrate_to = ('mscc', '0026_remove_exceptionalexam_bln_level')
 
     def migrate(self, targets):
         executor = MigrationExecutor(connection)
@@ -19,7 +19,7 @@ class ExceptionalExamRequirementsMigrationTests(TransactionTestCase):
         self.latest_migrations = MigrationExecutor(connection).loader.graph.leaf_nodes()
         self.addCleanup(self.migrate, self.latest_migrations)
 
-    def test_upgrade_preserves_answers_without_guessing_country_or_bln_level(self):
+    def test_upgrade_preserves_answers_and_uses_existing_education_service_program(self):
         old_apps = self.migrate([self.migrate_from])
         Registration = old_apps.get_model('mscc', 'Registration')
         EducationService = old_apps.get_model('mscc', 'EducationService')
@@ -43,6 +43,8 @@ class ExceptionalExamRequirementsMigrationTests(TransactionTestCase):
 
         apps = self.migrate([self.migrate_to])
         Exam = apps.get_model('mscc', 'ExceptionalExam')
+        EducationService = apps.get_model('mscc', 'EducationService')
+        self.assertNotIn('bln_level', {field.name for field in Exam._meta.fields})
         self.assertEqual(Exam.objects.count(), len(records))
         for pk, registration_id, programme, grade, birthplace in records:
             with self.subTest(programme=programme, grade=grade):
@@ -51,10 +53,45 @@ class ExceptionalExamRequirementsMigrationTests(TransactionTestCase):
                 self.assertEqual((exam.programme, exam.grade), (programme, grade))
                 self.assertEqual(exam.place_of_birth, birthplace)
                 self.assertEqual(exam.country_of_birth, '')
-                self.assertEqual(exam.bln_level, '')
+                self.assertEqual(
+                    EducationService.objects.get(registration_id=registration_id).education_program,
+                    'BLN Level 2',
+                )
                 self.assertEqual(
                     (exam.governorate_legacy, exam.district_legacy, exam.nearest_town),
                     ('beirut', 'beirut', 'achrafieh'),
                 )
                 self.assertIsNone(exam.governorate_id)
                 self.assertIsNone(exam.district_id)
+
+    def test_removing_temporary_exam_level_preserves_exam_answers_and_service_program(self):
+        old_apps = self.migrate([('mscc', '0025_exceptional_exam_birth_country_bln_level')])
+        Registration = old_apps.get_model('mscc', 'Registration')
+        EducationService = old_apps.get_model('mscc', 'EducationService')
+        Exam = old_apps.get_model('mscc', 'ExceptionalExam')
+        registration = Registration.objects.create(nfe_programme='BLN')
+        service = EducationService.objects.create(
+            registration=registration, education_program='BLN Level 3',
+        )
+        exam = Exam.objects.create(
+            registration=registration, governorate_legacy='beirut', district_legacy='beirut',
+            nearest_town='achrafieh', country_of_birth='SY', place_of_birth='دمشق',
+            programme='BLN', bln_level='1', grade='2', math_language='ar', language_exam='en',
+        )
+
+        apps = self.migrate([self.migrate_to])
+        Exam = apps.get_model('mscc', 'ExceptionalExam')
+        EducationService = apps.get_model('mscc', 'EducationService')
+        exam = Exam.objects.get(pk=exam.pk)
+        self.assertNotIn('bln_level', {field.name for field in Exam._meta.fields})
+        self.assertEqual(exam.registration_id, registration.pk)
+        self.assertEqual(
+            (exam.country_of_birth, exam.place_of_birth, exam.programme, exam.grade),
+            ('SY', 'دمشق', 'BLN', '2'),
+        )
+        self.assertEqual((exam.math_language, exam.language_exam), ('ar', 'en'))
+        self.assertEqual(
+            (exam.governorate_legacy, exam.district_legacy, exam.nearest_town),
+            ('beirut', 'beirut', 'achrafieh'),
+        )
+        self.assertEqual(EducationService.objects.get(pk=service.pk).education_program, 'BLN Level 3')
