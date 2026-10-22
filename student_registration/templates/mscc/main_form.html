@@ -308,9 +308,12 @@
                 $('#wizardProgressBar').css('width', `${progress}%`);
 
                 // Transitions
-                $('.step-content').addClass('d-none');
-                const $target = $(`#step-${step}`);
-                $target.removeClass('d-none');
+                const $panels = $('#registrationForm .step-content');
+                $panels.removeClass('active').addClass('d-none').hide();
+                const $target = $panels.filter(`#step-${step}`);
+                // Older cached stylesheets hide steps 2 and 3 by ID. Set the
+                // selected panel's display explicitly as well as its classes.
+                $target.removeClass('d-none').addClass('active').show();
 
                 // Stepper Icons
                 $('.step').removeClass('active completed');
