@@ -8,6 +8,8 @@ var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
 
 var isDuplicateFound = false;
+var duplicationCheckRequest = null;
+var duplicationCheckVersion = 0;
 
 function initializeResidentialAddressLocations() {
     var form = $('#registrationForm');
@@ -141,6 +143,8 @@ function initializeResidentialAddressLocations() {
             cadaster.empty().append(initialCadasterOptions.clone()).val(initialCadaster);
             errorMessage.addClass('d-none');
             clearErrors();
+            updateConditionalRequirements();
+            child_duplication_check();
         }, 0);
     });
 }
@@ -319,12 +323,9 @@ $(document).ready(function() {
         var first_name = $('#id_child_first_name').val();
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
-        var mother_fullname = $('#id_child_mother_fullname').val();
-        var sex = $('#id_child_gender').val();
         var year = $('#id_child_birthday_year').val();
         var month = $('#id_child_birthday_month').val();
         var day = $('#id_child_birthday_day').val();
-        var nationality = $('#id_child_nationality').val();
 
         if (first_name && father_name && last_name && year && month && day) {
 
@@ -332,11 +333,9 @@ $(document).ready(function() {
           $('#nfe_search_loader').removeClass('d-none');
 
           if (typeof outreach_child_search === 'function') outreach_child_search();
-
-          if (mother_fullname && sex && nationality) {
-                child_duplication_check();
-            }
         }
+        // Clear a previous result even while the identity is incomplete.
+        child_duplication_check();
       }
     );
 
@@ -382,6 +381,9 @@ $(document).ready(function() {
 });
 
 function child_duplication_check() {
+    var version = ++duplicationCheckVersion;
+    if (duplicationCheckRequest) duplicationCheckRequest.abort();
+    duplicationCheckRequest = null;
 
     isDuplicateFound = false;
     $('#child-duplication-error').hide();
@@ -421,7 +423,7 @@ function child_duplication_check() {
         var requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';
 
-        $.ajax({
+        duplicationCheckRequest = $.ajax({
             type: "POST",
             url: '/mscc/child-duplication-check/',
             data: JSON.stringify(data),
@@ -430,6 +432,7 @@ function child_duplication_check() {
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
+                if (version !== duplicationCheckVersion) return;
                 if(response.result.length > 0){
                     isDuplicateFound = true;
                     var text = ''
@@ -468,8 +471,10 @@ function child_duplication_check() {
                     $('#next-btn').prop('disabled', true);
                 }
             },
-            error: function (response) {
-                console.log(response);
+            error: function (response, status) {
+                if (status !== 'abort' && version === duplicationCheckVersion) {
+                    console.log(response);
+                }
             }
         });
     }
@@ -551,6 +556,10 @@ function fill_old_child_data(data)
             if (window.setResidentialAddressLocations) {
                 window.setResidentialAddressLocations(item);
             }
+            if ($('#registrationForm').length) {
+                updateConditionalRequirements();
+                child_duplication_check();
+            }
         }
     });
     $('#nfe_search_loader').addClass('hidden');
@@ -577,7 +586,8 @@ function reorganizeForm()
     //$('div#div_id_child_nationality_other').addClass('d-none').hide();
 
 //    Child Disability Other
-    var child_disability = $('select#id_child_disability option:selected').text();
+    var child_disability = $('select#id_child_disability option:selected').text().trim();
+    updateConditionalRequirements();
     if(child_disability == 'Other' || child_disability == 'غير ذلك'){
         //$('#div_id_child_disability_other').removeClass('d-none').show();
     }
@@ -725,6 +735,28 @@ function reorganizeForm()
     {
 //        $('div#div_id_labour_type_specify').addClass('d-none').hide();
         $('#id_labour_type_specify').val('');
+    }
+}
+
+function updateConditionalRequirements() {
+    if (!$('#registrationForm').length) return;
+    setConditionalRequired('#id_child_nationality_other', $('#id_child_nationality').val() == '6');
+    var disability = $('#id_child_disability option:selected').text().trim();
+    setConditionalRequired('#id_child_disability_other', disability == 'Other' || disability == 'غير ذلك');
+}
+
+function setConditionalRequired(selector, required) {
+    var field = $(selector);
+    field.prop('required', required).attr('aria-required', String(required));
+    var label = $('label[for="' + field.attr('id') + '"]');
+    label.toggleClass('requiredField', required);
+    if (required && !label.find('.asteriskField').length) {
+        label.append('<span class="asteriskField">*</span>');
+    } else if (!required) {
+        label.find('.asteriskField').remove();
+        field.removeClass('is-invalid');
+        field.closest('.mb-3').removeClass('has-error');
+        field.siblings('.invalid-feedback').text('');
     }
 }
 
@@ -953,6 +985,7 @@ function validateMainForm(showModal, step) {
     }
 
     if (step === 1) {
+        if (showModal && !valid) showFormValidationErrors();
         return valid;
     }
     if ($('#id_id_type').is(':visible') && (!$('#id_id_type').val() || $('#id_id_type').val().trim() === '')) {
@@ -1225,37 +1258,38 @@ function validateMainForm(showModal, step) {
             valid = false;
         }
 
-    if (showModal && !valid) {
-        var missingByStep = {};
-        $('.is-invalid:visible').each(function() {
-            var field = $(this);
-            var stepDiv = field.closest('.step-content');
-            var stepId = stepDiv.length ? stepDiv.attr('id') : 'step-1';
-            var stepNum = stepId.split('-')[1];
-            if (!missingByStep[stepNum]) {
-                missingByStep[stepNum] = [];
-            }
-            var label = $('label[for="' + field.attr('id') + '"]').clone().children().remove().end().text().trim();
-            if (!label) {
-                label = field.attr('name') || field.attr('id');
-            }
-            if (missingByStep[stepNum].indexOf(label) === -1) {
-                missingByStep[stepNum].push(label);
-            }
-        });
-        var content = '';
-        Object.keys(missingByStep).sort().forEach(function(stepKey) {
-            content += '<strong>Step ' + stepKey + ':</strong><ul>';
-            missingByStep[stepKey].forEach(function(label) {
-                content += '<li>' + label + '</li>';
-            });
-            content += '</ul>';
-        });
-        $('#formErrorModal #swal2-content').html(content);
-        $('#formErrorModal').modal('show');
-    }
-
+    if (showModal && !valid) showFormValidationErrors();
     return valid;
+}
+
+function showFormValidationErrors() {
+    var missingByStep = {};
+    $('.is-invalid:visible').each(function() {
+        var field = $(this);
+        var stepDiv = field.closest('.step-content');
+        var stepId = stepDiv.length ? stepDiv.attr('id') : 'step-1';
+        var stepNum = stepId.split('-')[1];
+        if (!missingByStep[stepNum]) {
+            missingByStep[stepNum] = [];
+        }
+        var label = $('label[for="' + field.attr('id') + '"]').clone().children().remove().end().text().trim();
+        if (!label) {
+            label = field.attr('name') || field.attr('id');
+        }
+        if (missingByStep[stepNum].indexOf(label) === -1) {
+            missingByStep[stepNum].push(label);
+        }
+    });
+    var content = '';
+    Object.keys(missingByStep).sort().forEach(function(stepKey) {
+        content += '<strong>Step ' + stepKey + ':</strong><ul>';
+        missingByStep[stepKey].forEach(function(label) {
+            content += '<li>' + label + '</li>';
+        });
+        content += '</ul>';
+    });
+    $('#formErrorModal #swal2-content').html(content);
+    $('#formErrorModal').modal('show');
 }
 
 $(document).ready(function() {
