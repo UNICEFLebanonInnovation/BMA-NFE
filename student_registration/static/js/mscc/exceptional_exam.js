@@ -6,11 +6,13 @@
         if (!form) return;
 
         var programme = form.elements.programme;
+        var blnLevel = form.elements.bln_level;
+        var blnLevelField = document.getElementById('exceptional-exam-bln-level-field');
         var grade = form.elements.grade;
         var choicesData = document.getElementById('exceptional-exam-grade-choices');
         var helpData = document.getElementById('exceptional-exam-grade-help');
         var gradeField = document.getElementById('exceptional-exam-grade-field');
-        if (!programme || !grade || !choicesData || !helpData || !gradeField) return;
+        if (!programme || !blnLevel || !blnLevelField || !grade || !choicesData || !helpData || !gradeField) return;
 
         var choicesByProgramme;
         var helpByProgramme;
@@ -33,8 +35,15 @@
         }
 
         function updateGrades() {
-            // The server computes BLN eligibility from the registered child's age.
-            var choices = choicesByProgramme[programme.value] || [];
+            var isBLN = programme.value === 'BLN';
+            blnLevelField.hidden = !isBLN;
+            blnLevel.disabled = !isBLN;
+            blnLevel.required = isBLN;
+            if (!isBLN) blnLevel.value = '';
+
+            // The server defines the grade allowed for each selected BLN level.
+            var choiceKey = isBLN && blnLevel.value ? 'BLN:' + blnLevel.value : programme.value;
+            var choices = choicesByProgramme[choiceKey] || [];
             if (!Array.isArray(choices)) return;
             var previousGrade = grade.value;
             grade.innerHTML = '';
@@ -46,19 +55,19 @@
                 return String(choice.id) === previousGrade;
             });
             grade.value = stillAvailable ? previousGrade : '';
-            if (programme.value === 'BLN' && choices.length === 1) {
+            if (isBLN && choices.length === 1) {
                 grade.value = String(choices[0].id);
             }
 
-            var message = helpByProgramme[programme.value] || helpByProgramme[''] || '';
+            var message = helpByProgramme[choiceKey] || helpByProgramme[''] || '';
             if (help) help.textContent = message;
-            // Keep the required select enabled so an ineligible BLN application
-            // cannot bypass the browser's validation when no grade is available.
+            // A BLN level must be selected before the required grade is available.
             grade.disabled = false;
-            grade.setCustomValidity(programme.value === 'BLN' && !choices.length ? message : '');
+            grade.setCustomValidity(isBLN && !choices.length ? message : '');
         }
 
         programme.addEventListener('change', updateGrades);
+        blnLevel.addEventListener('change', updateGrades);
         updateGrades();
     }
 

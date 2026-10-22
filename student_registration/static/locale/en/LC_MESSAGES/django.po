@@ -12111,3 +12111,45 @@ msgstr ""
 #: student_registration/templates/alp/child_profile.html:107
 msgid "Unique child number"
 msgstr ""
+
+# Exceptional examination requirements.
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Country of Birth"
+msgstr ""
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Lebanon"
+msgstr ""
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Syria"
+msgstr ""
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "BLN level"
+msgstr ""
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Select a BLN level first."
+msgstr ""
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "For BLN, the grade is determined by the selected BLN level."
+msgstr ""
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Select the grade allowed for the selected BLN level."
+msgstr ""
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Grades 2–4 are available for DIRASA."
+msgstr ""
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Place of birth similar in the Official ID"
+msgstr ""
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Required for BLN."
+msgstr ""

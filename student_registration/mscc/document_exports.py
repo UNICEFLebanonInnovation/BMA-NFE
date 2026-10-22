@@ -483,7 +483,13 @@ def build_examination_card(registration):
     centred_line('NGO: ' + ngo)
     centred_line('الاسم الثلاثي: ' + values['child_full_name'], arabic=True)
     centred_line('Date of Birth: ' + birthday)
-    centred_line('Place of Birth: ' + values.get('exceptional_exam__place_of_birth', '').strip())
+    birthplace = ', '.join(
+        value.strip() for value in (
+            values.get('exceptional_exam__place_of_birth', ''),
+            values.get('exceptional_exam__country_of_birth', ''),
+        ) if value.strip()
+    )
+    centred_line('Place of Birth: ' + birthplace)
     centred_line('Nationality: ' + nationality)
     centred_line('Governorate: ' + governorate)
     last_line = centred_line('Physical difficulties: ' + disability)

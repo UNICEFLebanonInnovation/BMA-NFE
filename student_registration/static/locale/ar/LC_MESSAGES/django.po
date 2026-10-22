@@ -14687,3 +14687,45 @@ msgstr "راجع معلومات مدرستك أدناه وحدّثها."
 #: student_registration/templates/alp/school_profile.html:43
 msgid "You are not assigned to any specific school."
 msgstr "لم يتم تعيينك في مدرسة محددة."
+
+# Exceptional examination requirements.
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Country of Birth"
+msgstr "بلد الولادة"
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Lebanon"
+msgstr "لبنان"
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Syria"
+msgstr "سوريا"
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "BLN level"
+msgstr "مستوى برنامج BLN"
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Select a BLN level first."
+msgstr "اختر مستوى برنامج BLN أولاً."
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "For BLN, the grade is determined by the selected BLN level."
+msgstr "في برنامج BLN، يُحدَّد الصف الدراسي بحسب المستوى المختار."
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Select the grade allowed for the selected BLN level."
+msgstr "اختر الصف المسموح به لمستوى برنامج BLN المختار."
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Grades 2–4 are available for DIRASA."
+msgstr "الصفوف من الثاني إلى الرابع متاحة لبرنامج دراسة."
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Place of birth similar in the Official ID"
+msgstr "مكان الولادة كما هو مذكور في وثيقة الهوية الرسمية."
+
+#: student_registration/mscc/models.py student_registration/mscc/exceptional_exam_forms.py student_registration/mscc/exceptional_exam_grades.py
+msgid "Required for BLN."
+msgstr "مطلوب لبرنامج BLN."

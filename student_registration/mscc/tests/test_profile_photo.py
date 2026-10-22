@@ -164,7 +164,7 @@ class MSCCProfilePhotoTests(TestCase):
             'first_phone_number': '70-123456', 'nfe_programme': 'BLN',
             'child_governorate': self.governorate.pk,
             'child_district': self.district.pk, 'child_cadaster': self.cadaster.pk,
-            'child_municipality': 'Beirut municipality', 'child_village': 'Hamra',
+            'child_municipality': 'Beirut municipality', 'child_village': self.cadaster.name,
             'child_street': 'Street Twelve', 'child_building_camp': 'Building Two',
             'child_photo': SimpleUploadedFile('portrait.png', portrait_bytes(colour), content_type='image/png'),
         }

@@ -24,7 +24,7 @@ ADDRESS = {
     'child_governorate': 'بيروت',
     'child_district': 'بيروت',
     'child_municipality': 'بلدية بيروت',
-    'child_village': 'الحمرا',
+    'child_village': 'منطقة رأس بيروت العقارية',
     'child_street': 'شارع 12',
     'child_building_camp': 'مبنى الأمل 2 / طابق 3',
     'child_cadaster': 'منطقة رأس بيروت العقارية',
@@ -278,6 +278,7 @@ class MSCCRegistrationWorkflowTests(TestCase):
         response = self.client.post(url, self.registration_data(
             child_governorate=str(self.other_governorate.pk),
             child_district=str(self.other_district.pk),
+            child_village=self.other_cadaster.name,
             child_cadaster=str(self.other_cadaster.pk),
         ))
 
@@ -302,6 +303,61 @@ class MSCCRegistrationWorkflowTests(TestCase):
                      if 'selected' in option],
                     [str(location.pk)],
                 )
+
+    def test_another_districts_village_is_rejected_without_creating_a_child(self):
+        data = self.registration_data(child_village=self.other_cadaster.name)
+        form = MSCCRegistrationForm(data=data)
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(set(form.errors), {'child_village'})
+
+        response = self.client.post(reverse('mscc:child_add'), data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(set(response.context['form'].errors), {'child_village'})
+        self.assertFalse(Registration.objects.exists())
+        self.assertFalse(Child.objects.exists())
+
+    def test_legacy_village_survives_an_edit_but_cannot_follow_a_district_change(self):
+        registration = self.create_registration()
+        child = registration.child
+        child.village = 'Legacy village absent from the location catalogue'
+        child.save(update_fields=['village'])
+        url = reverse('mscc:child_edit', args=[registration.pk])
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form']['child_village'].value(), child.village)
+
+        response = self.client.post(url, self.registration_data(
+            child_village=child.village, child_street='Updated legacy street',
+        ))
+
+        self.assertEqual(response.status_code, 302)
+        child.refresh_from_db()
+        self.assertEqual(child.village, 'Legacy village absent from the location catalogue')
+        self.assertEqual(child.street, 'Updated legacy street')
+
+        moved_data = self.registration_data(
+            child_governorate=str(self.other_governorate.pk),
+            child_district=str(self.other_district.pk),
+            child_cadaster=str(self.other_cadaster.pk),
+            child_village=child.village,
+        )
+        form = MSCCRegistrationForm(data=moved_data, instance=registration)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(set(form.errors), {'child_village'})
+
+        response = self.client.post(url, moved_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(set(response.context['form'].errors), {'child_village'})
+        child.refresh_from_db()
+        self.assertEqual(child.governorate_id, self.governorate.pk)
+        self.assertEqual(child.district_id, self.district.pk)
+        self.assertEqual(child.cadaster_id, self.cadaster.pk)
+        self.assertEqual(child.village, 'Legacy village absent from the location catalogue')
+        self.assertEqual(child.street, 'Updated legacy street')
 
     def test_location_option_endpoint_returns_typed_direct_children(self):
         url = reverse('mscc:child_location_options')
