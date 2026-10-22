@@ -2781,15 +2781,7 @@ class ExceptionalExam(TimeStampedModel):
             town_choices_for_locations(governorate, district)
         ):
             errors['nearest_town'] = _('Select a village in the selected district.')
-        registration = self._state.fields_cache.get('registration')
-        if registration is None and self.registration_id:
-            try:
-                registration = self.registration
-            except Registration.DoesNotExist:
-                # Let foreign-key validation report an unknown registration.
-                registration = None
-        education_program = registration.education_program if registration and registration.pk else ''
-        grade_error = programme_grade_error(self.programme, education_program, self.grade)
+        grade_error = programme_grade_error(self.programme, self.grade)
         if grade_error:
             errors['grade'] = grade_error
         if errors:
@@ -2814,6 +2806,16 @@ class ExceptionalExam(TimeStampedModel):
         return tuple(
             (self._meta.get_field(name).verbose_name, value)
             for name, value in zip(fields, values)
+        )
+
+    def get_programme_display(self):
+        # Removed choices stay readable in historical profiles and exports.
+        historical_labels = {
+            'BLN': gettext_lazy('Basic Literacy and Numeracy (BLN)'),
+            'DIRASA': gettext_lazy('DIRASA'),
+        }
+        return dict(PROGRAMME_CHOICES).get(
+            self.programme, historical_labels.get(self.programme, self.programme),
         )
 
     def get_grade_display(self):

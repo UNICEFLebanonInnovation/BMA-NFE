@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='exceptionalexam',
             name='programme',
-            field=models.CharField(choices=[('BLN', 'Basic Literacy and Numeracy (BLN)'), ('BLN Level 1', 'BLN Level 1'), ('BLN Level 2', 'BLN Level 2'), ('BLN Level 3', 'BLN Level 3'), ('DIRASA', 'DIRASA')], max_length=20, verbose_name='Non-formal education programme'),
+            field=models.CharField(choices=[('BLN Level 1', 'BLN Level 1'), ('BLN Level 2', 'BLN Level 2'), ('BLN Level 3', 'BLN Level 3')], max_length=20, verbose_name='Non-formal education programme'),
         ),
     ]

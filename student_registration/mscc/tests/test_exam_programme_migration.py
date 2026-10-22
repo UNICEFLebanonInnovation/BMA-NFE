@@ -51,6 +51,11 @@ class ExceptionalExamProgrammeMigrationTests(TransactionTestCase):
         EducationService = apps.get_model('mscc', 'EducationService')
         self.assertEqual(self.columns(Exam._meta.db_table), original_columns)
         self.assertNotIn('bln_level', self.columns(Exam._meta.db_table))
+        self.assertEqual(
+            tuple(value for value, _ in Exam._meta.get_field('programme').choices),
+            ('BLN Level 1', 'BLN Level 2', 'BLN Level 3'),
+        )
+        self.assertEqual(Exam._meta.get_field('programme').max_length, 20)
         self.assertEqual(Exam.objects.count(), len(records))
         for pk, registration_id, service_id, programme, grade in records:
             with self.subTest(existing_programme=programme):
