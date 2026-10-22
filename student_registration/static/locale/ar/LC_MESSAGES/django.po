@@ -14721,3 +14721,23 @@ msgstr "اختر صف برنامج BLN المسموح به بحسب البرنا
 #: student_registration/mscc/exceptional_exam_grades.py
 msgid "BLN requires a Program of BLN Level 1, BLN Level 2, or BLN Level 3 in Education Service. Update Education Service first."
 msgstr "يتطلب برنامج BLN اختيار المستوى الأول أو الثاني أو الثالث من برنامج BLN في خدمة التعليم. حدّث خدمة التعليم أولاً."
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Governorate and district are taken from the child's registration."
+msgstr "تؤخذ المحافظة والقضاء من تسجيل الطفل."
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Update the governorate and district in the child's registration first."
+msgstr "حدّث المحافظة والقضاء في تسجيل الطفل أولاً."
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Select a village in the registered district."
+msgstr "اختر قرية ضمن القضاء المسجّل."
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "From the child's registration."
+msgstr "من تسجيل الطفل."
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Edit registration"
+msgstr "تعديل التسجيل"

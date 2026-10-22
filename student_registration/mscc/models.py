@@ -2685,9 +2685,9 @@ class Recreational(TimeStampedModel):
 class ExceptionalExam(TimeStampedModel):
     """The exceptional-exam application for a registered MSCC child.
 
-    Residence is recorded independently of the child's registration address.
-    Governorate and district use the shared Location hierarchy; village choices
-    come from the exam-specific catalog supplied by the NFE sector.
+    Form saves copy governorate and district from the registered child's
+    address. Village choices come from the district's exam-specific catalog
+    supplied by the NFE sector. Saved applications retain their prior answers.
     """
 
     registration = models.OneToOneField(

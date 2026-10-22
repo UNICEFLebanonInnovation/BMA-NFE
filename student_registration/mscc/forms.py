@@ -955,8 +955,8 @@ class MSCCRegistrationForm(MainForm):
         label=_('District/Caza (قضاء)'), queryset=Location.objects.none(), required=True,
     )
     child_municipality = forms.CharField(label=_('Municipality (بلدية)'), max_length=255)
-    child_village = forms.ChoiceField(
-        label=_('Village (قرية)'), choices=(('', _('---------')),), required=True,
+    child_village = forms.CharField(
+        label=_('Village (قرية)'), max_length=255, required=True,
     )
     child_street = forms.CharField(label=_('Street (شارع)'), max_length=255)
     child_building_camp = forms.CharField(label=_('Building/Camp (مبنى/مخيم)'), max_length=255)
@@ -1005,23 +1005,6 @@ class MSCCRegistrationForm(MainForm):
                 type_id=3, parent_id=district_id, parent__type_id=2,
                 parent__parent_id=governorate_id, parent__parent__type_id=1,
             ).order_by('name')
-            # Villages use the district's existing Location children. Keep the
-            # canonical name in Child.village so legacy profiles and exports
-            # continue to display a village name rather than an internal ID.
-            villages = dict.fromkeys(
-                location.name for location in self.fields['child_cadaster'].queryset
-            )
-            if self.instance.pk and self.instance.child_id:
-                child = self.instance.child
-                if (child.governorate_id == governorate_id
-                        and child.district_id == district_id
-                        and child.village and child.village.strip()):
-                    # Preserve an existing free-text village only within its
-                    # original parents; it cannot be carried to a new district.
-                    villages.setdefault(child.village, None)
-            self.fields['child_village'].choices = (
-                [('', _('---------'))] + [(name, name) for name in villages]
-            )
 
     def clean(self):
         # MainForm retains the legacy ALP validation. Only fields still offered

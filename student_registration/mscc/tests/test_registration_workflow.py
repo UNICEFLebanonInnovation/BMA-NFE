@@ -24,7 +24,7 @@ ADDRESS = {
     'child_governorate': 'بيروت',
     'child_district': 'بيروت',
     'child_municipality': 'بلدية بيروت',
-    'child_village': 'منطقة رأس بيروت العقارية',
+    'child_village': 'الحمرا',
     'child_street': 'شارع 12',
     'child_building_camp': 'مبنى الأمل 2 / طابق 3',
     'child_cadaster': 'منطقة رأس بيروت العقارية',
@@ -304,21 +304,20 @@ class MSCCRegistrationWorkflowTests(TestCase):
                     [str(location.pk)],
                 )
 
-    def test_another_districts_village_is_rejected_without_creating_a_child(self):
-        data = self.registration_data(child_village=self.other_cadaster.name)
+    def test_arbitrary_village_text_is_accepted_and_saved(self):
+        village = '  قرية مكتوبة يدوياً وغير مدرجة في المواقع  '
+        data = self.registration_data(child_village=village)
         form = MSCCRegistrationForm(data=data)
 
-        self.assertFalse(form.is_valid())
-        self.assertEqual(set(form.errors), {'child_village'})
+        self.assertTrue(form.is_valid(), form.errors.as_json())
+        self.assertEqual(form.cleaned_data['child_village'], village.strip())
 
         response = self.client.post(reverse('mscc:child_add'), data)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(set(response.context['form'].errors), {'child_village'})
-        self.assertFalse(Registration.objects.exists())
-        self.assertFalse(Child.objects.exists())
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Registration.objects.get().child.village, village.strip())
 
-    def test_legacy_village_survives_an_edit_but_cannot_follow_a_district_change(self):
+    def test_free_text_village_is_preserved_when_the_registration_address_changes(self):
         registration = self.create_registration()
         child = registration.child
         child.village = 'Legacy village absent from the location catalogue'
@@ -345,19 +344,17 @@ class MSCCRegistrationWorkflowTests(TestCase):
             child_village=child.village,
         )
         form = MSCCRegistrationForm(data=moved_data, instance=registration)
-        self.assertFalse(form.is_valid())
-        self.assertEqual(set(form.errors), {'child_village'})
+        self.assertTrue(form.is_valid(), form.errors.as_json())
 
         response = self.client.post(url, moved_data)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(set(response.context['form'].errors), {'child_village'})
+        self.assertEqual(response.status_code, 302)
         child.refresh_from_db()
-        self.assertEqual(child.governorate_id, self.governorate.pk)
-        self.assertEqual(child.district_id, self.district.pk)
-        self.assertEqual(child.cadaster_id, self.cadaster.pk)
+        self.assertEqual(child.governorate_id, self.other_governorate.pk)
+        self.assertEqual(child.district_id, self.other_district.pk)
+        self.assertEqual(child.cadaster_id, self.other_cadaster.pk)
         self.assertEqual(child.village, 'Legacy village absent from the location catalogue')
-        self.assertEqual(child.street, 'Updated legacy street')
+        self.assertEqual(child.street, self.address['child_street'])
 
     def test_location_option_endpoint_returns_typed_direct_children(self):
         url = reverse('mscc:child_location_options')
@@ -634,6 +631,8 @@ class MSCCRegistrationWorkflowTests(TestCase):
                 self.assertIn('required', controls[field])
         for field in LOCATION_FIELDS:
             self.assertEqual(rendered.tags[field], 'select')
+        self.assertEqual(rendered.tags['child_village'], 'input')
+        self.assertEqual(controls['child_village']['type'], 'text')
         self.assertNotContains(response, 'Identification Documentation')
         self.assertNotContains(response, 'Labour &amp; Vulnerability')
 
