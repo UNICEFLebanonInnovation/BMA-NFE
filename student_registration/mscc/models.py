@@ -2726,7 +2726,7 @@ class ExceptionalExam(TimeStampedModel):
         help_text=gettext_lazy('Place of birth similar in the Official ID'),
     )
     programme = models.CharField(
-        max_length=6, choices=PROGRAMME_CHOICES,
+        max_length=20, choices=PROGRAMME_CHOICES,
         verbose_name=gettext_lazy('Non-formal education programme'),
     )
     grade = models.CharField(

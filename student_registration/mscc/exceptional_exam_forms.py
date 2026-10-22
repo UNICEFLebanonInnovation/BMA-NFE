@@ -5,7 +5,10 @@ from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from student_registration.locations.models import Location
 
-from .exceptional_exam_grades import programme_grade_choices, programme_grade_help
+from .exceptional_exam_choices import PROGRAMME_CHOICES
+from .exceptional_exam_grades import (
+    BLN_GRADE_BY_PROGRAM, programme_grade_choices, programme_grade_help,
+)
 from .exceptional_exam_locations import (
     location_label, town_choices_for_locations,
 )
@@ -21,7 +24,7 @@ class TranslatedLocationChoiceField(forms.ModelChoiceField):
 
 
 class ExceptionalExamForm(forms.ModelForm):
-    """Use the registered residence and saved Education Service Program."""
+    """Use registered residence and programme-specific examination grades."""
 
     governorate = TranslatedLocationChoiceField(
         queryset=Location.objects.filter(type_id=1).order_by('name'),
@@ -78,26 +81,26 @@ class ExceptionalExamForm(forms.ModelForm):
             return self.initial.get(name, '')
 
         programme = selected('programme')
-        # The registration comes from the authorized URL, and its latest saved
-        # service is authoritative. Submitted programme levels cannot replace it.
+        # Generic BLN applications retain the saved Education Service rule.
+        # Explicit BLN programme levels determine their own eligible grade.
         education_program = registration.education_program if registration and registration.pk else ''
+        programme_codes = ('',) + tuple(code for code, _ in PROGRAMME_CHOICES)
 
         self.grade_choices_by_programme = {
             code: [
                 {'id': value, 'text': str(label)}
                 for value, label in programme_grade_choices(code, education_program)
             ]
-            for code in ('', 'BLN', 'DIRASA')
+            for code in programme_codes
         }
         self.grade_help_by_programme = {
             code: str(programme_grade_help(code, education_program))
-            for code in ('', 'BLN', 'DIRASA')
+            for code in programme_codes
         }
         grade_choices = programme_grade_choices(programme, education_program)
         self.fields['grade'].choices = grade_choices
-        if not self.is_bound and programme == 'BLN' and len(grade_choices) == 1:
-            # A service may have changed since the last application. Display
-            # the current eligible grade without rewriting the saved answer.
+        if not self.is_bound and len(grade_choices) == 1:
+            # Display the eligible grade without rewriting the saved answer.
             self.initial['grade'] = grade_choices[0][0]
 
         for field in self.fields.values():
@@ -134,4 +137,8 @@ class ExceptionalExamForm(forms.ModelForm):
             self.fields['grade'].error_messages['invalid_choice'] = (
                 _('Select the BLN grade allowed by the Program saved in Education Service.')
                 if grade_choices else programme_grade_help(programme, education_program)
+            )
+        elif programme in BLN_GRADE_BY_PROGRAM:
+            self.fields['grade'].error_messages['invalid_choice'] = _(
+                'Select the grade allowed for the selected BLN programme level.'
             )
