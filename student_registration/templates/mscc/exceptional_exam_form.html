@@ -4,6 +4,17 @@
 {% block project_title %}{% translate "Exceptional Exam" %}{% endblock %}
 {% block module_name %}{% translate "Exceptional Exam" %}{% endblock %}
 
+{% block extra_head %}
+{{ block.super }}
+<style>
+    #exceptional-exam-form .form-label::after {
+        content: "*";
+        color: #dc3545;
+        margin-inline-start: 0.25em;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
