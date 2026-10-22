@@ -429,6 +429,29 @@ class MSCCDocumentExportTests(TestCase):
         ))[0][1]
         self.assertEqual(row['Exceptional Exam - Place of Birth'], 'بيروت')
 
+    def test_card_and_workbook_include_saved_birth_country_without_an_exam_level_field(self):
+        exam = ExceptionalExam.objects.create(
+            registration=self.first_registration, governorate=self.governorate,
+            district=self.district, nearest_town='achrafieh',
+            country_of_birth='SY', place_of_birth='دمشق',
+            programme='BLN', grade='4',
+            math_language='ar', language_exam='en',
+        )
+        registration = Registration.objects.get(pk=self.first_registration.pk)
+        text, photos = word_text_and_photos(build_examination_card(registration))
+        self.assertEqual(
+            card_field(text, 'Place of Birth'),
+            'دمشق, {}'.format(exam.get_country_of_birth_display()),
+        )
+        self.assertPhotoColour(photos[0], (255, 0, 0))
+        row = workbook_rows(build_children_workbook(
+            Registration.objects.filter(pk=self.first_registration.pk),
+        ))[0][1]
+        self.assertEqual(row['Exceptional Exam - Country of Birth'], exam.get_country_of_birth_display())
+        self.assertEqual(row['Exceptional Exam - Place of Birth'], 'دمشق')
+        self.assertNotIn('Exceptional Exam - BLN level', row)
+        self.assertEqual(row['Exceptional Exam - Grade applying for the examination'], exam.get_grade_display())
+
     def test_word_card_leaves_unrecorded_fields_blank_and_preserves_partial_birthdate(self):
         registration = Registration.objects.get(pk=self.second_registration.pk)
         text, photos = word_text_and_photos(build_examination_card(registration))

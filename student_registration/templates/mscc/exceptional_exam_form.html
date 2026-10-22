@@ -68,6 +68,7 @@
                                 </div>
                             </div>
                         </fieldset>
+                        <div class="mb-4">{% bootstrap_field form.country_of_birth %}</div>
                         <div class="mb-4">{% bootstrap_field form.place_of_birth %}</div>
                         <div class="mb-4">{% bootstrap_field form.programme %}</div>
                         <div class="mb-4" id="exceptional-exam-grade-field">{% bootstrap_field form.grade %}</div>
@@ -86,5 +87,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=4"></script>
+<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=6"></script>
 {% endblock %}

@@ -345,13 +345,16 @@ PROGRAMME_CHOICES = (
     ('DIRASA', _('DIRASA')),
 )
 
+COUNTRY_OF_BIRTH_CHOICES = (
+    ('LB', _('Lebanon')),
+    ('SY', _('Syria')),
+    ('OTHER', _('Other')),
+)
+
 GRADE_CHOICES = (
     ('2', _('Grade 2')),
     ('3', _('Grade 3')),
     ('4', _('Grade 4')),
-    ('5', _('Grade 5')),
-    ('6', _('Grade 6')),
-    ('7', _('Grade 7')),
 )
 
 MATH_LANGUAGE_CHOICES = (

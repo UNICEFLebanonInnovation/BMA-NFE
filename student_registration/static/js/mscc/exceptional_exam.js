@@ -33,7 +33,8 @@
         }
 
         function updateGrades() {
-            // The server computes BLN eligibility from the registered child's age.
+            var isBLN = programme.value === 'BLN';
+            // The server derives the BLN grade from the saved Education Service Program.
             var choices = choicesByProgramme[programme.value] || [];
             if (!Array.isArray(choices)) return;
             var previousGrade = grade.value;
@@ -46,16 +47,15 @@
                 return String(choice.id) === previousGrade;
             });
             grade.value = stillAvailable ? previousGrade : '';
-            if (programme.value === 'BLN' && choices.length === 1) {
+            if (isBLN && choices.length === 1) {
                 grade.value = String(choices[0].id);
             }
 
             var message = helpByProgramme[programme.value] || helpByProgramme[''] || '';
             if (help) help.textContent = message;
-            // Keep the required select enabled so an ineligible BLN application
-            // cannot bypass the browser's validation when no grade is available.
+            // Keep missing Education Service information visible to browser validation.
             grade.disabled = false;
-            grade.setCustomValidity(programme.value === 'BLN' && !choices.length ? message : '');
+            grade.setCustomValidity(isBLN && !choices.length ? message : '');
         }
 
         programme.addEventListener('change', updateGrades);

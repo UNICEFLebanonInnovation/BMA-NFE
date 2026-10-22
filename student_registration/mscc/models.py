@@ -23,6 +23,7 @@ from .exceptional_exam_choices import (
     DISTRICT_CHOICES,
     TOWN_CHOICES,
     PROGRAMME_CHOICES,
+    COUNTRY_OF_BIRTH_CHOICES,
     GRADE_CHOICES,
     MATH_LANGUAGE_CHOICES,
     LANGUAGE_EXAM_CHOICES,
@@ -2715,9 +2716,14 @@ class ExceptionalExam(TimeStampedModel):
         max_length=100, choices=TOWN_CHOICES,
         verbose_name=gettext_lazy('Village'),
     )
+    country_of_birth = models.CharField(
+        max_length=5, choices=COUNTRY_OF_BIRTH_CHOICES, default='',
+        verbose_name=gettext_lazy('Country of Birth'),
+    )
     place_of_birth = models.CharField(
-        max_length=100, blank=True, default='',
+        max_length=100, default='',
         verbose_name=gettext_lazy('Place of Birth'),
+        help_text=gettext_lazy('Place of birth similar in the Official ID'),
     )
     programme = models.CharField(
         max_length=6, choices=PROGRAMME_CHOICES,
@@ -2780,10 +2786,10 @@ class ExceptionalExam(TimeStampedModel):
             try:
                 registration = self.registration
             except Registration.DoesNotExist:
-                # Leave invalid foreign keys to the model field's validation.
+                # Let foreign-key validation report an unknown registration.
                 registration = None
-        child = registration.child if registration is not None and registration.child_id else None
-        grade_error = programme_grade_error(self.programme, child, self.grade)
+        education_program = registration.education_program if registration and registration.pk else ''
+        grade_error = programme_grade_error(self.programme, education_program, self.grade)
         if grade_error:
             errors['grade'] = grade_error
         if errors:
@@ -2797,10 +2803,11 @@ class ExceptionalExam(TimeStampedModel):
             location_label(self.district) or self.get_district_legacy_display() or '',
             self.get_nearest_town_display(),
         )
-        fields = ('governorate', 'district', 'nearest_town', 'place_of_birth', 'programme',
-                  'grade', 'math_language', 'language_exam')
+        fields = ('governorate', 'district', 'nearest_town', 'country_of_birth',
+                  'place_of_birth', 'programme', 'grade',
+                  'math_language', 'language_exam')
         values = residence + (
-            self.place_of_birth or '',
+            self.get_country_of_birth_display(), self.place_of_birth or '',
             self.get_programme_display(), self.get_grade_display(),
             self.get_math_language_display(), self.get_language_exam_display(),
         )
@@ -2808,6 +2815,16 @@ class ExceptionalExam(TimeStampedModel):
             (self._meta.get_field(name).verbose_name, value)
             for name, value in zip(fields, values)
         )
+
+    def get_grade_display(self):
+        # Older applications retain their submitted grade. These grades are no
+        # longer selectable, but profiles and exports must remain readable.
+        historical_labels = {
+            '5': gettext_lazy('Grade 5'),
+            '6': gettext_lazy('Grade 6'),
+            '7': gettext_lazy('Grade 7'),
+        }
+        return dict(GRADE_CHOICES).get(self.grade, historical_labels.get(self.grade, self.grade))
 
     def __str__(self):
         return '%s — %s' % (_('Exceptional Exam'), self.registration_id)

@@ -35,8 +35,9 @@ class ExceptionalExamForm(forms.ModelForm):
     class Meta:
         model = ExceptionalExam
         fields = (
-            'governorate', 'district', 'nearest_town', 'place_of_birth', 'programme',
-            'grade', 'math_language', 'language_exam',
+            'governorate', 'district', 'nearest_town', 'country_of_birth',
+            'place_of_birth', 'programme', 'grade', 'math_language',
+            'language_exam',
         )
 
     def __init__(self, *args, registration=None, **kwargs):
@@ -64,6 +65,11 @@ class ExceptionalExamForm(forms.ModelForm):
                 return self.data.get(self.add_prefix(name), '')
             return self.initial.get(name, '')
 
+        programme = selected('programme')
+        # The registration comes from the authorized URL, and its latest saved
+        # service is authoritative. Submitted programme levels cannot replace it.
+        education_program = registration.education_program if registration and registration.pk else ''
+
         governorate_id = positive_location_id(selected('governorate'))
         governorate = Location.objects.filter(pk=governorate_id, type_id=1).first()
         district_queryset = Location.objects.none()
@@ -76,24 +82,22 @@ class ExceptionalExamForm(forms.ModelForm):
         district = district_queryset.filter(pk=district_id).first()
         self.fields['nearest_town'].choices = town_choices_for_locations(governorate, district)
 
-        child = registration.child if registration is not None and registration.child_id else None
-        programme = selected('programme')
         self.grade_choices_by_programme = {
             code: [
                 {'id': value, 'text': str(label)}
-                for value, label in programme_grade_choices(code, child)
+                for value, label in programme_grade_choices(code, education_program)
             ]
-            for code in ('BLN', 'DIRASA')
-        }
-        self.grade_help_by_programme = {
-            code: str(programme_grade_help(code, child))
             for code in ('', 'BLN', 'DIRASA')
         }
-        grade_choices = programme_grade_choices(programme, child)
+        self.grade_help_by_programme = {
+            code: str(programme_grade_help(code, education_program))
+            for code in ('', 'BLN', 'DIRASA')
+        }
+        grade_choices = programme_grade_choices(programme, education_program)
         self.fields['grade'].choices = grade_choices
         if not self.is_bound and programme == 'BLN' and len(grade_choices) == 1:
-            # The eligible BLN grade can change after the child's birthday.
-            # Showing it does not alter the existing application until saved.
+            # A service may have changed since the last application. Display
+            # the current eligible grade without rewriting the saved answer.
             self.initial['grade'] = grade_choices[0][0]
 
         for field in self.fields.values():
@@ -117,11 +121,12 @@ class ExceptionalExamForm(forms.ModelForm):
             field.help_text = _('Required')
         self.fields['district'].help_text = _('Select a governorate first.')
         self.fields['nearest_town'].help_text = _('Select a district first.')
-        self.fields['grade'].help_text = programme_grade_help(programme, child)
+        self.fields['place_of_birth'].help_text = _('Place of birth similar in the Official ID')
+        self.fields['grade'].help_text = programme_grade_help(programme, education_program)
         if programme == 'BLN':
             if not grade_choices:
-                self.fields['grade'].error_messages['required'] = programme_grade_help(programme, child)
+                self.fields['grade'].error_messages['required'] = programme_grade_help(programme, education_program)
             self.fields['grade'].error_messages['invalid_choice'] = (
-                _("Select the BLN grade allowed for the child's age.")
-                if grade_choices else programme_grade_help(programme, child)
+                _('Select the BLN grade allowed by the Program saved in Education Service.')
+                if grade_choices else programme_grade_help(programme, education_program)
             )
