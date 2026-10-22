@@ -338,11 +338,9 @@ TOWN_CHOICES = tuple(dict(
 ).items())
 
 PROGRAMME_CHOICES = (
-    (
-        'BLN',
-        _('Basic Literacy and Numeracy (BLN)'),
-    ),
-    ('DIRASA', _('DIRASA')),
+    ('BLN Level 1', _('BLN Level 1')),
+    ('BLN Level 2', _('BLN Level 2')),
+    ('BLN Level 3', _('BLN Level 3')),
 )
 
 COUNTRY_OF_BIRTH_CHOICES = (

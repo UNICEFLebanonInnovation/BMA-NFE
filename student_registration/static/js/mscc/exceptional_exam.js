@@ -33,8 +33,7 @@
         }
 
         function updateGrades() {
-            var isBLN = programme.value === 'BLN';
-            // The server derives the BLN grade from the saved Education Service Program.
+            // The server supplies the grades allowed for each programme.
             var choices = choicesByProgramme[programme.value] || [];
             if (!Array.isArray(choices)) return;
             var previousGrade = grade.value;
@@ -47,15 +46,15 @@
                 return String(choice.id) === previousGrade;
             });
             grade.value = stillAvailable ? previousGrade : '';
-            if (isBLN && choices.length === 1) {
+            if (choices.length === 1) {
                 grade.value = String(choices[0].id);
             }
 
             var message = helpByProgramme[programme.value] || helpByProgramme[''] || '';
             if (help) help.textContent = message;
-            // Keep missing Education Service information visible to browser validation.
+            // Keep missing programme eligibility visible to browser validation.
             grade.disabled = false;
-            grade.setCustomValidity(isBLN && !choices.length ? message : '');
+            grade.setCustomValidity(programme.value && !choices.length ? message : '');
         }
 
         programme.addEventListener('change', updateGrades);
