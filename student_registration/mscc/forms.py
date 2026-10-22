@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, gettext_lazy
 from django import forms
 from django.db import transaction
 from django.urls import reverse
@@ -39,6 +39,8 @@ from student_registration.schools.models import (
 )
 from django.core.validators import RegexValidator
 from .serializers import MainSerializer, MSCCRegistrationSerializer
+from .exceptional_exam_choices import COUNTRY_OF_BIRTH_CHOICES
+from .exceptional_exam_locations import registered_village_code, town_choices_for_locations
 from student_registration.mscc.templatetags.simple_tags import get_service, get_education_service
 from student_registration.users.templatetags.custom_tags import has_group
 import datetime
@@ -954,17 +956,24 @@ class MSCCRegistrationForm(MainForm):
     child_district = forms.ModelChoiceField(
         label=_('District/Caza (قضاء)'), queryset=Location.objects.none(), required=True,
     )
-    child_municipality = forms.CharField(label=_('Municipality (بلدية)'), max_length=255)
-    child_village = forms.CharField(
-        label=_('Village (قرية)'), max_length=255, required=True,
+    child_village = forms.ChoiceField(
+        label=gettext_lazy('Village (قرية)'), choices=(('', gettext_lazy('---------')),),
+        required=True,
     )
-    child_street = forms.CharField(label=_('Street (شارع)'), max_length=255)
-    child_building_camp = forms.CharField(label=_('Building/Camp (مبنى/مخيم)'), max_length=255)
+    child_country_of_birth = forms.ChoiceField(
+        label=gettext_lazy('Country of Birth'),
+        choices=(('', gettext_lazy('Select an option')),) + tuple(COUNTRY_OF_BIRTH_CHOICES),
+        required=True,
+    )
+    child_place_of_birth = forms.CharField(
+        label=gettext_lazy('Place of Birth'), max_length=100, required=True,
+        help_text=gettext_lazy('Place of birth similar in the Official ID'),
+    )
     child_cadaster = forms.ModelChoiceField(
         label=_('Cadaster (منطقة عقارية)'), queryset=Location.objects.none(), required=True,
     )
     nfe_programme = forms.ChoiceField(
-        label=_('Type of NFE Programme'),
+        label=gettext_lazy('Non-formal education programme'),
         choices=(('', _('---------')),) + tuple(Registration.NFE_PROGRAMMES),
         required=True,
     )
@@ -985,6 +994,8 @@ class MSCCRegistrationForm(MainForm):
             for name in ('governorate', 'district', 'cadaster'):
                 self.initial.setdefault('child_' + name, getattr(self.instance.child, name + '_id'))
             self.initial.setdefault('child_village', self.instance.child.village)
+            self.initial.setdefault('child_country_of_birth', self.instance.child.country_of_birth)
+            self.initial.setdefault('child_place_of_birth', self.instance.child.place_of_birth)
 
         def selected_id(name):
             value = self.data.get(self.add_prefix(name)) if self.is_bound else self.initial.get(name)
@@ -1005,6 +1016,24 @@ class MSCCRegistrationForm(MainForm):
                 type_id=3, parent_id=district_id, parent__type_id=2,
                 parent__parent_id=governorate_id, parent__parent__type_id=1,
             ).order_by('name')
+
+        governorate = self.fields['child_governorate'].queryset.filter(pk=governorate_id).first()
+        district = (
+            self.fields['child_district'].queryset.filter(pk=district_id).first()
+            if governorate else None
+        )
+        village_choices = town_choices_for_locations(governorate, district)
+        self.fields['child_village'].choices = (
+            (('', gettext_lazy('Select an option')),) + tuple(village_choices)
+        )
+        if not self.is_bound:
+            self.initial['child_village'] = registered_village_code(
+                governorate, district, self.initial.get('child_village'),
+            )
+        self.fields['child_village'].help_text = (
+            gettext_lazy('Select a district first.') if not district
+            else gettext_lazy('Select a village in the selected district.')
+        )
 
     def clean(self):
         # MainForm retains the legacy ALP validation. Only fields still offered

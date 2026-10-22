@@ -656,6 +656,23 @@ class ChildLocationOptionsView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         from student_registration.locations.models import Location
 
+        if request.GET.get('type') == 'village':
+            parent_value = request.GET.get('parent')
+            if not parent_value:
+                return JsonResponse({'results': []})
+            parent_id = positive_location_id(parent_value)
+            if parent_id is None:
+                return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+            district = Location.objects.select_related('parent').filter(
+                pk=parent_id, type_id=2, parent__type_id=1,
+            ).first()
+            if district is None:
+                return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+            choices = town_choices_for_locations(district.parent, district)
+            return JsonResponse({'results': [
+                {'id': code, 'text': label} for code, label in choices
+            ]})
+
         try:
             location_type = int(request.GET.get('type', ''))
         except (TypeError, ValueError):

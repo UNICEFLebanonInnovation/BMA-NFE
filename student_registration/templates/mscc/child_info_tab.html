@@ -32,10 +32,22 @@
                     </div>
                     {% if instance.nfe_programme %}
                     <div class="list-group-item py-3">
-                        <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Type of NFE Programme" %}</div>
+                        <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Non-formal education programme" %}</div>
                         <div>{{ instance.get_nfe_programme_display }}</div>
                     </div>
                     {% endif %}
+                    <div class="list-group-item py-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Country of Birth" %}</div>
+                                <div>{{ instance.child.get_country_of_birth_display|default:"-" }}</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="small text-uppercase fw-bold text-muted mb-1">{% trans "Place of Birth" %}</div>
+                                <div>{{ instance.child.place_of_birth|default:"-" }}</div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="list-group-item py-3">
                         <div class="row">
                             <div class="col-6">

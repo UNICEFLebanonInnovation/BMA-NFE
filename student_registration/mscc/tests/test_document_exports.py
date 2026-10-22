@@ -452,6 +452,82 @@ class MSCCDocumentExportTests(TestCase):
         self.assertNotIn('Exceptional Exam - BLN level', row)
         self.assertEqual(row['Exceptional Exam - Grade applying for the examination'], exam.get_grade_display())
 
+    def test_registered_birth_details_are_exported_without_an_exam_application(self):
+        self.first_child.country_of_birth = 'SY'
+        self.first_child.place_of_birth = 'دمشق'
+        self.first_child.save(update_fields=['country_of_birth', 'place_of_birth'])
+        registration = Registration.objects.get(pk=self.first_registration.pk)
+        text, photos = word_text_and_photos(build_examination_card(registration))
+        self.assertEqual(card_field(text, 'Place of Birth'), 'دمشق, Syria')
+        self.assertPhotoColour(photos[0], (255, 0, 0))
+        row = workbook_rows(build_children_workbook(
+            Registration.objects.filter(pk=self.first_registration.pk),
+        ))[0][1]
+        self.assertEqual(row['Country of Birth'], 'Syria')
+        self.assertEqual(row['Place of Birth'], 'دمشق')
+        self.assertEqual(row['Exceptional Exam - Country of Birth'], '')
+        self.assertEqual(row['Exceptional Exam - Place of Birth'], '')
+
+    def test_registered_birth_details_override_old_exam_snapshot_on_card_only(self):
+        exam = ExceptionalExam.objects.create(
+            registration=self.first_registration, governorate=self.governorate,
+            district=self.district, nearest_town='achrafieh',
+            country_of_birth='SY', place_of_birth='Damascus',
+            programme='BLN Level 1', grade='2', math_language='ar', language_exam='en',
+        )
+        self.first_child.country_of_birth = 'LB'
+        self.first_child.place_of_birth = 'Beirut'
+        self.first_child.save(update_fields=['country_of_birth', 'place_of_birth'])
+        registration = Registration.objects.get(pk=self.first_registration.pk)
+        text, photos = word_text_and_photos(build_examination_card(registration))
+        self.assertEqual(card_field(text, 'Place of Birth'), 'Beirut, Lebanon')
+        self.assertNotIn('Damascus', text)
+        self.assertPhotoColour(photos[0], (255, 0, 0))
+        row = workbook_rows(build_children_workbook(
+            Registration.objects.filter(pk=self.first_registration.pk),
+        ))[0][1]
+        self.assertEqual((row['Country of Birth'], row['Place of Birth']), ('Lebanon', 'Beirut'))
+        self.assertEqual((row['Exceptional Exam - Country of Birth'], row['Exceptional Exam - Place of Birth']),
+                         ('Syria', 'Damascus'))
+        exam.refresh_from_db()
+        self.assertEqual((exam.country_of_birth, exam.place_of_birth), ('SY', 'Damascus'))
+
+    def test_partial_registered_birth_details_do_not_mix_with_legacy_exam_details(self):
+        ExceptionalExam.objects.create(
+            registration=self.first_registration, governorate=self.governorate,
+            district=self.district, nearest_town='achrafieh',
+            country_of_birth='SY', place_of_birth='Damascus',
+            programme='BLN Level 1', grade='2', math_language='ar', language_exam='en',
+        )
+        self.first_child.country_of_birth = 'LB'
+        self.first_child.save(update_fields=['country_of_birth'])
+        registration = Registration.objects.get(pk=self.first_registration.pk)
+        text, _ = word_text_and_photos(build_examination_card(registration))
+        self.assertEqual(card_field(text, 'Place of Birth'), 'Lebanon')
+        self.assertNotIn('Damascus', text)
+        self.assertNotIn('Syria', text)
+
+    def test_registered_village_codes_export_as_readable_labels_and_preserve_legacy_text(self):
+        governorate = Location.objects.create(type_id=1, name='بيروت', name_en='Beirut')
+        district = Location.objects.create(type_id=2, parent=governorate, name='بيروت', name_en='Beirut')
+        self.first_child.governorate = governorate
+        self.first_child.district = district
+        self.first_child.village = 'achrafieh'
+        self.first_child.save(update_fields=['governorate', 'district', 'village'])
+        self.second_child.village = 'Historical village text'
+        self.second_child.save(update_fields=['village'])
+        content = build_children_workbook(Registration.objects.filter(
+            pk__in=[self.first_registration.pk, self.second_registration.pk],
+        ))
+        rows = {row['Registration ID']: row for _, row in workbook_rows(content)}
+        self.assertEqual(rows[str(self.first_registration.pk)]['Village (قرية)'], 'Achrafieh')
+        self.assertEqual(rows[str(self.second_registration.pk)]['Village (قرية)'], 'Historical village text')
+        photos = workbook_photos_by_row(content)
+        for row_number, row in workbook_rows(content):
+            expected_colour = ((255, 0, 0) if row['Registration ID'] == str(self.first_registration.pk)
+                               else (0, 0, 255))
+            self.assertPhotoColour(photos[row_number], expected_colour)
+
     def test_word_card_leaves_unrecorded_fields_blank_and_preserves_partial_birthdate(self):
         registration = Registration.objects.get(pk=self.second_registration.pk)
         text, photos = word_text_and_photos(build_examination_card(registration))

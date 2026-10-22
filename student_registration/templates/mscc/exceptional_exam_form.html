@@ -49,15 +49,15 @@
                             </ul>
                         </div>
                         {% endif %}
+                        <p class="small text-muted" id="residence-selection-help">{% translate "Programme, address, and birth details are taken from the child's registration." %}</p>
+                        {% if not form.registration_details_valid %}
+                        <div class="alert alert-warning" role="alert">
+                            {{ form.registration_details_help }}
+                            <a href="{% url 'mscc:child_edit' registration.pk %}" class="alert-link">{% translate "Edit registration" %}</a>
+                        </div>
+                        {% endif %}
                         <fieldset class="mb-4">
                             <legend class="fs-5 fw-bold mb-2">{% translate "Place of residence" %}</legend>
-                            <p class="small text-muted" id="residence-selection-help">{% translate "Governorate and district are taken from the child's registration." %}</p>
-                            {% if not form.registration_residence_valid %}
-                            <div class="alert alert-warning" role="alert">
-                                {{ form.registration_residence_help }}
-                                <a href="{% url 'mscc:child_edit' registration.pk %}" class="alert-link">{% translate "Edit registration" %}</a>
-                            </div>
-                            {% endif %}
                             <div class="row">
                                 <div class="col-md-4">{% bootstrap_field form.governorate %}</div>
                                 <div class="col-md-4">{% bootstrap_field form.district %}</div>
@@ -83,5 +83,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=8"></script>
+<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=9"></script>
 {% endblock %}

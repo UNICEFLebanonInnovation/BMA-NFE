@@ -147,6 +147,8 @@ def _field_values(instance, model, prefix, excluded):
             # Storage names are permanent references; signed storage URLs are
             # neither necessary nor appropriate to retain in a document.
             values[key] = _text(value.name if value else None)
+        elif prefix == 'child' and field.name == 'village' and instance is not None:
+            values[key] = _text(instance.village_display)
         elif field.choices and instance is not None:
             values[key] = _text(getattr(instance, 'get_{}_display'.format(field.name))())
         elif hasattr(field, 'base_field') and field.base_field.choices and value is not None:
@@ -483,12 +485,15 @@ def build_examination_card(registration):
     centred_line('NGO: ' + ngo)
     centred_line('الاسم الثلاثي: ' + values['child_full_name'], arabic=True)
     centred_line('Date of Birth: ' + birthday)
-    birthplace = ', '.join(
-        value.strip() for value in (
+    birth_details = (
+        values.get('child__place_of_birth', ''), values.get('child__country_of_birth', ''),
+    )
+    if not any(birth_details):
+        birth_details = (
             values.get('exceptional_exam__place_of_birth', ''),
             values.get('exceptional_exam__country_of_birth', ''),
-        ) if value.strip()
-    )
+        )
+    birthplace = ', '.join(value.strip() for value in birth_details if value.strip())
     centred_line('Place of Birth: ' + birthplace)
     centred_line('Nationality: ' + nationality)
     centred_line('Governorate: ' + governorate)

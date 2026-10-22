@@ -12,20 +12,26 @@ var isDuplicateFound = false;
 function initializeResidentialAddressLocations() {
     var form = $('#registrationForm');
     var optionsUrl = form.attr('data-location-options-url');
+    var villageOptionsUrl = form.attr('data-village-options-url');
     if (!optionsUrl) return;
 
     var governorate = $('#id_child_governorate');
     var district = $('#id_child_district');
+    var village = $('#id_child_village');
     var cadaster = $('#id_child_cadaster');
     var errorMessage = $('#residential-location-error');
     var selectionVersion = 0;
     var districtRequest = { request: null, version: 0 };
+    var villageRequest = { request: null, version: 0 };
     var cadasterRequest = { request: null, version: 0 };
     var initialDistrictOptions = district.children().clone();
+    var initialVillageOptions = village.children().clone();
     var initialCadasterOptions = cadaster.children().clone();
     var initialDistrict = district.val();
+    var initialVillage = village.val();
     var initialCadaster = cadaster.val();
     var districtPlaceholder = district.find('option[value=""]').first().text() || '---------';
+    var villagePlaceholder = village.find('option[value=""]').first().text() || '---------';
     var cadasterPlaceholder = cadaster.find('option[value=""]').first().text() || '---------';
 
     function cancelRequest(field, state) {
@@ -53,7 +59,7 @@ function initializeResidentialAddressLocations() {
         var version = state.version;
         field.attr('aria-busy', 'true');
         state.request = $.ajax({
-            url: optionsUrl,
+            url: type === 'village' ? villageOptionsUrl : optionsUrl,
             data: { type: type, parent: parentId },
             dataType: 'json'
         }).done(function(response) {
@@ -86,10 +92,12 @@ function initializeResidentialAddressLocations() {
         var version = ++selectionVersion;
         errorMessage.addClass('d-none');
         governorate.val(values.child_governorate ? String(values.child_governorate) : '');
+        clearOptions(village, villageRequest, villagePlaceholder);
         clearOptions(cadaster, cadasterRequest, cadasterPlaceholder);
         loadOptions(district, districtRequest, governorate, 2, values.child_district, districtPlaceholder)
             .done(function(loaded) {
                 if (loaded && version === selectionVersion && district.val()) {
+                    loadOptions(village, villageRequest, district, 'village', values.child_village, villagePlaceholder);
                     loadOptions(cadaster, cadasterRequest, district, 3, values.child_cadaster, cadasterPlaceholder);
                 }
             });
@@ -98,6 +106,7 @@ function initializeResidentialAddressLocations() {
     governorate.on('change', function() {
         selectionVersion += 1;
         errorMessage.addClass('d-none');
+        clearOptions(village, villageRequest, villagePlaceholder);
         clearOptions(cadaster, cadasterRequest, cadasterPlaceholder);
         loadOptions(district, districtRequest, governorate, 2, '', districtPlaceholder);
     });
@@ -105,6 +114,7 @@ function initializeResidentialAddressLocations() {
     district.on('change', function() {
         selectionVersion += 1;
         errorMessage.addClass('d-none');
+        loadOptions(village, villageRequest, district, 'village', '', villagePlaceholder);
         loadOptions(cadaster, cadasterRequest, district, 3, '', cadasterPlaceholder);
     });
 
@@ -112,6 +122,7 @@ function initializeResidentialAddressLocations() {
         window.setResidentialAddressLocations({
             child_governorate: governorate.val(),
             child_district: district.val(),
+            child_village: village.val(),
             child_cadaster: cadaster.val()
         });
     });
@@ -123,8 +134,10 @@ function initializeResidentialAddressLocations() {
             if (event.isDefaultPrevented()) return;
             selectionVersion += 1;
             cancelRequest(district, districtRequest);
+            cancelRequest(village, villageRequest);
             cancelRequest(cadaster, cadasterRequest);
             district.empty().append(initialDistrictOptions.clone()).val(initialDistrict);
+            village.empty().append(initialVillageOptions.clone()).val(initialVillage);
             cadaster.empty().append(initialCadasterOptions.clone()).val(initialCadaster);
             errorMessage.addClass('d-none');
             clearErrors();
@@ -532,7 +545,7 @@ function fill_old_child_data(data)
     $(data).each(function(i, item) {
         {
             Object.keys(item).forEach(key => {
-                if (window.setResidentialAddressLocations && ['child_governorate', 'child_district', 'child_cadaster'].indexOf(key) !== -1) return;
+                if (window.setResidentialAddressLocations && ['child_governorate', 'child_district', 'child_village', 'child_cadaster'].indexOf(key) !== -1) return;
                 $('#id_'+ key).val(item[key]);
             });
             if (window.setResidentialAddressLocations) {
@@ -845,10 +858,9 @@ function validateMainForm(showModal, step) {
         '#id_child_disability',
         '#id_child_governorate',
         '#id_child_district',
-        '#id_child_municipality',
         '#id_child_village',
-        '#id_child_street',
-        '#id_child_building_camp',
+        '#id_child_country_of_birth',
+        '#id_child_place_of_birth',
         '#id_child_cadaster',
         '#id_nfe_programme',
         '#id_child_marital_status',

@@ -5,6 +5,8 @@ from .models import (
     Registration,
     Teacher,
 )
+from .exceptional_exam_choices import COUNTRY_OF_BIRTH_CHOICES
+from .exceptional_exam_locations import registered_village_code, town_choices_for_locations
 
 
 def create_instance(validated_data, model):
@@ -288,6 +290,10 @@ class MSCCRegistrationSerializer(MainSerializer):
     )
     child_municipality = serializers.CharField(source='child.municipality', max_length=255)
     child_village = serializers.CharField(source='child.village', max_length=255)
+    child_country_of_birth = serializers.ChoiceField(
+        source='child.country_of_birth', choices=COUNTRY_OF_BIRTH_CHOICES,
+    )
+    child_place_of_birth = serializers.CharField(source='child.place_of_birth', max_length=100)
     child_street = serializers.CharField(source='child.street', max_length=255)
     child_building_camp = serializers.CharField(source='child.building_camp', max_length=255)
     child_cadaster = serializers.PrimaryKeyRelatedField(
@@ -308,10 +314,9 @@ class MSCCRegistrationSerializer(MainSerializer):
         'child_birthday_day',
         'child_governorate',
         'child_district',
-        'child_municipality',
         'child_village',
-        'child_street',
-        'child_building_camp',
+        'child_country_of_birth',
+        'child_place_of_birth',
         'child_cadaster',
         'child_disability',
         'child_disability_other',
@@ -341,14 +346,33 @@ class MSCCRegistrationSerializer(MainSerializer):
         governorate = selected('governorate')
         district = selected('district')
         cadaster = selected('cadaster')
+        village = selected('village')
         errors = {}
         if district and (not governorate or district.parent_id != governorate.pk):
             errors['child_district'] = _('Select a district within the selected governorate.')
         if cadaster and (not district or cadaster.parent_id != district.pk):
             errors['child_cadaster'] = _('Select a cadaster within the selected district.')
+        parents_changed = bool(existing_child and (
+            getattr(governorate, 'pk', None) != existing_child.governorate_id
+            or getattr(district, 'pk', None) != existing_child.district_id
+        ))
+        if 'village' in child_data or parents_changed or existing_child is None:
+            if village not in dict(town_choices_for_locations(governorate, district)):
+                errors['child_village'] = _('Select a village in the selected district.')
         if errors:
             raise serializers.ValidationError(errors)
         return attrs
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if getattr(instance, 'child_id', None):
+            child = instance.child
+            # Matching registrations must prefill the same stable village code
+            # used by the district-scoped registration dropdown.
+            code = registered_village_code(child.governorate, child.district, child.village)
+            if code:
+                data['child_village'] = code
+        return data
 
     @staticmethod
     def _location_ids(validated_data):
@@ -373,6 +397,8 @@ class MSCCRegistrationSerializer(MainSerializer):
             'child_district',
             'child_municipality',
             'child_village',
+            'child_country_of_birth',
+            'child_place_of_birth',
             'child_street',
             'child_building_camp',
             'child_cadaster',

@@ -11,6 +11,7 @@
         var helpData = document.getElementById('exceptional-exam-grade-help');
         var gradeField = document.getElementById('exceptional-exam-grade-field');
         if (!programme || !grade || !choicesData || !helpData || !gradeField) return;
+        var registeredProgramme = programme.value;
 
         var choicesByProgramme;
         var helpByProgramme;
@@ -34,7 +35,7 @@
 
         function updateGrades() {
             // The server supplies the grades allowed for each programme.
-            var choices = choicesByProgramme[programme.value] || [];
+            var choices = choicesByProgramme[registeredProgramme] || [];
             if (!Array.isArray(choices)) return;
             var previousGrade = grade.value;
             grade.innerHTML = '';
@@ -50,14 +51,13 @@
                 grade.value = String(choices[0].id);
             }
 
-            var message = helpByProgramme[programme.value] || helpByProgramme[''] || '';
+            var message = helpByProgramme[registeredProgramme] || helpByProgramme[''] || '';
             if (help) help.textContent = message;
             // Keep missing programme eligibility visible to browser validation.
             grade.disabled = false;
-            grade.setCustomValidity(programme.value && !choices.length ? message : '');
+            grade.setCustomValidity(!choices.length ? message : '');
         }
 
-        programme.addEventListener('change', updateGrades);
         updateGrades();
     }
 
@@ -65,11 +65,12 @@
         var form = document.getElementById('exceptional-exam-form');
         if (!form) return;
 
-        // Residence parents and village choices are supplied by the server
-        // from the child's registration. Keep the parents read-only.
-        ['governorate', 'district', 'nearest_town'].forEach(function (name) {
+        // Registered programme, address, and birth details are supplied by the
+        // server. Only the examination questions can be changed here.
+        ['programme', 'governorate', 'district', 'nearest_town', 'country_of_birth', 'place_of_birth'].forEach(function (name) {
             var field = form.elements[name];
             if (!field) return;
+            field.disabled = true;
             var descriptions = (field.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
             if (descriptions.indexOf('residence-selection-help') === -1) {
                 descriptions.push('residence-selection-help');

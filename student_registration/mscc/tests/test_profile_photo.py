@@ -116,7 +116,7 @@ class MSCCProfilePhotoTests(TestCase):
         district_type = LocationType.objects.create(pk=2, name='District')
         cadaster_type = LocationType.objects.create(pk=3, name='Cadaster')
         cls.governorate = Location.objects.create(type=governorate_type, name='Beirut')
-        cls.district = Location.objects.create(type=district_type, name='Beirut district', parent=cls.governorate)
+        cls.district = Location.objects.create(type=district_type, name='Beirut', parent=cls.governorate)
         cls.cadaster = Location.objects.create(type=cadaster_type, name='Ras Beirut', parent=cls.district)
 
     @staticmethod
@@ -161,11 +161,11 @@ class MSCCProfilePhotoTests(TestCase):
             'child_gender': 'Male', 'child_nationality': self.nationality.pk,
             'child_birthday_year': '2015', 'child_birthday_month': '3',
             'child_birthday_day': '12', 'child_disability': self.disability.pk,
-            'first_phone_number': '70-123456', 'nfe_programme': 'BLN',
+            'first_phone_number': '70-123456', 'nfe_programme': 'BLN Level 1',
+            'child_country_of_birth': 'LB', 'child_place_of_birth': 'Beirut',
             'child_governorate': self.governorate.pk,
             'child_district': self.district.pk, 'child_cadaster': self.cadaster.pk,
-            'child_municipality': 'Beirut municipality', 'child_village': self.cadaster.name,
-            'child_street': 'Street Twelve', 'child_building_camp': 'Building Two',
+            'child_village': 'ras_beirut',
             'child_photo': SimpleUploadedFile('portrait.png', portrait_bytes(colour), content_type='image/png'),
         }
 

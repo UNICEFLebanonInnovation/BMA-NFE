@@ -14749,3 +14749,11 @@ msgstr "في برنامج BLN، يُحدَّد الصف الدراسي بحسب 
 #: student_registration/mscc/exceptional_exam_grades.py
 msgid "Select the grade allowed for the selected BLN programme level."
 msgstr "اختر الصف الدراسي المسموح به لمستوى برنامج BLN المختار."
+
+#: student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Programme, address, and birth details are taken from the child's registration."
+msgstr "تؤخذ بيانات البرنامج والعنوان والولادة من تسجيل الطفل."
+
+#: student_registration/mscc/exceptional_exam_forms.py
+msgid "Complete the required programme, address, and birth details in the child's registration first."
+msgstr "أكمل بيانات البرنامج والعنوان والولادة المطلوبة في تسجيل الطفل أولاً."
