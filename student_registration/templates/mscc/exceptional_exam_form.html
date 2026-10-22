@@ -22,21 +22,8 @@
                 <div class="card-body p-4 p-md-5">
                     <p class="text-muted mb-4">{% translate "All questions are required." %}</p>
                     {% translate 'Select' as select_prompt %}
-                    {% translate 'Loading districts…' as district_loading %}
-                    {% translate 'No districts are available for this governorate.' as district_empty %}
-                    {% translate 'Districts could not be loaded. Please retry.' as district_error %}
-                    {% translate 'Loading villages…' as village_loading %}
-                    {% translate 'No villages are available for this district.' as village_empty %}
-                    {% translate 'Villages could not be loaded. Please retry.' as village_error %}
                     <form method="post" action="{% url 'mscc:exceptional_exam_form' registry=registration.pk %}" id="exceptional-exam-form"
-                          data-options-url="{% url 'mscc:exceptional_exam_location_options' %}"
-                          data-select-prompt="{{ select_prompt|force_escape }}"
-                          data-district-loading="{{ district_loading|force_escape }}"
-                          data-district-empty="{{ district_empty|force_escape }}"
-                          data-district-error="{{ district_error|force_escape }}"
-                          data-village-loading="{{ village_loading|force_escape }}"
-                          data-village-empty="{{ village_empty|force_escape }}"
-                          data-village-error="{{ village_error|force_escape }}">
+                          data-select-prompt="{{ select_prompt|force_escape }}">
                         {% csrf_token %}
                         {{ form.grade_choices_by_programme|json_script:"exceptional-exam-grade-choices" }}
                         {{ form.grade_help_by_programme|json_script:"exceptional-exam-grade-help" }}
@@ -53,19 +40,17 @@
                         {% endif %}
                         <fieldset class="mb-4">
                             <legend class="fs-5 fw-bold mb-2">{% translate "Place of residence" %}</legend>
-                            <p class="small text-muted" id="residence-selection-help">{% translate "Select the governorate, then the district, then the village." %}</p>
+                            <p class="small text-muted" id="residence-selection-help">{% translate "Governorate and district are taken from the child's registration." %}</p>
+                            {% if not form.registration_residence_valid %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ form.registration_residence_help }}
+                                <a href="{% url 'mscc:child_edit' registration.pk %}" class="alert-link">{% translate "Edit registration" %}</a>
+                            </div>
+                            {% endif %}
                             <div class="row">
                                 <div class="col-md-4">{% bootstrap_field form.governorate %}</div>
-                                <div class="col-md-4">
-                                    {% bootstrap_field form.district %}
-                                    <p class="small text-muted mt-2 mb-0" id="exceptional-exam-district-status" role="status" aria-live="polite"></p>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-1 d-none" id="exceptional-exam-district-retry" hidden>{% translate "Retry districts" %}</button>
-                                </div>
-                                <div class="col-md-4">
-                                    {% bootstrap_field form.nearest_town %}
-                                    <p class="small text-muted mt-2 mb-0" id="exceptional-exam-village-status" role="status" aria-live="polite"></p>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-1 d-none" id="exceptional-exam-village-retry" hidden>{% translate "Retry villages" %}</button>
-                                </div>
+                                <div class="col-md-4">{% bootstrap_field form.district %}</div>
+                                <div class="col-md-4">{% bootstrap_field form.nearest_town %}</div>
                             </div>
                         </fieldset>
                         <div class="mb-4">{% bootstrap_field form.country_of_birth %}</div>
@@ -87,5 +72,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=6"></script>
+<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=7"></script>
 {% endblock %}

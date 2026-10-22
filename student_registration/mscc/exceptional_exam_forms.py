@@ -7,7 +7,7 @@ from student_registration.locations.models import Location
 
 from .exceptional_exam_grades import programme_grade_choices, programme_grade_help
 from .exceptional_exam_locations import (
-    location_label, positive_location_id, town_choices_for_locations,
+    location_label, town_choices_for_locations,
 )
 from .models import ExceptionalExam
 
@@ -21,7 +21,7 @@ class TranslatedLocationChoiceField(forms.ModelChoiceField):
 
 
 class ExceptionalExamForm(forms.ModelForm):
-    """Keep residence and examination choices independent of child registration."""
+    """Use the registered residence and saved Education Service Program."""
 
     governorate = TranslatedLocationChoiceField(
         queryset=Location.objects.filter(type_id=1).order_by('name'),
@@ -47,18 +47,30 @@ class ExceptionalExamForm(forms.ModelForm):
         elif self.instance.registration_id:
             registration = self.instance.registration
 
-        # Stored exam selections always take precedence over the registration
-        # address and programme. Selecting an exam residence never rewrites it.
+        # Keep the saved exam programme on edit. Residence always comes from
+        # the child's current registration, including when a form is posted.
         if not self.is_bound and not self.instance.pk and registration is not None:
             self.initial.setdefault('programme', registration.nfe_programme)
-            child = registration.child if registration.child_id else None
-            governorate = child.governorate if child and child.governorate_id else None
-            district = child.district if child and child.district_id else None
-            if governorate and governorate.type_id == 1:
-                self.initial.setdefault('governorate', governorate.pk)
-                if (district and district.type_id == 2
-                        and district.parent_id == governorate.pk):
-                    self.initial.setdefault('district', district.pk)
+
+        child = registration.child if registration is not None and registration.child_id else None
+        governorate = child.governorate if child and child.governorate_id else None
+        district = child.district if child and child.district_id else None
+        if not governorate or governorate.type_id != 1:
+            governorate = None
+        if not (governorate and district and district.type_id == 2
+                and district.parent_id == governorate.pk):
+            district = None
+        self.registration_residence_valid = bool(governorate and district)
+        self.registration_residence_help = _(
+            "Update the governorate and district in the child's registration first."
+        )
+        for name, location in (('governorate', governorate), ('district', district)):
+            self.initial[name] = location.pk if location else None
+            self.fields[name].disabled = True
+            self.fields[name].queryset = (
+                Location.objects.filter(pk=location.pk) if location else Location.objects.none()
+            )
+        self.fields['nearest_town'].choices = town_choices_for_locations(governorate, district)
 
         def selected(name):
             if self.is_bound:
@@ -69,18 +81,6 @@ class ExceptionalExamForm(forms.ModelForm):
         # The registration comes from the authorized URL, and its latest saved
         # service is authoritative. Submitted programme levels cannot replace it.
         education_program = registration.education_program if registration and registration.pk else ''
-
-        governorate_id = positive_location_id(selected('governorate'))
-        governorate = Location.objects.filter(pk=governorate_id, type_id=1).first()
-        district_queryset = Location.objects.none()
-        if governorate:
-            district_queryset = Location.objects.filter(
-                type_id=2, parent_id=governorate.pk,
-            ).order_by('name')
-        self.fields['district'].queryset = district_queryset
-        district_id = positive_location_id(selected('district'))
-        district = district_queryset.filter(pk=district_id).first()
-        self.fields['nearest_town'].choices = town_choices_for_locations(governorate, district)
 
         self.grade_choices_by_programme = {
             code: [
@@ -119,8 +119,13 @@ class ExceptionalExamForm(forms.ModelForm):
                 'invalid_choice': _('Select a valid option.'),
             })
             field.help_text = _('Required')
-        self.fields['district'].help_text = _('Select a governorate first.')
-        self.fields['nearest_town'].help_text = _('Select a district first.')
+        for name in ('governorate', 'district'):
+            self.fields[name].help_text = _("From the child's registration.")
+            self.fields[name].error_messages['required'] = self.registration_residence_help
+        if self.registration_residence_valid and not self.fields['nearest_town'].choices[1:]:
+            self.fields['nearest_town'].help_text = _('No villages are available for this district.')
+        else:
+            self.fields['nearest_town'].help_text = _('Select a village in the registered district.')
         self.fields['place_of_birth'].help_text = _('Place of birth similar in the Official ID')
         self.fields['grade'].help_text = programme_grade_help(programme, education_program)
         if programme == 'BLN':

@@ -12145,3 +12145,23 @@ msgstr ""
 #: student_registration/mscc/exceptional_exam_grades.py
 msgid "BLN requires a Program of BLN Level 1, BLN Level 2, or BLN Level 3 in Education Service. Update Education Service first."
 msgstr ""
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Governorate and district are taken from the child's registration."
+msgstr ""
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Update the governorate and district in the child's registration first."
+msgstr ""
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Select a village in the registered district."
+msgstr ""
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "From the child's registration."
+msgstr ""
+
+#: student_registration/mscc/exceptional_exam_forms.py student_registration/templates/mscc/exceptional_exam_form.html
+msgid "Edit registration"
+msgstr ""

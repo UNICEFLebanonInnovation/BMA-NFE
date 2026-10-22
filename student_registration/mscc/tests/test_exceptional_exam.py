@@ -48,6 +48,10 @@ REQUIRED_FIELDS = (
     'governorate', 'district', 'nearest_town', 'country_of_birth', 'place_of_birth',
     'programme', 'grade', 'math_language', 'language_exam',
 )
+REGISTRATION_RESIDENCE_FIELDS = ('governorate', 'district')
+EDITABLE_REQUIRED_FIELDS = tuple(
+    name for name in REQUIRED_FIELDS if name not in REGISTRATION_RESIDENCE_FIELDS
+)
 
 # An independent transcription of the attached document's residence table.
 # Repeated towns intentionally remain in their original parent districts.
@@ -225,11 +229,17 @@ class ExceptionalExamWorkflowTests(TestCase):
             registration=cls.registration, education_program='BLN Level 1',
         )
         cls.second_registration = Registration.objects.create(
-            child=Child.objects.create(first_name='Second', last_name='Child'),
+            child=Child.objects.create(
+                first_name='Second', last_name='Child',
+                governorate=cls.governorate, district=cls.district,
+            ),
             partner=cls.partner, center=cls.second_center, nfe_programme='DIRASA',
         )
         cls.outside_registration = Registration.objects.create(
-            child=Child.objects.create(first_name='Outside', last_name='Child'),
+            child=Child.objects.create(
+                first_name='Outside', last_name='Child',
+                governorate=cls.governorate, district=cls.district,
+            ),
             partner=cls.other_partner, center=cls.outside_center, nfe_programme='DIRASA',
         )
         cls.deleted_registration = Registration.objects.create(
@@ -285,6 +295,12 @@ class ExceptionalExamWorkflowTests(TestCase):
     def set_education_program(self, program):
         self.education_service.education_program = program
         self.education_service.save(update_fields=['education_program'])
+
+    def set_registered_residence(self, governorate, district):
+        self.child.governorate = governorate
+        self.child.district = district
+        self.child.save(update_fields=('governorate', 'district'))
+        self.registration.refresh_from_db()
 
     def create_exam(self, registration=None, **updates):
         data = self.exam_data(**updates)
@@ -552,7 +568,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(exam.grade, '4')
 
     def test_missing_required_answers_do_not_create_an_exam(self):
-        for field in REQUIRED_FIELDS:
+        for field in EDITABLE_REQUIRED_FIELDS:
             with self.subTest(field=field):
                 data = self.exam_data()
                 del data[field]
@@ -563,9 +579,13 @@ class ExceptionalExamWorkflowTests(TestCase):
 
     def test_required_fields_render_browser_validation_and_reject_whitespace_birthplace(self):
         form = ExceptionalExamForm(registration=self.registration)
-        for field in REQUIRED_FIELDS:
+        for field in EDITABLE_REQUIRED_FIELDS:
             with self.subTest(field=field):
                 self.assertIn('required', form[field].as_widget())
+        for field in REGISTRATION_RESIDENCE_FIELDS:
+            with self.subTest(readonly_field=field):
+                self.assertTrue(form.fields[field].disabled)
+                self.assertIn('disabled', form[field].as_widget())
         response = self.client.post(self.exam_url(), self.exam_data(place_of_birth='   '))
         self.assertEqual(response.status_code, 200)
         self.assertIn('place_of_birth', response.context['form'].errors)
@@ -582,11 +602,6 @@ class ExceptionalExamWorkflowTests(TestCase):
 
     def test_invalid_choices_and_wrong_residence_parents_are_rejected(self):
         invalid_choices = (
-            ('governorate', 'unknown'), ('governorate', 999999999),
-            ('governorate', self.district.pk), ('governorate', self.cadaster.pk),
-            ('district', 'unknown'), ('district', 999999999),
-            ('district', self.governorate.pk), ('district', self.cadaster.pk),
-            ('district', self.baabda.pk),
             ('nearest_town', 'jounieh'), ('nearest_town', 'unknown'),
             ('country_of_birth', 'JO'), ('country_of_birth', 'Lebanon'),
             ('programme', 'ALP'),
@@ -610,7 +625,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         form = ExceptionalExamForm(registration=self.registration)
         self.assertEqual(
             set(form.fields['governorate'].queryset.values_list('pk', flat=True)),
-            {self.governorate.pk, self.other_governorate.pk},
+            {self.governorate.pk},
         )
         self.assertEqual(
             set(form.fields['district'].queryset.values_list('pk', flat=True)),
@@ -620,28 +635,86 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(form.fields['district'].label_from_instance(self.district), 'Beirut')
         self.assertEqual(str(form.fields['nearest_town'].label), 'Village')
 
-    def test_changing_governorate_requires_a_new_district_and_village(self):
-        for updates, expected in (
-            ({'governorate': self.other_governorate.pk}, 'district'),
-            ({'governorate': self.other_governorate.pk, 'district': self.baabda.pk}, 'nearest_town'),
+    def test_submitted_readonly_residence_values_are_ignored(self):
+        for updates in (
+            {'governorate': self.other_governorate.pk, 'district': self.keserwan.pk},
+            {'governorate': 'unknown', 'district': 'not-an-id'},
+            {'governorate': self.district.pk, 'district': self.cadaster.pk},
+            {'governorate': '', 'district': ''},
         ):
             with self.subTest(updates=updates):
-                form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(**updates))
-                self.assertFalse(form.is_valid())
-                self.assertIn(expected, form.errors)
+                response = self.client.post(self.exam_url(), self.exam_data(**updates))
+                self.assertEqual(response.status_code, 302)
+                exam = ExceptionalExam.objects.get(registration=self.registration)
+                self.assertEqual(
+                    (exam.governorate_id, exam.district_id),
+                    (self.governorate.pk, self.district.pk),
+                )
+                self.child.refresh_from_db()
+                self.assertEqual(self.child.governorate_id, self.governorate.pk)
+                self.assertEqual(self.child.district_id, self.district.pk)
 
-    def test_repeated_document_villages_are_valid_only_in_their_document_districts(self):
+    def test_readonly_residence_is_filled_without_posted_parent_fields(self):
+        data = self.exam_data()
+        for field in REGISTRATION_RESIDENCE_FIELDS:
+            del data[field]
+        response = self.client.post(self.exam_url(), data)
+        self.assertEqual(response.status_code, 302)
+        exam = ExceptionalExam.objects.get(registration=self.registration)
+        self.assertEqual(
+            (exam.governorate_id, exam.district_id),
+            (self.governorate.pk, self.district.pk),
+        )
+
+    def test_forged_parents_cannot_enable_a_village_in_another_district(self):
+        response = self.client.post(self.exam_url(), self.exam_data(
+            governorate=self.other_governorate.pk, district=self.keserwan.pk,
+            nearest_town='jounieh',
+        ))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('nearest_town', response.context['form'].errors)
+        self.assertFalse(ExceptionalExam.objects.exists())
+
+    def test_readonly_parent_values_override_untrusted_initial_values(self):
+        form = ExceptionalExamForm(registration=self.registration, initial={
+            'governorate': self.other_governorate.pk, 'district': self.keserwan.pk,
+        })
+        self.assertEqual(form['governorate'].value(), self.governorate.pk)
+        self.assertEqual(form['district'].value(), self.district.pk)
+        self.assertEqual(tuple(form.fields['district'].queryset), (self.district,))
+
+    def test_missing_or_invalid_registered_residence_cannot_be_filled_by_post(self):
+        for governorate, district in (
+            (None, None), (self.governorate, None), (None, self.district),
+            (self.district, self.district), (self.governorate, self.cadaster),
+            (self.governorate, self.baabda),
+        ):
+            with self.subTest(governorate=governorate, district=district):
+                self.set_registered_residence(governorate, district)
+                response = self.client.post(self.exam_url(), self.exam_data())
+                self.assertEqual(response.status_code, 200)
+                form = response.context['form']
+                self.assertFalse(form.registration_residence_valid)
+                self.assertTrue(set(form.errors).intersection(REGISTRATION_RESIDENCE_FIELDS))
+                self.assertIn(
+                    "Update the governorate and district in the child's registration first.",
+                    [message for name in REGISTRATION_RESIDENCE_FIELDS
+                     for message in form.errors.get(name, [])],
+                )
+                self.assertFalse(ExceptionalExam.objects.exists())
+
+    def test_repeated_document_villages_are_valid_only_in_the_registered_district(self):
         for district in (self.baabda, self.aley):
             with self.subTest(district=district.pk):
-                form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
-                    governorate=self.other_governorate.pk,
-                    district=district.pk, nearest_town='aley',
-                ))
+                self.set_registered_residence(self.other_governorate, district)
+                form = ExceptionalExamForm(
+                    registration=self.registration, data=self.exam_data(nearest_town='aley'),
+                )
                 self.assertTrue(form.is_valid(), form.errors.as_json())
-        form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
-            governorate=self.other_governorate.pk,
-            district=self.keserwan.pk, nearest_town='aley',
-        ))
+        self.set_registered_residence(self.other_governorate, self.keserwan)
+        form = ExceptionalExamForm(
+            registration=self.registration, data=self.exam_data(nearest_town='aley'),
+        )
         self.assertFalse(form.is_valid())
         self.assertIn('nearest_town', form.errors)
 
@@ -730,6 +803,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         district = Location.objects.create(
             name='بعلبك', name_en='Baalbek', type_id=2, parent=governorate,
         )
+        self.set_registered_residence(governorate, district)
         form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='douris',
         ))
@@ -743,6 +817,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_village_lookup_matches_existing_governorate_alias_and_district_separator(self):
         governorate = Location.objects.create(name='الشمال', name_en='North', type_id=1)
         district = Location.objects.create(name='المنية الضنية', type_id=2, parent=governorate)
+        self.set_registered_residence(governorate, district)
         form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='minnieh',
         ))
@@ -756,6 +831,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_standalone_existing_hermel_governorate_can_use_the_document_hermel_villages(self):
         governorate = Location.objects.create(name='الهرمل', name_en='Hermel', type_id=1)
         district = Location.objects.create(name='الهرمل', name_en='Hermel', type_id=2, parent=governorate)
+        self.set_registered_residence(governorate, district)
         form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='qasr',
         ))
@@ -764,6 +840,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_ambiguous_existing_district_names_do_not_guess_a_village_list(self):
         governorate = Location.objects.create(name='Unknown governorate', type_id=1)
         district = Location.objects.create(name='بعلبك', name_en='Hermel', type_id=2, parent=governorate)
+        self.set_registered_residence(governorate, district)
         form = ExceptionalExamForm(registration=self.registration, data=self.exam_data(
             governorate=governorate.pk, district=district.pk, nearest_town='douris',
         ))
@@ -775,7 +852,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['results'], [])
 
-    def test_unmapped_legacy_answers_remain_readable_and_edit_requires_linked_locations(self):
+    def test_unmapped_legacy_exam_inherits_registered_parents_on_edit_and_save(self):
         exam = self.create_exam(
             governorate=None, district=None,
             governorate_legacy='beirut', district_legacy='beirut',
@@ -786,13 +863,17 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.assertContains(profile, 'Beirut')
         self.assertContains(profile, 'Achrafieh')
         response = self.client.get(self.exam_url())
-        self.assertIn(response.context['form']['governorate'].value(), ('', None))
-        self.assertIn(response.context['form']['district'].value(), ('', None))
-        response = self.client.post(self.exam_url(), self.exam_data(governorate='', district=''))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('governorate', response.context['form'].errors)
-        self.assertIn('district', response.context['form'].errors)
+        self.assertEqual(response.context['form']['governorate'].value(), self.governorate.pk)
+        self.assertEqual(response.context['form']['district'].value(), self.district.pk)
         exam.refresh_from_db()
+        self.assertEqual((exam.governorate_id, exam.district_id), (None, None))
+        response = self.client.post(self.exam_url(), self.exam_data(governorate='', district=''))
+        self.assertEqual(response.status_code, 302)
+        exam.refresh_from_db()
+        self.assertEqual(
+            (exam.governorate_id, exam.district_id),
+            (self.governorate.pk, self.district.pk),
+        )
         self.assertEqual((exam.governorate_legacy, exam.district_legacy), ('beirut', 'beirut'))
 
     def test_invalid_registered_location_hierarchy_does_not_prefill_a_wrong_district(self):
@@ -932,6 +1013,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_edit_reuses_one_record_and_preserves_original_creator(self):
         exam = self.create_exam()
         self.client.force_login(self.other_editor)
+        self.set_registered_residence(self.other_governorate, self.keserwan)
         response = self.client.post(self.exam_url(), self.exam_data(
             programme='DIRASA', grade='4', math_language='fr', language_exam='fr',
             governorate=self.other_governorate.pk, district=self.keserwan.pk,
@@ -948,7 +1030,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         self.registration.refresh_from_db()
         self.assertEqual(self.registration.nfe_programme, 'BLN')
 
-    def test_edit_preloads_stored_parent_choices_and_answers(self):
+    def test_edit_uses_registered_parents_instead_of_stored_exam_residence(self):
         self.set_education_program('BLN Level 3')
         exam = self.create_exam(
             governorate=self.other_governorate.pk, district=self.keserwan.pk,
@@ -957,22 +1039,61 @@ class ExceptionalExamWorkflowTests(TestCase):
         response = self.client.get(self.exam_url())
         self.assertEqual(response.status_code, 200)
         form = response.context['form']
-        for field in REQUIRED_FIELDS:
-            value = getattr(exam, field + '_id') if field in ('governorate', 'district') else getattr(exam, field)
-            self.assertEqual(form[field].value(), value)
+        self.assertEqual(form['governorate'].value(), self.governorate.pk)
+        self.assertEqual(form['district'].value(), self.district.pk)
+        self.assertTrue(form.fields['governorate'].disabled)
+        self.assertTrue(form.fields['district'].disabled)
+        for field in EDITABLE_REQUIRED_FIELDS:
+            if field != 'nearest_town':
+                self.assertEqual(form[field].value(), getattr(exam, field))
+        self.assertEqual(tuple(form.fields['district'].queryset), (self.district,))
+        self.assertIn(('achrafieh', 'Achrafieh'), tuple(form.fields['nearest_town'].choices))
+        self.assertNotIn('jounieh', dict(form.fields['nearest_town'].choices))
+        exam.refresh_from_db()
         self.assertEqual(
-            set(form.fields['district'].queryset.values_list('pk', flat=True)),
-            {self.baabda.pk, self.keserwan.pk, self.aley.pk},
+            (exam.governorate_id, exam.district_id, exam.nearest_town),
+            (self.other_governorate.pk, self.keserwan.pk, 'jounieh'),
         )
-        self.assertEqual(form.fields['district'].label_from_instance(self.keserwan), 'Keserwan')
-        self.assertIn(('jounieh', 'Jounieh'), tuple(form.fields['nearest_town'].choices))
-        self.assertNotIn(self.district.pk, form.fields['district'].queryset.values_list('pk', flat=True))
-        self.assertNotIn('achrafieh', dict(form.fields['nearest_town'].choices))
+        rejected = self.client.post(self.exam_url(), self.exam_data(nearest_town='jounieh', grade='4'))
+        self.assertEqual(rejected.status_code, 200)
+        self.assertIn('nearest_town', rejected.context['form'].errors)
+        accepted = self.client.post(self.exam_url(), self.exam_data(nearest_town='achrafieh', grade='4'))
+        self.assertEqual(accepted.status_code, 302)
+        exam.refresh_from_db()
+        self.assertEqual(
+            (exam.governorate_id, exam.district_id, exam.nearest_town),
+            (self.governorate.pk, self.district.pk, 'achrafieh'),
+        )
 
-    def test_invalid_edit_keeps_the_existing_answers(self):
+    def test_registered_address_change_updates_readonly_parents_and_village_choices(self):
         exam = self.create_exam()
-        response = self.client.post(self.exam_url(), self.exam_data(district=self.baabda.pk))
+        self.set_registered_residence(self.other_governorate, self.keserwan)
+        response = self.client.get(self.exam_url())
+        form = response.context['form']
+        self.assertEqual(form['governorate'].value(), self.other_governorate.pk)
+        self.assertEqual(form['district'].value(), self.keserwan.pk)
+        self.assertIn('jounieh', dict(form.fields['nearest_town'].choices))
+        self.assertNotIn('achrafieh', dict(form.fields['nearest_town'].choices))
+        exam.refresh_from_db()
+        self.assertEqual(exam.nearest_town, 'achrafieh')
+        rejected = self.client.post(self.exam_url(), self.exam_data())
+        self.assertEqual(rejected.status_code, 200)
+        self.assertIn('nearest_town', rejected.context['form'].errors)
+        accepted = self.client.post(self.exam_url(), self.exam_data(nearest_town='jounieh'))
+        self.assertEqual(accepted.status_code, 302)
+        exam.refresh_from_db()
+        self.assertEqual(
+            (exam.governorate_id, exam.district_id, exam.nearest_town),
+            (self.other_governorate.pk, self.keserwan.pk, 'jounieh'),
+        )
+
+    def test_invalid_village_edit_keeps_the_existing_answers(self):
+        exam = self.create_exam()
+        response = self.client.post(self.exam_url(), self.exam_data(
+            district=self.baabda.pk, nearest_town='jounieh',
+        ))
         self.assertEqual(response.status_code, 200)
+        self.assertIn('nearest_town', response.context['form'].errors)
         exam.refresh_from_db()
         self.assertEqual(exam.district_id, self.district.pk)
         self.assertEqual(exam.nearest_town, 'achrafieh')
