@@ -84,6 +84,23 @@ def _already_applied(event_id):
     return SyncEventLog.objects.filter(event_id=event_id).first()
 
 
+def _same_event_identity(event, source_system, previous):
+    """Payloads may be rebuilt on retry; the producer and record cannot change."""
+    return (
+        previous.source_system == source_system
+        and previous.resource == event['resource']
+        and previous.source_id.strip() == normalize_bma_id(event['source_id'])
+        and previous.operation == event['operation']
+    )
+
+
+def _identity_mismatch(event):
+    return _result(
+        event, STATUS_FAILED,
+        detail='event_id already belongs to a different source system, resource, source_id or operation',
+    )
+
+
 def _log_event(event, source_system, status, detail, ignored_fields, applied_result=None):
     """Record the outcome of an event, tolerating a duplicate event id."""
     # A late failed attempt must not replace another delivery's committed result.
@@ -95,6 +112,8 @@ def _log_event(event, source_system, status, detail, ignored_fields, applied_res
                       'operation': event['operation'], 'status': STATUS_FAILED},
         )
         previous = SyncEventLog.objects.select_for_update().get(event_id=event['event_id'])
+        if not _same_event_identity(event, source_system, previous):
+            return
         if previous.status in (STATUS_APPLIED, STATUS_SKIPPED):
             return
         _write_event_log(event, source_system, status, detail, ignored_fields, applied_result)
@@ -176,6 +195,10 @@ def ingest_events(events, source_system, uploads=None):
             continue
 
         previous = _already_applied(event['event_id'])
+        if previous is not None and not _same_event_identity(event, source_system, previous):
+            results.append(_identity_mismatch(event))
+            counts[STATUS_FAILED] += 1
+            continue
         if previous is not None and previous.status in (STATUS_APPLIED, STATUS_SKIPPED):
             results.append(_replayed_result(event, previous))
             counts[STATUS_SKIPPED] += 1
@@ -205,6 +228,9 @@ def _apply_one(event, source_system, counts, uploads=None):
                           'operation': event['operation'], 'status': STATUS_FAILED},
             )
             previous = SyncEventLog.objects.select_for_update().get(event_id=event['event_id'])
+            if not _same_event_identity(event, source_system, previous):
+                counts[STATUS_FAILED] += 1
+                return _identity_mismatch(event)
             if previous.status in (STATUS_APPLIED, STATUS_SKIPPED):
                 counts[STATUS_SKIPPED] += 1
                 return _replayed_result(event, previous)
