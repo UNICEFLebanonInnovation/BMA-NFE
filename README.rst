@@ -40,6 +40,11 @@ Start here:
 * ``docs/wiki/developer.md`` — architecture, apps, access control, API surface, Celery, testing.
 * ``docs/wiki/system_details.md`` — dependency, model and infrastructure snapshot.
 
+End-user manuals with screenshots (English and Arabic, Word + PDF + Markdown):
+
+* ``docs/user_manuals/`` — step-by-step manuals for the **NFE** and **ALP** modules. See
+  ``docs/user_manuals/README.md`` for how to edit the text or re-take the screenshots.
+
 Reference and handover material:
 
 * ``docs/ACCESS_CONTROL.md`` — role → view permission matrix.
