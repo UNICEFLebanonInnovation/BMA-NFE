@@ -35,6 +35,7 @@ from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
+import content_admin  # noqa: E402
 import content_alp  # noqa: E402
 import content_nfe  # noqa: E402
 
@@ -251,17 +252,30 @@ class DocBuilder:
             kw2 = dict(kw)
             if i % 2 == 1:
                 kw2['bold'] = True
-            if not self.rtl:
-                self._style_run(p.add_run(part), **kw2)
-                continue
-            pos = 0
-            for m in self.LATIN.finditer(part):
-                if m.start() > pos:
-                    self._style_run(p.add_run(part[pos:m.start()]), **kw2)
-                self._style_run(p.add_run(m.group(0)), latin=True, **kw2)
-                pos = m.end()
-            if pos < len(part):
-                self._style_run(p.add_run(part[pos:]), **kw2)
+            # `code` spans: identifiers typed exactly as shown (group names, paths)
+            for j, chunk in enumerate(part.split('`')):
+                if not chunk:
+                    continue
+                if j % 2 == 1:
+                    run = p.add_run(chunk)
+                    self._style_run(run, latin=True, **kw2)
+                    run.font.name = 'Consolas'
+                    rfonts = run._r.get_or_add_rPr().find(qn('w:rFonts'))
+                    for attr in ('w:ascii', 'w:hAnsi', 'w:cs'):
+                        rfonts.set(qn(attr), 'Consolas')
+                    run.font.color.rgb = RGBColor(0x1F, 0x4E, 0x79)
+                    continue
+                if not self.rtl:
+                    self._style_run(p.add_run(chunk), **kw2)
+                    continue
+                pos = 0
+                for m in self.LATIN.finditer(chunk):
+                    if m.start() > pos:
+                        self._style_run(p.add_run(chunk[pos:m.start()]), **kw2)
+                    self._style_run(p.add_run(m.group(0)), latin=True, **kw2)
+                    pos = m.end()
+                if pos < len(chunk):
+                    self._style_run(p.add_run(chunk[pos:]), **kw2)
 
     # -- blocks ---------------------------------------------------------------
     def heading(self, text, level):
@@ -443,6 +457,7 @@ def to_pdf(docx_path):
 MANUALS = [
     ('NFE', content_nfe.MANUALS),
     ('ALP', content_alp.MANUALS),
+    ('Admin', content_admin.MANUALS),
 ]
 
 

@@ -262,5 +262,6 @@ read scope or a staff/superuser account, and returns only the requested parent's
 `/dashboard/manual/screenshot/<en|ar>/<name>.png` and the download route
 `/dashboard/manual/download/<module>/<lang>/<docx|pdf>/` only require an authenticated account: the manuals
 contain no beneficiary data. The page opens the ALP manual for `ALP_SCHOOL` accounts and the NFE manual for
-everybody else; the module can be switched from the page. Implemented in
+everybody else; the module can be switched from the page. The **admin panel manual** (`/dashboard/manual/admin/`
+and its downloads) is only served to `is_staff` or `is_superuser` accounts (`manual_views.user_can_read_manual`). Implemented in
 `student_registration/dashboard/manual_views.py`.

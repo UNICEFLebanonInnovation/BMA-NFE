@@ -13140,6 +13140,10 @@ msgstr ""
 "يتبع الدليل لغة الواجهة. استخدم أيقونة الكرة الأرضية في الشريط العلوي "
 "لقراءته باللغة الأخرى."
 
+#: student_registration/dashboard/manual_views.py
+msgid "Admin panel"
+msgstr "لوحة الإدارة"
+
 #~ msgid "Confirm Enrollment"
 #~ msgstr "تأكيد التسجيل"
 

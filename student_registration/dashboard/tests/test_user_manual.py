@@ -150,3 +150,44 @@ class ManualFileRoutesTests(TestCase):
         response = self.client.get(reverse('dashboard:user_manual_download', args=['nfe', 'en', 'pdf']))
 
         self.assertEqual(response.status_code, 302)
+
+
+@override_settings(LANGUAGE_CODE='en')
+class AdminManualAccessTests(TestCase):
+    """The admin panel manual is reserved for staff and superusers."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='center-user', password='password')
+        self.staff = User.objects.create_user(username='staff-user', password='password', is_staff=True)
+
+    def test_ordinary_user_does_not_see_the_admin_manual_tab(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse('dashboard:user_manual'))
+
+        self.assertNotContains(response, reverse('dashboard:user_manual_module', args=['admin']))
+
+    def test_ordinary_user_cannot_open_or_download_the_admin_manual(self):
+        self.client.force_login(self.user)
+
+        self.assertEqual(self.client.get(reverse('dashboard:user_manual_module', args=['admin'])).status_code, 404)
+        download = reverse('dashboard:user_manual_download', args=['admin', 'en', 'pdf'])
+        self.assertEqual(self.client.get(download).status_code, 404)
+
+    def test_staff_user_can_read_the_admin_manual(self):
+        self.client.force_login(self.staff)
+
+        response = self.client.get(reverse('dashboard:user_manual_module', args=['admin']))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['module'], 'admin')
+        self.assertContains(response, 'Admin Panel')
+        self.assertContains(response, reverse('dashboard:user_manual_screenshot', args=['en', 'adm_01_dashboard.png']))
+        self.assertContains(response, reverse('dashboard:user_manual_module', args=['admin']))
+
+    def test_staff_user_still_lands_on_the_nfe_manual_by_default(self):
+        self.client.force_login(self.staff)
+
+        response = self.client.get(reverse('dashboard:user_manual'))
+
+        self.assertEqual(response.context['module'], 'nfe')

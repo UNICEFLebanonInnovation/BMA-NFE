@@ -20,7 +20,12 @@ async function start(lang) {
     async shot(name, opts = {}) {
       const file = path.join(dir, name + '.png');
       if (opts.el) { const el = typeof opts.el === 'string' ? page.locator(opts.el).first() : opts.el; await el.screenshot({ path: file }); }
-      else if (opts.full) { const h = await page.addStyleTag({ content: '.sidebar{position:static !important;} .topbar{position:static !important;} #nfe_search_loader{display:none !important;}' }); await page.screenshot({ path: file, fullPage: true }); await h.evaluate(e => e.remove()); }
+      else if (opts.full || opts.nosidebar) {
+        const css = (opts.full ? 'nav.sidebar.d-lg-block{position:static !important;} header.topbar{position:static !important;} #nfe_search_loader{display:none !important;}' : '')
+          + (opts.nosidebar ? ' .main-sidebar{display:none !important;} .content-wrapper,.main-header,.main-footer{margin-left:0 !important;margin-right:0 !important;}' : '');
+        const h = await page.addStyleTag({ content: css }); await page.waitForTimeout(150);
+        await page.screenshot({ path: file, fullPage: !!opts.full }); await h.evaluate(e => e.remove());
+      }
       else await page.screenshot({ path: file, clip: opts.clip });
       console.log('shot', lang, name);
       return file;

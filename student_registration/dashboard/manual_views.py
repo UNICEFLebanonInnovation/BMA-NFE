@@ -29,7 +29,10 @@ from student_registration.users.templatetags.custom_tags import has_group
 MANUAL_MODULES = {
     'nfe': ('NFE', _('NFE module')),
     'alp': ('ALP', _('ALP module')),
+    'admin': ('Admin', _('Admin panel')),
 }
+#: Manuals reserved for accounts that can open the admin panel.
+STAFF_ONLY_MODULES = frozenset({'admin'})
 MANUAL_LANGUAGES = ('en', 'ar')
 MANUAL_FORMATS = {
     'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -48,6 +51,15 @@ def manual_module_for(user):
     if has_group(user, 'ALP_SCHOOL'):
         return 'alp'
     return 'nfe'
+
+
+def user_can_read_manual(user, module):
+    """Staff-only manuals (the admin panel manual) need staff or superuser status."""
+    if module not in MANUAL_MODULES:
+        return False
+    if module in STAFF_ONLY_MODULES:
+        return bool(user.is_staff or user.is_superuser)
+    return True
 
 
 def manual_language():
@@ -108,7 +120,7 @@ class UserManualView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         module = self.kwargs.get('module') or manual_module_for(self.request.user)
-        if module not in MANUAL_MODULES:
+        if not user_can_read_manual(self.request.user, module):
             raise Http404('Manual not found')
         language = manual_language()
         context['manual_content'] = render_manual(module, language)
@@ -120,6 +132,7 @@ class UserManualView(LoginRequiredMixin, TemplateView):
             {'slug': slug, 'label': label, 'active': slug == module,
              'url': reverse('dashboard:user_manual_module', args=[slug])}
             for slug, (_prefix, label) in MANUAL_MODULES.items()
+            if user_can_read_manual(self.request.user, slug)
         ]
         context['downloads'] = [
             {'format': fmt, 'url': reverse('dashboard:user_manual_download', args=[module, language, fmt]),
@@ -143,7 +156,8 @@ def user_manual_screenshot(request, language, name):
 @login_required
 def user_manual_download(request, module, language, fmt):
     """Send the Word or PDF version of a manual as an attachment."""
-    if module not in MANUAL_MODULES or language not in MANUAL_LANGUAGES or fmt not in MANUAL_FORMATS:
+    if (not user_can_read_manual(request.user, module) or language not in MANUAL_LANGUAGES
+            or fmt not in MANUAL_FORMATS):
         raise Http404('Manual not found')
     path = manual_file_path(module, language, fmt)
     if not os.path.isfile(path):

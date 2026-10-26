@@ -43,9 +43,9 @@ urlpatterns += [
 
 urlpatterns += [
     re_path(r'^manual/$', view=manual_views.UserManualView.as_view(), name='user_manual'),
-    re_path(r'^manual/(?P<module>nfe|alp)/$', view=manual_views.UserManualView.as_view(), name='user_manual_module'),
+    re_path(r'^manual/(?P<module>nfe|alp|admin)/$', view=manual_views.UserManualView.as_view(), name='user_manual_module'),
     re_path(r'^manual/screenshot/(?P<language>en|ar)/(?P<name>[\w\-]+\.png)$',
             view=manual_views.user_manual_screenshot, name='user_manual_screenshot'),
-    re_path(r'^manual/download/(?P<module>nfe|alp)/(?P<language>en|ar)/(?P<fmt>docx|pdf)/$',
+    re_path(r'^manual/download/(?P<module>nfe|alp|admin)/(?P<language>en|ar)/(?P<fmt>docx|pdf)/$',
             view=manual_views.user_manual_download, name='user_manual_download'),
 ]
