@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.urls import re_path
 
-from . import views
+from . import views, manual_views
 
 app_name = 'dashboard'
 
@@ -39,4 +39,13 @@ urlpatterns += [
 urlpatterns += [
     re_path(r'^guide/(?P<page_name>[\w\-]+)/$', view=views.WikiGuidePageView.as_view(), name='wiki_guide'),
     re_path(r'^guide/$', views.WikiGuidePageView.as_view(), {'page_name': 'index'}, name='wiki_guide_index'),
+]
+
+urlpatterns += [
+    re_path(r'^manual/$', view=manual_views.UserManualView.as_view(), name='user_manual'),
+    re_path(r'^manual/(?P<module>nfe|alp)/$', view=manual_views.UserManualView.as_view(), name='user_manual_module'),
+    re_path(r'^manual/screenshot/(?P<language>en|ar)/(?P<name>[\w\-]+\.png)$',
+            view=manual_views.user_manual_screenshot, name='user_manual_screenshot'),
+    re_path(r'^manual/download/(?P<module>nfe|alp)/(?P<language>en|ar)/(?P<fmt>docx|pdf)/$',
+            view=manual_views.user_manual_download, name='user_manual_download'),
 ]

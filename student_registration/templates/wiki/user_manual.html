@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block project_title %}{% trans "User Manual" %} — {{ module_label }}{% endblock %}
+{% block module_name %}{% trans "User Manual" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb bg-transparent p-0 m-0">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+            <li class="breadcrumb-item">{% trans "Documentation" %}</li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "User Manual" %}</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <ul class="nav nav-pills manual-tabs">
+            {% for item in modules %}
+            <li class="nav-item">
+                <a class="nav-link{% if item.active %} active{% endif %}" href="{{ item.url }}">{{ item.label }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="d-flex flex-wrap gap-2">
+            {% for download in downloads %}
+            {% if download.available %}
+            <a class="btn btn-sm btn-outline-primary" href="{{ download.url }}">
+                <i class="bi {% if download.format == 'pdf' %}bi-file-earmark-pdf{% else %}bi-file-earmark-word{% endif %} me-1"></i>
+                {% if download.format == 'pdf' %}{% trans "Download PDF" %}{% else %}{% trans "Download Word" %}{% endif %}
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="alert alert-info py-2 small mb-3">
+        <i class="bi bi-translate me-1"></i>
+        {% trans "The manual follows the language of the interface. Use the globe icon in the top bar to read it in the other language." %}
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-lg-5 markdown-body manual-body" dir="{% if is_rtl %}rtl{% else %}ltr{% endif %}">
+            {{ manual_content }}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_head %}
+<style>
+    .manual-tabs .nav-link { font-weight: 600; }
+    .markdown-body { line-height: 1.6; color: var(--bs-body-color); }
+    .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+        margin-top: 28px; margin-bottom: 14px; font-weight: 700; line-height: 1.25; color: #003366;
+    }
+    .markdown-body h1 { font-size: 1.9em; border-bottom: 1px solid #eaecef; padding-bottom: .3em; }
+    .markdown-body h2 { font-size: 1.45em; border-bottom: 1px solid #eaecef; padding-bottom: .3em; }
+    .markdown-body h3 { font-size: 1.15em; }
+    .markdown-body p, .markdown-body ul, .markdown-body ol { margin-bottom: 14px; }
+    .markdown-body ul, .markdown-body ol { padding-inline-start: 2em; }
+    .markdown-body li { margin-bottom: 6px; }
+    .markdown-body a { color: #00ADEF; text-decoration: none; }
+    .markdown-body a:hover { text-decoration: underline; }
+    .markdown-body img {
+        display: block; max-width: 100%; height: auto; margin: 10px auto 4px;
+        border: 1px solid #d0d7de; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    }
+    .markdown-body img + em, .markdown-body p > em:only-child { display: block; text-align: center; color: #6c757d; font-size: .9em; margin-bottom: 18px; }
+    .markdown-body blockquote {
+        border-inline-start: 4px solid #00ADEF; background: #eaf6fd; padding: 10px 16px; margin: 0 0 16px; border-radius: 4px;
+    }
+    .markdown-body blockquote p { margin: 0; }
+    .markdown-body table { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: .95em; }
+    .markdown-body th, .markdown-body td { border: 1px solid #dee2e6; padding: 8px 10px; vertical-align: top; }
+    .markdown-body th { background: #003366; color: #fff; }
+    .markdown-body tr:nth-child(even) td { background: #f8f9fa; }
+    .markdown-body code { padding: .2em .4em; font-size: 85%; background-color: rgba(27,31,35,.05); border-radius: 3px; }
+    .manual-body[dir="rtl"] { text-align: right; }
+</style>
+{% endblock extra_head %}

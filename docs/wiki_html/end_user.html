@@ -466,6 +466,9 @@ body {
 <h3 id="switching-language">Switching Language</h3>
 <p>Click your <strong>username</strong> in the top-right corner → select <strong>English</strong> or <strong>العربية</strong> (Arabic). The page reloads in the selected language, with a full right-to-left (RTL) layout for Arabic.</p>
 <h3 id="finding-this-manual-inside-the-system">Finding This Manual Inside the System</h3>
+<p>The sidebar entry <strong>Documentation → User Manual</strong> opens the illustrated, step-by-step manual of your module
+(NFE or ALP) with a screenshot for every step, in the language of the interface, and offers it for download as
+Word or PDF. Use the tabs at the top of that page to open the other module's manual.</p>
 <p>This manual is always available from the sidebar under <strong>Documentation → User Guide</strong>, whichever module
 you work in. It is the documentation written for you, and every signed-in user can open it.</p>
 <p>The system also contains <strong>technical documentation</strong> — deployment, database and permission references
@@ -1243,22 +1246,54 @@ services table sits under the education history.</p>
 <h3 id="how-to-request-an-export">How to Request an Export</h3>
 <ul>
 <li>Go to <strong>MSCC → Registrations List</strong>.</li>
-<li>Apply any filters you want (date range, center, round, etc.).</li>
 <li>Click <strong>Export</strong> at the top of the list.</li>
-<li>A dialog box opens. Select the <strong>fields</strong> you want to include in the export (or leave all selected for full data).</li>
-<li>Choose the <strong>format</strong>: XLSX (Excel) or CSV.</li>
-<li>Click <strong>Generate Export</strong>.</li>
+<li>Choose <strong>All registered children I can access</strong> to include every accessible registration across rounds, or <strong>Children matching the current filters</strong> to export your search results.</li>
+<li>Choose <strong>Excel with photographs</strong> (the default), or <strong>CSV (text only)</strong>.</li>
+<li>Click <strong>Start Export</strong>. The export includes the saved child and registration information, including the address and BLN/DIRASA programme.</li>
 </ul>
+<p>Excel embeds each photograph in the same row as its child and registration IDs. Children registered in
+more than one round have a separate row for each registration. A missing or unreadable photograph is
+identified in the photograph status column.</p>
 <h3 id="what-happens-next">What Happens Next</h3>
 <p>Large exports are processed in the background. You will see:</p>
 <pre><code>Export requested. Processing... [spinner]
 </code></pre>
 <p>You can <strong>continue using the system</strong> while the export is being prepared. When it is ready:</p>
 <ul>
-<li>The button changes to <strong>Download</strong>.</li>
+<li>The file downloads automatically if you remain on the list page. You can also open the download link in the recent exports menu.</li>
 <li>You will receive a <strong>push notification</strong> in your browser (if notifications are enabled) saying "Your export is ready."</li>
 </ul>
-<p>Click <strong>Download</strong> to save the file to your computer.</p>
+<p>Only the user who requested an export can download its file.</p>
+<h3 id="downloading-an-examination-card">Downloading an Examination Card</h3>
+<p>Open the child's <strong>MSCC profile</strong> and click <strong>Download Examination Card (Word)</strong>. The editable <code>.docx</code>
+card follows the bordered landscape examination-card layout, with the child's photograph at the upper
+left and centred round, registration ID, NGO, Arabic full name, date of birth, nationality, governorate
+and physical-difficulties details. The round and year come from the saved registration. The Place of
+Birth line remains blank because MSCC does not store that field. Correct any information on the profile
+before downloading a new card; each download reads the saved record again. If no photograph is
+available, the card shows that status instead of an image.</p>
+<h3 id="adding-exceptional-exam-details">Adding Exceptional Exam Details</h3>
+<p>After registering a child, open the <strong>MSCC profile → Exceptional Exam / الامتحان الاستثنائي</strong> tab and
+select <strong>Add Exceptional Exam / إضافة امتحان استثنائي</strong>. Questions and answer choices display both
+English and Arabic. Complete all fields:</p>
+<ul>
+<li><strong>Place of residence / مكان الإقامة:</strong> choose a governorate from the platform's Location records,
+  then one of its districts and a village. Governorates and districts use Location types 1 and 2;
+  village choices follow the supplied examination village/town list for the selected district.</li>
+<li><strong>Non-formal education programme / البرنامج التعليمي غير النظامي:</strong> BLN or DIRASA.</li>
+<li><strong>Grade applied for / الصف الدراسي الذي يتقدم للامتحان له:</strong> Grades 2–7 are available for both
+  programmes.</li>
+<li><strong>Mathematics exam language / لغة امتحان الرياضيات:</strong> Arabic, English or French.</li>
+<li><strong>Language exam / امتحان اللغة:</strong> English or French.</li>
+</ul>
+<p>Save to return to the child's exam tab and review the recorded answers. <strong>Edit Exceptional Exam</strong>
+reopens those answers for correction. Each registration has one exam record, so registrations in
+different rounds keep separate answers. Exam residence and programme are saved with the exam record;
+the child's registration address and programme retain their original values. Excel and CSV exports
+include the saved exam details alongside the corresponding child and registration IDs.</p>
+<p>Changing the governorate clears the district and village; changing the district clears the village.
+Saved location selections are restored when editing. Existing exam residence codes remain available
+as legacy values where they could not be mapped unambiguously to a Location record.</p>
 <h3 id="enabling-browser-notifications">Enabling Browser Notifications</h3>
 <p>To receive push notifications when exports are ready:</p>
 <ol>
@@ -1276,17 +1311,21 @@ services table sits under the education history.</p>
 <tbody>
 <tr>
 <td>XLSX (Excel)</td>
-<td>Opening in Microsoft Excel or Google Sheets for analysis</td>
+<td>Registered information with embedded photographs, for analysis in Excel</td>
 </tr>
 <tr>
 <td>CSV</td>
-<td>Importing into other databases or tools</td>
+<td>Registered text information for importing into other tools; photographs are not embedded</td>
+</tr>
+<tr>
+<td>DOCX (Word)</td>
+<td>An individual examination card downloaded from a child's profile</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
 <p><strong>Arabic text in CSV:</strong> CSV exports are written in UTF-8 with a byte-order mark so that Arabic names display correctly when the file is opened directly in Excel.</p>
-<p><strong>Note:</strong> Export access may be restricted to users with the <strong>EXPORT</strong> role. If you do not see the Export button, contact your coordinator.</p>
+<p><strong>Access:</strong> Centre users export their assigned centre's registrations; partner users export their assigned partner's registrations. UNICEF users and staff administrators can export across the platform. Contact your coordinator if your account needs an assignment or export role.</p>
 </blockquote>
 <hr />
 <h2 id="10-dashboards-reports">10. Dashboards &amp; Reports</h2>
@@ -1706,7 +1745,7 @@ services table sits under the education history.</p>
 </blockquote>
 <p><strong>Q: I can't see the Export button. Do I have access?</strong></p>
 <blockquote>
-<p>Export access is controlled by your user role. Contact your coordinator or system administrator to request the EXPORT permission if you need it.</p>
+<p>Export access is controlled by your user role and assigned centre or partner. Contact your coordinator or system administrator to check the assignment and role for your module.</p>
 </blockquote>
 <p><strong>Q: I switched language to Arabic but some parts are still in English.</strong></p>
 <blockquote>

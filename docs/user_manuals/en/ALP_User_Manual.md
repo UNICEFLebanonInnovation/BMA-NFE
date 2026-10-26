@@ -31,33 +31,33 @@ Open Google Chrome or Mozilla Firefox and go to the platform address given to yo
 
 1. Open the login page and enter your **username** and **password**.
 
-![Figure 1](../screenshots/en/00_login_empty.png)
+    ![Figure 1](../screenshots/en/00_login_empty.png)
 
-*Figure 1 – The login page*
+    *Figure 1 – The login page*
 
 2. Click **Sign in**. ALP users are taken straight to the **ALP home page**.
 
-![Figure 2](../screenshots/en/00_login_filled.png)
+    ![Figure 2](../screenshots/en/00_login_filled.png)
 
-*Figure 2 – Login form with the credentials filled in*
+    *Figure 2 – Login form with the credentials filled in*
 
 3. The home page shows today's and this week's registrations, the schools reporting, the average attendance of the month, a 14-day registration trend and the recent exports. The quick action cards open **New Registration**, **Beneficiary List** and **Track Attendance**.
 
-![Figure 3](../screenshots/en/alp_01_home.png)
+    ![Figure 3](../screenshots/en/alp_01_home.png)
 
-*Figure 3 – The ALP home page*
+    *Figure 3 – The ALP home page*
 
 4. To change the language click the **globe icon** in the top bar and choose **English** or **العربية**.
 
-![Figure 4](../screenshots/en/alp_02_language_menu.png)
+    ![Figure 4](../screenshots/en/alp_02_language_menu.png)
 
-*Figure 4 – Language menu*
+    *Figure 4 – Language menu*
 
 5. Click your **name** in the top-right corner for **Profile**, **Change Password** and **Logout**.
 
-![Figure 5](../screenshots/en/alp_03_user_menu.png)
+    ![Figure 5](../screenshots/en/alp_03_user_menu.png)
 
-*Figure 5 – User menu*
+    *Figure 5 – User menu*
 
 
 | Menu entry | What it opens |
@@ -83,15 +83,15 @@ Open **ALP Registrations** in the side menu. The list shows every student regist
 
 1. Each row shows the registration ID, names, school, academic year (round), programme and section. Click a column header to sort. The three icons in the **Actions** column open the **profile**, **edit** the registration or **delete** it.
 
-![Figure 6](../screenshots/en/alp_10_list.png)
+    ![Figure 6](../screenshots/en/alp_10_list.png)
 
-*Figure 6 – The ALP student list*
+    *Figure 6 – The ALP student list*
 
 2. Click **Search** to filter by name, academic year, programme, section or date, then **Apply Filters**.
 
-![Figure 7](../screenshots/en/alp_11_list_search.png)
+    ![Figure 7](../screenshots/en/alp_11_list_search.png)
 
-*Figure 7 – The search panel*
+    *Figure 7 – The search panel*
 
 3. **Export CSV** downloads the current list as a CSV file (UTF-8, Arabic names open correctly in Excel). **Add New Child** opens the registration form.
 
@@ -103,47 +103,47 @@ While you type the name and date of birth, the **Potential Matches** panel check
 
 1. Fill in the **Basic Identity Information**: photo (optional), first, father and family name, date of birth, gender, mother's full name and nationality.
 
-![Figure 8](../screenshots/en/alp_20_reg_step1_empty.png)
+    ![Figure 8](../screenshots/en/alp_20_reg_step1_empty.png)
 
-*Figure 8 – Step 1 – identity*
+    *Figure 8 – Step 1 – identity*
 
 2. Fill in **Status & Background**: P-code and home address (optional), **source of referral** to the NFE sector, unique child number, formal education unique ID, **living arrangement**, **disability**, **marital status** and whether the child has children. Then click **Next Step**.
 
-![Figure 9](../screenshots/en/alp_21_reg_step1_filled.png)
+    ![Figure 9](../screenshots/en/alp_21_reg_step1_filled.png)
 
-*Figure 9 – Step 1 completed*
+    *Figure 9 – Step 1 completed*
 
 
 1. Answer the household questions (siblings, siblings with disability, mother pregnant), the **parents' educational level**, the **primary phone number** (format XX-XXXXXX) with its confirmation and the person who answers it, the number of children under 18, the **primary caregiver** and the caregiver's names and nationality.
 
-![Figure 10](../screenshots/en/alp_22_reg_step2_empty.png)
+    ![Figure 10](../screenshots/en/alp_22_reg_step2_empty.png)
 
-*Figure 10 – Step 2 – caregiver details*
+    *Figure 10 – Step 2 – caregiver details*
 
 2. Choose the **ID type of the caregiver**. The document fields that apply to that ID type appear: type each number and confirm it (for example the UNHCR case number, the individual IDs and the barcode number). Follow the format shown under each field, then click **Next Step**.
 
-![Figure 11](../screenshots/en/alp_23_reg_step2_filled.png)
+    ![Figure 11](../screenshots/en/alp_23_reg_step2_filled.png)
 
-*Figure 11 – Step 2 completed*
+    *Figure 11 – Step 2 completed*
 
 
 1. Enter the **registration date**, the **academic year (round)**, the **programme** (ALP level) and the **section**. Upload a scanned copy or clear photo of the signed **consent form** (PDF or image).
 
-![Figure 12](../screenshots/en/alp_24_reg_step3_empty.png)
+    ![Figure 12](../screenshots/en/alp_24_reg_step3_empty.png)
 
-*Figure 12 – Step 3 – ALP enrolment*
+    *Figure 12 – Step 3 – ALP enrolment*
 
 2. Answer **Does the child participate in work?** (mandatory). If the answer is Yes, the type of work, hours per week, weekly income and working conditions appear. Tick the **cash support programmes** the household receives, then click **Complete Registration**.
 
-![Figure 13](../screenshots/en/alp_25_reg_step3_filled.png)
+    ![Figure 13](../screenshots/en/alp_25_reg_step3_filled.png)
 
-*Figure 13 – Step 3 completed*
+    *Figure 13 – Step 3 completed*
 
 3. The message "Your data has been sent successfully" confirms the registration and the **student profile** opens.
 
-![Figure 14](../screenshots/en/alp_26_reg_submitted.png)
+    ![Figure 14](../screenshots/en/alp_26_reg_submitted.png)
 
-*Figure 14 – The profile right after registration*
+    *Figure 14 – The profile right after registration*
 
 
 > **Note:** The school is not shown on the form: it is set automatically from the school linked to your account.
@@ -152,33 +152,33 @@ While you type the name and date of birth, the **Potential Matches** panel check
 
 1. The header shows the photo, the full name, the unique ID, the date of birth and age, the school, the programme, the current round and the registration number. **Edit Profile** reopens the registration form.
 
-![Figure 15](../screenshots/en/alp_30_profile_header.png)
+    ![Figure 15](../screenshots/en/alp_30_profile_header.png)
 
-*Figure 15 – Profile header and Personal Information tab*
+    *Figure 15 – Profile header and Personal Information tab*
 
 2. The **Programme Details** tab shows the ALP registration: school, programme, round, registration date, unique child number, source of referral and the child labour answers.
 
-![Figure 16](../screenshots/en/alp_31_profile_tab1.png)
+    ![Figure 16](../screenshots/en/alp_31_profile_tab1.png)
 
-*Figure 16 – Programme Details tab*
+    *Figure 16 – Programme Details tab*
 
 3. The **Caregiver & Support** tab shows the caregiver, the phone numbers, the identification documents and the cash support programmes.
 
-![Figure 17](../screenshots/en/alp_32_profile_tab2.png)
+    ![Figure 17](../screenshots/en/alp_32_profile_tab2.png)
 
-*Figure 17 – Caregiver & Support tab*
+    *Figure 17 – Caregiver & Support tab*
 
 4. To correct a registration click **Edit Profile** (or the pencil icon in the list), update the values through the three steps and click **Complete Registration**.
 
-![Figure 18](../screenshots/en/alp_33_edit_registration.png)
+    ![Figure 18](../screenshots/en/alp_33_edit_registration.png)
 
-*Figure 18 – Editing a registration*
+    *Figure 18 – Editing a registration*
 
 5. To delete a registration click the red bin icon in the list and confirm with **Delete**. This cannot be undone.
 
-![Figure 19](../screenshots/en/alp_34_delete_confirm.png)
+    ![Figure 19](../screenshots/en/alp_34_delete_confirm.png)
 
-*Figure 19 – Delete confirmation*
+    *Figure 19 – Delete confirmation*
 
 
 ## 5. Student Attendance
@@ -187,33 +187,33 @@ Attendance is recorded per day, programme, round and section. Open **ALP Attenda
 
 1. The date defaults to today. Choose the **Programme**, the **Round** and the **Section**.
 
-![Figure 20](../screenshots/en/alp_40_attendance_page.png)
+    ![Figure 20](../screenshots/en/alp_40_attendance_page.png)
 
-*Figure 20 – The attendance page*
+    *Figure 20 – The attendance page*
 
 2. Click **Load**. The students of that class appear with **Attended** and **Absent** buttons.
 
-![Figure 21](../screenshots/en/alp_41_attendance_loaded.png)
+    ![Figure 21](../screenshots/en/alp_41_attendance_loaded.png)
 
-*Figure 21 – Students loaded*
+    *Figure 21 – Students loaded*
 
 3. For each absent student click **Absent** and choose the **absence reason** (Sick, Transportation or Other with a description).
 
-![Figure 22](../screenshots/en/alp_42_attendance_marked.png)
+    ![Figure 22](../screenshots/en/alp_42_attendance_marked.png)
 
-*Figure 22 – Absences marked*
+    *Figure 22 – Absences marked*
 
 4. Click **Save**. A **Success** message confirms the save.
 
-![Figure 23](../screenshots/en/alp_43_attendance_saved.png)
+    ![Figure 23](../screenshots/en/alp_43_attendance_saved.png)
 
-*Figure 23 – Attendance saved*
+    *Figure 23 – Attendance saved*
 
 5. If the school was closed, select **Day Off**, choose the **closing reason** and save instead of marking students.
 
-![Figure 24](../screenshots/en/alp_44_attendance_day_off.png)
+    ![Figure 24](../screenshots/en/alp_44_attendance_day_off.png)
 
-*Figure 24 – Recording a day off*
+    *Figure 24 – Recording a day off*
 
 
 - Future dates are refused; past dates can be corrected by loading them again.
@@ -223,27 +223,27 @@ Attendance is recorded per day, programme, round and section. Open **ALP Attenda
 
 1. Open **ALP Teacher Attendance**, pick the **date** and click **Load**.
 
-![Figure 25](../screenshots/en/alp_50_teacher_attendance_page.png)
+    ![Figure 25](../screenshots/en/alp_50_teacher_attendance_page.png)
 
-*Figure 25 – Teacher attendance page*
+    *Figure 25 – Teacher attendance page*
 
 2. The teachers of your school appear with **Present** and **Absent** buttons.
 
-![Figure 26](../screenshots/en/alp_51_teacher_attendance_loaded.png)
+    ![Figure 26](../screenshots/en/alp_51_teacher_attendance_loaded.png)
 
-*Figure 26 – Teachers loaded*
+    *Figure 26 – Teachers loaded*
 
 3. Mark each teacher, then click **Save**.
 
-![Figure 27](../screenshots/en/alp_52_teacher_attendance_marked.png)
+    ![Figure 27](../screenshots/en/alp_52_teacher_attendance_marked.png)
 
-*Figure 27 – Teacher status marked*
+    *Figure 27 – Teacher status marked*
 
 4. The confirmation message appears; the whole list is saved in one action.
 
-![Figure 28](../screenshots/en/alp_53_teacher_attendance_saved.png)
+    ![Figure 28](../screenshots/en/alp_53_teacher_attendance_saved.png)
 
-*Figure 28 – Teacher attendance saved*
+    *Figure 28 – Teacher attendance saved*
 
 
 ## 7. Teachers
@@ -252,33 +252,33 @@ Open **ALP Teachers** in the side menu to manage the teachers of your school.
 
 1. The list shows the teachers of your school with their contact details and round. Click **Add Teacher**.
 
-![Figure 29](../screenshots/en/alp_60_teachers_list.png)
+    ![Figure 29](../screenshots/en/alp_60_teachers_list.png)
 
-*Figure 29 – The ALP teacher list*
+    *Figure 29 – The ALP teacher list*
 
 2. Fill in **Identity & Contact** (names in Arabic letters, gender, birth date, nationality, phone in the format XX-XXXXXX, email).
 
-![Figure 30](../screenshots/en/alp_61_teacher_form_empty.png)
+    ![Figure 30](../screenshots/en/alp_61_teacher_form_empty.png)
 
-*Figure 30 – The teacher form*
+    *Figure 30 – The teacher form*
 
 3. Fill in **Assignment & Qualifications**: academic year, assignment, teaching hours per week under ALP, subjects provided, levels taught, training topics, years of experience and extra coaching. Attach up to five supporting documents with their type and description.
 
-![Figure 31](../screenshots/en/alp_62_teacher_form_filled.png)
+    ![Figure 31](../screenshots/en/alp_62_teacher_form_filled.png)
 
-*Figure 31 – Teacher form completed*
+    *Figure 31 – Teacher form completed*
 
 4. Click **Complete Registration**. The teacher appears in the list.
 
-![Figure 32](../screenshots/en/alp_63_teacher_saved.png)
+    ![Figure 32](../screenshots/en/alp_63_teacher_saved.png)
 
-*Figure 32 – Teacher saved*
+    *Figure 32 – Teacher saved*
 
 5. Use the row actions to **Edit** or **Delete** a teacher.
 
-![Figure 33](../screenshots/en/alp_64_teacher_edit.png)
+    ![Figure 33](../screenshots/en/alp_64_teacher_edit.png)
 
-*Figure 33 – Editing a teacher*
+    *Figure 33 – Editing a teacher*
 
 
 ## 8. Grading
@@ -287,36 +287,36 @@ Grades are entered per student registration. The subjects and the allowed ranges
 
 1. Open the grading form from the student list (**Actions**) or the address **ALP → Grading → Add**. Select the **registration** of the student.
 
-![Figure 34](../screenshots/en/alp_70_grading_form_empty.png)
+    ![Figure 34](../screenshots/en/alp_70_grading_form_empty.png)
 
-*Figure 34 – The grading form*
+    *Figure 34 – The grading form*
 
 2. Enter a value for each subject. A value outside the allowed range is rejected.
 
-![Figure 35](../screenshots/en/alp_71_grading_form_filled.png)
+    ![Figure 35](../screenshots/en/alp_71_grading_form_filled.png)
 
-*Figure 35 – Grades entered*
+    *Figure 35 – Grades entered*
 
 3. Click **Save**. The grades are stored with the registration and feed the **Learning Outcomes** section of the Registration Dashboard. They can be edited later.
 
-![Figure 36](../screenshots/en/alp_72_grading_saved.png)
+    ![Figure 36](../screenshots/en/alp_72_grading_saved.png)
 
-*Figure 36 – Back to the student list after saving*
+    *Figure 36 – Back to the student list after saving*
 
 
 ## 9. School Profile
 
 1. Open **School Profile**. Update the **school information** (type, operating shift, programme manager, phone, email), the **location** (governorate, district, cadaster and GPS coordinates) and the **provided services** (packages, digital learning, digital hub, number of ALP staff, nearby PHCC).
 
-![Figure 37](../screenshots/en/alp_80_school_profile.png)
+    ![Figure 37](../screenshots/en/alp_80_school_profile.png)
 
-*Figure 37 – The school profile form*
+    *Figure 37 – The school profile form*
 
 2. Click **Save changes**. The confirmation appears at the top of the page.
 
-![Figure 38](../screenshots/en/alp_81_school_profile_saved.png)
+    ![Figure 38](../screenshots/en/alp_81_school_profile_saved.png)
 
-*Figure 38 – School profile saved*
+    *Figure 38 – School profile saved*
 
 
 > **Note:** Keep the GPS coordinates accurate: they place your school on the School Dashboard map.
@@ -327,42 +327,42 @@ All dashboards are limited to your school.
 
 1. **Registration Dashboard** – total registrations, rounds and the **Learning Outcomes** block (children assessed, average achievement, progress, achievement by subject), followed by charts on gender, nationality, source of identification and vulnerability.
 
-![Figure 39](../screenshots/en/alp_90_registration_dashboard.png)
+    ![Figure 39](../screenshots/en/alp_90_registration_dashboard.png)
 
-*Figure 39 – Registration dashboard*
+    *Figure 39 – Registration dashboard*
 
 2. **Teacher Dashboard** – number of teachers, gender, nationality, assignments, subjects and training.
 
-![Figure 40](../screenshots/en/alp_91_teacher_dashboard.png)
+    ![Figure 40](../screenshots/en/alp_91_teacher_dashboard.png)
 
-*Figure 40 – Teacher dashboard*
+    *Figure 40 – Teacher dashboard*
 
 3. **Attendance Dashboard** – a heatmap with one square per day, overall and per ALP level. Dark green means high attendance.
 
-![Figure 41](../screenshots/en/alp_92_attendance_dashboard.png)
+    ![Figure 41](../screenshots/en/alp_92_attendance_dashboard.png)
 
-*Figure 41 – Attendance dashboard*
+    *Figure 41 – Attendance dashboard*
 
 4. **School Dashboard** – the ALP schools on a map with their students and teachers. Schools without GPS coordinates are not mapped.
 
-![Figure 42](../screenshots/en/alp_93_school_dashboard.png)
+    ![Figure 42](../screenshots/en/alp_93_school_dashboard.png)
 
-*Figure 42 – School dashboard*
+    *Figure 42 – School dashboard*
 
 5. **ALP Pivot Builder** – drag fields into rows and columns to build your own tables and charts.
 
-![Figure 43](../screenshots/en/alp_94_pivot_builder.png)
+    ![Figure 43](../screenshots/en/alp_94_pivot_builder.png)
 
-*Figure 43 – Pivot builder*
+    *Figure 43 – Pivot builder*
 
 
 ## 11. Your Account
 
 1. **Change Password** (user menu): enter the current password and the new password twice, then click **Change Password**.
 
-![Figure 44](../screenshots/en/alp_97_change_password.png)
+    ![Figure 44](../screenshots/en/alp_97_change_password.png)
 
-*Figure 44 – Change password form*
+    *Figure 44 – Change password form*
 
 2. **Logout** (user menu) ends the session. Always log out on a shared computer.
 

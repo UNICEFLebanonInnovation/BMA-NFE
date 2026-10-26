@@ -255,3 +255,12 @@ read scope or a staff/superuser account, and returns only the requested parent's
 | ALP school scoping | `student_registration/alp/utils.py` → `filter_by_school()` |
 | ALP read-only for superusers | `student_registration/alp/views.py` → `ALPEditPermissionMixin` |
 | ALP form dropdown scoping | `student_registration/alp/mixins.py` → `ALPSchoolFilterMixin` |
+
+## Documentation routes
+
+`dashboard:user_manual` (`/dashboard/manual/`, `/dashboard/manual/<nfe|alp>/`), the screenshot route
+`/dashboard/manual/screenshot/<en|ar>/<name>.png` and the download route
+`/dashboard/manual/download/<module>/<lang>/<docx|pdf>/` only require an authenticated account: the manuals
+contain no beneficiary data. The page opens the ALP manual for `ALP_SCHOOL` accounts and the NFE manual for
+everybody else; the module can be switched from the page. Implemented in
+`student_registration/dashboard/manual_views.py`.

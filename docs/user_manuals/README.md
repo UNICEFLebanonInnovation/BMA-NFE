@@ -2,6 +2,11 @@
 
 Step-by-step user manuals with a screenshot for every step, in English and Arabic.
 
+Signed-in users read them inside the application under **Documentation → User Manual** in the sidebar
+(`/dashboard/manual/`): the page shows the manual of the user's module in the interface language, rendered from
+the Markdown below with the screenshots, and offers the Word and PDF files for download. See
+`student_registration/dashboard/manual_views.py`.
+
 | Manual | Word | PDF | Markdown source |
 |---|---|---|---|
 | NFE module – English | `NFE_User_Manual_EN.docx` | `NFE_User_Manual_EN.pdf` | `en/NFE_User_Manual.md` |

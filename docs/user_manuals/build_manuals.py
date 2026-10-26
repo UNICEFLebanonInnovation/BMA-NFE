@@ -70,10 +70,10 @@ def build_markdown(manual, lang, out_path):
         lines.append('%d. %s' % (i, sec['title']))
     lines.append('')
 
-    def image(img, caption):
+    def image(img, caption, indent=''):
         fig[0] += 1
-        lines.append('![%s %d](%s%s)\n' % (S['figure'], fig[0], rel_img, img))
-        lines.append('*%s %d – %s*\n' % (S['figure'], fig[0], caption))
+        lines.append('%s![%s %d](%s%s)\n' % (indent, S['figure'], fig[0], rel_img, img))
+        lines.append('%s*%s %d – %s*\n' % (indent, S['figure'], fig[0], caption))
 
     for i, sec in enumerate(manual['sections'], 1):
         lines.append('## %d. %s\n' % (i, sec['title']))
@@ -93,7 +93,8 @@ def build_markdown(manual, lang, out_path):
                     lines.append('%d. %s' % (n, text))
                     if img:
                         lines.append('')
-                        image(img, caption or text)
+                        # indented so the figure stays inside the list item and numbering continues
+                        image(img, caption or text, indent='    ')
                 lines.append('')
             elif kind == 'img':
                 image(block[1], block[2])

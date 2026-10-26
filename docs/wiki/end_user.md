@@ -97,6 +97,10 @@ Click your **username** in the top-right corner → select **English** or **ال
 
 ### Finding This Manual Inside the System
 
+The sidebar entry **Documentation → User Manual** opens the illustrated, step-by-step manual of your module
+(NFE or ALP) with a screenshot for every step, in the language of the interface, and offers it for download as
+Word or PDF. Use the tabs at the top of that page to open the other module's manual.
+
 This manual is always available from the sidebar under **Documentation → User Guide**, whichever module
 you work in. It is the documentation written for you, and every signed-in user can open it.
 
