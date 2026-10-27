@@ -377,11 +377,6 @@ User lands on their default dashboard
 <td>Same as <code>MSCC</code> but limited to their assigned center</td>
 </tr>
 <tr>
-<td><code>MSCC_FULL</code></td>
-<td>MSCC unrestricted</td>
-<td>No center/partner filter — can see all MSCC data</td>
-</tr>
-<tr>
 <td><code>MSCC_PARTNER</code></td>
 <td>MSCC partner-scoped</td>
 <td>See all data for their assigned partner organization</td>
@@ -430,17 +425,19 @@ def get_queryset(self):
     user = self.request.user
     qs = Registration.objects.filter(deleted=False)
 
-    if user.groups.filter(name='MSCC_FULL').exists():
-        return qs  # No filter — sees everything
+    current_round = Q(round__isnull=True) | Q(round__current_year=True)
 
-    if user.groups.filter(name='MSCC_PARTNER').exists():
-        return qs.filter(partner=user.partner)
+    if has_group(user, 'MSCC_UNICEF'):
+        return qs.filter(current_round)
 
-    if user.groups.filter(name='MSCC_CENTER').exists():
-        return qs.filter(center=user.center)
+    if has_group(user, 'MSCC_PARTNER') and user.partner_id:
+        return qs.filter(current_round, partner_id=user.partner_id)
 
-    # Default MSCC: filter by center
-    return qs.filter(center=user.center)
+    if has_group(user, 'MSCC_CENTER') and user.center_id:
+        return qs.filter(current_round, center_id=user.center_id)
+
+    # Module membership alone does not grant a data scope.
+    return Registration.objects.none()
 </code></pre>
 
 <p>The <code>User</code> model stores assignment context:<br />
@@ -453,20 +450,20 @@ def get_queryset(self):
 <pre class="highlight"><code class="language-python">from braces.views import GroupRequiredMixin
 
 class MyView(GroupRequiredMixin, ListView):
-    group_required = ['MSCC', 'MSCC_FULL']  # Any of these groups
+    group_required = ['MSCC', 'MSCC_CENTER']  # Any of these groups
 </code></pre>
 
 <p><strong>Manual check in a view:</strong></p>
 <pre class="highlight"><code class="language-python">def my_view(request):
-    if not request.user.groups.filter(name__in=['MSCC', 'MSCC_FULL']).exists():
+    if not request.user.groups.filter(name__in=['MSCC', 'MSCC_CENTER']).exists():
         raise PermissionDenied
 </code></pre>
 
 <p><strong>In templates:</strong></p>
-<pre class="highlight"><code class="language-django">{% load has_group %}
+<pre class="highlight"><code class="language-django">{% load custom_tags %}
 
-{% if request.user|has_group:&quot;MSCC_FULL&quot; %}
-    &lt;a href=&quot;{% url 'mscc:export' %}&quot;&gt;Export All Data&lt;/a&gt;
+{% if request.user|has_group:&quot;MSCC&quot; or request.user|has_group:&quot;MSCC_CENTER&quot; %}
+    &lt;a href=&quot;{% url 'mscc:child_add' %}&quot;&gt;Register Child&lt;/a&gt;
 {% endif %}
 </code></pre>
 

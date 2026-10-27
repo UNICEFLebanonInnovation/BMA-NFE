@@ -564,6 +564,10 @@ class NewRoundView(LoginRequiredMixin,
     template_name = 'mscc/new_round.html'
     form_class = NewRoundForm
 
+    def handle_no_permission(self, request=None):
+        """Accept both Django's login and braces' group denial callbacks."""
+        return super().handle_no_permission()
+
     def get_success_url(self):
         return reverse('mscc:child_profile', kwargs={'pk': self.new_registration_id}) + '?current_tab=services'
 
@@ -617,6 +621,10 @@ class MainListView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     filterset_class = MainFilter
+
+    def handle_no_permission(self, request=None):
+        """Accept both Django's login and braces' group denial callbacks."""
+        return super().handle_no_permission()
 
     def get_queryset(self):
         user = self.request.user
@@ -688,9 +696,7 @@ class MainListView(LoginRequiredMixin,
         elif has_group(self.request.user, 'MSCC_CENTER'):
             return self.table_class
 
-        if not has_group(self.request.user, 'MSCC_FULL'):
-            return YouthMainTable
-        return self.table_class
+        return YouthMainTable
 
     def get_filterset_class(self):
         if has_group(self.request.user, 'MSCC_UNICEF'):

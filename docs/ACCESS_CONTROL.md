@@ -129,10 +129,6 @@ The application uses Django's authentication system and custom role checks (via 
 - YouthServiceGilFormView
 - YouthServiceMaharatiFormView
 
-### `MSCC_FULL`
-**Capabilities:** High-level access with unrestricted viewing privileges, primarily bypassing filters in lists.
-- MainListView (unrestricted access)
-
 ### `MSCC_PARTNER`
 **Capabilities:** Access for MSCC partner organizations, typically limited to filtering views based on partner assignment. Cannot add or edit most records.
 - AttendanceView
@@ -153,3 +149,20 @@ The application uses Django's authentication system and custom role checks (via 
 - TeacherDeleteView
 - TeacherEditView
 - TeacherListView
+
+## Retired role
+
+`MSCC_FULL` is no longer required. It did not bypass the current list filters;
+it only added redundant UI checks and selected a fallback table for users with
+no data scope. Centre, partner and UNICEF list scopes remain unchanged.
+
+- The Add New Child button requires `MSCC_CENTER` plus an assigned centre and partner.
+- New Round uses the existing view roles, `MSCC` or `MSCC_CENTER` (or a superuser).
+- UNICEF and partner groups alone do not enable the New Round action.
+
+Deployment: run `python manage.py migrate`. The `users.0002_remove_mscc_full_group`
+data migration removes the old group and its memberships. If a deployment attached
+Django model permissions to that group, those grants are preserved as direct
+permissions for its existing members only. No replacement role is assigned and no
+other group's permissions change. The cleanup is idempotent and intentionally
+irreversible: deleted memberships cannot be reconstructed by reversing migrations.

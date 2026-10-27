@@ -418,10 +418,10 @@ context['registrations'] = Registration.objects.filter(center=self.request.user.
 </code></pre>
 
 <h3 id="group-based-conditional-ui">Group-Based Conditional UI</h3>
-<pre class="highlight"><code class="language-django">{% load has_group %}
+<pre class="highlight"><code class="language-django">{% load custom_tags %}
 
-{% if request.user|has_group:&quot;MSCC_FULL&quot; %}
-  &lt;button&gt;Export All Data&lt;/button&gt;
+{% if request.user|has_group:&quot;MSCC&quot; or request.user|has_group:&quot;MSCC_CENTER&quot; %}
+  &lt;a href=&quot;{% url 'mscc:child_add' %}&quot;&gt;Register Child&lt;/a&gt;
 {% endif %}
 
 {% if request.user|has_group:&quot;MSCC_UNICEF&quot; %}
