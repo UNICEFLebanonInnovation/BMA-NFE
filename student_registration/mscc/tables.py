@@ -167,12 +167,15 @@ class TeacherTable(tables.Table):
     )
     partner = tables.Column(verbose_name=_('Partner'), accessor='center.partner')
 
+    facilitator_name = tables.Column(verbose_name=_('Facilitator name'))
+
     class Meta:
         model = Teacher
         template = 'django_tables2/bootstrap5.html'
         attrs = {'class': 'table table-hover'}
         fields = (
             'action_column',
+            'facilitator_name',
             'first_name',
             'father_name',
             'last_name',
@@ -192,7 +195,7 @@ class TeacherTable(tables.Table):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        if user and not (user.is_staff or user.groups.filter(name='MSCC_UNICEF').exists()):
+        if user and not (user.is_staff or user.groups.filter(name='MSCC_MEHE').exists()):
             self.exclude = tuple(set(self.exclude + ('partner',)))
 
 

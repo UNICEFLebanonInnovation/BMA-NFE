@@ -104,7 +104,7 @@ class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      TemplateView):
 
-    group_required = [u"MSCC",u"MSCC_UNICEF", u"MSCC_CENTER", "MSCC_PARTNER"]
+    group_required = [u"MSCC",u"MSCC_MEHE", u"MSCC_CENTER", "MSCC_PARTNER"]
     template_name = 'mscc/attendance.html'
 
     def get_context_data(self, **kwargs):
@@ -275,7 +275,7 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
         context['class_section'] = class_section_dict
 
         user = self.request.user
-        is_unicef_or_staff = user.is_staff or has_group(user, 'MSCC_UNICEF')
+        is_mehe_or_staff = user.is_staff or has_group(user, 'MSCC_MEHE')
         is_partner_user = has_group(user, 'MSCC_PARTNER') and user.partner_id
         is_center_user = has_group(user, 'MSCC_CENTER') and user.center_id
 
@@ -287,7 +287,7 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
         context['selected_partner_id'] = user.partner_id or ''
         context['selected_center_id'] = user.center_id or ''
 
-        if is_unicef_or_staff:
+        if is_mehe_or_staff:
             context['center'] = Center.objects.all().order_by('name')
             context['partner'] = PartnerOrganization.objects.all().order_by('name')
             context['show_partner_filter'] = True

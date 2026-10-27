@@ -424,7 +424,7 @@ context['registrations'] = Registration.objects.filter(center=self.request.user.
   &lt;a href=&quot;{% url 'mscc:child_add' %}&quot;&gt;Register Child&lt;/a&gt;
 {% endif %}
 
-{% if request.user|has_group:&quot;MSCC_UNICEF&quot; %}
+{% if request.user|has_group:&quot;MSCC_MEHE&quot; %}
   &lt;a href=&quot;{% url 'mscc:dashboard' %}&quot;&gt;Analytics Dashboard&lt;/a&gt;
 {% endif %}
 </code></pre>

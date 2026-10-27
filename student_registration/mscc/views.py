@@ -673,7 +673,7 @@ class MainListView(LoginRequiredMixin,
 
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
 
-        if has_group(user, 'MSCC_UNICEF'):
+        if has_group(user, 'MSCC_MEHE'):
             return qs.filter(round_filter).order_by('-id')
 
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
@@ -689,7 +689,7 @@ class MainListView(LoginRequiredMixin,
         """
         Return the class to use for the table.
         """
-        if has_group(self.request.user, 'MSCC_UNICEF'):
+        if has_group(self.request.user, 'MSCC_MEHE'):
             return FullTable
         elif has_group(self.request.user, 'MSCC_PARTNER'):
             return PartnerTable
@@ -699,7 +699,7 @@ class MainListView(LoginRequiredMixin,
         return YouthMainTable
 
     def get_filterset_class(self):
-        if has_group(self.request.user, 'MSCC_UNICEF'):
+        if has_group(self.request.user, 'MSCC_MEHE'):
             return FullFilter
         elif has_group(self.request.user, 'MSCC_PARTNER'):
             return self.filterset_class
@@ -867,7 +867,7 @@ def quick_search(request):
             center_id = user.center_id
             partner_id = user.partner_id
 
-            if has_group(user, 'MSCC_UNICEF'):
+            if has_group(user, 'MSCC_MEHE'):
                 qs= Registration.objects.filter(
                     Q(round__isnull=True) | Q(round__current_year=True),
                     deleted=False
@@ -905,8 +905,28 @@ def quick_search(request):
     return JsonResponse({'result': json.dumps(list(qs))})
 
 
-class TeacherListView(LoginRequiredMixin,
-                  GroupRequiredMixin,
+class TeacherAccessMixin(LoginRequiredMixin, GroupRequiredMixin):
+    """Bridge Django and django-braces denial signatures for teacher pages."""
+    def handle_no_permission(self, request=None):
+        if self.request.user.is_authenticated:
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied
+        return super().handle_no_permission()
+
+
+def teachers_for_user(user):
+    """Use the same object scope on teacher lists and direct edit/delete URLs."""
+    query = Teacher.objects.select_related('round', 'center')
+    if user.is_staff or has_group(user, 'MSCC_MEHE'):
+        return query
+    if user.center_id:
+        return query.filter(center_id=user.center_id)
+    if user.partner_id:
+        return query.filter(center__partner_id=user.partner_id)
+    return query.none()
+
+
+class TeacherListView(TeacherAccessMixin,
                   FilterView,
                   ExportMixin,
                   SingleTableView,
@@ -915,7 +935,7 @@ class TeacherListView(LoginRequiredMixin,
     model = Teacher
     template_name = 'mscc/teacher_list.html'
     table = TeacherTable(Teacher.objects.none(), order_by='id')
-    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_MEHE"]
     filterset_class = TeacherFilter
 
     def get_table_kwargs(self):
@@ -924,30 +944,15 @@ class TeacherListView(LoginRequiredMixin,
         return kwargs
 
     def get_queryset(self):
-        base_queryset = Teacher.objects.select_related('round', 'center')
-        user = self.request.user
-
-        if has_group(user, 'MSCC_UNICEF') or user.is_staff:
-            return base_queryset
-
-        center_id = user.center_id if user.center_id else 0
-        partner_id = user.partner_id if user.partner_id else 0
-
-        if center_id:
-            return base_queryset.filter(center_id=center_id)
-        if partner_id:
-            return base_queryset.filter(center__partner_id=partner_id)
-
-        return base_queryset.none()
+        return teachers_for_user(self.request.user)
 
 
-class TeacherAddView(LoginRequiredMixin,
-                 GroupRequiredMixin,
+class TeacherAddView(TeacherAccessMixin,
                  FormView):
     template_name = 'mscc/teacher_form.html'
     form_class = TeacherForm
     success_url = reverse_lazy('mscc:teacher_list')
-    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_MEHE"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
@@ -972,13 +977,12 @@ class TeacherAddView(LoginRequiredMixin,
         return TeacherForm(None, instance=None, request=self.request)
 
 
-class TeacherEditView(LoginRequiredMixin,
-                  GroupRequiredMixin,
+class TeacherEditView(TeacherAccessMixin,
                   FormView):
     template_name = 'mscc/teacher_form.html'
     form_class = TeacherForm
     success_url = reverse_lazy('mscc:teacher_list')
-    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_MEHE"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
@@ -988,27 +992,31 @@ class TeacherEditView(LoginRequiredMixin,
             return reverse('mscc:teacher_edit', kwargs={'pk': self.request.session.get('instance_id')})
         return self.success_url
 
+    def get_teacher(self):
+        from django.shortcuts import get_object_or_404
+        return get_object_or_404(teachers_for_user(self.request.user), pk=self.kwargs['pk'])
+
     def get_form(self, form_class=None):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = self.get_teacher()
         if self.request.method == "POST":
             return TeacherForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         data = TeacherSerializer(instance).data
         return TeacherForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Teacher.objects.get(id=self.kwargs['pk'])
+        instance = self.get_teacher()
         form.save(request=self.request, instance=instance)
         return super(TeacherEditView, self).form_valid(form)
 
 
-class TeacherDeleteView(LoginRequiredMixin, GroupRequiredMixin, DeleteView):
+class TeacherDeleteView(TeacherAccessMixin, DeleteView):
     model = Teacher
     success_url = reverse_lazy('mscc:teacher_list')
-    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_UNICEF"]
+    group_required = [u"MSCC", u"MSCC_CENTER", u"MSCC_PARTNER", u"MSCC_MEHE"]
 
     def get_object(self):
         from django.shortcuts import get_object_or_404
-        return get_object_or_404(Teacher, pk=self.kwargs['pk'])
+        return get_object_or_404(teachers_for_user(self.request.user), pk=self.kwargs['pk'])
 
     def get(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -1030,7 +1038,7 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
         user = self.request.user
         queryset = Teacher.objects.all()
 
-        if has_group(user, 'MSCC_UNICEF') or user.is_staff:
+        if has_group(user, 'MSCC_MEHE') or user.is_staff:
             return queryset
 
         center_id = user.center_id if user.center_id else 0

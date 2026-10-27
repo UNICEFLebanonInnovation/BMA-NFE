@@ -120,6 +120,13 @@ class Teacher(TimeStampedModel):
     bma_id = models.CharField(max_length=64, blank=True, null=True,
                               verbose_name=_('BMA Teacher ID'))
 
+    # The two Compiler tables have independent integer ID sequences.
+    bma_source = models.CharField(max_length=64, default='mscc.teacher', editable=False)
+    facilitator_name = models.CharField(max_length=200, blank=True, default='',
+                                        verbose_name=_('Facilitator name'))
+    program_staff_details = models.JSONField(default=dict, blank=True,
+                                             verbose_name=_('Makani program staff details'))
+
     GENDER = Choices(
         ('Male', _('Male')),
         ('Female', _('Female')),
@@ -242,7 +249,7 @@ class Teacher(TimeStampedModel):
         verbose_name=_('Center')
     )
     email = models.CharField(
-        max_length=100,
+        max_length=254,
         blank=True,
         null=True,
         verbose_name=_('Email')
@@ -431,11 +438,17 @@ class Teacher(TimeStampedModel):
         verbose_name=_('Modified by'),
     )
 
+    def __str__(self):
+        return self.facilitator_name or ' '.join(filter(None, [self.first_name, self.last_name])) or str(self.pk)
+
     class Meta:
         verbose_name=_('Teacher')
         verbose_name_plural=_('Teachers')
         constraints = [
-            models.UniqueConstraint(fields=['bma_id', 'center'], name='mscc_teacher_bma_center_uniq'),
+            models.UniqueConstraint(fields=['bma_source', 'bma_id', 'center'], name='mscc_teacher_source_center_uniq'),
+            models.UniqueConstraint(fields=['bma_source', 'bma_id'],
+                condition=models.Q(bma_source='locations.program_staff'),
+                name='mscc_program_staff_bma_uniq'),
             models.CheckConstraint(
                 condition=models.Q(bma_id__isnull=True) | models.Q(center__isnull=False),
                 name='mscc_teacher_bma_needs_center',

@@ -81,7 +81,7 @@ class CenterFilter(RedesignFilterSet):
         user = getattr(getattr(self, 'request', None), 'user', None)
         if not user:
             return
-        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+        if user.is_staff or has_group(user, 'MSCC_MEHE'):
             return
 
         self.filters.pop('partner', None)

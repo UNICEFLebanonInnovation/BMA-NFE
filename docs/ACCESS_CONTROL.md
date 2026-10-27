@@ -139,8 +139,8 @@ The application uses Django's authentication system and custom role checks (via 
 - TeacherEditView
 - TeacherListView (filtered)
 
-### `MSCC_UNICEF`
-**Capabilities:** Broad analytical and view access for UNICEF staff. Allows wide visibility over MSCC data and reporting.
+### `MSCC_MEHE`
+**Capabilities:** Broad analytical and view access for MEHE staff. Allows wide visibility over MSCC data and reporting.
 - AttendanceReport
 - AttendanceView
 - CenterListView
@@ -154,11 +154,11 @@ The application uses Django's authentication system and custom role checks (via 
 
 `MSCC_FULL` is no longer required. It did not bypass the current list filters;
 it only added redundant UI checks and selected a fallback table for users with
-no data scope. Centre, partner and UNICEF list scopes remain unchanged.
+no data scope. Centre, partner and MEHE list scopes remain unchanged.
 
 - The Add New Child button requires `MSCC_CENTER` plus an assigned centre and partner.
 - New Round uses the existing view roles, `MSCC` or `MSCC_CENTER` (or a superuser).
-- UNICEF and partner groups alone do not enable the New Round action.
+- MEHE and partner groups alone do not enable the New Round action.
 
 Deployment: run `python manage.py migrate`. The `users.0002_remove_mscc_full_group`
 data migration removes the old group and its memberships. If a deployment attached
@@ -166,3 +166,11 @@ Django model permissions to that group, those grants are preserved as direct
 permissions for its existing members only. No replacement role is assigned and no
 other group's permissions change. The cleanup is idempotent and intentionally
 irreversible: deleted memberships cannot be reconstructed by reversing migrations.
+
+## MEHE role name
+
+The central MSCC role is `MSCC_MEHE`. Deploy the matching code and run
+`python manage.py migrate` to apply `users.0003_rename_mscc_unicef_to_mscc_mehe`.
+Existing role members and model permissions are preserved. If the destination
+group already exists, its memberships and grants are combined with the old
+group before removing the old group. Other roles and assignments are unchanged.

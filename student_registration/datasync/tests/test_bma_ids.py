@@ -153,44 +153,27 @@ class BmaIdentityTests(TestCase):
                 self.assertEqual(result['failed'], 1, result['results'])
         self.assertEqual(Center.objects.count(), 1)
 
-    def test_teacher_identity_is_teacher_id_plus_center(self):
-        for center_id, first_name in (('center-41', 'Teacher One'), ('center-42', 'Teacher Two')):
-            result = self.push(RESOURCE_TEACHER, 'teacher-7', {
-                'fields': {'first_name': first_name, 'unicef_id': 'SAME-UNICEF-ID'},
-                'center': {'source_id': center_id},
-            })
-            self.assertEqual(result['applied'], 1, result['results'])
-        self.assertEqual(Teacher.objects.filter(bma_id='teacher-7').count(), 2)
-        first = Teacher.objects.get(bma_id='teacher-7', center=self.center)
+    def test_legacy_teacher_upserts_are_rejected(self):
         result = self.push(RESOURCE_TEACHER, 'teacher-7', {
-            'fields': {'first_name': 'Updated'}, 'center': {'source_id': 'center-41'},
-        })
-        self.assertEqual(result['results'][0]['local_id'], first.pk)
-        first.refresh_from_db()
-        self.assertEqual(first.first_name, 'Updated')
-        self.assertEqual(Teacher.objects.exclude(pk=first.pk).get().first_name, 'Teacher Two')
-        scopes = set(SyncedRecord.objects.filter(resource=RESOURCE_TEACHER).values_list('source_scope', flat=True))
-        self.assertEqual(scopes, {'center-41', 'center-42'})
+            'fields': {'first_name': 'Dirasa'}, 'center': {'source_id': 'center-41'}})
+        self.assertEqual(result['failed'], 1)
+        self.assertFalse(Teacher.objects.exists())
 
-    def test_teacher_without_center_is_rejected(self):
-        result = self.push(RESOURCE_TEACHER, 'teacher-7', {'fields': {'first_name': 'No centre'}})
-        self.assertEqual(result['failed'], 1, result['results'])
-        self.assertEqual(Teacher.objects.count(), 0)
+    def test_legacy_teacher_without_center_is_rejected(self):
+        self.assertEqual(self.push(RESOURCE_TEACHER, 'teacher-7')['failed'], 1)
 
-    def test_teacher_delete_targets_only_one_center(self):
-        for center_id in ('center-41', 'center-42'):
-            self.push(RESOURCE_TEACHER, 'teacher-7', {'center': {'source_id': center_id}})
+    def test_legacy_delete_cannot_remove_existing_data(self):
+        old = Teacher.objects.create(bma_id='teacher-7', center=self.center, first_name='Existing')
         result = self.push(RESOURCE_TEACHER, 'teacher-7',
-                           {'center': {'source_id': 'center-41'}}, operation='delete')
-        self.assertEqual(result['applied'], 1, result['results'])
-        self.assertEqual(Teacher.objects.get().center.bma_id, 'center-42')
-        self.assertTrue(SyncedRecord.objects.get(resource=RESOURCE_TEACHER, source_scope='center-41').deleted)
+            {'center': {'source_id': 'center-41'}}, operation='delete')
+        self.assertEqual(result['failed'], 1)
+        self.assertTrue(Teacher.objects.filter(pk=old.pk).exists())
 
-    def test_teacher_delete_without_center_cannot_delete_an_arbitrary_row(self):
-        self.push(RESOURCE_TEACHER, 'teacher-7', {'center': {'source_id': 'center-41'}})
+    def test_legacy_delete_without_center_cannot_delete_an_arbitrary_row(self):
+        old = Teacher.objects.create(bma_id='teacher-7', center=self.center)
         result = self.push(RESOURCE_TEACHER, 'teacher-7', operation='delete')
-        self.assertEqual(result['failed'], 1, result['results'])
-        self.assertEqual(Teacher.objects.count(), 1)
+        self.assertEqual(result['failed'], 1)
+        self.assertTrue(Teacher.objects.filter(pk=old.pk).exists())
 
     def test_existing_services_grading_and_referrals_update_by_bma_id_without_mapping(self):
         cases = (

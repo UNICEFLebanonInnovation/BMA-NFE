@@ -18,7 +18,8 @@ CONTRACT_VERSION = '1.0'
 RESOURCE_ROUND = 'mscc.round'
 RESOURCE_PARTNER = 'schools.partner'
 RESOURCE_CENTER = 'locations.center'
-RESOURCE_TEACHER = 'mscc.teacher'
+RESOURCE_TEACHER = 'mscc.teacher'  # Legacy Dirasa identity, retained for history.
+RESOURCE_PROGRAM_STAFF = 'locations.program_staff'
 RESOURCE_REGISTRATION = 'mscc.registration'
 RESOURCE_EDUCATION_SERVICE = 'mscc.education_service'
 RESOURCE_EDUCATION_ASSESSMENT = 'mscc.education_assessment'
@@ -38,6 +39,7 @@ RESOURCE_ORDER = [
     RESOURCE_ROUND,
     RESOURCE_CENTER,
     RESOURCE_TEACHER,
+    RESOURCE_PROGRAM_STAFF,
     RESOURCE_REGISTRATION,
     RESOURCE_EDUCATION_SERVICE,
     RESOURCE_EDUCATION_ASSESSMENT,
@@ -51,7 +53,8 @@ RESOURCE_LABELS = (
     (RESOURCE_PARTNER, 'Partner'),
     (RESOURCE_ROUND, 'Round'),
     (RESOURCE_CENTER, 'Center'),
-    (RESOURCE_TEACHER, 'Teacher'),
+    (RESOURCE_TEACHER, 'Legacy teacher'),
+    (RESOURCE_PROGRAM_STAFF, 'Makani program staff'),
     (RESOURCE_REGISTRATION, 'Registration'),
     (RESOURCE_EDUCATION_SERVICE, 'Child education situation'),
     (RESOURCE_EDUCATION_ASSESSMENT, 'Education assessment'),

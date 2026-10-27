@@ -433,7 +433,7 @@ class BmaIdMatchingTests(TestCase):
         self.push()
         payload = registration_payload()
         payload['round'] = {'source_id': 4, 'name': '2027 Round A', 'year': 2027}
-        payload['center'] = {'source_id': 42, 'name': 'Another centre', 'p_code': 'LB-9999'}
+        payload['center'] = {'source_id': 42, 'name': 'Another centre', 'p_code': 'LB-9999', 'partner': {'source_id': 7, 'name': 'Partner One'}}
 
         result = self.push(payload)
 
@@ -461,7 +461,7 @@ class BmaIdMatchingTests(TestCase):
         self.assert_new_registration(payload)
 
     def test_different_center_creates_a_new_registration(self):
-        payload = registration_payload(center={'source_id': 42, 'name': 'Other centre', 'p_code': 'LB-9999'})
+        payload = registration_payload(center={'source_id': 42, 'name': 'Other centre', 'p_code': 'LB-9999', 'partner': {'source_id': 7, 'name': 'Partner One'}})
         self.assert_new_registration(payload)
 
     def test_same_local_id_is_not_used_as_a_registration_match(self):
@@ -505,7 +505,7 @@ class BmaIdMatchingTests(TestCase):
                 self.assertEqual(self.child.first_name, 'Local name')
 
     def test_unresolved_initial_reference_can_be_retried_after_it_arrives(self):
-        payload = registration_payload(center={'source_id': 42, 'name': 'New centre', 'p_code': 'LB-9999'})
+        payload = registration_payload(center={'source_id': 42, 'name': 'New centre', 'p_code': 'LB-9999', 'partner': {'source_id': 7, 'name': 'Partner One'}})
         with self.settings(DATASYNC_CREATE_MISSING_REFERENCES=False):
             wire = event(RESOURCE_REGISTRATION, 1234, payload)
             first = ingest_events([wire], SOURCE_SYSTEM_COMPILER)

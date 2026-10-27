@@ -40,5 +40,5 @@ class CenterTable(tables.Table):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        if user and not (user.is_staff or user.groups.filter(name='MSCC_UNICEF').exists()):
+        if user and not (user.is_staff or user.groups.filter(name='MSCC_MEHE').exists()):
             self.exclude = tuple(set(self.exclude + ('partner',)))

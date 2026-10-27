@@ -69,7 +69,7 @@ class SyncIngestView(APIView):
         return Response({
             'contract_version': CONTRACT_VERSION,
             'enabled': getattr(settings, 'DATASYNC_INGEST_ENABLED', True),
-            'resources': RESOURCE_ORDER,
+            'resources': [resource for resource in RESOURCE_ORDER if resource != 'mscc.teacher'],
             'max_batch_size': _max_batch_size(),
             'allowed_source_systems': _allowed_source_systems(),
             'child_photo_sync': {

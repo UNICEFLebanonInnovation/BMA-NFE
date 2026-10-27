@@ -59,6 +59,7 @@ from .constants import (
     RESOURCE_ROUND,
     RESOURCE_PARTNER,
     RESOURCE_TEACHER,
+    RESOURCE_PROGRAM_STAFF,
 )
 from .models import SyncConflict, SyncedRecord
 from .identity import (StaleEvent, UnresolvedDependency, normalize_bma_id,
@@ -70,7 +71,7 @@ logger = logging.getLogger(__name__)
 #: timestamps maintained by ``TimeStampedModel``, and user foreign keys whose
 #: ids mean nothing in the other database.
 NEVER_COPIED = frozenset({
-    'id', 'pk', 'bma_id', 'created', 'modified',
+    'id', 'pk', 'bma_id', 'bma_source', 'created', 'modified',
     'owner', 'owner_id',
     'modified_by', 'modified_by_id',
     'deleted_by', 'deleted_by_id',
@@ -274,6 +275,34 @@ class TeacherHandler(BaseHandler):
         return None
 
 
+class ProgramStaffHandler(BaseHandler):
+    """Makani locations.ProgramStaff, written into the existing Teachers table."""
+    resource = RESOURCE_PROGRAM_STAFF
+    model = Teacher
+
+    def build(self, payload, log, ctx):
+        if payload.get('source_model') != 'locations.programstaff':
+            raise ValueError('Makani teachers must originate from locations.ProgramStaff')
+        center = resolvers.resolve_center(payload.get('center'), log)
+        if center is None:
+            raise ValueError('Program staff requires a center identified by BMA ID')
+        incoming = payload.get('fields') or {}
+        name = incoming.get('facilitator_name')
+        if not isinstance(name, str) or not name.strip() or len(name) > 200:
+            raise ValueError('facilitator_name is required (maximum 200 characters)')
+        details = incoming.get('program_staff_details') or {}
+        if not isinstance(details, dict):
+            raise ValueError('program_staff_details must be an object')
+        programs = details.get('programs') or []
+        if not isinstance(programs, list) or any(value not in ('BLN', 'ABLN', 'RS', 'CBECE', 'YBLN', 'YFS') for value in programs):
+            raise ValueError('Only Makani program staff may be synchronized')
+        allowed = ('facilitator_name', 'sex', 'email', 'primary_phone_number',
+                   'teaching_hours_mscc', 'teacher_assignment', 'program_staff_details')
+        values = {key: incoming[key] for key in allowed if key in incoming}
+        values.update(center=center, round=None, teacher_assignment='Makani only')
+        return values, sorted(set(incoming) - set(allowed))
+
+
 class ChildHandler(BaseHandler):
     """Children. Always applied as part of their registration."""
 
@@ -331,6 +360,16 @@ class RegistrationHandler(BaseHandler):
             'round': resolvers.resolve_round(payload.get('round'), log),
             'partner': resolvers.resolve_partner(payload.get('partner'), log),
         }
+        center_key = payload.get('center')
+        if extra['center'] and extra['center'].partner_id is None and isinstance(center_key, dict) and center_key.get('partner'):
+            # A placeholder centre may predate its master event. Use only the
+            # explicit centre-partner reference, never the registration alone.
+            center_partner = resolvers.resolve_partner(center_key['partner'], log)
+            if center_partner:
+                extra['center'].partner = center_partner
+                extra['center'].save(update_fields=['partner', 'modified'])
+        if extra['center'] and extra['center'].partner_id != (extra['partner'].pk if extra['partner'] else None):
+            raise ValueError('Registration centre and partner must agree')
         return _plain(Registration, payload, extra)
 
 
@@ -348,6 +387,10 @@ class RegistrationChildHandler(BaseHandler):
                     reference_bma_id(payload['registration'])
                 )
             )
+        if registration.type not in (None, '', 'Core-Package', 'Walk-in', 'Walk-in-OOSC', 'Walk-in-In-School'):
+            raise ValueError('Services require a Makani registration')
+        if registration.center_id and registration.center.partner_id != registration.partner_id:
+            raise ValueError('Registration centre and partner must agree')
         return registration
 
 
@@ -362,6 +405,8 @@ class EducationServiceHandler(RegistrationChildHandler):
             'registration': self.registration_of(payload, log),
             'round': resolvers.resolve_round(payload.get('round'), log),
         }
+        if extra['round'] and extra['registration'].round_id != extra['round'].pk:
+            raise ValueError('Education service round differs from its registration')
         return _plain(EducationService, payload, extra)
 
 
@@ -433,6 +478,15 @@ class AttendanceHandler(BaseHandler):
                         reference_bma_id(row.get('registration'))
                     )
                 )
+            if registration.type not in (None, '', 'Core-Package', 'Walk-in', 'Walk-in-OOSC', 'Walk-in-In-School'):
+                raise ValueError('Attendance requires Makani registrations only')
+            if registration.center_id != instance.center_id or registration.round_id != instance.round_id:
+                raise ValueError('Attendance registration must belong to the same centre and round')
+            if registration.center_id and registration.center.partner_id != registration.partner_id:
+                raise ValueError('Attendance registration centre and partner must agree')
+            if row.get('child') and (registration.child is None or
+                    reference_bma_id(row['child']) != registration.child.bma_id):
+                raise ValueError('Attendance child differs from its registration')
             values, _ignored = split_fields(MSCCAttendanceChild, row.get('fields'))
             child_row, _created = MSCCAttendanceChild.objects.get_or_create(
                 attendance_day=instance,
@@ -456,6 +510,7 @@ HANDLERS = {
         RoundHandler,
         CenterHandler,
         TeacherHandler,
+        ProgramStaffHandler,
         ChildHandler,
         RegistrationHandler,
         EducationServiceHandler,
@@ -517,6 +572,10 @@ def apply_resource(resource, source_id, payload, log, ctx):
     """
     handler = HANDLERS[resource]
     payload = payload or {}
+    if resource == RESOURCE_REGISTRATION:
+        package = (payload.get('fields') or {}).get('type')
+        if package not in (None, '', 'Core-Package', 'Walk-in', 'Walk-in-OOSC', 'Walk-in-In-School'):
+            raise ValueError('Only Makani registrations may be synchronized')
     source_id = normalize_bma_id(source_id)
     for supplied_id in (payload.get('bma_id'), (payload.get('fields') or {}).get('bma_id')):
         if supplied_id is not None and normalize_bma_id(supplied_id) != source_id:
@@ -552,6 +611,9 @@ def apply_resource(resource, source_id, payload, log, ctx):
     values, ignored = handler.build(payload, log, ctx)
     values['bma_id'] = source_id
     identity = {'bma_id': source_id}
+    if resource in (RESOURCE_TEACHER, RESOURCE_PROGRAM_STAFF):
+        identity['bma_source'] = resource
+        values['bma_source'] = resource
     if resource == RESOURCE_TEACHER:
         identity['center'] = values['center']
     instance = handler.model.objects.select_for_update().filter(**identity).first()
@@ -650,6 +712,8 @@ def delete_resource(resource, source_id, log, ctx, payload=None):
     """
     source_id = normalize_bma_id(source_id)
     identity = {'bma_id': source_id}
+    if resource in (RESOURCE_TEACHER, RESOURCE_PROGRAM_STAFF):
+        identity['bma_source'] = resource
     source_scope = ''
     if resource == RESOURCE_TEACHER:
         center_id = reference_bma_id((payload or {}).get('center'))
@@ -713,6 +777,8 @@ def apply_event(event, source_system):
     log = resolvers.ResolutionLog()
     resource = event['resource']
     source_id = event['source_id']
+    if resource == RESOURCE_TEACHER:
+        raise ValueError('Legacy Dirasa teacher sync is disabled; use locations.ProgramStaff for Makani teachers')
     ctx = ApplyContext(source_system, event_id=event.get('event_id'),
                        source_modified=source_timestamp(event.get('source_modified')),
                        resource=resource)

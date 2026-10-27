@@ -22,7 +22,7 @@ class MsccRoleAccessTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.groups = {name: Group.objects.create(name=name) for name in
-                      ('MSCC', 'MSCC_CENTER', 'MSCC_PARTNER', 'MSCC_UNICEF', 'MSCC_FULL')}
+                      ('MSCC', 'MSCC_CENTER', 'MSCC_PARTNER', 'MSCC_MEHE', 'MSCC_FULL')}
         cls.partner_a = PartnerOrganization.objects.create(name='Role QA partner A')
         cls.partner_b = PartnerOrganization.objects.create(name='Role QA partner B')
         cls.center_a = Center.objects.create(name='Role QA centre A', partner=cls.partner_a)
@@ -67,8 +67,8 @@ class MsccRoleAccessTests(TestCase):
         self.assertQuerySetEqual(view.get_queryset(), [self.registration,self.other_center], ordered=False)
         self.assertIs(view.get_table_class(), PartnerTable)
 
-    def test_unicef_user_without_full_sees_current_records_across_partners(self):
-        user = self.user('unicef', ('MSCC','MSCC_UNICEF'))
+    def test_mehe_user_without_full_sees_current_records_across_partners(self):
+        user = self.user('mehe', ('MSCC','MSCC_MEHE'))
         view = self.view(user)
         self.assertQuerySetEqual(view.get_queryset(),
                                 [self.registration,self.other_center,self.other_partner], ordered=False)
@@ -120,7 +120,7 @@ class MsccRoleAccessTests(TestCase):
                 self.assertEqual(form.status_code,200)
 
     def test_viewer_groups_alone_do_not_enable_new_round(self):
-        for role in ('MSCC_PARTNER','MSCC_UNICEF','MSCC_FULL'):
+        for role in ('MSCC_PARTNER','MSCC_MEHE','MSCC_FULL'):
             with self.subTest(role=role):
                 user = self.user('viewer-'+role,(role,),partner=self.partner_a)
                 self.client.force_login(user)

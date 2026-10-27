@@ -382,7 +382,7 @@ User lands on their default dashboard
 <td>See all data for their assigned partner organization</td>
 </tr>
 <tr>
-<td><code>MSCC_UNICEF</code></td>
+<td><code>MSCC_MEHE</code></td>
 <td>MSCC read-only analytics</td>
 <td>Can view dashboards and run reports across all partners</td>
 </tr>
@@ -427,7 +427,7 @@ def get_queryset(self):
 
     current_round = Q(round__isnull=True) | Q(round__current_year=True)
 
-    if has_group(user, 'MSCC_UNICEF'):
+    if has_group(user, 'MSCC_MEHE'):
         return qs.filter(current_round)
 
     if has_group(user, 'MSCC_PARTNER') and user.partner_id:

@@ -1,0 +1,26 @@
+/* Keep the navigation within the viewport while the page scrolls normally. */
+.layout-fixed #jazzy-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior-y: contain;
+}
+
+.layout-fixed #jazzy-sidebar .brand-link {
+  flex: 0 0 auto;
+}
+
+.layout-fixed #jazzy-sidebar .sidebar {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Stop wheel and touch scrolling from reaching the page at the menu's edges. */
+.layout-fixed #jazzy-sidebar .sidebar,
+.layout-fixed #jazzy-sidebar .os-viewport {
+  overscroll-behavior-y: contain;
+}

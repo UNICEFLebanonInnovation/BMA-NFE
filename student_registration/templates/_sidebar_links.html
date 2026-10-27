@@ -2,7 +2,7 @@
 
 {% if request.user.is_authenticated %}
 
-{% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
+{% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_MEHE" or request.user|has_group:"MSCC" %}
 <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
     <i class="bi bi-house-door"></i> <span>{% trans "Home" %}</span>
 </a>

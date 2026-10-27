@@ -1370,10 +1370,14 @@ class TeacherForm(forms.ModelForm):
         center_queryset = Center.objects.all()
         if self.request:
             user = self.request.user
-            if has_group(user, 'MSCC_CENTER') and user.center_id:
+            if user.is_staff or has_group(user, 'MSCC_MEHE'):
+                pass
+            elif user.center_id:
                 center_queryset = Center.objects.filter(id=user.center_id)
-            elif has_group(user, 'MSCC_PARTNER') and user.partner_id:
+            elif user.partner_id:
                 center_queryset = Center.objects.filter(partner_id=user.partner_id).order_by('name')
+            else:
+                center_queryset = Center.objects.none()
 
         self.fields['center'] = forms.ModelChoiceField(
             queryset=center_queryset,
@@ -1383,6 +1387,17 @@ class TeacherForm(forms.ModelForm):
             required=True,
             to_field_name='id',
         )
+
+        is_program_staff = bool(self.instance.pk and self.instance.bma_id and
+                                self.instance.bma_source == 'locations.program_staff')
+        if is_program_staff:
+            self.fields['facilitator_name'] = forms.CharField(
+                label=_('Facilitator name (from Compiler)'), required=False, disabled=True,
+                initial=self.instance.facilitator_name)
+            for field_name in ('first_name', 'father_name', 'last_name', 'mother_fullname',
+                               'round', 'subjects_provided', 'registration_level',
+                               'trainings', 'extra_coaching'):
+                self.fields[field_name].required = False
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1480,6 +1495,10 @@ class TeacherForm(forms.ModelForm):
             ),
         )
 
+        if is_program_staff:
+            self.helper.layout.fields[0].fields.insert(0,
+                Div('facilitator_name', css_class='row mb-3'))
+
     def save(self, request, instance=None):
         from student_registration.mscc.serializers import TeacherSerializer
         from student_registration.students.utils import generate_one_unique_id
@@ -1501,20 +1520,21 @@ class TeacherForm(forms.ModelForm):
             if not instance.owner:
                 instance.owner = request.user
 
-            mother_name = instance.mother_fullname or ''
-            nationality = instance.nationality.name if instance.nationality else ''
-            birthdate = instance.birthdate.isoformat() if instance.birthdate else ''
+            if not (instance.bma_id and instance.bma_source == 'locations.program_staff'):
+                mother_name = instance.mother_fullname or ''
+                nationality = instance.nationality.name if instance.nationality else ''
+                birthdate = instance.birthdate.isoformat() if instance.birthdate else ''
 
-            instance.unicef_id = generate_one_unique_id(
-                str(instance.pk),
-                instance.first_name or '',
-                instance.father_name or '',
-                instance.last_name or '',
-                mother_name,
-                birthdate,
-                nationality,
-                instance.sex or '',
-            )
+                instance.unicef_id = generate_one_unique_id(
+                    str(instance.pk),
+                    instance.first_name or '',
+                    instance.father_name or '',
+                    instance.last_name or '',
+                    mother_name,
+                    birthdate,
+                    nationality,
+                    instance.sex or '',
+                )
             instance.save()
         else:
             messages.warning(request, serializer.errors)

@@ -102,7 +102,7 @@ class MainFilter(RedesignFilterSet):
         if not user:
             return
 
-        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+        if user.is_staff or has_group(user, 'MSCC_MEHE'):
             return
 
         if has_group(user, 'MSCC_PARTNER'):
@@ -175,7 +175,7 @@ class FullFilter(RedesignFilterSet):
         if not user:
             return
 
-        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+        if user.is_staff or has_group(user, 'MSCC_MEHE'):
             return
 
         if has_group(user, 'MSCC_PARTNER'):
@@ -216,6 +216,7 @@ class TeacherFilter(RedesignFilterSet):
     class Meta:
         model = Teacher
         fields = OrderedDict((
+            ('facilitator_name', ['icontains']),
             ('first_name', ['contains']),
             ('father_name', ['contains']),
             ('last_name', ['contains']),
@@ -230,7 +231,7 @@ class TeacherFilter(RedesignFilterSet):
         if not user:
             return
 
-        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+        if user.is_staff or has_group(user, 'MSCC_MEHE'):
             return
 
         if has_group(user, 'MSCC_CENTER'):

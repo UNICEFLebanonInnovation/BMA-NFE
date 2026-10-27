@@ -437,7 +437,12 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS AS NEEDED
 }
 
+JAZZMIN_UI_TWEAKS = {
+    "sidebar_fixed": True,
+}
+
 JAZZMIN_SETTINGS = {
+    "custom_css": "css/admin-layout.css",
     "site_title": "BMA  Sector",
     "site_header": "BMA  Sector",
     "welcome_sign": "Welcome to BMA Admin",
