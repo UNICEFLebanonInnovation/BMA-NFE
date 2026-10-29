@@ -27,6 +27,7 @@ import uuid
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as django_models
+from django.utils import timezone
 
 from student_registration.attendances.models import (
     MSCCAttendance,
@@ -469,15 +470,21 @@ class AttendanceHandler(BaseHandler):
         if children is None:
             return None
 
-        seen = []
-        for row in children:
-            registration = resolvers.resolve_registration(row.get('registration'), log)
+        # Resolve and validate the entire day before changing any child row.
+        # Eager relations avoid one query per registration/centre/child.
+        keys = [reference_bma_id(row.get('registration')) for row in children]
+        if len(set(keys)) != len(keys):
+            raise ValueError('Attendance contains duplicate registration BMA IDs')
+        registrations = {
+            row.bma_id: row for row in Registration.objects.filter(bma_id__in=keys)
+            .select_related('center', 'child')
+        }
+        prepared = []
+        for row, key in zip(children, keys):
+            registration = registrations.get(key)
             if registration is None:
                 raise UnresolvedDependency(
-                    'attendance registration #{} has not arrived yet'.format(
-                        reference_bma_id(row.get('registration'))
-                    )
-                )
+                    'attendance registration #{} has not arrived yet'.format(key))
             if registration.type not in (None, '', 'Core-Package', 'Walk-in', 'Walk-in-OOSC', 'Walk-in-In-School'):
                 raise ValueError('Attendance requires Makani registrations only')
             if registration.center_id != instance.center_id or registration.round_id != instance.round_id:
@@ -488,18 +495,34 @@ class AttendanceHandler(BaseHandler):
                     reference_bma_id(row['child']) != registration.child.bma_id):
                 raise ValueError('Attendance child differs from its registration')
             values, _ignored = split_fields(MSCCAttendanceChild, row.get('fields'))
-            child_row, _created = MSCCAttendanceChild.objects.get_or_create(
-                attendance_day=instance,
-                registration=registration,
-                defaults={'child': registration.child},
-            )
-            child_row.child = registration.child
+            prepared.append((registration, values))
+
+        existing = {}
+        for row in instance.attendance_child.order_by('pk'):
+            existing.setdefault(row.registration_id, row)
+        created, updated, kept = [], [], []
+        changed_fields = {'child', 'modified'}
+        now = timezone.now()
+        for registration, values in prepared:
+            child_row = existing.get(registration.pk)
+            if child_row is None:
+                child_row = MSCCAttendanceChild(attendance_day=instance, registration=registration)
+                created.append(child_row)
+            else:
+                kept.append(child_row.pk)
+                updated.append(child_row)
+            child_row.child_id = registration.child_id
+            child_row.modified = now
             for name, value in values.items():
                 setattr(child_row, name, value)
-            child_row.save()
-            seen.append(child_row.pk)
+            changed_fields.update(values)
 
-        instance.attendance_child.exclude(pk__in=seen).delete()
+        # Keep existing primary keys; discard absent rows and historical
+        # duplicates, then insert/update in bounded SQL batches. The enclosing
+        # event transaction rolls all writes back if any operation fails.
+        instance.attendance_child.exclude(pk__in=kept).delete()
+        MSCCAttendanceChild.objects.bulk_create(created, batch_size=500)
+        MSCCAttendanceChild.objects.bulk_update(updated, sorted(changed_fields), batch_size=500)
         return None
 
 
