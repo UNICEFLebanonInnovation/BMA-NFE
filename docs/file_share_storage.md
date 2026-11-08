@@ -1,9 +1,36 @@
 # NFE file-share storage
 
 Uploaded files, synchronized child photos and generated exports use NFE's default
-Django storage. The production default is `VMFileShareStorage`, backed by the
-mounted share supplied for the NFE VM. It rejects file operations when the mount
-is missing. It does not create the mount or fall back to local disk or Azure.
+Django storage. On the MEHE VM the default is `VMFileShareStorage`, backed by the
+mounted share supplied for NFE. It rejects file operations when the mount is
+missing and does not fall back to local disk or Azure.
+
+On Azure App Service (`WEBSITE_SITE_NAME` is set by Azure), the default is
+`storages.backends.azure_storage.AzureStorage`. It uses the existing
+`AZURE_ACCOUNT_NAME`, `AZURE_ACCOUNT_KEY` and `AZURE_CONTAINER` settings. Values
+come from the hosting environment; the `NO_AZURE_*` values in `base.py` are
+placeholders. The Blob container must already exist and allow application
+read/write access. No share mount is required for Blob storage. Compiler's
+storage configuration is unchanged.
+
+`NFE_MEDIA_STORAGE_BACKEND` explicitly overrides either default. If staging has
+an old override pointing to `VMFileShareStorage`, remove that override or select
+`storages.backends.azure_storage.AzureStorage` in its environment.
+
+Private Blob photo links are signed, read-only URLs valid for one hour by
+default (`AZURE_URL_EXPIRATION_SECS=3600`). Page reload generates fresh links.
+This does not make the container public. New photos and exports go to the
+configured Blob container; selecting a backend does not migrate old files.
+
+For an Azure Blob deployment, verify with:
+
+```sh
+python manage.py datasync_photo_storage_check --write-test
+```
+
+The authenticated sync capability response includes
+`child_photo_sync.storage_backend` so the configured deployment backend can be
+checked without exposing account keys. That response alone is not an I/O test.
 
 ## Deployment path
 

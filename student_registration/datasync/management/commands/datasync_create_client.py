@@ -10,7 +10,8 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 from rest_framework.authtoken.models import Token
 
 from student_registration.datasync.permissions import sync_client_group
@@ -34,6 +35,7 @@ class Command(BaseCommand):
             help='Issue a new token, invalidating the current one.',
         )
 
+    @transaction.atomic
     def handle(self, *args, **options):
         """Ensure the account, its group membership and its token exist."""
         username = options['username']
@@ -52,6 +54,9 @@ class Command(BaseCommand):
                 'Created service account "{}".'.format(username)
             ))
         else:
+            if (user.is_staff or user.is_superuser or not user.is_active or
+                    user.has_usable_password() or not user.groups.filter(name=group_name).exists()):
+                raise CommandError('That username belongs to a different account; choose a dedicated service username')
             self.stdout.write('Service account "{}" already exists.'.format(username))
 
         group, group_created = Group.objects.get_or_create(name=group_name)

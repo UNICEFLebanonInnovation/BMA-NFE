@@ -36,3 +36,8 @@ node_modules/
 dist/
 build/venv/
 venv/
+
+# MEHE deployment/local secrets and runtime files
+.env.mehe
+.env.mehe-local
+.mehe-local/

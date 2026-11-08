@@ -10,6 +10,7 @@ import warnings
 from django.conf import settings
 from django.db import DatabaseError
 from django.core.files.base import ContentFile
+from azure.core.exceptions import ResourceNotFoundError
 from PIL import Image
 
 from student_registration.child.models import Child
@@ -29,6 +30,13 @@ def stored_photo_digest(child, validate=False):
             data = stream.read(max_photo_bytes() + 1)
     except FileNotFoundError:
         return None
+    except ResourceNotFoundError as error:
+        # Azure's lazy file reader reports a deleted blob through its SDK,
+        # rather than FileNotFoundError. Request bytes again for that object;
+        # a missing container or inaccessible account is a storage failure.
+        if getattr(error, 'error_code', None) == 'BlobNotFound':
+            return None
+        raise
     if not data or len(data) > max_photo_bytes():
         return None
     digest = hashlib.sha256(data).hexdigest()

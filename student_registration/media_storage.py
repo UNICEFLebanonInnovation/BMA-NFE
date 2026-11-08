@@ -18,6 +18,13 @@ class VMFileShareStorage(FileSystemStorage):
         root = self.share_root
         if not os.path.isabs(root) or not os.path.isdir(root) or not os.path.ismount(root):
             raise FileShareUnavailable('The configured NFE file-share mount is unavailable')
+        expected_server = getattr(settings, 'NFE_REQUIRED_SHARE_SERVER', '')
+        if expected_server:
+            from student_registration.mehe_mounts import remote_share_mount
+            try:
+                remote_share_mount(root, expected_server)
+            except OSError as error:
+                raise FileShareUnavailable('The configured NFE network-share mount is unavailable') from error
         root = os.path.realpath(root)
         location = os.path.realpath(self.location)
         try:

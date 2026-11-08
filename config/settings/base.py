@@ -267,8 +267,15 @@ STATICFILES_FINDERS = [
 # or set NFE_FILE_SHARE_ROOT in the server environment. This is a placeholder.
 NFE_FILE_SHARE_ROOT = env('NFE_FILE_SHARE_ROOT', default='/mnt/nfe-media')
 MEDIA_ROOT = env('MEDIA_ROOT', default=NFE_FILE_SHARE_ROOT)
+# App Service supplies WEBSITE_SITE_NAME. Its NFE deployment uses Azure Blob;
+# MEHE's VM keeps the mounted file-share default. An explicit backend wins.
+_default_media_backend = (
+    'storages.backends.azure_storage.AzureStorage'
+    if env('WEBSITE_SITE_NAME', default='')
+    else 'student_registration.media_storage.VMFileShareStorage'
+)
 _media_backend = env('NFE_MEDIA_STORAGE_BACKEND',
-                     default='student_registration.media_storage.VMFileShareStorage')
+                     default=_default_media_backend)
 STORAGES = globals().get('STORAGES', {
     'staticfiles': {'BACKEND': globals().get(
         'STATICFILES_STORAGE', 'django.contrib.staticfiles.storage.StaticFilesStorage')},
@@ -510,6 +517,7 @@ INSTALLED_APPS += ['storages', ]
 AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
 AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
 AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
+AZURE_URL_EXPIRATION_SECS = env.int('AZURE_URL_EXPIRATION_SECS', default=3600)
 
 DEFAULT_FILE_STORAGE = _media_backend  # Compatibility with older integrations.
 DEFAULT_FILE_FORMAT = 'xlsx'

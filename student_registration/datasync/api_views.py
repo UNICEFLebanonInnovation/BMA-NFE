@@ -77,6 +77,7 @@ class SyncIngestView(APIView):
                 'path': 'events/',
                 'atomic_with_registration': True,
                 'verified_reuse': True,
+                'storage_backend': settings.STORAGES.get('default', {}).get('BACKEND'),
                 'max_bytes': getattr(settings, 'DATASYNC_PHOTO_MAX_BYTES', 5 * 1024 * 1024),
             },
         })
