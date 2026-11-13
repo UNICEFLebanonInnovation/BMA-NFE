@@ -61,7 +61,7 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.status === "done" && data.file_url) {
                     window.location.href = data.file_url;
-                    showModal(translateMessage('Export successful. Your download should start automatically. If it does not, please use the recent exports menu.'));
+                    showModal(translateMessage('Export successful. Your download should start automatically. If it does not, click Download below.'), data.file_url);
                     return;
                 }
 

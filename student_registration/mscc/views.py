@@ -39,6 +39,8 @@ from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
 import uuid
+from zoneinfo import ZoneInfo
+from datetime import datetime
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
 from student_registration.students.utils import generate_one_unique_id
@@ -1203,16 +1205,21 @@ def export_list_async(request):
     return JsonResponse({'status': 'started'})
 
 
+def _export_download_filename(extension):
+    export_date = datetime.now(ZoneInfo('Asia/Beirut')).date()
+    return f'nfr_export_{export_date:%Y-%m-%d}.{extension}'
+
+
 @login_required(login_url='/users/login')
 def get_file(request, file_name):
     if is_valid_filename(file_name, 'zip'):
-        return download_file(file_name, 'output_file.zip')
+        return download_file(file_name, _export_download_filename('zip'))
     if is_valid_filename(file_name, 'csv'):
-        return download_file(file_name, 'exported_data.csv', content_type='text/csv')
+        return download_file(file_name, _export_download_filename('csv'), content_type='text/csv')
     if is_valid_filename(file_name, 'xlsx'):
         return download_file(
             file_name,
-            'exported_data.xlsx',
+            _export_download_filename('xlsx'),
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
     return HttpResponse("Invalid file.")
@@ -1221,7 +1228,7 @@ def get_file(request, file_name):
 @login_required(login_url='/users/login')
 def get_file_csv(request, file_name):
     if is_valid_filename(file_name, 'csv'):
-        return download_file(file_name, 'exported_data.csv', content_type='text/csv')
+        return download_file(file_name, _export_download_filename('csv'), content_type='text/csv')
     return HttpResponse("Invalid file.", status=400)
 
 

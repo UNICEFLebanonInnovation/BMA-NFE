@@ -42,7 +42,7 @@ from student_registration.locations.models import Location, LocationType
 from student_registration.mscc.filters import MainFilter, FullFilter
 from student_registration.mscc.models import Registration
 from student_registration.mscc import tasks
-from student_registration.mscc.views import get_file
+from student_registration.mscc.views import get_file, _export_download_filename
 
 urlpatterns = [path('mscc/', include(([
     path('export-download/<str:file_name>/', get_file, name='export_download'),
@@ -119,7 +119,7 @@ class ExportDownloadChecks(unittest.TestCase):
                         response = match.func(request, **match.kwargs)
                         self.assertEqual(response.status_code, 200)
                         self.assertIn('attachment;', response['Content-Disposition'])
-                        self.assertIn('exported_data.xlsx', response['Content-Disposition'])
+                        self.assertRegex(response['Content-Disposition'], r'nfr_export_\d{4}-\d{2}-\d{2}\.xlsx')
                         self.assertEqual(response['Content-Type'],
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
                         payload = b''.join(response.streaming_content)
@@ -128,6 +128,14 @@ class ExportDownloadChecks(unittest.TestCase):
                         self.assertEqual(list(workbook.active.values),
                                          [('id', 'center_id', 'round_id'), ('101', '10', '3')])
                         workbook.close()
+
+    def test_dated_filename_supports_both_timezone_settings(self):
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        for use_tz in (False, True):
+            with override_settings(USE_TZ=use_tz):
+                expected = datetime.now(ZoneInfo('Asia/Beirut')).strftime('nfr_export_%Y-%m-%d.xlsx')
+                self.assertEqual(_export_download_filename('xlsx'), expected)
 
     def test_anonymous_download_redirects_to_login(self):
         request = RequestFactory().get('/mscc/export-download/example.xlsx/')
