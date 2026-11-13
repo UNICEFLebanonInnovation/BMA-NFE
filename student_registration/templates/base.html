@@ -147,9 +147,9 @@
                                                 {% trans "Processing..." %}
                                             {% endif %}
                                         </small>
-                                        {% if export.status == 'done' and export.file %}
-                                        <a href="{{ export.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank" download>
-                                            <i class="bi bi-download"></i>
+                                        {% if export.status == 'done' and export.file_url %}
+                                        <a href="{{ export.file_url }}" class="btn btn-sm btn-outline-primary flex-shrink-0 ms-2" target="_blank" rel="noopener" download>
+                                            <i class="bi bi-download" aria-hidden="true"></i> {% trans "Download" %}
                                         </a>
                                         {% endif %}
                                     </div>

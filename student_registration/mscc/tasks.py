@@ -189,6 +189,11 @@ def _generate_filtered_mscc_export(export_id, filters=None, file_format='csv'):
             vw_mscc_data_str += " AND id = 0"
 
         # Apply additional filters from the UI
+        if filters.get('governorate'):
+            vw_mscc_data_str += (
+                " AND center_id IN (SELECT id FROM locations_center WHERE governorate_id = %s)"
+            )
+            query_params.append(filters['governorate'])
         if filters.get('child__first_name'):
             vw_mscc_data_str += " AND child_first_name ILIKE %s"
             query_params.append(f"%{filters['child__first_name']}%")

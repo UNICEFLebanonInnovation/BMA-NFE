@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging.js";
+import { getMessaging, getToken, isSupported, onMessage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging.js";
 
 
 function translateMessage(message) {
@@ -16,45 +16,69 @@ const firebaseConfig = {
   measurementId: "G-1QPVEZK990",
 };
 
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
-window.firebaseMessaging = messaging;
+async function initializeMessaging() {
+  try {
+    if (!window.isSecureContext || !("Notification" in window) ||
+        !("serviceWorker" in navigator) || !(await isSupported())) {
+      return;
+    }
 
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+    window.firebaseMessaging = messaging;
+    // Receiving messages must not depend on successfully saving a new token.
+    onMessage(messaging, handleMessage);
 
-navigator.serviceWorker
-  .register("/static/firebase-messaging-sw.js")
-  .then((registration) => {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        getToken(messaging, {
-          vapidKey: "BAwRHhzYusFpd-Z_CTfU3AE1w_LuOgCJ2LpTQMPbIUNZQv343yQwd2fF49XxGj09AwArLcZ7icVMTlgxcaX53nE",
-          serviceWorkerRegistration: registration,
-        }).then((token) => {
-          const csrfToken = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("csrftoken="))
-            ?.split("=")[1] || document.querySelector("[name=csrfmiddlewaretoken]")?.value;
+    if (Notification.permission === "denied") {
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      return;
+    }
 
-          if (!csrfToken) {
-            console.warn("Unable to register FCM token because the CSRF token is missing.");
-            return;
-          }
-
-          fetch("/api/save-fcm-token/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": csrfToken,
-            },
-            credentials: "same-origin",
-            body: JSON.stringify({ token }),
-          });
-        });
-      }
+    const registration = await navigator.serviceWorker.register("/static/firebase-messaging-sw.js");
+    const token = await getToken(messaging, {
+      vapidKey: "BAwRHhzYusFpd-Z_CTfU3AE1w_LuOgCJ2LpTQMPbIUNZQv343yQwd2fF49XxGj09AwArLcZ7icVMTlgxcaX53nE",
+      serviceWorkerRegistration: registration,
     });
-  });
+    if (!token) {
+      return;
+    }
+    const csrfToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("csrftoken="))
+      ?.split("=")[1] || document.querySelector("[name=csrfmiddlewaretoken]")?.value;
 
-onMessage(messaging, (payload) => {
+    if (!csrfToken) {
+      console.warn("Unable to register FCM token because the CSRF token is missing.");
+      return;
+    }
+
+    const response = await fetch("/api/save-fcm-token/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken,
+      },
+      credentials: "same-origin",
+      body: JSON.stringify({ token }),
+    });
+    if (!response.ok) {
+      throw new Error(`Saving the FCM token failed (${response.status}).`);
+    }
+  } catch (error) {
+    // Push notifications are optional; export polling and history still work.
+    console.warn(
+      "Push notifications are unavailable. Downloads remain available in Recent Exports. " +
+      "For messaging/token-subscribe-failed, verify the Firebase web config, " +
+      "VAPID key and FCM Registration API settings for the same project.",
+      error
+    );
+  }
+}
+
+function handleMessage(payload) {
   if (payload.data && (payload.data.type === "mscc_export_ready" || payload.data.type === "mscc_export_failed")) {
     const isSuccess = payload.data.type === "mscc_export_ready";
 
@@ -85,4 +109,6 @@ onMessage(messaging, (payload) => {
         }
     }
   }
-});
+}
+
+initializeMessaging();

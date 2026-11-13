@@ -63,6 +63,13 @@ class PlaceholderFilterSet(FilterSet):
 
 class MainFilter(RedesignFilterSet):
 
+    governorate = ModelChoiceFilter(
+        field_name='center__governorate',
+        queryset=Location.objects.filter(type_id=1).order_by('name'),
+        label=_('Governorate'),
+        empty_label=_('Governorate'),
+    )
+
     child__first_name = CharFilter(lookup_expr='icontains' )
     child__father_name = CharFilter(lookup_expr='icontains')
     child__last_name = CharFilter(lookup_expr='icontains')
@@ -134,6 +141,13 @@ class MainFilter(RedesignFilterSet):
 
 
 class FullFilter(RedesignFilterSet):
+
+    governorate = ModelChoiceFilter(
+        field_name='center__governorate',
+        queryset=Location.objects.filter(type_id=1).order_by('name'),
+        label=_('Governorate'),
+        empty_label=_('Governorate'),
+    )
 
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
