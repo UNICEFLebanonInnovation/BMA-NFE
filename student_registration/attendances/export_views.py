@@ -95,7 +95,7 @@ def mscc_attendance_export(request, **kwargs):
             vw_data_str += " AND center_id = %s"
             query_params.append(center_id)
 
-        if not has_group(request.user, 'MSCC_UNICEF'):
+        if not has_group(request.user, 'MSCC_MEHE'):
             if getattr(request.user, 'partner_id', None):
                 vw_data_str += " AND partner_id = %s"
                 query_params.append(request.user.partner_id)
@@ -177,7 +177,7 @@ def mscc_total_attendance_export(request, **kwargs):
             vw_data_str += " AND center_id = %s"
             query_params.append(center_id)
 
-        if not has_group(request.user, 'MSCC_UNICEF'):
+        if not has_group(request.user, 'MSCC_MEHE'):
             if getattr(request.user, 'partner_id', None):
                 vw_data_str += " AND partner_id = %s"
                 query_params.append(request.user.partner_id)

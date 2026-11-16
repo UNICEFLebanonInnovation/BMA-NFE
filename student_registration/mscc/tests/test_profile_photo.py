@@ -100,7 +100,7 @@ class MSCCProfilePhotoTests(TestCase):
         cls.childless_registration = Registration.objects.create(
             child=None, partner=cls.partner, center=cls.center,
         )
-        cls.unicef_user = cls.make_user('profile-photo-unicef', ['MSCC', 'MSCC_UNICEF'])
+        cls.unicef_user = cls.make_user('profile-photo-unicef', ['MSCC', 'MSCC_MEHE'])
         cls.partner_user = cls.make_user('profile-photo-partner', ['MSCC', 'MSCC_PARTNER'], partner=cls.partner)
         cls.center_user = cls.make_user('profile-photo-centre', ['MSCC', 'MSCC_CENTER'], center=cls.center)
         cls.assigned_user = cls.make_user('profile-photo-assigned', ['MSCC'], center=cls.center, partner=cls.partner)

@@ -146,7 +146,7 @@ class CenterListView(LoginRequiredMixin,
         user = self.request.user
         center_id = user.center_id
         partner_id = user.partner_id
-        if has_group(user, 'MSCC_UNICEF'):
+        if has_group(user, 'MSCC_MEHE'):
             return Center.objects.order_by('-id')
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
             return Center.objects.filter(partner__id=partner_id).order_by('-id')
@@ -171,7 +171,7 @@ def export_data(request):
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
         query_params = []
 
-        if has_group(user, 'MSCC_UNICEF'):
+        if has_group(user, 'MSCC_MEHE'):
             vw_center_data_str += ""  # UNICEF has no extra filter
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
             vw_center_data_str += " AND partner_id = %s"
@@ -265,7 +265,7 @@ def export_center_background(request):
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
         query_params = []
 
-        if has_group(user, 'MSCC_UNICEF'):
+        if has_group(user, 'MSCC_MEHE'):
             vw_center_data_str += ""  # UNICEF has no extra filter
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
             vw_center_data_str += " AND partner_id = %s"

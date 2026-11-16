@@ -265,7 +265,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         )
         cls.center_user = cls.make_user('exam-centre', ['MSCC', 'MSCC_CENTER'], center=cls.center)
         cls.other_editor = cls.make_user('exam-second-editor', ['MSCC', 'MSCC_CENTER'], center=cls.center)
-        cls.unicef_user = cls.make_user('exam-unicef', ['MSCC', 'MSCC_UNICEF'])
+        cls.unicef_user = cls.make_user('exam-unicef', ['MSCC', 'MSCC_MEHE'])
         cls.partner_user = cls.make_user('exam-partner', ['MSCC', 'MSCC_PARTNER'], partner=cls.partner)
         cls.unassigned_user = cls.make_user('exam-unassigned', ['MSCC'])
         cls.unassigned_center_user = cls.make_user('exam-unassigned-centre', ['MSCC', 'MSCC_CENTER'])
@@ -273,7 +273,7 @@ class ExceptionalExamWorkflowTests(TestCase):
         cls.staff_user = cls.make_user('exam-staff', [], is_staff=True)
         cls.super_user = cls.make_user('exam-superuser', [], is_superuser=True)
         cls.unicef_center_user = cls.make_user(
-            'exam-unicef-centre', ['MSCC', 'MSCC_UNICEF', 'MSCC_CENTER'], center=cls.center,
+            'exam-unicef-centre', ['MSCC', 'MSCC_MEHE', 'MSCC_CENTER'], center=cls.center,
         )
         cls.partner_center_user = cls.make_user(
             'exam-partner-centre', ['MSCC', 'MSCC_PARTNER', 'MSCC_CENTER'],
@@ -1357,7 +1357,7 @@ class ExceptionalExamWorkflowTests(TestCase):
     def test_assigning_a_centre_to_a_viewer_does_not_implicitly_grant_editing(self):
         viewers = (
             self.make_user(
-                'exam-unicef-assigned', ['MSCC', 'MSCC_UNICEF'], center=self.center,
+                'exam-unicef-assigned', ['MSCC', 'MSCC_MEHE'], center=self.center,
             ),
             self.make_user(
                 'exam-partner-assigned', ['MSCC', 'MSCC_PARTNER'],

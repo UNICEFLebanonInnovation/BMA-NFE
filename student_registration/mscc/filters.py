@@ -63,6 +63,13 @@ class PlaceholderFilterSet(FilterSet):
 
 class MainFilter(RedesignFilterSet):
 
+    governorate = ModelChoiceFilter(
+        field_name='center__governorate',
+        queryset=Location.objects.filter(type_id=1).order_by('name'),
+        label=_('Governorate'),
+        empty_label=_('Governorate'),
+    )
+
     child__first_name = CharFilter(lookup_expr='icontains' )
     child__father_name = CharFilter(lookup_expr='icontains')
     child__last_name = CharFilter(lookup_expr='icontains')
@@ -102,7 +109,7 @@ class MainFilter(RedesignFilterSet):
         if not user:
             return
 
-        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+        if user.is_staff or has_group(user, 'MSCC_MEHE'):
             return
 
         if has_group(user, 'MSCC_PARTNER'):
@@ -134,6 +141,13 @@ class MainFilter(RedesignFilterSet):
 
 
 class FullFilter(RedesignFilterSet):
+
+    governorate = ModelChoiceFilter(
+        field_name='center__governorate',
+        queryset=Location.objects.filter(type_id=1).order_by('name'),
+        label=_('Governorate'),
+        empty_label=_('Governorate'),
+    )
 
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
@@ -175,7 +189,7 @@ class FullFilter(RedesignFilterSet):
         if not user:
             return
 
-        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+        if user.is_staff or has_group(user, 'MSCC_MEHE'):
             return
 
         if has_group(user, 'MSCC_PARTNER'):
@@ -216,6 +230,7 @@ class TeacherFilter(RedesignFilterSet):
     class Meta:
         model = Teacher
         fields = OrderedDict((
+            ('facilitator_name', ['icontains']),
             ('first_name', ['contains']),
             ('father_name', ['contains']),
             ('last_name', ['contains']),
@@ -230,7 +245,7 @@ class TeacherFilter(RedesignFilterSet):
         if not user:
             return
 
-        if user.is_staff or has_group(user, 'MSCC_UNICEF'):
+        if user.is_staff or has_group(user, 'MSCC_MEHE'):
             return
 
         if has_group(user, 'MSCC_CENTER'):

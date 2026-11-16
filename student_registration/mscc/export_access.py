@@ -16,7 +16,7 @@ def user_can_export(user):
     return bool(
         user.is_staff
         or user.is_superuser
-        or has_group(user, 'MSCC_UNICEF')
+        or has_group(user, 'MSCC_MEHE')
         or (has_group(user, 'MSCC_PARTNER') and user.partner_id)
         or (has_group(user, 'MSCC_CENTER') and user.center_id)
     )
@@ -45,7 +45,7 @@ def scoped_registrations(user):
     ).order_by('pk')
     if not user_can_export(user):
         return queryset.none()
-    if user.is_staff or user.is_superuser or has_group(user, 'MSCC_UNICEF'):
+    if user.is_staff or user.is_superuser or has_group(user, 'MSCC_MEHE'):
         return queryset
     if has_group(user, 'MSCC_PARTNER') and user.partner_id:
         return queryset.filter(partner_id=user.partner_id)

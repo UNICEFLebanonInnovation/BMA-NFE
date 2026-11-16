@@ -40,8 +40,8 @@ The system enforces data isolation based on group membership combined with the c
 | `MSCC` | Standard MSCC module access — registrations, services, assessments, grading, attendance |
 | `MSCC_CENTER` | Same as `MSCC`, but lists are filtered to the user's assigned center |
 | `MSCC_PARTNER` | View-oriented access across the centers of the user's partner organization; cannot add or edit registrations |
-| `MSCC_FULL` | Bypasses the center/partner filter on the MSCC registration list |
-| `MSCC_UNICEF` | Broad analytical and reporting visibility for UNICEF staff |
+| `MSCC_FULL` | Retired: removed by the `users.0002_remove_mscc_full_group` migration; it no longer grants anything |
+| `MSCC_MEHE` | Broad analytical and reporting visibility for ministry and UNICEF staff (renamed from `MSCC_UNICEF` by `users.0003`) |
 | `YOUTH` | Youth-stream users; surfaced as a distinct user type in the Django admin filters |
 | `ALP_SCHOOL` | ALP school focal points. Required for every `/alp/` view; data is scoped to the user's school |
 | `CLM_Bridging` | Core CLM bridging workflows — assessments, services, clubs, meetings, health visits, follow-ups |

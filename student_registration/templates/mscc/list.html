@@ -38,7 +38,7 @@
                 <i class="bi bi-file-earmark-word me-2"></i> {% trans "Download Examination Cards" %}
             </button>
             {% endif %}
-            {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner.id %}
+            {% if request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner.id %}
             <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#child-registration-modal">
                 <i class="bi bi-plus-lg me-2"></i> {% trans "Add New Child" %}
             </button>

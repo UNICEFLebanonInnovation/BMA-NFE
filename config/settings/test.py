@@ -68,3 +68,14 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
 #         return 'notmigrations'
 #
 # MIGRATION_MODULES = DisableMigrations()
+
+# MEDIA STORAGE
+# ------------------------------------------------------------------------------
+# Tests write uploads and exports to a throw-away local directory. The deployed
+# backends (file share on the MEHE VM, Azure Blob on App Service) are selected
+# in base.py and covered by their own tests.
+import tempfile  # noqa: E402
+
+MEDIA_ROOT = tempfile.mkdtemp(prefix='bma-test-media-')
+STORAGES['default'] = {'BACKEND': 'django.core.files.storage.FileSystemStorage'}  # noqa: F405
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'

@@ -362,7 +362,7 @@ def teacher_export_data(request):
         vw_center_teacher_str = "SELECT * FROM vw_center_teacher WHERE center_id > 0"
         query_params = []
 
-        if has_group(user, 'MSCC_UNICEF') or user.is_staff:
+        if has_group(user, 'MSCC_MEHE') or user.is_staff:
             vw_center_teacher_str += " AND center_id > 0"
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
             vw_center_teacher_str += " AND partner_id = %s"

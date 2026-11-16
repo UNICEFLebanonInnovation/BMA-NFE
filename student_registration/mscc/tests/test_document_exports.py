@@ -214,7 +214,7 @@ class MSCCDocumentExportTests(TestCase):
             child=cls.first_child, partner=cls.partner, center=cls.center,
             nfe_programme='BLN', deleted=True,
         )
-        cls.unicef_user = cls.make_user('photo-unicef', ['MSCC', 'MSCC_UNICEF'])
+        cls.unicef_user = cls.make_user('photo-unicef', ['MSCC', 'MSCC_MEHE'])
         cls.center_user = cls.make_user('photo-centre', ['MSCC', 'MSCC_CENTER'], center=cls.center)
         cls.partner_user = cls.make_user('photo-partner', ['MSCC', 'MSCC_PARTNER'], partner=cls.partner)
         cls.base_user = cls.make_user('photo-basic', ['MSCC'])
