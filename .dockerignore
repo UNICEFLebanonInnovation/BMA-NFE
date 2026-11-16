@@ -9,3 +9,6 @@ venv
 **/*.pyc
 **/*.pyo
 *.log
+
+# Firebase service-account key: supply separately at runtime
+utility/firebase-creds.json

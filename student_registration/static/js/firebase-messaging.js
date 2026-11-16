@@ -16,6 +16,19 @@ const firebaseConfig = {
   measurementId: "G-XCEDM17QFX"
 };
 
+async function refreshSubscriptionKey(registration, vapidKey) {
+  const subscription = await registration.pushManager.getSubscription();
+  if (!subscription) {
+    return;
+  }
+  const currentKey = subscription.options.applicationServerKey;
+  const encodedKey = currentKey ? btoa(String.fromCharCode(...new Uint8Array(currentKey)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') : '';
+  if (encodedKey !== vapidKey && !(await subscription.unsubscribe())) {
+    throw new Error('Unable to refresh the previous web push subscription.');
+  }
+}
+
 async function initializeMessaging() {
   try {
     if (!window.isSecureContext || !("Notification" in window) ||
@@ -38,8 +51,12 @@ async function initializeMessaging() {
     }
 
     const registration = await navigator.serviceWorker.register("/static/firebase-messaging-sw.js");
+    const vapidKey = "BLJ6-9NoQ9xhZ7KFBiU5ijOargaiaOn6LJ_JwjtY4A4W04XnThpJVpW8nNtQmc7wFNkd2lvVQUyU5tiqNTOpRZA";
+    // A subscription created with the previous project's key cannot receive
+    // messages signed with this project's Web Push credentials.
+    await refreshSubscriptionKey(registration, vapidKey);
     const token = await getToken(messaging, {
-      vapidKey: "BLJ6-9NoQ9xhZ7KFBiU5ijOargaiaOn6LJ_JwjtY4A4W04XnThpJVpW8nNtQmc7wFNkd2lvVQUyU5tiqNTOpRZA",
+      vapidKey,
       serviceWorkerRegistration: registration,
     });
     if (!token) {
