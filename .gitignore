@@ -41,3 +41,7 @@ venv/
 .env.mehe
 .env.mehe-local
 .mehe-local/
+
+# Firebase private keys: supply separately at runtime
+utility/firebase-creds.json
+**/*firebase-adminsdk*.json

@@ -12,3 +12,6 @@ venv
 
 # Firebase service-account key: supply separately at runtime
 utility/firebase-creds.json
+
+# Firebase private keys: supply separately at runtime
+**/*firebase-adminsdk*.json
