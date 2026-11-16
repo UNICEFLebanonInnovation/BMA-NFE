@@ -90,6 +90,12 @@ def filter_registrations(queryset, filters=None):
         if value and str(value).lower() != 'all':
             queryset = queryset.filter(**{name + '_id': _integer_filter(value, name)})
 
+    governorate = filters.get('governorate')
+    if governorate and str(governorate).lower() != 'all':
+        queryset = queryset.filter(
+            center__governorate_id=_integer_filter(governorate, 'governorate')
+        )
+
     round_id = filters.get('round')
     if round_id == 'no_round':
         queryset = queryset.filter(round__isnull=True)

@@ -32,7 +32,7 @@ async function run(options = {}) {
       if (options.supportError) throw new Error('Support check failed');
       return options.supported !== false;
     },
-    initializeApp: () => ({}),
+    initializeApp: (config) => { calls.config = config; return {}; },
     getMessaging: () => ({}),
     onMessage: () => calls.listeners++,
     getToken: async () => {
@@ -91,4 +91,22 @@ for (const failure of ['tokenError', 'workerError', 'permissionError', 'supportE
 test('does not save an empty token or send a request without CSRF', async () => {
   assert.equal((await run({ emptyToken: true })).saved.length, 0);
   assert.equal((await run({ noCsrf: true })).saved.length, 0);
+});
+
+
+test('page and service worker use the same bma-nfe Firebase configuration', async () => {
+  const page = await run();
+  let workerConfig;
+  const workerSource = readFileSync(resolve(__dirname,
+    '../student_registration/static/firebase-messaging-sw.js'), 'utf8');
+  vm.runInNewContext(workerSource, {
+    importScripts: () => {},
+    firebase: {
+      initializeApp: (config) => { workerConfig = config; },
+      messaging: () => ({ onBackgroundMessage: () => {} }),
+    },
+  });
+  assert.equal(workerConfig.projectId, 'bma-nfe');
+  assert.deepEqual(JSON.parse(JSON.stringify(workerConfig)),
+    JSON.parse(JSON.stringify(page.config)));
 });

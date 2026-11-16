@@ -39,7 +39,7 @@ async function initializeMessaging() {
 
     const registration = await navigator.serviceWorker.register("/static/firebase-messaging-sw.js");
     const token = await getToken(messaging, {
-      vapidKey: "BAwRHhzYusFpd-Z_CTfU3AE1w_LuOgCJ2LpTQMPbIUNZQv343yQwd2fF49XxGj09AwArLcZ7icVMTlgxcaX53nE",
+      vapidKey: "BLJ6-9NoQ9xhZ7KFBiU5ijOargaiaOn6LJ_JwjtY4A4W04XnThpJVpW8nNtQmc7wFNkd2lvVQUyU5tiqNTOpRZA",
       serviceWorkerRegistration: registration,
     });
     if (!token) {

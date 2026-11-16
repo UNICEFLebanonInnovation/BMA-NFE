@@ -1583,7 +1583,7 @@ def _download_owned_export(request, file_name, formats):
     return FileResponse(
         stream,
         as_attachment=True,
-        filename='exported_data.%s' % file_format,
+        filename=_export_download_filename(file_format),
         content_type=content_types[file_format],
     )
 
