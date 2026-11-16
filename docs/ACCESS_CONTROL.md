@@ -276,3 +276,13 @@ The central MSCC role is `MSCC_MEHE`. Deploy the matching code and run
 Existing role members and model permissions are preserved. If the destination
 group already exists, its memberships and grants are combined with the old
 group before removing the old group. Other roles and assignments are unchanged.
+
+## Documentation routes
+
+`dashboard:user_manual` (`/dashboard/manual/`, `/dashboard/manual/<nfe|alp>/`), the screenshot route
+`/dashboard/manual/screenshot/<en|ar>/<name>.png` and the download route
+`/dashboard/manual/download/<module>/<lang>/<docx|pdf>/` only require an authenticated account: the manuals
+contain no beneficiary data. The page opens the ALP manual for `ALP_SCHOOL` accounts and the NFE manual for
+everybody else; the module can be switched from the page. The **admin panel manual** (`/dashboard/manual/admin/`
+and its downloads) is only served to `is_staff` or `is_superuser` accounts (`manual_views.user_can_read_manual`). Implemented in
+`student_registration/dashboard/manual_views.py`.

@@ -120,6 +120,10 @@ When a background export completes, the system notifies the requesting user in r
 
 ## 6. Documentation Access Inside the Application
 
+The illustrated **Admin Panel manual** (user management and permissions, English and Arabic) is served under
+**Documentation → User Manual → Admin panel** to staff and superuser accounts only; the NFE and ALP manuals on the same
+page are open to every signed-in user. Sources and Word/PDF builds live in `docs/user_manuals/`.
+
 The documentation in this repository comes in two kinds, and the application enforces the split:
 
 | Kind | Pages | Who can read it |
