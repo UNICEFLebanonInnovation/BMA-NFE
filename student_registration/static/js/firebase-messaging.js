@@ -7,14 +7,27 @@ function translateMessage(message) {
 }
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAL2iS7YCesCURrxFViKUzH8LOrDzDIPHg",
-  authDomain: "leb-bma.firebaseapp.com",
-  projectId: "leb-bma",
-  storageBucket: "leb-bma.firebasestorage.app",
-  messagingSenderId: "455115377412",
-  appId: "1:455115377412:web:1e39a332cd97f98e009e51",
-  measurementId: "G-1QPVEZK990",
+  apiKey: "AIzaSyCfHk4d_bUgJcU-KI4wve7ZuA4YDlCHYVg",
+  authDomain: "bma-nfe.firebaseapp.com",
+  projectId: "bma-nfe",
+  storageBucket: "bma-nfe.firebasestorage.app",
+  messagingSenderId: "427743071075",
+  appId: "1:427743071075:web:c089e6f26c16c0142fe156",
+  measurementId: "G-XCEDM17QFX"
 };
+
+async function refreshSubscriptionKey(registration, vapidKey) {
+  const subscription = await registration.pushManager.getSubscription();
+  if (!subscription) {
+    return;
+  }
+  const currentKey = subscription.options.applicationServerKey;
+  const encodedKey = currentKey ? btoa(String.fromCharCode(...new Uint8Array(currentKey)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') : '';
+  if (encodedKey !== vapidKey && !(await subscription.unsubscribe())) {
+    throw new Error('Unable to refresh the previous web push subscription.');
+  }
+}
 
 async function initializeMessaging() {
   try {
@@ -38,8 +51,12 @@ async function initializeMessaging() {
     }
 
     const registration = await navigator.serviceWorker.register("/static/firebase-messaging-sw.js");
+    const vapidKey = "BLJ6-9NoQ9xhZ7KFBiU5ijOargaiaOn6LJ_JwjtY4A4W04XnThpJVpW8nNtQmc7wFNkd2lvVQUyU5tiqNTOpRZA";
+    // A subscription created with the previous project's key cannot receive
+    // messages signed with this project's Web Push credentials.
+    await refreshSubscriptionKey(registration, vapidKey);
     const token = await getToken(messaging, {
-      vapidKey: "BAwRHhzYusFpd-Z_CTfU3AE1w_LuOgCJ2LpTQMPbIUNZQv343yQwd2fF49XxGj09AwArLcZ7icVMTlgxcaX53nE",
+      vapidKey,
       serviceWorkerRegistration: registration,
     });
     if (!token) {

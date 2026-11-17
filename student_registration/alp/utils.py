@@ -6,10 +6,14 @@ def user_has_alp_permission(user):
 def filter_by_school(queryset, user):
     """
     Filter the queryset to only include records related to the user's school.
-    Superusers can see all records.
+
+    ALP records are school-owned data, so the connected user's school remains
+    the boundary even when that user has elevated Django permissions. Views
+    that intentionally provide cross-school reporting must opt in explicitly
+    instead of relying on a privilege-based exception here.
     """
-    if user.is_superuser:
-        return queryset
+    if user.school_id is None:
+        return queryset.none()
 
     # Most ALP models have a school field directly. Related attendance models
     # must be filtered through their owning teacher or registration instead.
@@ -44,7 +48,9 @@ def parse_date_flexible(date_str):
             continue
     return None
 
-def load_child_attendance(school_id, round_id, attendance_date_str, programme_id):
+def load_child_attendance(
+    school_id, round_id, attendance_date_str, programme_id, section_id=None,
+):
 
     attendance = None
 
@@ -57,6 +63,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
             attendance_date=attendance_date,
             programme_id=programme_id,
             round_id=round_id,
+            section_id=section_id,
         ).last()
 
     existing_children = []
@@ -64,7 +71,10 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
 
     try:
         if attendance:
-            attendances = ALPAttendanceChild.objects.filter(attendance_day=attendance)
+            attendances = ALPAttendanceChild.objects.filter(
+                attendance_day=attendance,
+                registration__registration_date__lte=attendance_day,
+            )
 
             existing_ids = []
             for attendance_child in attendances:
@@ -77,6 +87,10 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     'child_mother_fullname': attendance_child.child.mother_fullname,
                     'child_birthday': attendance_child.child.birthday,
                     'child_nationality': attendance_child.child.nationality.name,
+                    'section': (
+                        attendance_child.registration.section.name
+                        if attendance_child.registration.section else ''
+                    ),
                     'attended': attendance_child.attended,
                     'absence_reason': attendance_child.absence_reason,
                     'absence_reason_other': attendance_child.absence_reason_other,
@@ -90,6 +104,8 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     deleted=False,
                     round_id=round_id,
                     programme_id=programme_id,
+                    section_id=section_id,
+                    registration_date__lte=attendance_day,
                 )
                 .exclude(id__in=existing_ids)
             )
@@ -102,6 +118,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     'child_mother_fullname': registration_child.child.mother_fullname,
                     'child_birthday': registration_child.child.birthday,
                     'child_nationality': registration_child.child.nationality.name,
+                    'section': registration_child.section.name if registration_child.section else '',
                     'attended': 'Yes',
                     'absence_reason': '',
                     'absence_reason_other': '',
@@ -115,6 +132,8 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     deleted=False,
                     round_id=round_id,
                     programme_id=programme_id,
+                    section_id=section_id,
+                    registration_date__lte=attendance_day,
                 )
             )
 
@@ -126,6 +145,7 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
                     'child_mother_fullname': registration_child.child.mother_fullname,
                     'child_birthday': registration_child.child.birthday,
                     'child_nationality': registration_child.child.nationality.name,
+                    'section': registration_child.section.name if registration_child.section else '',
                     'attended': 'Yes',
                     'absence_reason': '',
                     'absence_reason_other': '',
@@ -141,11 +161,18 @@ def load_child_attendance(school_id, round_id, attendance_date_str, programme_id
 def create_attendance(data, school_id):
     round_id = data.get("round_id")
     programme_id = data.get("programme")
+    section_id = data.get("section")
+
+    if not round_id or not programme_id or not section_id:
+        logger.error("Round, programme, and section are required for ALP attendance")
+        return False
 
     attendance_date = parse_date_flexible(data["attendance_date"])
     if not attendance_date:
         logger.error(f"Invalid date format: {data['attendance_date']}")
         return False
+
+    attendance_day = attendance_date.date()
 
     try:
         attendance, created = ALPAttendance.objects.get_or_create(
@@ -153,6 +180,7 @@ def create_attendance(data, school_id):
             school_id=school_id,
             attendance_date=attendance_date,
             programme_id=programme_id,
+            section_id=section_id,
         )
         attendance.day_off = data.get("attendance_day_off")
         attendance.close_reason = data.get("close_reason")
@@ -166,10 +194,30 @@ def create_attendance(data, school_id):
                 logger.warning(f"Missing child_id or registration_id for child: {child}")
                 continue
 
+            # Never trust IDs submitted by the browser. Besides preventing
+            # cross-school attendance, this ensures attendance cannot predate
+            # the child's registration in this round.
+            registration = ALPRegistration.objects.filter(
+                id=registration_id,
+                child_id=child_id,
+                school_id=school_id,
+                round_id=round_id,
+                programme_id=programme_id,
+                section_id=section_id,
+                deleted=False,
+                registration_date__lte=attendance_day,
+            ).first()
+            if registration is None:
+                logger.warning(
+                    "Ignoring ineligible ALP attendance registration %s",
+                    registration_id,
+                )
+                continue
+
             attendance_child, child_created = ALPAttendanceChild.objects.get_or_create(
                 attendance_day=attendance,
-                child_id=child_id,
-                registration_id=registration_id
+                child_id=registration.child_id,
+                registration=registration,
             )
 
             attendance_child.attended = child.get('attended')

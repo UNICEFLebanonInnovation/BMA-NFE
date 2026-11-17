@@ -6,7 +6,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from django_tables2.export.views import ExportMixin
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.conf import settings
@@ -27,6 +26,7 @@ from student_registration.students.utils import generate_one_unique_id
 from .tables import ALPRegistrationTable, ALPTeacherTable
 from .filters import ALPRegistrationFilter, ALPTeacherFilter
 from .utils import user_has_alp_permission, filter_by_school
+from .export import ALPExportMixin
 
 
 def _current_date():
@@ -152,7 +152,7 @@ class ALPEditPermissionMixin(object):
             raise PermissionDenied("Superusers have read-only access to ALP data.")
         return super().dispatch(request, *args, **kwargs)
 
-class RegistrationListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin, SingleTableMixin, FilterView):
+class RegistrationListView(LoginRequiredMixin, ALPUserRequiredMixin, ALPExportMixin, SingleTableMixin, FilterView):
     model = ALPRegistration
     table_class = ALPRegistrationTable
     filterset_class = ALPRegistrationFilter
@@ -242,7 +242,7 @@ def child_duplication_check(request):
     return JsonResponse({'result': list(result)})
 
 
-class TeacherListView(LoginRequiredMixin, ALPUserRequiredMixin, ExportMixin, SingleTableMixin, FilterView):
+class TeacherListView(LoginRequiredMixin, ALPUserRequiredMixin, ALPExportMixin, SingleTableMixin, FilterView):
     model = ALPTeacher
     table_class = ALPTeacherTable
     filterset_class = ALPTeacherFilter
@@ -266,6 +266,7 @@ class TeacherAddView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermission
     def form_valid(self, form):
         form.instance.owner = self.request.user
         form.instance.modified_by = self.request.user
+        form.instance.school = self.request.user.school
         return super().form_valid(form)
 
 class TeacherEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, UpdateView):
@@ -285,6 +286,7 @@ class TeacherEditView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissio
 
     def form_valid(self, form):
         form.instance.modified_by = self.request.user
+        form.instance.school = self.request.user.school
         return super().form_valid(form)
 
 class TeacherDeleteView(LoginRequiredMixin, ALPUserRequiredMixin, ALPEditPermissionMixin, DeleteView):
@@ -369,7 +371,21 @@ from django.db.models import Avg, Count, Q, Sum
 def _alp_pivot_queryset(user):
     """Return registrations in the reporting scope of ``user``."""
     queryset = ALPRegistration.objects.filter(deleted=False)
-    if user.is_superuser or user.is_staff:
+    if _is_dashboard_admin(user):
+        return queryset
+    return filter_by_school(queryset, user)
+
+
+def _is_dashboard_admin(user):
+    """Return whether ``user`` may report across every school."""
+    return bool(
+        getattr(user, 'is_superuser', False) or getattr(user, 'is_staff', False)
+    )
+
+
+def _dashboard_school_queryset(queryset, user):
+    """Apply the connected user's school boundary to dashboard records."""
+    if _is_dashboard_admin(user):
         return queryset
     return filter_by_school(queryset, user)
 
@@ -438,13 +454,15 @@ class ALPRegistrationDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Tem
         from .models import ALPRound, ALPProgram, ALPRegistration
 
         user = self.request.user
-        instances = filter_by_school(ALPRegistration.objects.filter(deleted=False), user)
+        instances = _dashboard_school_queryset(
+            ALPRegistration.objects.filter(deleted=False), user
+        )
 
         schools = School.objects.all()
         rounds = ALPRound.objects.all()
         programmes = ALPProgram.objects.all()
 
-        if not user.is_superuser:
+        if not _is_dashboard_admin(user):
             schools = schools.filter(id=user.school_id)
 
         return {
@@ -459,7 +477,9 @@ class ALPDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
         from .models import ALPRegistration
         user = request.user
 
-        qs = filter_by_school(ALPRegistration.objects.filter(deleted=False), user)
+        qs = _dashboard_school_queryset(
+            ALPRegistration.objects.filter(deleted=False), user
+        )
 
         schools = request.GET.getlist('schools')
         if schools:
@@ -517,12 +537,12 @@ class ALPTeacherDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Template
         )
 
         user = self.request.user
-        instances = filter_by_school(ALPTeacher.objects.all(), user)
+        instances = _dashboard_school_queryset(ALPTeacher.objects.all(), user)
 
         schools = School.objects.all()
         rounds = ALPRound.objects.all()
 
-        if not user.is_superuser:
+        if not _is_dashboard_admin(user):
             schools = schools.filter(id=user.school_id)
 
         programmes = ALPProgram.objects.all()
@@ -613,7 +633,7 @@ class ALPTeacherDashboardDataView(LoginRequiredMixin, ALPUserRequiredMixin, View
     """Return teacher workforce indicators within the user's ALP school scope."""
 
     def get(self, request):
-        teachers = filter_by_school(ALPTeacher.objects.all(), request.user)
+        teachers = _dashboard_school_queryset(ALPTeacher.objects.all(), request.user)
 
         school_ids = request.GET.getlist('schools')
         if school_ids:
@@ -725,7 +745,7 @@ class ALPAttendanceDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, Templ
 def _alp_attendance_queryset(user):
     """Return child attendance records visible to an ALP user."""
     queryset = ALPAttendanceChild.objects.all()
-    if not user.is_superuser:
+    if not _is_dashboard_admin(user):
         queryset = queryset.filter(attendance_day__school_id=user.school_id)
     return queryset
 
@@ -748,7 +768,7 @@ class ALPSchoolDashboardView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
 
         schools = School.objects.all()
 
-        if not user.is_superuser:
+        if not _is_dashboard_admin(user):
             schools = schools.filter(id=user.school_id)
 
         return {
@@ -770,7 +790,7 @@ class ALPSchoolGeoDataView(LoginRequiredMixin, ALPUserRequiredMixin, View):
             latitude__isnull=False, longitude__isnull=False
         ).order_by('name')
 
-        if not request.user.is_superuser:
+        if not _is_dashboard_admin(request.user):
             if not request.user.school_id:
                 return JsonResponse([], safe=False)
             schools = schools.filter(id=request.user.school_id)
@@ -844,7 +864,7 @@ class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
 
         # apply school filtering for standard users
         registrations = ALPRegistration.objects.filter(deleted=False)
-        if not user.is_superuser:
+        if not _is_dashboard_admin(user):
             registrations = registrations.filter(school_id=user.school_id)
 
         today_count = registrations.filter(created__date=today).count()
@@ -858,7 +878,7 @@ class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
             attendance_day__attendance_date__gte=month_start,
             attendance_day__attendance_date__lte=today,
         )
-        if not user.is_superuser:
+        if not _is_dashboard_admin(user):
             attendance_rows = attendance_rows.filter(attendance_day__school_id=user.school_id)
 
         attendance_total = attendance_rows.count()
@@ -879,7 +899,7 @@ class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
             trend_data.append({'date': key, 'value': trend_map.get(key, 0)})
 
         recent_exports = ExportHistory.objects.filter(
-            export_type__icontains='ALP'
+            export_type__icontains='ALP', created_by=self.request.user
         ).order_by('-created')[:5]
         export_rows = []
         for export in recent_exports:
@@ -894,7 +914,7 @@ class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
                 'export_type': export.export_type,
                 'created_display': created_display,
                 'status': export.status,
-                'file_url': export.file.url if export.file and export.file.name else '#',
+                'file_url': export.file_url or '',
             })
 
         context.update({

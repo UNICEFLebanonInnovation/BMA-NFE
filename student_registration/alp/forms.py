@@ -20,8 +20,60 @@ from .serializers import ALPRegistrationSerializer
 class ALPSchoolProfileForm(forms.ModelForm):
     """School details that an ALP school focal point may maintain."""
 
+    land_phone_number = forms.RegexField(
+        label=_('Phone number'),
+        regex=r'^[0-9]+$',
+        required=False,
+        widget=forms.TextInput(attrs={
+            'inputmode': 'numeric',
+            'pattern': '[0-9]+',
+        }),
+    )
+    email = forms.EmailField(
+        label=_('School email'),
+        required=False,
+        widget=forms.EmailInput(attrs={
+            'placeholder': _('Format: school@email.com'),
+        }),
+    )
+    provided_packages = forms.MultipleChoiceField(
+        label=_('Provided Services'),
+        choices=School.PROVIDED_PACKAGES,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+    )
+    offer_digital_learning = forms.ChoiceField(
+        label=_('Does the school offer digital learning services?'),
+        choices=School.YES_NO,
+        required=False,
+    )
+    have_digital_hub = forms.ChoiceField(
+        label=_('Does the school have a digital hub?'),
+        choices=School.YES_NO,
+        required=False,
+    )
+    admin_staff_number = forms.IntegerField(
+        label=_(
+            '# of staff assigned under the ALP programme within the school, '
+            'including teaching and admin staff'
+        ),
+        min_value=0,
+        required=True,
+    )
+    neaby_phcc = forms.CharField(
+        label=_('Nearby PHCC name'),
+        required=False,
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # These identifiers are managed centrally and must only be displayed to
+        # ALP school users.  ``disabled`` makes Django ignore forged POST values,
+        # while ``readonly`` communicates the restriction to supporting clients.
+        for field_name in ('number', 'name'):
+            self.fields[field_name].disabled = True
+            self.fields[field_name].widget.attrs['readonly'] = True
 
         self.fields['governorate'].queryset = Location.objects.filter(
             parent__isnull=True
@@ -56,6 +108,10 @@ class ALPSchoolProfileForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
+                    Div('operating_shift', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
                     Div('director_name', css_class='col-md-4'),
                     Div('land_phone_number', css_class='col-md-4'),
                     Div('email', css_class='col-md-4'),
@@ -77,10 +133,19 @@ class ALPSchoolProfileForm(forms.ModelForm):
                 ),
             ),
             Fieldset(
-                _('School Capacity'),
+                _('Provided Services'),
                 Div(
-                    Div('registration_level', css_class='col-md-8 multiple-choice'),
-                    Div('school_capacity', css_class='col-md-4'),
+                    Div('provided_packages', css_class='col-md-12 multiple-choice'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('offer_digital_learning', css_class='col-md-6'),
+                    Div('have_digital_hub', css_class='col-md-6'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('admin_staff_number', css_class='col-md-6'),
+                    Div('neaby_phcc', css_class='col-md-6'),
                     css_class='row',
                 ),
             ),
@@ -91,31 +156,52 @@ class ALPSchoolProfileForm(forms.ModelForm):
 
     class Meta:
         model = School
-        fields = (
-            'number', 'name', 'type', 'director_name', 'land_phone_number',
-            'email', 'governorate', 'district', 'cadaster', 'longitude',
-            'latitude', 'registration_level', 'school_capacity',
-        )
-        widgets = {'registration_level': forms.CheckboxSelectMultiple}
+        fields = School.ALP_PROFILE_FIELDS
 
 
 class ALPRegistrationForm(MainForm):
     """ALP registration with the MSCC child, caregiver and ID workflow."""
+
+    consent_form = forms.FileField(
+        label=_('Consent form copy/photo'),
+        required=False,
+        help_text=_('Upload a scanned copy or clear photo of the signed consent form.'),
+        widget=forms.ClearableFileInput(attrs={
+            'accept': 'application/pdf,image/*',
+        }),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         route = 'alp:registration_edit' if self.instance.pk else 'alp:registration_add'
         route_kwargs = {'pk': self.instance.pk} if self.instance.pk else None
         self.helper.form_action = reverse(route, kwargs=route_kwargs)
-        request = self.request
-        if request and not request.user.is_superuser and request.user.school_id:
-            self.fields['school'].queryset = School.objects.filter(pk=request.user.school_id)
-            self.fields['school'].initial = request.user.school_id
+        self.fields.pop('school', None)
+        self.fields['partner_unique_number'].label = _('Unique child number')
+        # MainForm declares this field with the general registration choices;
+        # use the ALP-specific referral sources for this profile instead.
+        self.fields['source_of_identification'].choices = ALPRegistration.IDENTIFICATION_SOURCE
+        # MainForm already validates this value in ``clean``, but marking the
+        # field itself as required also renders the required indicator and
+        # enables the browser's built-in validation.
+        self.fields['have_labour'].required = True
+
+    @staticmethod
+    def _registration_data(request):
+        """Return submitted data scoped to the school assigned to the user."""
+        data = request.POST.copy()
+        if not request.user.is_superuser:
+            if request.user.school_id:
+                data['school'] = request.user.school_id
+            else:
+                data.pop('school', None)
+        return data
 
     def save(self, request=None, instance=None):
+        data = self._registration_data(request)
         serializer = ALPRegistrationSerializer(
-            instance, data=request.POST
-        ) if instance else ALPRegistrationSerializer(data=request.POST)
+            instance, data=data
+        ) if instance else ALPRegistrationSerializer(data=data)
         if not serializer.is_valid():
             messages.warning(request, serializer.errors)
             return None
@@ -127,6 +213,8 @@ class ALPRegistrationForm(MainForm):
         child = registration.child
         if request.FILES.get('child_photo'):
             child.photo = request.FILES['child_photo']
+        if request.FILES.get('consent_form'):
+            registration.consent_form = request.FILES['consent_form']
         child.disability_other = request.POST.get('child_disability_other', '')
         child.unicef_id = generate_one_unique_id(
             str(child.pk), child.first_name, child.father_name, child.last_name,
@@ -142,7 +230,8 @@ class ALPRegistrationForm(MainForm):
     class Meta:
         model = ALPRegistration
         fields = MainForm.Meta.fields + (
-            'school', 'round', 'programme', 'registration_date',
+            'school', 'round', 'programme', 'section', 'registration_date',
+            'consent_form',
         )
         widgets = {'registration_date': forms.DateInput(attrs={'type': 'date'})}
 
@@ -152,13 +241,6 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         label=_('Academic year'),
         empty_label='-------',
         required=True, to_field_name='id',
-    )
-    school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_closed=False).order_by('-id'), widget=forms.Select,
-        label=_('School'),
-        empty_label='-------',
-        required=True, to_field_name='id',
-        initial=0
     )
     first_name = forms.CharField(
         label=_("First name"),
@@ -187,15 +269,6 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         )
     )
     birthdate = forms.DateField(label=_('Birth date'), widget=forms.TextInput(attrs={'type': 'date'}), required=False)
-    id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.all(),
-        widget=forms.Select,
-        label=_('ID type'),
-        empty_label=_('-------'),
-        required=False,
-        to_field_name='id',
-    )
-    id_number = forms.CharField(label=_('ID number'), widget=forms.TextInput, required=False)
     nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(),
         widget=forms.Select,
@@ -235,12 +308,17 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         required=False,
         choices=ALPTeacher.TEACHER_ASSIGNMENT,
     )
+    teacher_assignment_other = forms.CharField(
+        label=_('Other teacher assignment'),
+        widget=forms.TextInput,
+        required=False,
+    )
     teaching_hours_private_school = forms.IntegerField(
         label=_('Number of teaching hours in private school'),
         widget=forms.TextInput, required=False
     )
     teaching_hours_mscc = forms.IntegerField(
-        label=_('Number of teaching hours'),
+        label=_('Number of teaching hours per week under ALP'),
         widget=forms.TextInput, required=False
     )
     trainings = forms.ModelMultipleChoiceField(
@@ -380,8 +458,6 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
                 ),
                 Div(
                     Div('nationality', css_class='col-md-4'),
-                    Div('id_type', css_class='col-md-4'),
-                    Div('id_number', css_class='col-md-4'),
                     css_class='row mb-3'
                 ),
                 Div(
@@ -393,13 +469,16 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
             Fieldset(
                 _('Assignment & Qualifications'),
                 Div(
-                    Div('school', css_class='col-md-6'),
                     Div('round', css_class='col-md-6'),
                     css_class='row mb-3'
                 ),
                 Div(
                     Div('teacher_assignment', css_class='col-md-4'),
+                    Div('teacher_assignment_other', css_class='col-md-4'),
                     Div('teaching_hours_private_school', css_class='col-md-4'),
+                    css_class='row mb-3'
+                ),
+                Div(
                     Div('teaching_hours_mscc', css_class='col-md-4'),
                     css_class='row mb-3'
                 ),
@@ -464,14 +543,18 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
     def clean(self):
         cleaned_data = super(ALPTeacherForm, self).clean()
         teacher_assignment = cleaned_data.get('teacher_assignment')
+        teacher_assignment_other = cleaned_data.get('teacher_assignment_other')
         teaching_hours_private_school = cleaned_data.get('teaching_hours_private_school')
         teaching_hours_mscc = cleaned_data.get('teaching_hours_mscc')
 
-        if teacher_assignment == 'Private and Makani':
+        if teacher_assignment == 'ALP and private':
             if teaching_hours_private_school is None:
                 self.add_error('teaching_hours_private_school', _('This field is required'))
             if teaching_hours_mscc is None:
                 self.add_error('teaching_hours_mscc', _('This field is required'))
+
+        if teacher_assignment == 'other' and not teacher_assignment_other:
+            self.add_error('teacher_assignment_other', _('This field is required'))
 
         extra_coaching = cleaned_data.get('extra_coaching')
         extra_coaching_specify = cleaned_data.get('extra_coaching_specify')
@@ -486,21 +569,19 @@ class ALPTeacherForm(ALPSchoolFilterMixin, forms.ModelForm):
         model = ALPTeacher
         fields = [
             'round',
-            'school',
             'first_name',
             'father_name',
             'last_name',
             'mother_fullname',
             'sex',
             'birthdate',
-            'id_type',
-            'id_number',
             'nationality',
             'phone_number',
             'email',
             'subjects_provided',
             'registration_level',
             'teacher_assignment',
+            'teacher_assignment_other',
             'teaching_hours_private_school',
             'teaching_hours_mscc',
             'trainings',

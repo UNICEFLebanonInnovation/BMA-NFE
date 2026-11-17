@@ -9,6 +9,42 @@ app_name = 'mscc'
 urlpatterns = [
 
     re_path(
+        r'^photo-upload/(?P<pk>\d+)/$',
+        view=views.photo_upload,
+        name='photo_upload'
+    ),
+
+    re_path(
+        r'^profile-photo/(?P<pk>\d+)/$',
+        view=views.profile_photo,
+        name='profile_photo'
+    ),
+
+    re_path(
+        r'^exceptional-exam-location-options/$',
+        view=views.exceptional_exam_location_options,
+        name='exceptional_exam_location_options'
+    ),
+
+    re_path(
+        r'^exceptional-exam/(?P<registry>\d+)/$',
+        view=views.exceptional_exam_form,
+        name='exceptional_exam_form'
+    ),
+
+    re_path(
+        r'^child-location-options/$',
+        view=views.ChildLocationOptionsView.as_view(),
+        name='child_location_options'
+    ),
+
+    re_path(
+        r'^informed-consent/(?P<pk>[\w.@+-]+)/$',
+        view=views.informed_consent_file,
+        name='informed_consent_file'
+    ),
+
+    re_path(
         r'^child-add/$',
         view=views.MainAddView.as_view(),
         name='child_add'
@@ -349,6 +385,11 @@ urlpatterns = [
         r'^export-status/(?P<export_id>\d+)/$',
         view=views.export_status,
         name='export_status'
+    ),
+    re_path(
+        r'^examination-card/(?P<pk>\d+)/$',
+        view=views.examination_card,
+        name='examination_card'
     ),
     re_path(
         r"^export-download/(?P<file_name>.+)/$",

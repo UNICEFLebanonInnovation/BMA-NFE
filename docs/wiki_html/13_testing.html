@@ -275,12 +275,16 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
     <a href="02_setup.html">2. Setup & Installation</a>
@@ -339,6 +343,19 @@ body {
 </tr>
 </tbody>
 </table>
+<hr />
+<h2 id="where-the-tests-are">Where the Tests Are</h2>
+<p>Coverage is uneven across the tree. The <code>alp</code> app has by far the densest suite and is the best
+model to follow when adding tests:</p>
+<table>
+<thead><tr><th>Location</th><th>Covers</th></tr></thead>
+<tbody>
+<tr><td><code>student_registration/alp/tests/</code></td><td>Registration form, tables, exports, attendance views and downloads, attendance navigation, school profile, and the registration / teacher / attendance / school / pivot / learning-outcome dashboards</td></tr>
+<tr><td><code>student_registration/backends/tests/</code></td><td>Storage backends and push helpers</td></tr>
+</tbody>
+</table>
+<p>ALP tests create the <code>ALP_SCHOOL</code> group and attach a school to the test user — without both,
+every ALP view either returns 403 or renders an empty queryset, so new ALP tests must do the same.</p>
 <hr />
 <h2 id="running-tests">Running Tests</h2>
 <pre class="highlight"><code class="language-bash"># Run all tests
@@ -575,7 +592,7 @@ print("STEP 3:", attendance_records.count())
 </table>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 

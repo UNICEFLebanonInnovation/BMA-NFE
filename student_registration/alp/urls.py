@@ -22,6 +22,7 @@ urlpatterns = [
     re_path(r'^attendance/$', view=attendance_views.AttendanceView.as_view(), name='attendance_list'),
     re_path(r'^load-attendance-children/$', view=attendance_views.LoadAttendanceChildren.as_view(), name='load_attendance_children'),
     re_path(r'^save-attendance-children/$', view=attendance_views.save_attendance_children, name='save_attendance_children'),
+    re_path(r'^export-attendance-children/$', view=attendance_views.export_attendance_children, name='export_attendance_children'),
 
     re_path(r'^teacher-attendance/$', view=attendance_views.TeacherAttendanceView.as_view(), name='teacher_attendance_list'),
     re_path(r'^load-attendance-teachers/$', view=attendance_views.LoadAttendanceTeachers.as_view(), name='load_attendance_teachers'),

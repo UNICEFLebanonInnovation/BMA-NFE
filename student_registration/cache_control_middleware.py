@@ -11,6 +11,6 @@ class CacheControlMiddleware:
         response = self.get_response(request)
 
         if request.is_secure:
-            response["Cache-Control"] = "no-cache"
+            response.setdefault("Cache-Control", "no-cache")
 
         return response

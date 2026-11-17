@@ -8,8 +8,149 @@ var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
 
 var isDuplicateFound = false;
+var duplicationCheckRequest = null;
+var duplicationCheckVersion = 0;
+
+function initializeResidentialAddressLocations() {
+    var form = $('#registrationForm');
+    var optionsUrl = form.attr('data-location-options-url');
+    var villageOptionsUrl = form.attr('data-village-options-url');
+    if (!optionsUrl) return;
+
+    var governorate = $('#id_child_governorate');
+    var district = $('#id_child_district');
+    var village = $('#id_child_village');
+    var cadaster = $('#id_child_cadaster');
+    var errorMessage = $('#residential-location-error');
+    var selectionVersion = 0;
+    var districtRequest = { request: null, version: 0 };
+    var villageRequest = { request: null, version: 0 };
+    var cadasterRequest = { request: null, version: 0 };
+    var initialDistrictOptions = district.children().clone();
+    var initialVillageOptions = village.children().clone();
+    var initialCadasterOptions = cadaster.children().clone();
+    var initialDistrict = district.val();
+    var initialVillage = village.val();
+    var initialCadaster = cadaster.val();
+    var districtPlaceholder = district.find('option[value=""]').first().text() || '---------';
+    var villagePlaceholder = village.find('option[value=""]').first().text() || '---------';
+    var cadasterPlaceholder = cadaster.find('option[value=""]').first().text() || '---------';
+
+    function cancelRequest(field, state) {
+        // Increment before aborting so even an already completing request is stale.
+        state.version += 1;
+        if (state.request) state.request.abort();
+        state.request = null;
+        field.removeAttr('aria-busy');
+    }
+
+    function clearOptions(field, state, placeholder) {
+        cancelRequest(field, state);
+        field.empty().append(new Option(placeholder, '')).val('');
+        field.removeClass('is-invalid is-valid');
+        field.closest('.mb-3').removeClass('has-error');
+        field.siblings('.invalid-feedback').text('');
+    }
+
+    function loadOptions(field, state, parentField, type, selectedValue, placeholder) {
+        var parentId = parentField.val();
+        var completion = $.Deferred();
+        clearOptions(field, state, placeholder);
+        if (!parentId) return completion.resolve(false).promise();
+
+        var version = state.version;
+        field.attr('aria-busy', 'true');
+        state.request = $.ajax({
+            url: type === 'village' ? villageOptionsUrl : optionsUrl,
+            data: { type: type, parent: parentId },
+            dataType: 'json'
+        }).done(function(response) {
+            if (version !== state.version || parentField.val() !== parentId) {
+                completion.resolve(false);
+                return;
+            }
+            response.results.forEach(function(location) {
+                field.append(new Option(location.text, location.id));
+            });
+            field.val(selectedValue ? String(selectedValue) : '');
+            completion.resolve(true);
+        }).fail(function(request, status) {
+            if (status !== 'abort' && version === state.version) {
+                errorMessage.removeClass('d-none');
+            }
+            completion.resolve(false);
+        }).always(function() {
+            if (version === state.version) {
+                field.removeAttr('aria-busy');
+                state.request = null;
+            }
+        });
+        return completion.promise();
+    }
+
+    // Used when selecting a potential match, whose dependent choices are not
+    // necessarily among those currently rendered in the form.
+    window.setResidentialAddressLocations = function(values) {
+        var version = ++selectionVersion;
+        errorMessage.addClass('d-none');
+        governorate.val(values.child_governorate ? String(values.child_governorate) : '');
+        clearOptions(village, villageRequest, villagePlaceholder);
+        clearOptions(cadaster, cadasterRequest, cadasterPlaceholder);
+        loadOptions(district, districtRequest, governorate, 2, values.child_district, districtPlaceholder)
+            .done(function(loaded) {
+                if (loaded && version === selectionVersion && district.val()) {
+                    loadOptions(village, villageRequest, district, 'village', values.child_village, villagePlaceholder);
+                    loadOptions(cadaster, cadasterRequest, district, 3, values.child_cadaster, cadasterPlaceholder);
+                }
+            });
+    };
+
+    governorate.on('change', function() {
+        selectionVersion += 1;
+        errorMessage.addClass('d-none');
+        clearOptions(village, villageRequest, villagePlaceholder);
+        clearOptions(cadaster, cadasterRequest, cadasterPlaceholder);
+        loadOptions(district, districtRequest, governorate, 2, '', districtPlaceholder);
+    });
+
+    district.on('change', function() {
+        selectionVersion += 1;
+        errorMessage.addClass('d-none');
+        loadOptions(village, villageRequest, district, 'village', '', villagePlaceholder);
+        loadOptions(cadaster, cadasterRequest, district, 3, '', cadasterPlaceholder);
+    });
+
+    $('#retry-residential-locations').on('click', function() {
+        window.setResidentialAddressLocations({
+            child_governorate: governorate.val(),
+            child_district: district.val(),
+            child_village: village.val(),
+            child_cadaster: cadaster.val()
+        });
+    });
+
+    form.on('reset', function(event) {
+        // Native reset runs after this event; restore the initial dependent
+        // choices afterwards, including values from a bound edit form.
+        window.setTimeout(function() {
+            if (event.isDefaultPrevented()) return;
+            selectionVersion += 1;
+            cancelRequest(district, districtRequest);
+            cancelRequest(village, villageRequest);
+            cancelRequest(cadaster, cadasterRequest);
+            district.empty().append(initialDistrictOptions.clone()).val(initialDistrict);
+            village.empty().append(initialVillageOptions.clone()).val(initialVillage);
+            cadaster.empty().append(initialCadasterOptions.clone()).val(initialCadaster);
+            errorMessage.addClass('d-none');
+            clearErrors();
+            updateConditionalRequirements();
+            child_duplication_check();
+        }, 0);
+    });
+}
 
 $(document).ready(function() {
+    initializeResidentialAddressLocations();
 
     $("#submit-id-save").click(function(e){
         var form = $(this).closest('form')[0];
@@ -182,12 +323,9 @@ $(document).ready(function() {
         var first_name = $('#id_child_first_name').val();
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
-        var mother_fullname = $('#id_child_mother_fullname').val();
-        var sex = $('#id_child_gender').val();
         var year = $('#id_child_birthday_year').val();
         var month = $('#id_child_birthday_month').val();
         var day = $('#id_child_birthday_day').val();
-        var nationality = $('#id_child_nationality').val();
 
         if (first_name && father_name && last_name && year && month && day) {
 
@@ -195,11 +333,9 @@ $(document).ready(function() {
           $('#nfe_search_loader').removeClass('d-none');
 
           if (typeof outreach_child_search === 'function') outreach_child_search();
-
-          if (mother_fullname && sex && nationality) {
-                child_duplication_check();
-            }
         }
+        // Clear a previous result even while the identity is incomplete.
+        child_duplication_check();
       }
     );
 
@@ -245,6 +381,9 @@ $(document).ready(function() {
 });
 
 function child_duplication_check() {
+    var version = ++duplicationCheckVersion;
+    if (duplicationCheckRequest) duplicationCheckRequest.abort();
+    duplicationCheckRequest = null;
 
     isDuplicateFound = false;
     $('#child-duplication-error').hide();
@@ -284,7 +423,7 @@ function child_duplication_check() {
         var requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';
 
-        $.ajax({
+        duplicationCheckRequest = $.ajax({
             type: "POST",
             url: '/mscc/child-duplication-check/',
             data: JSON.stringify(data),
@@ -293,6 +432,7 @@ function child_duplication_check() {
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
+                if (version !== duplicationCheckVersion) return;
                 if(response.result.length > 0){
                     isDuplicateFound = true;
                     var text = ''
@@ -331,8 +471,10 @@ function child_duplication_check() {
                     $('#next-btn').prop('disabled', true);
                 }
             },
-            error: function (response) {
-                console.log(response);
+            error: function (response, status) {
+                if (status !== 'abort' && version === duplicationCheckVersion) {
+                    console.log(response);
+                }
             }
         });
     }
@@ -406,11 +548,18 @@ function fill_old_child_data(data)
 {
     $('#nfe_search_loader').addClass('hidden');
     $(data).each(function(i, item) {
-        console.log(item);
         {
             Object.keys(item).forEach(key => {
+                if (window.setResidentialAddressLocations && ['child_governorate', 'child_district', 'child_village', 'child_cadaster'].indexOf(key) !== -1) return;
                 $('#id_'+ key).val(item[key]);
             });
+            if (window.setResidentialAddressLocations) {
+                window.setResidentialAddressLocations(item);
+            }
+            if ($('#registrationForm').length) {
+                updateConditionalRequirements();
+                child_duplication_check();
+            }
         }
     });
     $('#nfe_search_loader').addClass('hidden');
@@ -437,7 +586,8 @@ function reorganizeForm()
     //$('div#div_id_child_nationality_other').addClass('d-none').hide();
 
 //    Child Disability Other
-    var child_disability = $('select#id_child_disability option:selected').text();
+    var child_disability = $('select#id_child_disability option:selected').text().trim();
+    updateConditionalRequirements();
     if(child_disability == 'Other' || child_disability == 'غير ذلك'){
         //$('#div_id_child_disability_other').removeClass('d-none').show();
     }
@@ -588,10 +738,32 @@ function reorganizeForm()
     }
 }
 
+function updateConditionalRequirements() {
+    if (!$('#registrationForm').length) return;
+    setConditionalRequired('#id_child_nationality_other', $('#id_child_nationality').val() == '6');
+    var disability = $('#id_child_disability option:selected').text().trim();
+    setConditionalRequired('#id_child_disability_other', disability == 'Other' || disability == 'غير ذلك');
+}
+
+function setConditionalRequired(selector, required) {
+    var field = $(selector);
+    field.prop('required', required).attr('aria-required', String(required));
+    var label = $('label[for="' + field.attr('id') + '"]');
+    label.toggleClass('requiredField', required);
+    if (required && !label.find('.asteriskField').length) {
+        label.append('<span class="asteriskField">*</span>');
+    } else if (!required) {
+        label.find('.asteriskField').remove();
+        field.removeClass('is-invalid');
+        field.closest('.mb-3').removeClass('has-error');
+        field.siblings('.invalid-feedback').text('');
+    }
+}
+
 
 // main_form_validation.js merged into mscc.js
 // Client-side validation for MSCC MainForm with realtime feedback
-var phoneRegex = /^((03|70|71|76|78|79|81|86)-\d{6})$/;
+var phoneRegex = /^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$/;
 var regexMap = {
     '#id_first_phone_number': phoneRegex,
     '#id_first_phone_number_confirm': phoneRegex,
@@ -716,6 +888,13 @@ function validateMainForm(showModal, step) {
         '#id_child_gender',
         '#id_child_nationality',
         '#id_child_disability',
+        '#id_child_governorate',
+        '#id_child_district',
+        '#id_child_village',
+        '#id_child_country_of_birth',
+        '#id_child_place_of_birth',
+        '#id_child_cadaster',
+        '#id_nfe_programme',
         '#id_child_marital_status',
         '#id_child_have_children',
         '#id_child_have_sibling',
@@ -806,6 +985,7 @@ function validateMainForm(showModal, step) {
     }
 
     if (step === 1) {
+        if (showModal && !valid) showFormValidationErrors();
         return valid;
     }
     if ($('#id_id_type').is(':visible') && (!$('#id_id_type').val() || $('#id_id_type').val().trim() === '')) {
@@ -834,7 +1014,7 @@ function validateMainForm(showModal, step) {
             showError('#id_first_phone_number_confirm', 'This field is required');
             valid = false;
         }
-        if (first_phone !== first_phone_confirm) {
+        if ($('#id_first_phone_number_confirm').length && first_phone !== first_phone_confirm) {
             showError('#id_first_phone_number_confirm', 'The phone numbers are not matched');
             valid = false;
         }
@@ -1069,46 +1249,47 @@ function validateMainForm(showModal, step) {
             }
         }
 
-        if (!$('#id_caregiver_mother_name').val() || $('#id_caregiver_mother_name').val().trim() === '') {
+        if ($('#id_caregiver_mother_name').is(':visible') && (!$('#id_caregiver_mother_name').val() || $('#id_caregiver_mother_name').val().trim() === '')) {
             showError('#id_caregiver_mother_name', 'This field is required');
             valid = false;
         }
-        if (!$('#id_child_living_arrangement').val() || $('#id_child_living_arrangement').val().trim() === '') {
+        if ($('#id_child_living_arrangement').is(':visible') && (!$('#id_child_living_arrangement').val() || $('#id_child_living_arrangement').val().trim() === '')) {
             showError('#id_child_living_arrangement', 'This field is required');
             valid = false;
         }
 
-    if (showModal && !valid) {
-        var missingByStep = {};
-        $('.is-invalid:visible').each(function() {
-            var field = $(this);
-            var stepDiv = field.closest('.step-content');
-            var stepId = stepDiv.length ? stepDiv.attr('id') : 'step-1';
-            var stepNum = stepId.split('-')[1];
-            if (!missingByStep[stepNum]) {
-                missingByStep[stepNum] = [];
-            }
-            var label = $('label[for="' + field.attr('id') + '"]').clone().children().remove().end().text().trim();
-            if (!label) {
-                label = field.attr('name') || field.attr('id');
-            }
-            if (missingByStep[stepNum].indexOf(label) === -1) {
-                missingByStep[stepNum].push(label);
-            }
-        });
-        var content = '';
-        Object.keys(missingByStep).sort().forEach(function(stepKey) {
-            content += '<strong>Step ' + stepKey + ':</strong><ul>';
-            missingByStep[stepKey].forEach(function(label) {
-                content += '<li>' + label + '</li>';
-            });
-            content += '</ul>';
-        });
-        $('#formErrorModal #swal2-content').html(content);
-        $('#formErrorModal').modal('show');
-    }
-
+    if (showModal && !valid) showFormValidationErrors();
     return valid;
+}
+
+function showFormValidationErrors() {
+    var missingByStep = {};
+    $('.is-invalid:visible').each(function() {
+        var field = $(this);
+        var stepDiv = field.closest('.step-content');
+        var stepId = stepDiv.length ? stepDiv.attr('id') : 'step-1';
+        var stepNum = stepId.split('-')[1];
+        if (!missingByStep[stepNum]) {
+            missingByStep[stepNum] = [];
+        }
+        var label = $('label[for="' + field.attr('id') + '"]').clone().children().remove().end().text().trim();
+        if (!label) {
+            label = field.attr('name') || field.attr('id');
+        }
+        if (missingByStep[stepNum].indexOf(label) === -1) {
+            missingByStep[stepNum].push(label);
+        }
+    });
+    var content = '';
+    Object.keys(missingByStep).sort().forEach(function(stepKey) {
+        content += '<strong>Step ' + stepKey + ':</strong><ul>';
+        missingByStep[stepKey].forEach(function(label) {
+            content += '<li>' + label + '</li>';
+        });
+        content += '</ul>';
+    });
+    $('#formErrorModal #swal2-content').html(content);
+    $('#formErrorModal').modal('show');
 }
 
 $(document).ready(function() {

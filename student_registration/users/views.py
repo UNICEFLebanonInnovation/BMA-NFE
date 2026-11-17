@@ -165,7 +165,7 @@ class LandingPage(LoginRequiredMixin,
         ]
 
         recent_exports = ExportHistory.objects.filter(
-            export_type__icontains='NFR Sector'
+            export_type__icontains='NFR Sector', created_by=self.request.user
         ).order_by('-created')[:5]
         export_rows = []
         for export in recent_exports:
@@ -180,6 +180,7 @@ class LandingPage(LoginRequiredMixin,
                 'export_type': export.export_type,
                 'created_display': created_display,
                 'status': export.status,
+                'file_url': export.file_url or '',
             })
 
         context.update({

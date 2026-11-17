@@ -1,10 +1,13 @@
+import codecs
+import csv
 import json
+
 from django.views.generic import TemplateView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2.export.views import ExportMixin
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
 from django import forms
 from braces.views import GroupRequiredMixin
@@ -14,8 +17,16 @@ from .models import ALPAttendance, ALPTeacherAttendance, ALPRound, ALPProgram
 from .views import ALPUserRequiredMixin, ALPEditPermissionMixin
 from .tables import ALPTeacherAttendanceTable
 from .filters import ALPTeacherAttendanceFilter
-from .utils import filter_by_school, load_child_attendance, create_attendance, load_teacher_attendance, create_teacher_attendance
+from .utils import (
+    create_attendance,
+    create_teacher_attendance,
+    filter_by_school,
+    load_child_attendance,
+    load_teacher_attendance,
+    parse_date_flexible,
+)
 from .mixins import ALPSchoolFilterMixin
+from student_registration.schools.models import Section
 
 class AttendanceView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
     template_name = 'alp/attendance.html'
@@ -29,6 +40,7 @@ class AttendanceView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
         close_reason = ''
         rounds = ALPRound.objects.filter(current_year=True)
         programmes = ALPProgram.objects.all()
+        sections = Section.objects.all()
 
         instance = None
 
@@ -48,6 +60,7 @@ class AttendanceView(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
             'close_reason': close_reason,
             'rounds': rounds,
             'programmes': programmes,
+            'sections': sections,
         }
 
 class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
@@ -56,9 +69,10 @@ class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
     def get_context_data(self, **kwargs):
         current_date = datetime.today().date()
         attendance_date_str = self.request.GET.get("attendance_date")
-        school_id = self.request.GET.get("school_id")
+        school_id = self.request.user.school_id
         programme_id = self.request.GET.get("programme")
         round_id = self.request.GET.get("round_id")
+        section_id = self.request.GET.get("section")
 
         if attendance_date_str is None:
             return {'instances': [], 'new_instances': []}
@@ -75,6 +89,7 @@ class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
                     round_id,
                     attendance_date_str,
                     programme_id,
+                    section_id,
                 )
             else:
                 data = {'instances': [], 'new_instances': []}
@@ -83,9 +98,53 @@ class LoadAttendanceChildren(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
 
         return data
 
+
+def export_attendance_children(request):
+    """Download the attendance currently selected on the attendance page."""
+    if not request.user.is_authenticated or not request.user.groups.filter(name='ALP_SCHOOL').exists():
+        return HttpResponseBadRequest("Unauthorized")
+    if request.user.school_id is None:
+        return HttpResponseBadRequest("No school assigned")
+
+    attendance_date = request.GET.get('attendance_date')
+    round_id = request.GET.get('round_id')
+    programme_id = request.GET.get('programme')
+    section_id = request.GET.get('section')
+    parsed_date = parse_date_flexible(attendance_date)
+    if not parsed_date or not round_id or not programme_id or not section_id:
+        return HttpResponseBadRequest(
+            "Attendance date, round, programme, and section are required"
+        )
+
+    data = load_child_attendance(
+        request.user.school_id, round_id, attendance_date, programme_id,
+        section_id,
+    )
+    rows = data['instances'] + data['new_instances']
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = (
+        f'attachment; filename="alp-attendance-{parsed_date:%Y-%m-%d}.csv"'
+    )
+    response.write(codecs.BOM_UTF8)
+    writer = csv.writer(response)
+    writer.writerow([
+        'Child ID', 'Child name', 'Mother name', 'Birthday', 'Nationality',
+        'Section',
+        'Attendance status', 'Absence reason', 'Other absence reason',
+    ])
+    for row in rows:
+        writer.writerow([
+            row['child_id'], row['child_fullname'], row['child_mother_fullname'],
+            row['child_birthday'], row['child_nationality'], row['section'], row['attended'],
+            row['absence_reason'], row['absence_reason_other'],
+        ])
+    return response
+
 def save_attendance_children(request):
     if not request.user.is_authenticated or not request.user.groups.filter(name='ALP_SCHOOL').exists():
         return HttpResponseBadRequest("Unauthorized")
+    if request.user.school_id is None:
+        return HttpResponseBadRequest("No school assigned")
 
     body_unicode = request.body.decode("utf-8")
 
@@ -98,7 +157,7 @@ def save_attendance_children(request):
         return HttpResponseBadRequest("Invalid JSON payload")
 
     try:
-        result = create_attendance(data, request.GET.get("school_id"))
+        result = create_attendance(data, request.user.school_id)
     except Exception:
         return HttpResponseBadRequest("Failed to save attendance")
 
@@ -125,7 +184,7 @@ class LoadAttendanceTeachers(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
     def get_context_data(self, **kwargs):
         current_date = datetime.today().date()
         attendance_date_str = self.request.GET.get("attendance_date")
-        school_id = self.request.GET.get("school_id")
+        school_id = self.request.user.school_id
 
         if attendance_date_str is None:
             return {'instances': [], 'new_instances': []}
@@ -151,6 +210,8 @@ class LoadAttendanceTeachers(LoginRequiredMixin, ALPUserRequiredMixin, TemplateV
 def save_attendance_teachers(request):
     if not request.user.is_authenticated or not request.user.groups.filter(name='ALP_SCHOOL').exists():
         return HttpResponseBadRequest("Unauthorized")
+    if request.user.school_id is None:
+        return HttpResponseBadRequest("No school assigned")
 
     body_unicode = request.body.decode("utf-8")
 
@@ -163,7 +224,7 @@ def save_attendance_teachers(request):
         return HttpResponseBadRequest("Invalid JSON payload")
 
     try:
-        result = create_teacher_attendance(data, request.GET.get("school_id"), request.user)
+        result = create_teacher_attendance(data, request.user.school_id, request.user)
     except Exception:
         return HttpResponseBadRequest("Failed to save teacher attendance")
 

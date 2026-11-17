@@ -1,0 +1,12 @@
+{% load i18n %}
+<div class="btn-group btn-group-sm" role="group">
+    <a href="{% url 'alp:child_profile' record.pk %}" class="btn btn-outline-primary" title="{% trans 'Profile' %}">
+        <i class="bi bi-person-badge"></i>
+    </a>
+    <a href="{% url 'alp:registration_edit' record.pk %}" class="btn btn-outline-secondary" title="{% trans 'Edit' %}">
+        <i class="bi bi-pencil"></i>
+    </a>
+    <a href="{% url 'alp:registration_delete' record.pk %}" class="btn btn-outline-danger" title="{% trans 'Delete' %}">
+        <i class="bi bi-trash"></i>
+    </a>
+</div>

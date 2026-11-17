@@ -2,7 +2,8 @@ from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
 
-from student_registration.alp.models import ALPRound
+from student_registration.alp.forms import ALPTeacherForm
+from student_registration.alp.models import ALPRound, ALPTeacher
 from student_registration.schools.models import School
 from student_registration.users.models import User
 
@@ -27,3 +28,53 @@ class ALPTeacherDashboardTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertQuerySetEqual(response.context['rounds'], [alp_round])
+
+    def test_teacher_grade_levels_only_include_levels_one_to_four(self):
+        form = ALPTeacherForm(user=self.user)
+
+        self.assertEqual(
+            list(form.fields['registration_level'].choices),
+            [
+                ('Level one', 'Level one'),
+                ('Level two', 'Level two'),
+                ('Level three', 'Level three'),
+                ('Level four', 'Level four'),
+            ],
+        )
+
+    def test_teacher_assignment_options_match_alp_programme(self):
+        form = ALPTeacherForm(user=self.user)
+
+        self.assertEqual(
+            list(form.fields['teacher_assignment'].choices),
+            [
+                ('ALP only', 'ALP only'),
+                ('ALP and FE', 'ALP and FE'),
+                ('ALP and private', 'ALP and private'),
+                ('other', 'other'),
+            ],
+        )
+
+    def test_teacher_form_omits_identification_fields(self):
+        form = ALPTeacherForm(user=self.user)
+
+        self.assertNotIn('id_type', form.fields)
+        self.assertNotIn('id_number', form.fields)
+
+    def test_teacher_form_asks_for_weekly_alp_teaching_hours(self):
+        form = ALPTeacherForm(user=self.user)
+
+        self.assertEqual(
+            form.fields['teaching_hours_mscc'].label,
+            'Number of teaching hours per week under ALP',
+        )
+
+    def test_other_teacher_assignment_requires_details(self):
+        form = ALPTeacherForm(
+            data={'teacher_assignment': 'other'},
+            user=self.user,
+        )
+
+        form.is_valid()
+
+        self.assertIn('teacher_assignment_other', form.errors)

@@ -103,6 +103,9 @@
                                                 {% endfor %}
                                                 <div id="step-1">
                                                     <div class="row card-body">
+                                                        <div class="col-md-12">{{ form.informed_consent|as_crispy_field }}</div>
+                                                    </div>
+                                                    <div class="row card-body">
                                                         <div class="col-md-12">{{ form.child_photo|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">

@@ -70,8 +70,14 @@ class School(TimeStampedModel):
     )
     TYPE = Choices(
         ('', '----------'),
+        ('Public School', _("Public School")),
         ('Private School', _("Private School")),
         ('Private Free School', _("Private Free School")),
+    )
+    OPERATING_SHIFT = Choices(
+        ('', '----------'),
+        ('morning shift', _("Morning shift")),
+        ('afternoon shift', _("Afternoon shift")),
     )
     DAYS_OF_THE_WEEK = Choices(
         ('Monday', _('Monday')),
@@ -82,6 +88,29 @@ class School(TimeStampedModel):
         ('Saturday', _('Saturday')),
         ('Sunday', _('Sunday')),
     )
+    PROVIDED_PACKAGES = Choices(
+        ('Education', 'Education'),
+        ('Youth', 'Youth'),
+        ('Health & Nutrition', 'Health & Nutrition'),
+        ('Child Protection', 'Child Protection'),
+        ('Social Protection', 'Social Protection'),
+    )
+    PROGRAM = Choices(
+        ('ALP', 'ALP'),
+        ('BLN', 'BLN'),
+        ('ABLN', 'ABLN'),
+        ('RS', 'RS'),
+        ('CBECE', 'CBECE'),
+        ('YBLN', 'YBLN'),
+        ('YFS', 'YFS'),
+    )
+    ALP_PROFILE_FIELDS = (
+        'number', 'name', 'type', 'operating_shift', 'director_name',
+        'land_phone_number', 'email', 'governorate', 'district', 'cadaster',
+        'longitude', 'latitude', 'provided_packages',
+        'offer_digital_learning', 'have_digital_hub', 'admin_staff_number',
+        'neaby_phcc',
+    )
     number = models.CharField(
         max_length=45,
         unique=True,
@@ -91,6 +120,11 @@ class School(TimeStampedModel):
         blank=True, null=True, max_length=100,
         choices=TYPE,
     )
+    operating_shift = models.CharField(
+        blank=True, null=True, max_length=20,
+        choices=OPERATING_SHIFT,
+        verbose_name=_('Operating shift'),
+    )
     name = models.CharField(
         max_length=255,
         verbose_name=_('School name')
@@ -98,7 +132,7 @@ class School(TimeStampedModel):
     director_name = models.CharField(
         max_length=100,
         blank=True, null=True,
-        verbose_name=_('School director name')
+        verbose_name=_('Program Manager Name')
     )
     land_phone_number = models.CharField(
         max_length=100,
@@ -151,6 +185,28 @@ class School(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Grade level')
+    )
+    provided_packages = ArrayField(
+        models.CharField(
+            choices=PROVIDED_PACKAGES,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Provided Services')
+    )
+    programs = ArrayField(
+        models.CharField(
+            choices=PROGRAM,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Programs')
     )
     school_capacity = models.IntegerField(
         blank=True, null=True,

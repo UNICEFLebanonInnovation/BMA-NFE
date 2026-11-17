@@ -39,11 +39,14 @@
 <style>
   #pivot-wrapper {
     margin: 20px;
+    width: calc(100% - 40px);
+    min-width: 0;
+    box-sizing: border-box;
     background: #ffffff;
     border: 1px solid #dfe3e8;
     border-radius: 10px;
     padding: 18px;
-    overflow: visible !important;
+    overflow: hidden;
     position: relative;
   }
 
@@ -53,6 +56,7 @@
     left: 0;
     right: 0;
     bottom: 0;
+    width: auto;
     margin: 0;
     border-radius: 0;
     z-index: 1050;
@@ -82,28 +86,21 @@
   }
 
   #pivot {
-    overflow: auto;
+    width: 100%;
+    max-width: 100%;
     min-height: 450px;
-  }
-
-  /* important for dropdown visibility */
-  #pivot,
-  #pivot * ,
-  .pvtUi,
-  .pvtRendererArea,
-  .pvtAxisContainer,
-  .pvtVals {
-    overflow: visible;
+    overflow: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-gutter: stable;
   }
 
   .pvtUi {
     position: relative;
     z-index: 10;
     font-size: 14px;
-    width: 100%;
-  }
-
-  .pvtUi table {
+    width: max-content;
+    min-width: 100%;
+    table-layout: auto;
     border-collapse: separate;
     border-spacing: 6px;
   }
@@ -121,6 +118,34 @@
     border-radius: 8px;
     padding: 8px;
     min-width: 180px;
+  }
+
+  /* Preserve PivotTable.js's natural control layout. If the available fields
+     or result columns are wider than the card, #pivot provides one scrollbar. */
+  .pvtUnused {
+    white-space: nowrap !important;
+  }
+
+  .pvtUnused.pvtHorizList > li {
+    display: inline-block;
+    margin: 3px;
+  }
+
+  .pvtUnused .pvtAttr {
+    display: inline-flex;
+    vertical-align: top;
+  }
+
+  .pvtUnused .pvtAttr .pvtAttrDropdown {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pvtRendererArea {
+    max-width: none;
+    overflow: visible;
   }
 
   .pvtRenderer,
@@ -218,7 +243,9 @@
   }
 
   .pvtTable {
-    width: 100%;
+    width: auto !important;
+    min-width: 0;
+    table-layout: auto;
     border-collapse: collapse !important;
     margin-top: 14px;
     background: #fff;
@@ -259,6 +286,7 @@
     #pivot-wrapper {
       padding: 12px;
       margin: 10px;
+      width: calc(100% - 20px);
     }
 
     .pvtAxisContainer,

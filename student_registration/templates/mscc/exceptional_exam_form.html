@@ -1,0 +1,87 @@
+{% extends "mscc/base.html" %}
+{% load static django_bootstrap5 i18n %}
+
+{% block project_title %}{% translate "Exceptional Exam" %}{% endblock %}
+{% block module_name %}{% translate "Exceptional Exam" %}{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>
+    #exceptional-exam-form .form-label::after {
+        content: "*";
+        color: #dc3545;
+        margin-inline-start: 0.25em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold mb-2">{% translate "Exceptional Exam" %}</h3>
+            <p class="mb-1">{{ registration.child.full_name }}</p>
+            <p class="small text-muted mb-0">{% translate "Registration ID" %}: {{ registration.pk }}</p>
+        </div>
+        <a href="{% url 'mscc:child_profile' registration.pk %}?current_tab=exceptional_exam" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i> {% translate "Back to Profile" %}
+        </a>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-xl-9">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <p class="text-muted mb-4">{% translate "All questions are required." %}</p>
+                    {% translate 'Select' as select_prompt %}
+                    <form method="post" action="{% url 'mscc:exceptional_exam_form' registry=registration.pk %}" id="exceptional-exam-form"
+                          data-select-prompt="{{ select_prompt|force_escape }}">
+                        {% csrf_token %}
+                        {{ form.grade_choices_by_programme|json_script:"exceptional-exam-grade-choices" }}
+                        {{ form.grade_help_by_programme|json_script:"exceptional-exam-grade-help" }}
+                        {% if form.errors %}
+                        <div class="alert alert-danger" role="alert" id="exceptional-exam-errors" tabindex="-1">
+                            <p class="fw-bold mb-2">{% translate "Please correct the following errors." %}</p>
+                            <ul class="mb-0">
+                                {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                                {% for field in form %}
+                                    {% for error in field.errors %}<li><a href="#{{ field.id_for_label }}" class="alert-link">{{ field.label }}: {{ error }}</a></li>{% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        <p class="small text-muted" id="residence-selection-help">{% translate "Programme, address, and birth details are taken from the child's registration." %}</p>
+                        {% if not form.registration_details_valid %}
+                        <div class="alert alert-warning" role="alert">
+                            {{ form.registration_details_help }}
+                            <a href="{% url 'mscc:child_edit' registration.pk %}" class="alert-link">{% translate "Edit registration" %}</a>
+                        </div>
+                        {% endif %}
+                        <fieldset class="mb-4">
+                            <legend class="fs-5 fw-bold mb-2">{% translate "Place of residence" %}</legend>
+                            <div class="row">
+                                <div class="col-md-4">{% bootstrap_field form.governorate %}</div>
+                                <div class="col-md-4">{% bootstrap_field form.district %}</div>
+                                <div class="col-md-4">{% bootstrap_field form.nearest_town %}</div>
+                            </div>
+                        </fieldset>
+                        <div class="mb-4">{% bootstrap_field form.country_of_birth %}</div>
+                        <div class="mb-4">{% bootstrap_field form.place_of_birth %}</div>
+                        <div class="mb-4">{% bootstrap_field form.programme %}</div>
+                        <div class="mb-4" id="exceptional-exam-grade-field">{% bootstrap_field form.grade %}</div>
+                        <div class="mb-4">{% bootstrap_field form.math_language %}</div>
+                        <div class="mb-4">{% bootstrap_field form.language_exam %}</div>
+                        <div class="d-flex flex-wrap gap-2 border-top pt-4">
+                            <button type="submit" class="btn btn-primary px-4">{% translate "Save" %}</button>
+                            <a href="{% url 'mscc:child_profile' registration.pk %}?current_tab=exceptional_exam" class="btn btn-outline-secondary">{% translate "Cancel" %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/mscc/exceptional_exam.js' %}?v=9"></script>
+{% endblock %}

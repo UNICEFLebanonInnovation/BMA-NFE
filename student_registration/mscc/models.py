@@ -2,8 +2,9 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, gettext_lazy, pgettext_lazy
 from django.db.models import JSONField
 from django.contrib.postgres.fields import ArrayField
 
@@ -11,12 +12,23 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 from student_registration.child.models import Child
-from student_registration.locations.models import Center
+from student_registration.locations.models import Center, Location
 from student_registration.students.models import AttachmentType, IDType, Nationality, Training
 from student_registration.schools.models import (
     School,
     PartnerOrganization
 )
+from .exceptional_exam_choices import (
+    GOVERNORATE_CHOICES,
+    DISTRICT_CHOICES,
+    TOWN_CHOICES,
+    PROGRAMME_CHOICES,
+    COUNTRY_OF_BIRTH_CHOICES,
+    GRADE_CHOICES,
+    MATH_LANGUAGE_CHOICES,
+    LANGUAGE_EXAM_CHOICES,
+)
+from .exceptional_exam_locations import location_label, town_choices_for_locations
 
 PACKAGE_CATEGORIES = Choices(
     ('Education', 'Education'),
@@ -459,6 +471,8 @@ class Registration(TimeStampedModel):
     bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
                               verbose_name=_('BMA registration ID'))
 
+    NFE_PROGRAMMES = Choices(*PROGRAMME_CHOICES)
+
     YES_NO = Choices(
         ('', _('----------')),
         ('Yes', _("Yes")),
@@ -552,6 +566,19 @@ class Registration(TimeStampedModel):
         related_name='+',
         on_delete=models.SET_NULL,
         verbose_name=_('Child')
+    )
+    nfe_programme = models.CharField(
+        max_length=20,
+        choices=NFE_PROGRAMMES,
+        blank=True,
+        null=True,
+        verbose_name=_('Type of NFE Programme'),
+    )
+    informed_consent = models.FileField(
+        upload_to='uploads/mscc_registration/informed_consent',
+        blank=True,
+        null=True,
+        verbose_name=_('Informed Consent for Data Sharing\nNon-Formal Education Programming in Lebanon'),
     )
     student_old = models.IntegerField(blank=True, null=True, verbose_name=_('Student old'))
     partner = models.ForeignKey(
@@ -731,6 +758,15 @@ class Registration(TimeStampedModel):
         if program:
             result = program.education_program
         return result
+
+    def get_nfe_programme_display(self):
+        historical_labels = {
+            'BLN': gettext_lazy('Basic Literacy and Numeracy (BLN)'),
+            'DIRASA': gettext_lazy('DIRASA'),
+        }
+        return dict(PROGRAMME_CHOICES).get(
+            self.nfe_programme, historical_labels.get(self.nfe_programme, self.nfe_programme),
+        )
 
     @property
     def class_section(self):
@@ -2686,6 +2722,156 @@ class Recreational(TimeStampedModel):
         ordering = ['id']
         verbose_name=_("Recreational")
         verbose_name_plural=_("Recreational")
+
+
+class ExceptionalExam(TimeStampedModel):
+    """The exceptional-exam application for a registered MSCC child.
+
+    Form saves copy governorate and district from the registered child's
+    address. Village choices come from the district's exam-specific catalog
+    supplied by the NFE sector. Saved applications retain their prior answers.
+    """
+
+    registration = models.OneToOneField(
+        Registration, related_name='exceptional_exam', on_delete=models.CASCADE,
+        verbose_name=gettext_lazy('Registration'),
+    )
+    governorate_legacy = models.CharField(
+        max_length=64, choices=GOVERNORATE_CHOICES, blank=True, null=True,
+        verbose_name=gettext_lazy('Legacy governorate'),
+    )
+    district_legacy = models.CharField(
+        max_length=64, choices=DISTRICT_CHOICES, blank=True, null=True,
+        verbose_name=gettext_lazy('Legacy district'),
+    )
+    governorate = models.ForeignKey(
+        'locations.Location', related_name='+', null=True, blank=True,
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 1},
+        verbose_name=pgettext_lazy('exceptional_exam', 'Governorate'),
+    )
+    district = models.ForeignKey(
+        'locations.Location', related_name='+', null=True, blank=True,
+        on_delete=models.SET_NULL, limit_choices_to={'type_id': 2},
+        verbose_name=gettext_lazy('District/Caza'),
+    )
+    nearest_town = models.CharField(
+        max_length=100, choices=TOWN_CHOICES,
+        verbose_name=gettext_lazy('Village'),
+    )
+    country_of_birth = models.CharField(
+        max_length=5, choices=COUNTRY_OF_BIRTH_CHOICES, default='',
+        verbose_name=gettext_lazy('Country of Birth'),
+    )
+    place_of_birth = models.CharField(
+        max_length=100, default='',
+        verbose_name=gettext_lazy('Place of Birth'),
+        help_text=gettext_lazy('Place of birth similar in the Official ID'),
+    )
+    programme = models.CharField(
+        max_length=20, choices=PROGRAMME_CHOICES,
+        verbose_name=gettext_lazy('Non-formal education programme'),
+    )
+    grade = models.CharField(
+        max_length=1, choices=GRADE_CHOICES,
+        verbose_name=gettext_lazy('Grade applying for the examination'),
+    )
+    math_language = models.CharField(
+        max_length=2, choices=MATH_LANGUAGE_CHOICES,
+        verbose_name=gettext_lazy('Mathematics examination language'),
+    )
+    language_exam = models.CharField(
+        max_length=2, choices=LANGUAGE_EXAM_CHOICES,
+        verbose_name=gettext_lazy('Language examination'),
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        related_name='+', on_delete=models.SET_NULL,
+        verbose_name=gettext_lazy('Created by'),
+    )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        related_name='+', on_delete=models.SET_NULL,
+        verbose_name=gettext_lazy('Modified by'),
+    )
+
+    class Meta:
+        ordering = ['registration_id']
+        verbose_name = gettext_lazy('Exceptional Exam')
+        verbose_name_plural = gettext_lazy('Exceptional Exams')
+
+    def clean(self):
+        """Reject invalid residence combinations and ineligible exam grades."""
+        from .exceptional_exam_grades import programme_grade_error
+
+        super().clean()
+        errors = {}
+        governorate = self._state.fields_cache.get('governorate')
+        if governorate is None and self.governorate_id:
+            governorate = Location.objects.filter(pk=self.governorate_id).first()
+        district = self._state.fields_cache.get('district')
+        if district is None and self.district_id:
+            district = Location.objects.filter(pk=self.district_id).first()
+        if self.governorate_id and (not governorate or governorate.type_id != 1):
+            errors['governorate'] = _('Select a valid governorate.')
+        if self.district_id and (not district or district.type_id != 2):
+            errors['district'] = _('Select a valid district.')
+        elif district and (not governorate or district.parent_id != governorate.pk):
+            errors['district'] = _('Select a district in the selected governorate.')
+        # Missing legacy FKs remain readable. Form saves require all fields and
+        # therefore always validate the village against both selected parents.
+        if governorate and district and self.nearest_town and self.nearest_town not in dict(
+            town_choices_for_locations(governorate, district)
+        ):
+            errors['nearest_town'] = _('Select a village in the selected district.')
+        grade_error = programme_grade_error(self.programme, self.grade)
+        if grade_error:
+            errors['grade'] = grade_error
+        if errors:
+            raise ValidationError(errors)
+
+    @property
+    def display_rows(self):
+        """Active-language labels and values for the saved application."""
+        residence = (
+            location_label(self.governorate) or self.get_governorate_legacy_display() or '',
+            location_label(self.district) or self.get_district_legacy_display() or '',
+            self.get_nearest_town_display(),
+        )
+        fields = ('governorate', 'district', 'nearest_town', 'country_of_birth',
+                  'place_of_birth', 'programme', 'grade',
+                  'math_language', 'language_exam')
+        values = residence + (
+            self.get_country_of_birth_display(), self.place_of_birth or '',
+            self.get_programme_display(), self.get_grade_display(),
+            self.get_math_language_display(), self.get_language_exam_display(),
+        )
+        return tuple(
+            (self._meta.get_field(name).verbose_name, value)
+            for name, value in zip(fields, values)
+        )
+
+    def get_programme_display(self):
+        # Removed choices stay readable in historical profiles and exports.
+        historical_labels = {
+            'BLN': gettext_lazy('Basic Literacy and Numeracy (BLN)'),
+            'DIRASA': gettext_lazy('DIRASA'),
+        }
+        return dict(PROGRAMME_CHOICES).get(
+            self.programme, historical_labels.get(self.programme, self.programme),
+        )
+
+    def get_grade_display(self):
+        # Older applications retain their submitted grade. These grades are no
+        # longer selectable, but profiles and exports must remain readable.
+        historical_labels = {
+            '5': gettext_lazy('Grade 5'),
+            '6': gettext_lazy('Grade 6'),
+            '7': gettext_lazy('Grade 7'),
+        }
+        return dict(GRADE_CHOICES).get(self.grade, historical_labels.get(self.grade, self.grade))
+
+    def __str__(self):
+        return '%s — %s' % (_('Exceptional Exam'), self.registration_id)
 
 
 class LegoService(TimeStampedModel):

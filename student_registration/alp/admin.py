@@ -20,7 +20,7 @@ class ALPTeacherAdmin(ImportExportModelAdmin):
 
 @admin.register(ALPRegistration)
 class ALPRegistrationAdmin(ImportExportModelAdmin):
-    list_display = ('id', 'child', 'school', 'round', 'programme')
+    list_display = ('id', 'child', 'school', 'round', 'programme', 'section')
     search_fields = ('child__first_name', 'child__last_name', 'school__name')
     raw_id_fields = ('child', 'school', 'owner', 'modified_by')
 
@@ -39,5 +39,5 @@ class ALPTeacherAttendanceAdmin(ImportExportModelAdmin):
 
 @admin.register(ALPAttendance)
 class ALPAttendanceAdmin(ImportExportModelAdmin):
-    list_display = ('school', 'attendance_date', 'programme', 'round')
+    list_display = ('school', 'attendance_date', 'programme', 'round', 'section')
     search_fields = ('school__name',)

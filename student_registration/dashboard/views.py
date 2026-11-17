@@ -602,6 +602,23 @@ def centers_children_data(request):
     })
 
 
+#: Documentation pages every authenticated user may read. Everything else under
+#: ``docs/wiki/`` and ``docs/wiki_html/`` is technical documentation and is
+#: restricted to superusers, on both the Markdown and the HTML route.
+PUBLIC_WIKI_PAGES = frozenset({'end_user'})
+
+
+def wiki_page_is_visible_to(user, page_name):
+    """Return whether ``user`` may read the documentation page ``page_name``.
+
+    The user guidelines are for everyone; the technical documentation is for
+    superusers only. Both documentation views share this rule so the Markdown
+    route (``/dashboard/wiki/``) and the HTML route (``/dashboard/guide/``)
+    cannot drift apart.
+    """
+    return page_name in PUBLIC_WIKI_PAGES or user.is_superuser
+
+
 WIKI_HTML_PAGES = [
     ('index', 'Home', None),
     ('end_user', 'End User Manual', None),
@@ -667,7 +684,7 @@ class WikiGuidePageView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         page_name = self.kwargs.get('page_name', 'index')
 
-        if not self.request.user.is_superuser and page_name != 'end_user':
+        if not wiki_page_is_visible_to(self.request.user, page_name):
             raise Http404('Guide page not found')
 
         if page_name not in self.VALID_PAGES:
@@ -720,6 +737,11 @@ class WikiPageView(LoginRequiredMixin, TemplateView):
         # Ensure only allowed characters in page name to prevent path traversal
         if not page_name.replace('_', '').replace('-', '').isalnum():
             raise Http404('Invalid page name')
+
+        # The user guidelines are readable by everyone; the technical
+        # documentation is superuser-only. Same rule as WikiGuidePageView.
+        if not wiki_page_is_visible_to(self.request.user, page_name):
+            raise Http404('Wiki page not found')
 
         file_path = os.path.join(str(settings.ROOT_DIR.path('docs').path('wiki')), f'{page_name}.md')
 

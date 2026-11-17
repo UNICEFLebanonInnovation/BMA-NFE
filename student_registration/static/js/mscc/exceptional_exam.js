@@ -1,0 +1,95 @@
+(function () {
+    'use strict';
+
+    function initializeGradeChoices() {
+        var form = document.getElementById('exceptional-exam-form');
+        if (!form) return;
+
+        var programme = form.elements.programme;
+        var grade = form.elements.grade;
+        var choicesData = document.getElementById('exceptional-exam-grade-choices');
+        var helpData = document.getElementById('exceptional-exam-grade-help');
+        var gradeField = document.getElementById('exceptional-exam-grade-field');
+        if (!programme || !grade || !choicesData || !helpData || !gradeField) return;
+        var registeredProgramme = programme.value;
+
+        var choicesByProgramme;
+        var helpByProgramme;
+        try {
+            choicesByProgramme = JSON.parse(choicesData.textContent);
+            helpByProgramme = JSON.parse(helpData.textContent);
+        } catch (error) {
+            return;
+        }
+        if (!choicesByProgramme || !helpByProgramme) return;
+
+        var placeholder = grade.options.length ? grade.options[0].text : form.getAttribute('data-select-prompt') || '';
+        var help = gradeField.querySelector('.form-text');
+        if (help) {
+            help.id = help.id || 'exceptional-exam-grade-help-text';
+            help.setAttribute('aria-live', 'polite');
+            var descriptions = (grade.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+            if (descriptions.indexOf(help.id) === -1) descriptions.push(help.id);
+            grade.setAttribute('aria-describedby', descriptions.join(' '));
+        }
+
+        function updateGrades() {
+            // The server supplies the grades allowed for each programme.
+            var choices = choicesByProgramme[registeredProgramme] || [];
+            if (!Array.isArray(choices)) return;
+            var previousGrade = grade.value;
+            grade.innerHTML = '';
+            grade.add(new Option(placeholder, ''));
+            choices.forEach(function (choice) {
+                grade.add(new Option(choice.text, String(choice.id)));
+            });
+            var stillAvailable = choices.some(function (choice) {
+                return String(choice.id) === previousGrade;
+            });
+            grade.value = stillAvailable ? previousGrade : '';
+            if (choices.length === 1) {
+                grade.value = String(choices[0].id);
+            }
+
+            var message = helpByProgramme[registeredProgramme] || helpByProgramme[''] || '';
+            if (help) help.textContent = message;
+            // Keep missing programme eligibility visible to browser validation.
+            grade.disabled = false;
+            grade.setCustomValidity(!choices.length ? message : '');
+        }
+
+        updateGrades();
+    }
+
+    function initializeResidenceChoices() {
+        var form = document.getElementById('exceptional-exam-form');
+        if (!form) return;
+
+        // Registered programme, address, and birth details are supplied by the
+        // server. Only the examination questions can be changed here.
+        ['programme', 'governorate', 'district', 'nearest_town', 'country_of_birth', 'place_of_birth'].forEach(function (name) {
+            var field = form.elements[name];
+            if (!field) return;
+            field.disabled = true;
+            var descriptions = (field.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+            if (descriptions.indexOf('residence-selection-help') === -1) {
+                descriptions.push('residence-selection-help');
+            }
+            field.setAttribute('aria-describedby', descriptions.join(' '));
+        });
+
+        var errorSummary = document.getElementById('exceptional-exam-errors');
+        if (errorSummary) errorSummary.focus();
+    }
+
+    function initializeExceptionalExam() {
+        initializeGradeChoices();
+        initializeResidenceChoices();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeExceptionalExam);
+    } else {
+        initializeExceptionalExam();
+    }
+}());

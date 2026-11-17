@@ -2,7 +2,10 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+import logging
+import mimetypes
 from collections import Counter
+from pathlib import Path
 
 from django.views.generic import (
     DetailView,
@@ -15,10 +18,19 @@ from django.views.generic import (
 )
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
-from django.db.models import Count, F
+from django.contrib import messages
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpResponse,
+    JsonResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+)
+from django.db.models import BooleanField, Case, Count, F, Value, When
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db import connection
+from django.db import connection, transaction
 import csv
 import io
 import zipfile
@@ -37,18 +49,22 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 import uuid
 from zoneinfo import ZoneInfo
 from datetime import datetime
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.cache import never_cache
+from django.views.decorators.vary import vary_on_cookie
+from django.utils.translation import gettext as _
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
 from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.backends.utils import (
     ExportStorage,
-    download_file,
     is_valid_filename,
 )
 
@@ -69,6 +85,7 @@ from .models import (
     Round,
     ProvidedServices,
     Registration,
+    ExceptionalExam,
     Teacher,
     PSSService,
     EducationAssessment,
@@ -78,17 +95,61 @@ from .models import (
     NFEToFEReferralMapping,
 )
 from student_registration.backends.models import ExportHistory
-
 from .education_form import NewRoundForm
 from .forms import (
-    MainForm,
+    MSCCRegistrationForm,
     ReferralForm,
     TeacherForm,
 )
 from .serializers import (
     MainSerializer,
+    MSCCRegistrationSerializer,
     TeacherSerializer,
 )
+from .document_exports import build_examination_card
+from .examination_card_access import (
+    filter_examination_card_registrations, registration_can_have_examination_card,
+)
+from .photo_forms import PhotoUploadForm
+from .export_access import filter_registrations, scoped_registrations, user_can_export
+from .exceptional_exam_access import exceptional_exam_registrations, can_manage_exceptional_exam
+from .exceptional_exam_forms import ExceptionalExamForm
+from .exceptional_exam_locations import (
+    location_label, positive_location_id, town_choices_for_locations,
+)
+
+logger = logging.getLogger(__name__)
+
+
+@login_required
+def informed_consent_file(request, pk):
+    """Serve a registration's consent file through its configured storage.
+
+    Media URLs are not served by Django when ``DEBUG`` is disabled. Reading
+    through the field also keeps this endpoint compatible with local and
+    remote storage backends.
+    """
+    registration = get_object_or_404(Registration, pk=pk)
+    consent = registration.informed_consent
+    if not consent:
+        raise Http404("No informed consent file is available.")
+
+    filename = Path(consent.name).name
+    content_type, _ = mimetypes.guess_type(filename)
+    try:
+        consent_file = consent.open("rb")
+    except FileNotFoundError:
+        # A FileField can retain its database value after the underlying file
+        # has been removed from storage. Treat that stale reference like any
+        # other missing consent file instead of returning a server error.
+        raise Http404("The informed consent file could not be found.")
+
+    return FileResponse(
+        consent_file,
+        content_type=content_type or "application/octet-stream",
+        as_attachment=False,
+        filename=filename,
+    )
 
 from .utils import *
 
@@ -203,8 +264,18 @@ class ProfileView(LoginRequiredMixin,
             dict: Context containing the registration, service metadata and
             whether the child can be enrolled in a new round.
         """
-        instance = Registration.objects.get(id=self.kwargs['pk'])
+        instance = get_object_or_404(
+            Registration.objects.select_related('child').filter(deleted=False).exclude(child_id=None),
+            pk=self.kwargs['pk'],
+        )
         current_tab = self.request.GET.get('current_tab', 'info')
+        can_view_exam = exceptional_exam_registrations(self.request.user).filter(pk=instance.pk).exists()
+        can_manage_exam = can_view_exam and can_manage_exceptional_exam(self.request.user, instance)
+        exam = ExceptionalExam.objects.filter(registration=instance).first() if can_view_exam else None
+        if current_tab not in ('info', 'services', 'attendance', 'exceptional_exam'):
+            current_tab = 'info'
+        if current_tab == 'exceptional_exam' and not can_view_exam:
+            current_tab = 'info'
 
         rounds_registered = EducationService.objects.filter(
             registration__child_id=instance.child.id,
@@ -225,10 +296,112 @@ class ProfileView(LoginRequiredMixin,
 
         return {
             'instance': instance,
+            'can_export_examination_card': bool(
+                instance.child_id
+                and scoped_registrations(self.request.user).filter(pk=instance.pk).exists()
+                and registration_can_have_examination_card(instance)
+            ),
+            'can_upload_photo': bool(
+                can_view_exam and can_manage_exceptional_exam(self.request.user, instance)
+            ),
             'new_round': new_round,
+            'can_view_exceptional_exam': can_view_exam,
+            'can_manage_exceptional_exam': can_manage_exam,
+            'exceptional_exam': exam,
+            'exceptional_exam_rows': exam.display_rows if exam else (),
             'current_tab': current_tab,
             'provided_services': services_dict,
         }
+
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+def exceptional_exam_form(request, registry):
+    """Create or edit one application for an accessible child registration."""
+    queryset = exceptional_exam_registrations(request.user)
+    registration = get_object_or_404(queryset, pk=registry)
+    if not can_manage_exceptional_exam(request.user, registration):
+        return HttpResponseForbidden(
+            _('You may view this application but cannot edit it.')
+        )
+
+    if request.method == 'POST':
+        # Lock the registration, rather than a possibly nonexistent exam row.
+        # Concurrent first submissions then update the same OneToOne record.
+        with transaction.atomic():
+            registration = get_object_or_404(
+                queryset.select_for_update(of=('self',)), pk=registry,
+            )
+            if not can_manage_exceptional_exam(request.user, registration):
+                return HttpResponseForbidden(_('Editing is not permitted.'))
+            exam = ExceptionalExam.objects.filter(registration=registration).first()
+            form = ExceptionalExamForm(request.POST, instance=exam, registration=registration)
+            if form.is_valid():
+                saved_exam = form.save(commit=False)
+                if exam is None:
+                    saved_exam.created_by = request.user
+                saved_exam.modified_by = request.user
+                saved_exam.save()
+                messages.success(
+                    request,
+                    _('Exceptional exam saved.'),
+                )
+                return redirect(
+                    reverse('mscc:child_profile', kwargs={'pk': registration.pk})
+                    + '?current_tab=exceptional_exam'
+                )
+    else:
+        exam = ExceptionalExam.objects.filter(registration=registration).first()
+        form = ExceptionalExamForm(instance=exam, registration=registration)
+
+    return render(request, 'mscc/exceptional_exam_form.html', {
+        'registration': registration,
+        'instance': form.instance,
+        'form': form,
+    })
+
+
+@login_required
+@require_GET
+def exceptional_exam_location_options(request):
+    """Return the selected parent's exam choices in the interface language."""
+    from student_registration.locations.models import Location
+
+    user = request.user
+    can_view = user_can_export(user) or bool(
+        user.is_active and has_group(user, 'MSCC') and user.center_id
+    )
+    if not can_view:
+        return JsonResponse({'error': _('Access denied.')}, status=403)
+
+    location_type = request.GET.get('type', '')
+    if location_type not in ('2', 'village'):
+        return JsonResponse({'error': _('Invalid location type.')}, status=400)
+    parent_value = request.GET.get('parent')
+    if not parent_value:
+        return JsonResponse({'results': []})
+    parent_id = positive_location_id(parent_value)
+    if parent_id is None:
+        return JsonResponse({'error': _('Invalid parent location.')}, status=400)
+    parent_type = 1 if location_type == '2' else 2
+    parent = Location.objects.select_related('parent').filter(
+        pk=parent_id, type_id=parent_type,
+    ).first()
+    if parent is None:
+        return JsonResponse({'error': _('Invalid parent location.')}, status=400)
+
+    if location_type == '2':
+        locations = Location.objects.filter(
+            type_id=2, parent_id=parent.pk,
+        ).order_by('name')
+        results = [
+            {'id': location.pk, 'text': location_label(location)}
+            for location in locations
+        ]
+    else:
+        choices = town_choices_for_locations(parent.parent, parent)
+        results = [{'id': code, 'text': label} for code, label in choices]
+    return JsonResponse({'results': results})
 
 
 class DashboardView(LoginRequiredMixin,
@@ -479,11 +652,55 @@ class DashboardDataView(LoginRequiredMixin, View):
         return JsonResponse(data, safe=False)
 
 
+class ChildLocationOptionsView(LoginRequiredMixin, View):
+    """Return the next level in an MSCC child's residential address."""
+
+    def get(self, request, *args, **kwargs):
+        from student_registration.locations.models import Location
+
+        if request.GET.get('type') == 'village':
+            parent_value = request.GET.get('parent')
+            if not parent_value:
+                return JsonResponse({'results': []})
+            parent_id = positive_location_id(parent_value)
+            if parent_id is None:
+                return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+            district = Location.objects.select_related('parent').filter(
+                pk=parent_id, type_id=2, parent__type_id=1,
+            ).first()
+            if district is None:
+                return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+            choices = town_choices_for_locations(district.parent, district)
+            return JsonResponse({'results': [
+                {'id': code, 'text': label} for code, label in choices
+            ]})
+
+        try:
+            location_type = int(request.GET.get('type', ''))
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid location type.'}, status=400)
+        if location_type not in (2, 3):
+            return JsonResponse({'error': 'Invalid location type.'}, status=400)
+
+        parent_value = request.GET.get('parent')
+        if not parent_value:
+            return JsonResponse({'results': []})
+        try:
+            parent_id = int(parent_value)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+        if not Location.objects.filter(pk=parent_id, type_id=location_type - 1).exists():
+            return JsonResponse({'error': 'Invalid parent location.'}, status=400)
+
+        locations = Location.objects.filter(type_id=location_type, parent_id=parent_id).order_by('name')
+        return JsonResponse({'results': [{'id': location.pk, 'text': str(location)} for location in locations]})
+
+
 class MainAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
     template_name = 'mscc/main_form.html'
-    form_class = MainForm
+    form_class = MSCCRegistrationForm
     success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
@@ -511,21 +728,22 @@ class MainAddView(LoginRequiredMixin,
         return initial
 
     def form_valid(self, form):
-        form.save(self.request)
+        if form.save(self.request) is None:
+            return self.form_invalid(form)
         return super(MainAddView, self).form_valid(form)
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
-            return MainForm(self.request.POST, instance=None, request=self.request)
+            return MSCCRegistrationForm(self.request.POST, self.request.FILES, instance=None, request=self.request)
         else:
-            return MainForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return MSCCRegistrationForm(None, instance=None, request=self.request, initial=self.get_initial())
 
 
 class MainEditView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FormView):
     template_name = 'mscc/main_form.html'
-    form_class = MainForm
+    form_class = MSCCRegistrationForm
     success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
@@ -541,20 +759,21 @@ class MainEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = Registration.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            return MainForm(self.request.POST, instance=instance, request=self.request)
+            return MSCCRegistrationForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         else:
-            data = MainSerializer(instance).data
+            data = MSCCRegistrationSerializer(instance).data
             data['child_nationality'] = data['child_nationality_id'] if 'child_nationality_id' in data else ''
             data['child_disability'] = data['child_disability_id'] if 'child_disability_id' in data else ''
             data['main_caregiver_nationality'] = data['main_caregiver_nationality_id']if 'main_caregiver_nationality_id' in data else ''
             data['father_educational_level'] = data['father_educational_level_id']if 'father_educational_level_id' in data else ''
             data['mother_educational_level'] = data['mother_educational_level_id']if 'mother_educational_level_id' in data else ''
             data['id_type'] = data['id_type_id']if 'id_type_id' in data else ''
-            return MainForm(data, instance=instance, request=self.request)
+            return MSCCRegistrationForm(instance=instance, request=self.request, initial=data)
 
     def form_valid(self, form):
         instance = Registration.objects.get(id=self.kwargs['pk'])
-        form.save(request=self.request, instance=instance)
+        if form.save(request=self.request, instance=instance) is None:
+            return self.form_invalid(form)
         return super(MainEditView, self).form_valid(form)
 
 
@@ -624,6 +843,11 @@ class MainListView(LoginRequiredMixin,
 
     filterset_class = MainFilter
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['can_bulk_download_cards'] = user_can_export(self.request.user)
+        return context
+
     def handle_no_permission(self, request=None):
         """Accept both Django's login and braces' group denial callbacks."""
         return super().handle_no_permission()
@@ -647,7 +871,7 @@ class MainListView(LoginRequiredMixin,
             'round',
         )
               .prefetch_related('education_service')
-              .filter(deleted=False))
+              .filter(deleted=False).exclude(child_id=None))
 
         previous_registration = Registration.objects.filter(
             child_id=OuterRef('child_id'),
@@ -667,7 +891,23 @@ class MainListView(LoginRequiredMixin,
             recommended_learning_path='Progress to FE'
         )
 
+        editable_photos = Q(pk__in=[])
+        if user.is_active:
+            if user.is_staff or user.is_superuser:
+                editable_photos = Q(child_id__isnull=False)
+            elif center_id and (
+                has_group(user, 'MSCC_CENTER')
+                or (has_group(user, 'MSCC')
+                    and not has_group(user, 'MSCC_MEHE')
+                    and not has_group(user, 'MSCC_PARTNER'))
+            ):
+                editable_photos = Q(center_id=center_id, child_id__isnull=False)
+
         qs = qs.annotate(
+            can_upload_photo=Case(
+                When(editable_photos, then=Value(True)),
+                default=Value(False), output_field=BooleanField(),
+            ),
             has_previous=Exists(previous_registration),
             _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
             is_referred_to_fe=Exists(referred_to_fe_subquery),
@@ -1103,23 +1343,39 @@ class ChildProfilePreview(LoginRequiredMixin, TemplateView):
 
 
 @login_required(login_url='/users/login')
+@require_GET
 def export_list_background(request):
     user = request.user
+    if not user_can_export(user):
+        return HttpResponseForbidden('An assigned MSCC export role is required.')
     filters = request.GET.dict()
     file_format = request.GET.get('format', 'csv')
+    if file_format not in ('csv', 'xlsx', 'cards'):
+        return HttpResponseBadRequest('Unsupported export format.')
+    if filters.get('export_scope', 'all') not in ('all', 'filtered'):
+        return HttpResponseBadRequest('Unsupported export scope.')
+    try:
+        registrations = filter_registrations(scoped_registrations(user), filters)
+    except ValidationError as exc:
+        return HttpResponseBadRequest('; '.join(exc.messages))
+
+    if file_format == 'cards' and not filter_examination_card_registrations(
+        registrations.exclude(child_id=None)
+    ).exists():
+        return HttpResponseBadRequest(_('No eligible examination cards are available to download.'))
 
     export_record = ExportHistory.objects.create(
         export_type='NFR Sector List',
         created_by=user,
         partner_name=user.partner.name if user.partner else '',
-        file_format=file_format,
+        file_format='zip' if file_format == 'cards' else file_format,
         fields=filters
     )
-    queue_filtered_mscc_export(
-        export_record.id,
-        filters=filters,
-        file_format=file_format
-    )
+    if file_format == 'cards':
+        from .tasks import queue_examination_cards_export
+        queue_examination_cards_export(export_record.id, filters=filters)
+    else:
+        queue_filtered_mscc_export(export_record.id, filters=filters, file_format=file_format)
     return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
 
@@ -1179,7 +1435,10 @@ def export_child_list_background(request):
 
 
 @login_required(login_url='/users/login')
+@require_http_methods(['GET', 'POST'])
 def export_list_async(request):
+    if not user_can_export(request.user):
+        return HttpResponseForbidden('An assigned MSCC export role is required.')
     fields = None
     file_format = 'csv'
     if request.method == 'POST':
@@ -1187,22 +1446,146 @@ def export_list_async(request):
             payload = json.loads(request.body.decode('utf-8'))
         except (ValueError, AttributeError):
             payload = request.POST
-        if isinstance(payload, dict):
-            file_format = payload.get('format', 'csv')
-            fields = payload.get('fields') or None
-        else:
-            file_format = payload.get('format', 'csv') if payload else 'csv'
+        if not isinstance(payload, dict):
+            return HttpResponseBadRequest('The export request must be an object.')
+        file_format = payload.get('format', 'csv')
+        fields = payload.get('fields') or None
     else:
         file_format = request.GET.get('format', 'csv')
+    if file_format not in ('csv', 'xlsx', 'cards'):
+        return HttpResponseBadRequest('Unsupported export format.')
+    if fields is not None and (
+        not isinstance(fields, list)
+        or any(not isinstance(field, str) for field in fields)
+    ):
+        return HttpResponseBadRequest('Export fields must be a list of names.')
+    if file_format == 'cards' and not filter_examination_card_registrations(
+        scoped_registrations(request.user).exclude(child_id=None)
+    ).exists():
+        return HttpResponseBadRequest(_('No eligible examination cards are available to download.'))
     export_record = ExportHistory.objects.create(
         export_type='NFR Sector List',
         created_by=request.user,
         partner_name=request.user.partner.name if request.user.partner else '',
         fields=fields,
-        file_format=file_format,
+        file_format='zip' if file_format == 'cards' else file_format,
     )
-    queue_mscc_export(export_record.id, fields, file_format)
-    return JsonResponse({'status': 'started'})
+    if file_format == 'cards':
+        from .tasks import queue_examination_cards_export
+        queue_examination_cards_export(export_record.id)
+    else:
+        queue_mscc_export(export_record.id, fields, file_format)
+    return JsonResponse({'status': 'started', 'export_id': export_record.pk})
+
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+@never_cache
+def photo_upload(request, pk):
+    """Replace the saved child photograph without editing registration fields."""
+    registration = get_object_or_404(exceptional_exam_registrations(request.user), pk=pk)
+    if not can_manage_exceptional_exam(request.user, registration):
+        return HttpResponseForbidden(_('You do not have permission to upload a photograph for this child.'))
+    return_to = request.POST.get('return_to', request.GET.get('return_to', 'profile'))
+    if return_to not in ('list', 'profile'):
+        return_to = 'profile'
+    form = PhotoUploadForm(
+        request.POST if request.method == 'POST' else None,
+        request.FILES if request.method == 'POST' else None,
+    )
+    if request.method == 'POST' and form.is_valid():
+        try:
+            from student_registration.child.models import Child
+            with transaction.atomic():
+                child = Child.objects.select_for_update().get(pk=registration.child_id)
+                child.photo = form.cleaned_data['photo']
+                child.save(update_fields=['photo', 'modified'])
+                registration.modified_by = request.user
+                registration.save(update_fields=['modified_by', 'modified'])
+        except Exception:
+            logger.exception('Could not save photograph for child ID %s', registration.child_id)
+            form.add_error(None, _('The photograph could not be saved. Please try again.'))
+        else:
+            messages.success(request, _('Photograph uploaded successfully.'))
+            if return_to == 'list':
+                return redirect('mscc:list')
+            return redirect('mscc:child_profile', pk=registration.pk)
+    return render(request, 'mscc/photo_upload.html', {
+        'registration': registration, 'form': form, 'return_to': return_to,
+    })
+
+
+@login_required
+@require_GET
+@never_cache
+@vary_on_cookie
+def profile_photo(request, pk):
+    """Display the registered child's photograph through authenticated storage."""
+    from .document_exports import load_child_photo
+
+    registrations = exceptional_exam_registrations(request.user).select_related(None).select_related('child')
+    registration = get_object_or_404(registrations, pk=pk)
+    photo_data, _ = load_child_photo(registration.child)
+    if photo_data is None:
+        raise Http404('Photograph not found.')
+    response = HttpResponse(photo_data, content_type='image/png')
+    response['Cache-Control'] = 'private, no-store'
+    response['X-Content-Type-Options'] = 'nosniff'
+    return response
+
+
+@login_required
+@require_GET
+def examination_card(request, pk):
+    """Download a child's Word card from the current authorised registration."""
+    registration = get_object_or_404(scoped_registrations(request.user), pk=pk)
+    if not registration.child_id:
+        raise Http404('No child is associated with this registration.')
+    if not registration_can_have_examination_card(registration):
+        raise Http404(_('Examination cards are not available for RS registrations.'))
+    payload = build_examination_card(registration)
+    return FileResponse(
+        io.BytesIO(payload),
+        as_attachment=True,
+        filename='examination_card_child_%s_registration_%s.docx' % (
+            registration.child_id, registration.pk,
+        ),
+        content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    )
+
+
+def _download_owned_export(request, file_name, formats):
+    """Serve only completed export files associated with their requester."""
+    file_format = next(
+        (extension for extension in formats if is_valid_filename(file_name, extension)),
+        None,
+    )
+    if file_format is None:
+        raise Http404('Export file not found.')
+    urls = [reverse('mscc:export_download', args=[file_name])]
+    if file_format == 'csv':
+        urls.append(reverse('mscc:export_download_csv', args=[file_name]))
+    if not ExportHistory.objects.filter(
+        created_by=request.user, status='done', file_url__in=urls,
+    ).exists():
+        raise Http404('Export file not found.')
+
+    try:
+        stream = ExportStorage().open(file_name, 'rb')
+    except Exception:
+        logger.exception('Could not open export file %s', file_name)
+        raise Http404('Export file not found.')
+    content_types = {
+        'zip': 'application/zip',
+        'csv': 'text/csv',
+        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }
+    return FileResponse(
+        stream,
+        as_attachment=True,
+        filename=_export_download_filename(file_format),
+        content_type=content_types[file_format],
+    )
 
 
 def _export_download_filename(extension):
@@ -1212,24 +1595,12 @@ def _export_download_filename(extension):
 
 @login_required(login_url='/users/login')
 def get_file(request, file_name):
-    if is_valid_filename(file_name, 'zip'):
-        return download_file(file_name, _export_download_filename('zip'))
-    if is_valid_filename(file_name, 'csv'):
-        return download_file(file_name, _export_download_filename('csv'), content_type='text/csv')
-    if is_valid_filename(file_name, 'xlsx'):
-        return download_file(
-            file_name,
-            _export_download_filename('xlsx'),
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-    return HttpResponse("Invalid file.")
+    return _download_owned_export(request, file_name, ('zip', 'csv', 'xlsx'))
 
 
 @login_required(login_url='/users/login')
 def get_file_csv(request, file_name):
-    if is_valid_filename(file_name, 'csv'):
-        return download_file(file_name, _export_download_filename('csv'), content_type='text/csv')
-    return HttpResponse("Invalid file.", status=400)
+    return _download_owned_export(request, file_name, ('csv',))
 
 
 class WellbeingDashboardView(LoginRequiredMixin, TemplateView):

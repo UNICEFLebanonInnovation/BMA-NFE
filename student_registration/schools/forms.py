@@ -21,26 +21,46 @@ class SchoolForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=School.TYPE
     )
+    operating_shift = forms.ChoiceField(
+        label=_("Operating shift"),
+        widget=forms.Select, required=False,
+        choices=School.OPERATING_SHIFT
+    )
     number = forms.IntegerField(
-        label=_('School CERD Number'),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. 1234')}), required=False
+        label=_('School CERD ID Number'),
+        widget=forms.NumberInput(attrs={
+            'placeholder': _('e.g. 1234'),
+            'readonly': True,
+            'step': 1,
+        }),
+        required=False,
     )
     name = forms.CharField(
         label=_("School name"),
-        widget=forms.TextInput(attrs={'placeholder': _('e.g. Al Hikma Public School')}), required=True
+        widget=forms.TextInput(attrs={
+            'placeholder': _('e.g. Al Hikma Public School'),
+            'readonly': True,
+        }),
+        required=True,
     )
     director_name = forms.CharField(
-        label=_("School director name"),
-        widget=forms.TextInput(attrs={'placeholder': _('Full name of the director')}), required=True
+        label=_("Program Manager Name"),
+        widget=forms.TextInput(attrs={'placeholder': _('Full name of the program manager')}), required=True
     )
     land_phone_number = forms.RegexField(
-        label=_('School land phone number'),
-        regex=r'^[0-9]{2}-[0-9]{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+        label=_('Phone Number'),
+        regex=r'^[0-9]+$',
+        widget=forms.TextInput(attrs={
+            'inputmode': 'numeric',
+            'pattern': '[0-9]+',
+            'placeholder': _('Numbers only'),
+        })
     )
     email = forms.EmailField(
         label=_('School email'),
-        widget=forms.TextInput(attrs={'placeholder': 'Format: school@email.com'})
+        widget=forms.EmailInput(attrs={
+            'placeholder': _('Format: school@email.com'),
+        })
     )
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
@@ -75,6 +95,18 @@ class SchoolForm(forms.ModelForm):
     registration_level = forms.MultipleChoiceField(
         label=_('Registration level'),
         choices=School.REGISTRATION_LEVEL,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    provided_packages = forms.MultipleChoiceField(
+        label=_('Provided Services'),
+        choices=School.PROVIDED_PACKAGES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    programs = forms.MultipleChoiceField(
+        label=_('Education Program'),
+        choices=School.PROGRAM,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -162,15 +194,11 @@ class SchoolForm(forms.ModelForm):
         label=_("Dirasa End Date"),
         required=True
     )
-    receive_supplies = forms.ChoiceField(
-        label=_("Did the school receive school supplies/stationery?"),
-        widget=forms.Select, required=True,
-        choices=School.YES_NO
-    )
-    admin_staff_number = forms.ChoiceField(
+    admin_staff_number = forms.IntegerField(
         label=_("Number of Admin staff in the school"),
-        widget=forms.Select, required=False,
-        choices=((x, x) for x in range(0, 300)),
+        widget=forms.NumberInput(attrs={'min': 0, 'placeholder': '0'}),
+        required=True,
+        min_value=0,
     )
     offer_digital_learning = forms.ChoiceField(
         label=_("Does the school offer digital learning services?"),
@@ -186,15 +214,6 @@ class SchoolForm(forms.ModelForm):
         label=_("Nearby PHCC name"),
         widget=forms.TextInput(attrs={'placeholder': _('Nearby PHCC name')}),
         required=False
-    )
-
-    number_dirasa_children_disability = forms.IntegerField(
-        label=_('Total number of Children With Disability (Dirasa only)'),
-        widget=forms.TextInput, required=False
-    )
-    number_total_children_disability = forms.IntegerField(
-        label=_('Total number of Children With Disability (Excluding Dirasa)'),
-        widget=forms.TextInput, required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -232,48 +251,58 @@ class SchoolForm(forms.ModelForm):
                     Div('name', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('type', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('operating_shift', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('director_name', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('land_phone_number', css_class='col-md-3'),
+                    Div('director_name', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">6</span>'),
+                    Div('land_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('email', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('district', css_class='col-md-3'),
+                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">9</span>'),
+                    Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">10</span>'),
                     Div('cadaster', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('longitude', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                    Div('longitude', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('latitude', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('is_closed', css_class='col-md-3 '),
                     HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                    Div('is_closed', css_class='col-md-3 '),
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('admin_staff_number', css_class='col-md-3 '),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('offer_digital_learning', css_class='col-md-3 '),
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('have_digital_hub', css_class='col-md-3 '),
+                    Div('offer_digital_learning', css_class='col-md-3 '),
                     HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    Div('have_digital_hub', css_class='col-md-3 '),
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
                     Div('neaby_phcc', css_class='col-md-3 '),
                     css_class='row card-body',
+                ),
+                Fieldset(
+                    _('Provided Services & Programs'),
+                    Div(
+                        Div('provided_packages', css_class='col-md-6 bg-light p-3 rounded-3'),
+                        Div('programs', css_class='col-md-6 bg-light p-3 rounded-3'),
+                        css_class='row mb-3 mx-0',
+                    ),
                 ),
                 css_id='step-1'
 
@@ -326,24 +355,15 @@ class SchoolForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('CWD_accessible', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('receive_supplies', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('internet_available', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('digital_learning_programme', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_school_digital_capacity">18</span>'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_school_digital_capacity">17</span>'),
                     Div('school_digital_capacity', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                    Div('number_dirasa_children_disability', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
-                    Div('number_total_children_disability', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 css_id='step-2'
@@ -379,10 +399,25 @@ class SchoolForm(forms.ModelForm):
     #     instance = super(SchoolForm, self).save()
     #     messages.success(request, _('Your data has been sent successfully to the server'))
 
+    def clean_number(self):
+        """Keep the admin-imported CERD ID unchanged when editing a school."""
+        if self.instance and self.instance.pk:
+            return self.instance.number
+        return self.cleaned_data.get('number')
+
+    def clean_name(self):
+        """Keep the admin-imported school name unchanged when editing a school."""
+        if self.instance and self.instance.pk:
+            return self.instance.name
+        return self.cleaned_data.get('name')
+
     def save(self, request=None, instance=None):
         if instance:
             instance = super(SchoolForm, self).save()
-            serializer = SchoolSerializer(instance, data=request.POST)
+            data = request.POST.copy()
+            data['number'] = instance.number
+            data['name'] = instance.name
+            serializer = SchoolSerializer(instance, data=data)
             if serializer.is_valid():
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
@@ -433,6 +468,8 @@ class SchoolForm(forms.ModelForm):
             'longitude',
             'latitude',
             'registration_level',
+            'provided_packages',
+            'programs',
             'school_capacity',
             'empty_building',
             'number_children',
@@ -453,14 +490,12 @@ class SchoolForm(forms.ModelForm):
             'working_days',
             'academic_year_start',
             'academic_year_end',
-            'receive_supplies',
             'admin_staff_number',
             'offer_digital_learning',
             'have_digital_hub',
             'neaby_phcc',
-            'number_dirasa_children_disability',
-            'number_total_children_disability',
             'type',
+            'operating_shift',
         )
 
 

@@ -16,11 +16,17 @@
         <div class="card-body p-0">
             <div class="row g-0">
                 <div class="col-md-auto bg-primary d-flex align-items-center justify-content-center p-4" style="min-width: 150px;">
-                    <div class="text-white text-center">
+                    <div class="text-white text-center" data-profile-photo-container>
+                        {% if can_upload_photo %}
+                            <a href="{% url 'mscc:photo_upload' instance.pk %}?return_to=profile" class="d-inline-block position-relative text-white" aria-label="{% translate 'Upload Photo' %}" title="{% translate 'Upload Photo' %}">
+                        {% endif %}
                         {% if instance.child.photo %}
-                            <img src="{{ instance.child.photo.url }}" alt="{% trans 'Child Photo' %}" class="img-fluid rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid white;">
-                        {% else %}
-                            <i class="bi bi-person-bounding-box display-3"></i>
+                            <img src="{% url 'mscc:profile_photo' instance.pk %}" alt="{% trans 'Child Photo' %}" data-profile-photo class="img-fluid rounded-circle mb-2" width="80" height="80" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid white;">
+                        {% endif %}
+                        <i class="bi bi-person-bounding-box display-3{% if instance.child.photo %} d-none{% endif %}" data-profile-photo-fallback{% if instance.child.photo %} hidden{% endif %} aria-hidden="true"></i>
+                        {% if can_upload_photo %}
+                                <span class="position-absolute bottom-0 end-0 bg-white text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 26px; height: 26px;" aria-hidden="true"><i class="bi bi-camera"></i></span>
+                            </a>
                         {% endif %}
                         <div class="small mt-2 opacity-75">{% trans "Beneficiary" %}</div>
                     </div>
@@ -54,7 +60,12 @@
                                 <div class="fw-bold text-primary">{{ instance.round|default:"1" }}</div>
                             </div>
                         </div>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex flex-wrap justify-content-end gap-2">
+                            {% if can_export_examination_card %}
+                            <a href="{% url 'mscc:examination_card' instance.pk %}" class="btn btn-outline-success">
+                                <i class="bi bi-file-earmark-word me-2"></i> {% trans "Download Examination Card (Word)" %}
+                            </a>
+                            {% endif %}
                             {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_CENTER" %}
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newRoundModal">
                                 <i class="bi bi-plus-circle me-2"></i> {% trans "New Round" %}
@@ -75,35 +86,47 @@
         <div class="card-header bg-white p-0 border-bottom-0">
             <ul class="nav nav-tabs nav-fill redesign-tabs" id="profileTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link py-3 active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-pane" type="button" role="tab">
+                    <button class="nav-link py-3{% if current_tab == 'info' %} active{% endif %}" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-pane" type="button" role="tab" aria-controls="info-pane" aria-selected="{% if current_tab == 'info' %}true{% else %}false{% endif %}">
                         <i class="bi bi-info-circle me-2"></i> {% trans "Personal Info" %}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link py-3" id="edu-tab" data-bs-toggle="tab" data-bs-target="#edu-pane" type="button" role="tab">
+                    <button class="nav-link py-3{% if current_tab == 'services' %} active{% endif %}" id="edu-tab" data-bs-toggle="tab" data-bs-target="#edu-pane" type="button" role="tab" aria-controls="edu-pane" aria-selected="{% if current_tab == 'services' %}true{% else %}false{% endif %}">
                         <i class="bi bi-mortarboard me-2"></i> {% trans "Education situation" %}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link py-3" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance-pane" type="button" role="tab">
+                    <button class="nav-link py-3{% if current_tab == 'attendance' %} active{% endif %}" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance-pane" type="button" role="tab" aria-controls="attendance-pane" aria-selected="{% if current_tab == 'attendance' %}true{% else %}false{% endif %}">
                         <i class="bi bi-calendar-check me-2"></i> {% trans "Attendances" %}
                     </button>
                 </li>
+                {% if can_view_exceptional_exam %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-3{% if current_tab == 'exceptional_exam' %} active{% endif %}" id="exceptional-exam-tab" data-bs-toggle="tab" data-bs-target="#exceptional-exam-pane" type="button" role="tab" aria-controls="exceptional-exam-pane" aria-selected="{% if current_tab == 'exceptional_exam' %}true{% else %}false{% endif %}">
+                        <i class="bi bi-journal-check me-2" aria-hidden="true"></i> {% translate "Exceptional Exam" %}
+                    </button>
+                </li>
+                {% endif %}
             </ul>
         </div>
         <div class="tab-content" id="profileTabsContent">
-            <div class="tab-pane fade show active p-4" id="info-pane" role="tabpanel" aria-labelledby="info-tab">
+            <div class="tab-pane fade{% if current_tab == 'info' %} show active{% endif %} p-4" id="info-pane" role="tabpanel" aria-labelledby="info-tab">
                 {% include 'mscc/child_info_tab.html' %}
             </div>
-            <div class="tab-pane fade p-4" id="edu-pane" role="tabpanel" aria-labelledby="edu-tab">
+            <div class="tab-pane fade{% if current_tab == 'services' %} show active{% endif %} p-4" id="edu-pane" role="tabpanel" aria-labelledby="edu-tab">
                 {% include 'mscc/child_education_details.html' %}
                 <div class="mt-4">
                     {% include 'mscc/child_services_tab.html' %}
                 </div>
             </div>
-            <div class="tab-pane fade p-4" id="attendance-pane" role="tabpanel" aria-labelledby="attendance-tab">
+            <div class="tab-pane fade{% if current_tab == 'attendance' %} show active{% endif %} p-4" id="attendance-pane" role="tabpanel" aria-labelledby="attendance-tab">
                 {% include 'mscc/child_attendance_tab.html' %}
             </div>
+            {% if can_view_exceptional_exam %}
+            <div class="tab-pane fade{% if current_tab == 'exceptional_exam' %} show active{% endif %} p-4" id="exceptional-exam-pane" role="tabpanel" aria-labelledby="exceptional-exam-tab">
+                {% include 'mscc/exceptional_exam_tab.html' %}
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -168,30 +168,6 @@ class SchoolResource(resources.ModelResource):
             'cadaster',
             'longitude',
             'latitude',
-            'registration_level',
-            'school_capacity',
-            'empty_building',
-            'number_children',
-            'number_children_male',
-            'number_children_female',
-            'number_children_lebanese',
-            'number_children_non_lebanese',
-            'number_children_sbp',
-            'number_children_male_sbp',
-            'number_children_female_sbp',
-            'number_children_lebanese_sbp',
-            'number_children_non_lebanese_sbp',
-            'CWD_accessible',
-            'internet_available',
-            'school_digital_capacity',
-            'is_first_shift',
-            'working_days',
-            'academic_year_start',
-            'academic_year_end',
-            'receive_supplies',
-            'number_dirasa_children_disability',
-            'number_total_children_disability',
-            'is_closed',
         )
         export_order = fields
 
@@ -199,43 +175,24 @@ class SchoolResource(resources.ModelResource):
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = SchoolResource
 
-    fields = (
-            'number',
-            'name',
-            'is_closed',
-            'is_bma',
-            'director_name',
-            'land_phone_number',
-            'email',
-            'governorate',
-            'district',
-            'cadaster',
-            'longitude',
-            'latitude',
-            'registration_level',
-            'school_capacity',
-            'empty_building',
-            'number_children',
-            'number_children_male',
-            'number_children_female',
-            'number_children_lebanese',
-            'number_children_non_lebanese',
-            'number_children_sbp',
-            'number_children_male_sbp',
-            'number_children_female_sbp',
-            'number_children_lebanese_sbp',
-            'number_children_non_lebanese_sbp',
-            'CWD_accessible',
-            'internet_available',
-            'school_digital_capacity',
-            'is_first_shift',
-            'working_days',
-            'academic_year_start',
-            'academic_year_end',
-            'receive_supplies',
-            'number_dirasa_children_disability',
-            'number_total_children_disability',
-    )
+    # Keep the centrally managed school page aligned with the profile that ALP
+    # focal points see.
+    fields = School.ALP_PROFILE_FIELDS
+    LOCATION_TYPES_BY_FIELD = {
+        'governorate': 1,
+        'district': 2,
+        'cadaster': 3,
+    }
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        location_type_id = self.LOCATION_TYPES_BY_FIELD.get(db_field.name)
+        if location_type_id is not None:
+            kwargs['queryset'] = Location.objects.filter(type_id=location_type_id)
+
+        return super(SchoolAdmin, self).formfield_for_foreignkey(
+            db_field, request, **kwargs
+        )
+
     list_display = (
         'id',
         'number',
@@ -245,20 +202,17 @@ class SchoolAdmin(ImportExportModelAdmin):
         'email',
         'governorate',
         'district',
-        'is_closed',
-        'is_bma',
     )
     search_fields = (
         'name',
         'number',
     )
-    list_filter = ('is_closed', 'is_bma',)
 
     def has_delete_permission(self, request, obj=None):
         return False
 
 
-# admin.site.register(School, SchoolAdmin)
+admin.site.register(School, SchoolAdmin)
 # admin.site.register(Section, SectionAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(EducationalLevel, EducationalLevelAdmin)

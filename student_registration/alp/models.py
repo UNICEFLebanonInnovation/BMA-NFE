@@ -9,7 +9,7 @@ from django.db.models import JSONField
 from django.contrib.postgres.fields import ArrayField
 
 from student_registration.students.models import AttachmentType, IDType, Nationality, Training
-from student_registration.schools.models import School
+from student_registration.schools.models import School, Section
 from student_registration.child.models import Child
 
 class ALPRound(models.Model):
@@ -60,12 +60,12 @@ class ALPTeacher(TimeStampedModel):
         ('Level two', _('Level two')),
         ('Level three', _('Level three')),
         ('Level four', _('Level four')),
-        ('Level five', _('Level five')),
-        ('Level six', _('Level six')),
     )
     TEACHER_ASSIGNMENT = Choices(
-        ('Makani only', _('Makani only')),
-        ('Private and Makani', _('Private and Makani')),
+        ('ALP only', _('ALP only')),
+        ('ALP and FE', _('ALP and FE')),
+        ('ALP and private', _('ALP and private')),
+        ('other', _('other')),
     )
     YES_NO = Choices(
         ('', _('----------')),
@@ -139,11 +139,16 @@ class ALPTeacher(TimeStampedModel):
         max_length=100, blank=True, null=True,
         choices=TEACHER_ASSIGNMENT, verbose_name=_('Teacher Assignment')
     )
+    teacher_assignment_other = models.CharField(
+        max_length=255, blank=True, null=True,
+        verbose_name=_('Other teacher assignment')
+    )
     teaching_hours_private_school = models.IntegerField(
         blank=True, null=True, verbose_name=_('Number of teaching hours in private school')
     )
     teaching_hours_mscc = models.IntegerField(
-        blank=True, null=True, verbose_name=_('Number of teaching hours')
+        blank=True, null=True,
+        verbose_name=_('Number of teaching hours per week under ALP')
     )
     years_of_experience = models.IntegerField(
         blank=True, null=True, verbose_name=_('Years of experience in NFE/FE')
@@ -296,6 +301,8 @@ class ALPRegistration(TimeStampedModel):
             ('From Other NGO', _('From Other NGO')),
             ('From Displaced Community', _('From Displaced Community')),
             ('Referred by the municipality/Other formal sources', _('Referred by the municipality/Other formal sources')),
+            ('BLN programme', _('BLN programme')),
+            ('Transitioned from National NFE assessment', _('Transitioned from National NFE assessment')),
             ('Other Sources', _('Other Sources')),
     )
     CASH_SUPPORT_PROGRAMMES = Choices(
@@ -319,6 +326,10 @@ class ALPRegistration(TimeStampedModel):
     child = models.ForeignKey(Child, blank=False, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Child'))
     round = models.ForeignKey(ALPRound, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Round'))
     programme = models.ForeignKey(ALPProgram, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Programme'))
+    section = models.ForeignKey(
+        Section, null=True, related_name='+', on_delete=models.SET_NULL,
+        verbose_name=_('Section'),
+    )
 
     student_old = models.IntegerField(blank=True, null=True, verbose_name=_('Student old'))
     have_labour = models.CharField(
@@ -411,11 +422,17 @@ class ALPRegistration(TimeStampedModel):
         null=True,
         verbose_name=_('Registration date')
     )
+    consent_form = models.FileField(
+        upload_to='uploads/alp_registration/consent_forms',
+        blank=True,
+        null=True,
+        verbose_name=_('Consent form copy/photo'),
+    )
     partner_unique_number = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Partner unique child number')
+        verbose_name=_('Unique child number')
     )
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Owner'))
@@ -489,6 +506,10 @@ class ALPAttendance(TimeStampedModel):
     round = models.ForeignKey(ALPRound, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Round'))
     school = models.ForeignKey(School, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('School'))
     programme = models.ForeignKey(ALPProgram, blank=True, null=True, related_name='+', on_delete=models.SET_NULL, verbose_name=_('Programme'))
+    section = models.ForeignKey(
+        Section, null=True, related_name='+', on_delete=models.SET_NULL,
+        verbose_name=_('Section'),
+    )
 
     attendance_date = models.DateField(
         blank=True,

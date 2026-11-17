@@ -275,12 +275,16 @@ body {
 <aside id="sidebar">
   <div id="sidebar-header">
     <div class="logo">BMA Documentation</div>
-    <div class="version">Version 2.35 · UNICEF Lebanon NFE</div>
+    <div class="version">BMA — NFE Sector · UNICEF Lebanon</div>
   </div>
   <nav>
     <div class="section-label">Navigation</div>
     <a href="index.html">🏠 Home</a>
     <a href="end_user.html">📖 End User Manual</a>
+    <div class="section-label">Additional Guides</div>
+    <a href="admin.html">Administration Guide</a>
+    <a href="developer.html">Developer Guide</a>
+    <a href="system_details.html">System Overview</a>
     <div class="section-label">Developer Guides</div>
     <a href="01_project_overview.html">1. Project Overview</a>
     <a href="02_setup.html">2. Setup & Installation</a>
@@ -313,7 +317,10 @@ body {
         │              Center ◄────────┤
         │                  │           │
         ▼                  ▼           ▼
-  Registration ────► Child        Section
+  Registration ────► Child ◄──── ALPRegistration ────► School
+        │                                  │
+        │                                  ├──► ALPGrading
+        │                                  └──► ALPAttendanceChild ──► ALPAttendance
         │
         ├──► ProvidedServices
         ├──► EducationAssessment
@@ -1423,6 +1430,71 @@ Location (MPTT tree)
 <h3 id="center-clm-app"><code>Center</code> (CLM app)</h3>
 <p>CLM-specific center configuration (note: also a model in <code>locations</code> — CLM has its own variant).</p>
 <hr />
+<h2 id="alp-app"><code>alp</code> App</h2>
+<p>The Accelerated Learning Programme. Records are owned by a <code>School</code> and reuse the shared
+<code>child.Child</code> demographic record, so a child can appear in both MSCC and ALP without duplicated
+demographics.</p>
+<h3 id="alpround"><code>ALPRound</code></h3>
+<p>Academic year. <code>current_year</code> flags the round that forms and dropdowns default to.</p>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>name</td><td>CharField</td><td>Academic year label</td></tr>
+<tr><td>current_year</td><td>BooleanField</td><td>Restricts selectable rounds on ALP forms</td></tr>
+</tbody>
+</table>
+<h3 id="alpprogram"><code>ALPProgram</code></h3>
+<p>ALP programme / level offered at a school. Single <code>name</code> field.</p>
+<h3 id="alpteacher"><code>ALPTeacher</code></h3>
+<p>Teacher profile, aligned with the MSCC <code>Teacher</code> model but scoped to a school.</p>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>first_name / father_name / last_name / mother_fullname</td><td>CharField</td><td>Identity</td></tr>
+<tr><td>sex, birthdate, nationality, id_type, id_number</td><td>mixed</td><td>Demographics and identity document</td></tr>
+<tr><td>unicef_id</td><td>CharField</td><td>Generated deduplication key</td></tr>
+<tr><td>round</td><td>FK → ALPRound</td><td>Academic year</td></tr>
+<tr><td>school</td><td>FK → School</td><td>Scoping key for all ALP queries</td></tr>
+<tr><td>subjects_provided, registration_level</td><td>ArrayField</td><td>Subjects taught and grade levels covered</td></tr>
+<tr><td>teacher_assignment (+ _other)</td><td>CharField</td><td>Assignment type</td></tr>
+<tr><td>teaching_hours_private_school, teaching_hours_mscc, years_of_experience</td><td>IntegerField</td><td>Workload</td></tr>
+<tr><td>trainings</td><td>M2M</td><td>Trainings attended</td></tr>
+<tr><td>training_sessions_attended, training_date_of_completion, extra_coaching (+ _specify)</td><td>mixed</td><td>Training record</td></tr>
+<tr><td>attach_file_1..5, attach_type_1..5, attach_short_description_1..5</td><td>File / FK / Char</td><td>Up to five supporting documents</td></tr>
+<tr><td>owner, modified_by</td><td>FK → User</td><td>Audit</td></tr>
+</tbody>
+</table>
+<h3 id="alpregistration"><code>ALPRegistration</code></h3>
+<p>The ALP fact table. Soft-deleted via <code>deleted</code> / <code>deleted_by</code>.</p>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>school</td><td>FK → School</td><td>Scoping key; set from the user account, not the form</td></tr>
+<tr><td>child</td><td>FK → Child</td><td>Shared demographic record</td></tr>
+<tr><td>round, programme</td><td>FK</td><td>Academic year and ALP programme</td></tr>
+<tr><td>registration_date</td><td>DateField</td><td>Cannot be in the future</td></tr>
+<tr><td>have_labour, labour_type (+ _specify), labour_hours, labour_weekly_income</td><td>mixed</td><td>Child labour block; <code>have_labour</code> is required and gates the rest</td></tr>
+<tr><td>labour_condition, cash_support_programmes, mscc_packages</td><td>ArrayField</td><td>Multi-select answers</td></tr>
+<tr><td>source_of_identification (+ _specify)</td><td>CharField / Text</td><td>ALP-specific referral source list</td></tr>
+<tr><td>consent_form</td><td>FileField</td><td>Scanned or photographed signed consent form (PDF or image)</td></tr>
+<tr><td>partner_unique_number, student_old, type</td><td>mixed</td><td>Reference identifiers</td></tr>
+<tr><td>owner, modified_by, deleted, deleted_by</td><td>mixed</td><td>Audit and soft delete</td></tr>
+</tbody>
+</table>
+<h3 id="alpgrading"><code>ALPGrading</code> / <code>ALPGradingDefinition</code></h3>
+<p><code>ALPGradingDefinition</code> holds one row per subject (<code>material</code>) with a
+<code>min_grade</code> and <code>max_grade</code>. <code>ALPGrading.grading_data</code> is a
+<code>JSONField</code> mapping the definition's primary key (as a string) to the entered score, so subjects
+can be added or retired from the admin without a migration or a code change.</p>
+<h3 id="alpattendance"><code>ALPAttendance</code> / <code>ALPAttendanceChild</code></h3>
+<p><code>ALPAttendance</code> is one attendance day for a school, round and programme, with
+<code>day_off</code> and <code>close_reason</code> for days the school did not open.
+<code>ALPAttendanceChild</code> holds one row per student with <code>attended</code>,
+<code>absence_reason</code> and <code>absence_reason_other</code>.</p>
+<h3 id="alpteacherattendance"><code>ALPTeacherAttendance</code></h3>
+<p>One row per teacher per date with a <code>status</code> value, saved in bulk from the teacher attendance
+screen.</p>
+<hr />
 <h2 id="attendances-app"><code>attendances</code> App</h2>
 <h3 id="msccattendance"><code>MSCCAttendance</code></h3>
 <p>Daily attendance session at an MSCC center.</p>
@@ -1596,7 +1668,7 @@ Location (MPTT tree)
 </ul>
   </div>
   <div id="footer">
-    BMA Student Registration Compiler &nbsp;|&nbsp; Version 2.35 &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
+    BMA — NFE Sector Platform &nbsp;|&nbsp; UNICEF Lebanon NFE Sector
   </div>
 </div>
 
