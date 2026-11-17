@@ -38,6 +38,6 @@ def can_manage_exceptional_exam(user, registration):
     # an editor: those accounts need an explicit centre-editing role.
     return bool(
         has_group(user, 'MSCC')
-        and not has_group(user, 'MSCC_UNICEF')
+        and not has_group(user, 'MSCC_MEHE')
         and not has_group(user, 'MSCC_PARTNER')
     )

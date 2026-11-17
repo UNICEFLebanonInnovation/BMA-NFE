@@ -179,10 +179,6 @@ list and to expose inclusion-specific navigation.
 - YouthServiceGilFormView
 - YouthServiceMaharatiFormView
 
-### `MSCC_FULL`
-**Capabilities:** High-level access with unrestricted viewing privileges, primarily bypassing filters in lists.
-- MainListView (unrestricted access)
-
 ### `MSCC_PARTNER`
 **Capabilities:** Access for MSCC partner organizations, typically limited to filtering views based on partner assignment. Cannot add or edit most records.
 - AttendanceView
@@ -193,8 +189,8 @@ list and to expose inclusion-specific navigation.
 - TeacherEditView
 - TeacherListView (filtered)
 
-### `MSCC_UNICEF`
-**Capabilities:** Broad analytical and view access for UNICEF staff. Allows wide visibility over MSCC data and reporting.
+### `MSCC_MEHE`
+**Capabilities:** Broad analytical and view access for MEHE staff. Allows wide visibility over MSCC data and reporting.
 - AttendanceReport
 - AttendanceView
 - CenterListView
@@ -215,14 +211,14 @@ user-type filter and the user-type column) and to branch navigation for youth wo
 
 | Group | Note |
 |---|---|
-| `MSCC_FULL` | Not a `group_required` role. It is checked with `has_group` to bypass the center/partner filter on `MainListView`. |
+| `MSCC_FULL` | **Retired** (see below). The group is removed by the `users.0002_remove_mscc_full_group` migration. |
 | `EXPORT` | Not a `group_required` role. It is checked with `has_group` to reveal export actions on lists that gate them. |
 | `YOUTH` | Classification group, as described above. |
 
 ## Where this is enforced in code
 
 MSCC Excel exports with photographs and Word examination cards use the same registration scope:
-staff, superusers and `MSCC_UNICEF` can export all non-deleted registrations; `MSCC_PARTNER` can
+staff, superusers and `MSCC_MEHE` can export all non-deleted registrations; `MSCC_PARTNER` can
 export registrations for their assigned partner; `MSCC_CENTER` can export registrations for their
 assigned centre. Accounts without one of these roles and a required assignment cannot export child
 records. Selecting all registrations ignores search filters, while selecting current filters applies
@@ -233,7 +229,7 @@ returns a Word card only for an accessible registration. The profile action foll
 Background child export status and downloads are limited to the user who created the export.
 
 The **Exceptional Exam** profile section and `mscc:exceptional_exam_form` use scoped MSCC registrations:
-staff, superusers and `MSCC_UNICEF` can read across registrations; partner users can read their own
+staff, superusers and `MSCC_MEHE` can read across registrations; partner users can read their own
 partner's registrations; centre users can read their assigned centre's registrations. A plain `MSCC`
 user with an assigned centre can read that centre's exam details. Deleted registrations and records
 without a child are excluded.
@@ -255,3 +251,38 @@ read scope or a staff/superuser account, and returns only the requested parent's
 | ALP school scoping | `student_registration/alp/utils.py` → `filter_by_school()` |
 | ALP read-only for superusers | `student_registration/alp/views.py` → `ALPEditPermissionMixin` |
 | ALP form dropdown scoping | `student_registration/alp/mixins.py` → `ALPSchoolFilterMixin` |
+
+## Retired role
+
+`MSCC_FULL` is no longer required. It did not bypass the current list filters;
+it only added redundant UI checks and selected a fallback table for users with
+no data scope. Centre, partner and MEHE list scopes remain unchanged.
+
+- The Add New Child button requires `MSCC_CENTER` plus an assigned centre and partner.
+- New Round uses the existing view roles, `MSCC` or `MSCC_CENTER` (or a superuser).
+- MEHE and partner groups alone do not enable the New Round action.
+
+Deployment: run `python manage.py migrate`. The `users.0002_remove_mscc_full_group`
+data migration removes the old group and its memberships. If a deployment attached
+Django model permissions to that group, those grants are preserved as direct
+permissions for its existing members only. No replacement role is assigned and no
+other group's permissions change. The cleanup is idempotent and intentionally
+irreversible: deleted memberships cannot be reconstructed by reversing migrations.
+
+## MEHE role name
+
+The central MSCC role is `MSCC_MEHE`. Deploy the matching code and run
+`python manage.py migrate` to apply `users.0003_rename_mscc_unicef_to_mscc_mehe`.
+Existing role members and model permissions are preserved. If the destination
+group already exists, its memberships and grants are combined with the old
+group before removing the old group. Other roles and assignments are unchanged.
+
+## Documentation routes
+
+`dashboard:user_manual` (`/dashboard/manual/`, `/dashboard/manual/<nfe|alp>/`), the screenshot route
+`/dashboard/manual/screenshot/<en|ar>/<name>.png` and the download route
+`/dashboard/manual/download/<module>/<lang>/<docx|pdf>/` only require an authenticated account: the manuals
+contain no beneficiary data. The page opens the ALP manual for `ALP_SCHOOL` accounts and the NFE manual for
+everybody else; the module can be switched from the page. The **admin panel manual** (`/dashboard/manual/admin/`
+and its downloads) is only served to `is_staff` or `is_superuser` accounts (`manual_views.user_can_read_manual`). Implemented in
+`student_registration/dashboard/manual_views.py`.

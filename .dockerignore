@@ -1,0 +1,17 @@
+.git
+.env
+.env.*
+.venv
+venv
+.pytest_cache
+**/.pytest_cache
+**/__pycache__
+**/*.pyc
+**/*.pyo
+*.log
+
+# Firebase service-account key: supply separately at runtime
+utility/firebase-creds.json
+
+# Firebase private keys: supply separately at runtime
+**/*firebase-adminsdk*.json

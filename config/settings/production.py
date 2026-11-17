@@ -2,7 +2,7 @@
 """
 Production Configurations
 
-- Use Amazon's S3 for storing static files and uploaded media
+- Use the configured VM file share for uploaded media and generated exports
 - Use mailgun to send emails
 - Use Redis for cache
 - Use sentry for error logging

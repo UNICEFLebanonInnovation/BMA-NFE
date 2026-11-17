@@ -97,7 +97,7 @@ class PhotoActionsAndBulkCardsTests(TestCase):
         cls.partner_viewer = cls.make_user(
             'actions-partner-viewer', ['MSCC', 'MSCC_PARTNER'], partner=cls.partner, center=cls.center,
         )
-        cls.unicef_viewer = cls.make_user('actions-unicef-viewer', ['MSCC', 'MSCC_UNICEF'], center=cls.center)
+        cls.unicef_viewer = cls.make_user('actions-unicef-viewer', ['MSCC', 'MSCC_MEHE'], center=cls.center)
         cls.unassigned = cls.make_user('actions-unassigned', ['MSCC', 'MSCC_CENTER'])
         cls.admin = cls.make_user('actions-admin', [], is_staff=True)
 

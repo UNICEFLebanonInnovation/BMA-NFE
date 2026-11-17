@@ -899,7 +899,7 @@ class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
             trend_data.append({'date': key, 'value': trend_map.get(key, 0)})
 
         recent_exports = ExportHistory.objects.filter(
-            export_type__icontains='ALP'
+            export_type__icontains='ALP', created_by=self.request.user
         ).order_by('-created')[:5]
         export_rows = []
         for export in recent_exports:
@@ -914,7 +914,7 @@ class ALPLandingPage(LoginRequiredMixin, ALPUserRequiredMixin, TemplateView):
                 'export_type': export.export_type,
                 'created_display': created_display,
                 'status': export.status,
-                'file_url': export.file.url if export.file and export.file.name else '#',
+                'file_url': export.file_url or '',
             })
 
         context.update({

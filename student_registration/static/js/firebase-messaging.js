@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging.js";
+import { getMessaging, getToken, isSupported, onMessage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging.js";
 
 
 function translateMessage(message) {
@@ -16,45 +16,86 @@ const firebaseConfig = {
   measurementId: "G-XCEDM17QFX"
 };
 
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
-window.firebaseMessaging = messaging;
+async function refreshSubscriptionKey(registration, vapidKey) {
+  const subscription = await registration.pushManager.getSubscription();
+  if (!subscription) {
+    return;
+  }
+  const currentKey = subscription.options.applicationServerKey;
+  const encodedKey = currentKey ? btoa(String.fromCharCode(...new Uint8Array(currentKey)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') : '';
+  if (encodedKey !== vapidKey && !(await subscription.unsubscribe())) {
+    throw new Error('Unable to refresh the previous web push subscription.');
+  }
+}
 
+async function initializeMessaging() {
+  try {
+    if (!window.isSecureContext || !("Notification" in window) ||
+        !("serviceWorker" in navigator) || !(await isSupported())) {
+      return;
+    }
 
-navigator.serviceWorker
-  .register("/static/firebase-messaging-sw.js")
-  .then((registration) => {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        getToken(messaging, {
-          vapidKey: "BAwRHhzYusFpd-Z_CTfU3AE1w_LuOgCJ2LpTQMPbIUNZQv343yQwd2fF49XxGj09AwArLcZ7icVMTlgxcaX53nE",
-          serviceWorkerRegistration: registration,
-        }).then((token) => {
-          const csrfToken = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("csrftoken="))
-            ?.split("=")[1] || document.querySelector("[name=csrfmiddlewaretoken]")?.value;
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+    window.firebaseMessaging = messaging;
+    // Receiving messages must not depend on successfully saving a new token.
+    onMessage(messaging, handleMessage);
 
-          if (!csrfToken) {
-            console.warn("Unable to register FCM token because the CSRF token is missing.");
-            return;
-          }
+    if (Notification.permission === "denied") {
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      return;
+    }
 
-          fetch("/api/save-fcm-token/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": csrfToken,
-            },
-            credentials: "same-origin",
-            body: JSON.stringify({ token }),
-          });
-        });
-      }
+    const registration = await navigator.serviceWorker.register("/static/firebase-messaging-sw.js");
+    const vapidKey = "BLJ6-9NoQ9xhZ7KFBiU5ijOargaiaOn6LJ_JwjtY4A4W04XnThpJVpW8nNtQmc7wFNkd2lvVQUyU5tiqNTOpRZA";
+    // A subscription created with the previous project's key cannot receive
+    // messages signed with this project's Web Push credentials.
+    await refreshSubscriptionKey(registration, vapidKey);
+    const token = await getToken(messaging, {
+      vapidKey,
+      serviceWorkerRegistration: registration,
     });
-  });
+    if (!token) {
+      return;
+    }
+    const csrfToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("csrftoken="))
+      ?.split("=")[1] || document.querySelector("[name=csrfmiddlewaretoken]")?.value;
 
-onMessage(messaging, (payload) => {
+    if (!csrfToken) {
+      console.warn("Unable to register FCM token because the CSRF token is missing.");
+      return;
+    }
+
+    const response = await fetch("/api/save-fcm-token/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken,
+      },
+      credentials: "same-origin",
+      body: JSON.stringify({ token }),
+    });
+    if (!response.ok) {
+      throw new Error(`Saving the FCM token failed (${response.status}).`);
+    }
+  } catch (error) {
+    // Push notifications are optional; export polling and history still work.
+    console.warn(
+      "Push notifications are unavailable. Downloads remain available in Recent Exports. " +
+      "For messaging/token-subscribe-failed, verify the Firebase web config, " +
+      "VAPID key and FCM Registration API settings for the same project.",
+      error
+    );
+  }
+}
+
+function handleMessage(payload) {
   if (payload.data && (payload.data.type === "mscc_export_ready" || payload.data.type === "mscc_export_failed")) {
     const isSuccess = payload.data.type === "mscc_export_ready";
 
@@ -85,4 +126,6 @@ onMessage(messaging, (payload) => {
         }
     }
   }
-});
+}
+
+initializeMessaging();

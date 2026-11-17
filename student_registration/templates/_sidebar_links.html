@@ -2,7 +2,7 @@
 
 {% if request.user.is_authenticated %}
 
-{% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
+{% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_MEHE" or request.user|has_group:"MSCC" %}
 <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
     <i class="bi bi-house-door"></i> <span>{% trans "Home" %}</span>
 </a>
@@ -102,6 +102,9 @@
 {# they work in. The technical wiki is superuser-only, matching the access     #}
 {# check in dashboard.views.wiki_page_is_visible_to.                           #}
 <div class="px-4 mt-4 mb-2 text-muted small text-uppercase fw-bold">{% trans "Documentation" %}</div>
+<a href="{% url 'dashboard:user_manual' %}" class="nav-link {% if request.resolver_match.url_name == 'user_manual' or request.resolver_match.url_name == 'user_manual_module' %}active{% endif %}">
+    <i class="bi bi-journal-richtext"></i> <span>{% trans "User Manual" %}</span>
+</a>
 <a href="{% url 'dashboard:wiki_guide' 'end_user' %}" class="nav-link {% if request.resolver_match.url_name == 'wiki_guide_index' or request.resolver_match.url_name == 'wiki_guide' %}active{% endif %}">
     <i class="bi bi-book-half"></i> <span>{% trans "User Guide" %}</span>
 </a>

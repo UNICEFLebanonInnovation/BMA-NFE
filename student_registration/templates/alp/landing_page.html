@@ -109,7 +109,7 @@
                                     </span>
                                 </td>
                                 <td class="text-end pe-3">
-                                    {% if export.status == 'done' %}
+                                    {% if export.status == 'done' and export.file_url %}
                                     <a href="{{ export.file_url }}" class="btn btn-sm btn-outline-primary fw-bold" title="{% trans 'Download' %}">
                                         <i class="bi bi-download"></i>
                                     </a>

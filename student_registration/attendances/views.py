@@ -1114,7 +1114,7 @@
 #             vw_data_str += " AND center_id = %s"
 #             query_params.append(center_id)
 #
-#         if not has_group(request.user, 'MSCC_UNICEF'):
+#         if not has_group(request.user, 'MSCC_MEHE'):
 #             if request.user.partner_id:
 #                 vw_data_str += " AND partner_id = %s"
 #                 query_params.append(request.user.partner_id)
@@ -1229,7 +1229,7 @@
 #             vw_data_str += " AND center_id = %s"
 #             query_params.append(center_id)
 #
-#         if not has_group(request.user, 'MSCC_UNICEF'):
+#         if not has_group(request.user, 'MSCC_MEHE'):
 #             if request.user.partner_id:
 #                 vw_data_str += " AND partner_id = %s"
 #                 query_params.append(request.user.partner_id)
@@ -1346,7 +1346,7 @@
 #             vw_data_str += " AND center_id = %s"
 #             query_params.append(center_id)
 #
-#         if not has_group(request.user, 'MSCC_UNICEF'):
+#         if not has_group(request.user, 'MSCC_MEHE'):
 #             if request.user.center_id:
 #                 vw_data_str += " AND center_id = %s"
 #                 query_params.append(request.user.center_id)

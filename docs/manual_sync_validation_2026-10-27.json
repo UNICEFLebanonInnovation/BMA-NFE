@@ -1,0 +1,521 @@
+{
+  "date": "2026-10-27",
+  "fixture": "2bae8f7",
+  "scenario_groups": 86,
+  "compared_shared_fields": 147,
+  "checks": {
+    "Normal ProgramStaff screen creates a Makani teacher with arrays, flags, hours and Arabic name": {
+      "result": "passed"
+    },
+    "round: source values match actual wire payload and NFE row": {
+      "result": "passed",
+      "columns_checked": 3,
+      "columns": [
+        "name",
+        "year",
+        "current_year"
+      ],
+      "ignored": [
+        "end_date",
+        "start_date"
+      ]
+    },
+    "center_a: source values match actual wire payload and NFE row": {
+      "result": "passed",
+      "columns_checked": 16,
+      "columns": [
+        "name",
+        "type",
+        "email",
+        "p_code",
+        "latitude",
+        "programs",
+        "is_active",
+        "longitude",
+        "neaby_phcc",
+        "manager_name",
+        "phone_number",
+        "cwd_accessible",
+        "have_digital_hub",
+        "provided_packages",
+        "admin_staff_number",
+        "offer_digital_learning"
+      ],
+      "ignored": [
+        "active_during_emergency",
+        "is_tarl",
+        "is_tls",
+        "provide_french_language"
+      ]
+    },
+    "staff: source values match actual wire payload and NFE row": {
+      "result": "passed",
+      "columns_checked": 7,
+      "columns": [
+        "facilitator_name",
+        "sex",
+        "email",
+        "primary_phone_number",
+        "teaching_hours_mscc",
+        "teacher_assignment",
+        "program_staff_details"
+      ],
+      "ignored": []
+    },
+    "registration: source values match actual wire payload and NFE row": {
+      "result": "passed",
+      "columns_checked": 15,
+      "columns": [
+        "type",
+        "deleted",
+        "have_labour",
+        "labour_type",
+        "student_old",
+        "labour_hours",
+        "mscc_packages",
+        "labour_condition",
+        "registration_date",
+        "labour_type_specify",
+        "labour_weekly_income",
+        "partner_unique_number",
+        "cash_support_programmes",
+        "source_of_identification",
+        "source_of_identification_specify"
+      ],
+      "ignored": [
+        "child_is_idp",
+        "child_outreach",
+        "consent"
+      ]
+    },
+    "service: source values match actual wire payload and NFE row": {
+      "result": "passed",
+      "columns_checked": 6,
+      "columns": [
+        "dropout_date",
+        "class_section",
+        "education_status",
+        "education_program",
+        "registration_date",
+        "catch_up_registered"
+      ],
+      "ignored": [
+        "ppl_sector"
+      ]
+    },
+    "assessment: source values match actual wire payload and NFE row": {
+      "result": "passed",
+      "columns_checked": 23,
+      "columns": [
+        "barriers",
+        "participation",
+        "barriers_other",
+        "post_test_done",
+        "pre_math_grade",
+        "post_math_grade",
+        "pre_arabic_grade",
+        "post_arabic_grade",
+        "pre_attended_math",
+        "pre_modality_math",
+        "post_attended_math",
+        "post_modality_math",
+        "pre_language_grade",
+        "post_language_grade",
+        "pre_attended_arabic",
+        "pre_modality_arabic",
+        "post_attended_arabic",
+        "post_modality_arabic",
+        "pre_attended_language",
+        "pre_modality_language",
+        "school_year_completed",
+        "post_attended_language",
+        "post_modality_language"
+      ],
+      "ignored": []
+    },
+    "grading: source values match actual wire payload and NFE row": {
+      "result": "passed",
+      "columns_checked": 4,
+      "columns": [
+        "pre_test",
+        "post_test",
+        "school_test",
+        "programme_type"
+      ],
+      "ignored": [
+        "mid_test"
+      ]
+    },
+    "referral: source values match actual wire payload and NFE row": {
+      "result": "passed",
+      "columns_checked": 6,
+      "columns": [
+        "dropout_date",
+        "referred_service",
+        "referred_service_other",
+        "receive_needed_material",
+        "recommended_learning_path",
+        "referred_formal_education"
+      ],
+      "ignored": []
+    },
+    "attendance: source values match actual wire payload and NFE row": {
+      "result": "passed",
+      "columns_checked": 5,
+      "columns": [
+        "day_off",
+        "close_reason",
+        "class_section",
+        "attendance_date",
+        "education_program"
+      ],
+      "ignored": []
+    },
+    "Two rounds share one child, exact child data and byte-identical source photo": {
+      "result": "passed"
+    },
+    "All centre, round, registration, child and attendance references resolve to the correct NFE local IDs": {
+      "result": "passed"
+    },
+    "round: normal edit updates the existing target ID without duplication": {
+      "result": "passed"
+    },
+    "center_a: normal edit updates the existing target ID without duplication": {
+      "result": "passed"
+    },
+    "registration: normal edit updates the existing target ID without duplication": {
+      "result": "passed"
+    },
+    "service: normal edit updates the existing target ID without duplication": {
+      "result": "passed"
+    },
+    "grading: normal edit updates the existing target ID without duplication": {
+      "result": "passed"
+    },
+    "referral: normal edit updates the existing target ID without duplication": {
+      "result": "passed"
+    },
+    "attendance: normal edit updates the existing target ID without duplication": {
+      "result": "passed"
+    },
+    "ProgramStaff edit replaces arrays, preserves zero hours, clears email and changes Yes to No": {
+      "result": "passed"
+    },
+    "Child metadata updates both registrations and transfers zero unchanged photo bytes": {
+      "result": "passed"
+    },
+    "Saving the source Student without changing the image reuses the existing target photo": {
+      "result": "passed"
+    },
+    "Source image replacement saves exact green bytes on the existing NFE child": {
+      "result": "passed"
+    },
+    "Normal education assessment edit transfers all post-test values including a zero grade": {
+      "result": "passed"
+    },
+    "NFE normal assessment screen also accepts a completed grade of zero": {
+      "result": "passed"
+    },
+    "NFE optional blank grades save safely without an error or a partial assessment": {
+      "result": "passed"
+    },
+    "A subsequent Compiler assessment edit overwrites and audits the local NFE assessment edit": {
+      "result": "passed"
+    },
+    "Editing an attendance child updates the existing target day and absence values": {
+      "result": "passed"
+    },
+    "Partner name edits republish the correct embedded partner without changing its identity": {
+      "result": "passed"
+    },
+    "Fresh TLS-only centre, child, Student photo, registration, service and Dirasa teacher create no sync events": {
+      "result": "passed"
+    },
+    "TLS child/Student-photo/registration edits remain excluded and no TLS child exists in NFE": {
+      "result": "passed"
+    },
+    "All-category bulk is partner/round/Makani scoped and leaves the other partner unchanged": {
+      "result": "passed",
+      "deliveries": 10
+    },
+    "Multiple master categories sync two centres and one ProgramStaff without a round": {
+      "result": "passed"
+    },
+    "Two simultaneous clicks on the same bulk form create one durable request": {
+      "result": "passed"
+    },
+    "A local NFE photo edit is detected and overwritten by the authoritative Compiler image": {
+      "result": "passed"
+    },
+    "Clearing the source photo clears the NFE reference without duplicating the child": {
+      "result": "passed"
+    },
+    "Re-upload after clearing restores the photo on the same NFE child": {
+      "result": "passed"
+    },
+    "Cross-partner attendance: normal save is blocked before HTTP and preserves NFE data": {
+      "result": "passed"
+    },
+    "Cross-partner attendance: correction delivers automatically to the same NFE row": {
+      "result": "passed"
+    },
+    "Mismatched attendance child: normal save is blocked before HTTP and preserves NFE data": {
+      "result": "passed"
+    },
+    "Mismatched attendance child: correction delivers automatically to the same NFE row": {
+      "result": "passed"
+    },
+    "Attendance in another round: normal save is blocked before HTTP and preserves NFE data": {
+      "result": "passed"
+    },
+    "Attendance in another round: correction delivers automatically to the same NFE row": {
+      "result": "passed"
+    },
+    "Registration centre/partner mismatch: normal save is blocked before HTTP and preserves NFE data": {
+      "result": "passed"
+    },
+    "Registration centre/partner mismatch: correction delivers automatically to the same NFE row": {
+      "result": "passed"
+    },
+    "Education service round mismatch: normal save is blocked before HTTP and preserves NFE data": {
+      "result": "passed"
+    },
+    "Education service round mismatch: correction delivers automatically to the same NFE row": {
+      "result": "passed"
+    },
+    "Receiver down: source form still saves and target remains unchanged with a durable retry": {
+      "result": "passed"
+    },
+    "Receiver restart automatically delivers the same failed event without manual resubmission": {
+      "result": "passed"
+    },
+    "NFE storage unavailable: complete child/photo event rolls back and no unnecessary image bytes upload": {
+      "result": "passed"
+    },
+    "NFE storage recovery commits the same event and preserves the correct photo": {
+      "result": "passed"
+    },
+    "Browser 200-photo import: all 200 children, registrations, image checksums and references are correct": {
+      "result": "passed",
+      "deliveries": 202,
+      "uploaded_bytes": 435400
+    },
+    "Photo uploads stay within the configured four concurrent upload lanes": {
+      "result": "passed",
+      "observed_concurrency": 4
+    },
+    "Repeating all 200 photos uploads zero image bytes, keeps paths/IDs and creates no duplicates": {
+      "result": "passed",
+      "deliveries": 202
+    },
+    "Real receiver HTTP refuses missing and invalid service credentials": {
+      "result": "passed"
+    },
+    "Twenty concurrent retries of one real event return the same ID without rewriting the registration": {
+      "result": "passed"
+    },
+    "An applied event ID cannot be reused for another record": {
+      "result": "passed"
+    },
+    "Twenty concurrent new events for one identity create one NFE record": {
+      "result": "passed"
+    },
+    "Older updates and older deletions cannot overwrite a newer received value": {
+      "result": "passed"
+    },
+    "A deletion tombstone prevents an older event from resurrecting the record": {
+      "result": "passed"
+    },
+    "A missing-parent event remains retryable and the same event applies after the parent arrives": {
+      "result": "passed"
+    },
+    "Receiver rejects cross-partner registration HTTP and rolls back its embedded child changes": {
+      "result": "passed"
+    },
+    "Receiver independently rejects cross-partner attendance HTTP and preserves the whole existing day": {
+      "result": "passed"
+    },
+    "Invalid multipart checksum rolls back child/registration metadata and preserves the previous photo": {
+      "result": "passed"
+    },
+    "Deleting an attendance row republishes the day and removes the target row atomically": {
+      "result": "passed"
+    },
+    "Deleting a disposable referral removes only that BMA identity and keeps the other referral": {
+      "result": "passed"
+    },
+    "Deleting one registration preserves the shared child, remaining registration and its photo": {
+      "result": "passed"
+    },
+    "Normal ProgramStaff deletion removes only its source type and preserves a legacy teacher with the identical BMA ID": {
+      "result": "passed"
+    },
+    "Partner-assigned operator sees only its partner and can use masters without round permission": {
+      "result": "passed"
+    },
+    "Restricted operator with ProgramStaff permission completes a real partner-scoped bulk sync": {
+      "result": "passed"
+    },
+    "Forging another partner in a valid operator form cannot create a sync request": {
+      "result": "passed"
+    },
+    "Restricted operator cannot read another operator/partner bulk-run audit": {
+      "result": "passed"
+    },
+    "Bulk requests without a CSRF token are rejected": {
+      "result": "passed"
+    },
+    "Source photo metadata unavailable: source save commits, delivery retries, and NFE data is untouched": {
+      "result": "passed"
+    },
+    "Source photo storage recovery sends the same event and reuses the unchanged target image": {
+      "result": "passed"
+    },
+    "Missing target image triggers exactly one necessary upload and repairs the photo on the same child": {
+      "result": "passed"
+    },
+    "ProgramStaff import/model centre move updates one existing NFE teacher instead of duplicating it": {
+      "result": "passed"
+    },
+    "Moving ProgramStaff back preserves the same NFE teacher identity": {
+      "result": "passed"
+    },
+    "Embedded child: every common received field matches Compiler and NFE": {
+      "result": "passed",
+      "columns_checked": 62,
+      "columns": [
+        "gender",
+        "number",
+        "p_code",
+        "address",
+        "last_name",
+        "unicef_id",
+        "first_name",
+        "case_number",
+        "father_name",
+        "birthday_day",
+        "fe_unique_id",
+        "have_sibling",
+        "other_number",
+        "birthday_year",
+        "have_children",
+        "birthday_month",
+        "main_caregiver",
+        "marital_status",
+        "cash_programmes",
+        "children_number",
+        "mother_fullname",
+        "national_number",
+        "recorded_number",
+        "first_phone_owner",
+        "nationality_other",
+        "first_phone_number",
+        "living_arrangement",
+        "second_phone_owner",
+        "caregiver_last_name",
+        "case_number_confirm",
+        "parent_other_number",
+        "second_phone_number",
+        "sop_national_number",
+        "caregiver_first_name",
+        "main_caregiver_other",
+        "other_number_confirm",
+        "caregiver_middle_name",
+        "caregiver_mother_name",
+        "parent_extract_record",
+        "individual_case_number",
+        "parent_national_number",
+        "syrian_national_number",
+        "children_number_under18",
+        "national_number_confirm",
+        "recorded_number_confirm",
+        "siblings_have_disability",
+        "mother_pregnant_expecting",
+        "first_phone_number_confirm",
+        "parent_sop_national_number",
+        "parent_other_number_confirm",
+        "second_phone_number_confirm",
+        "sop_national_number_confirm",
+        "parent_extract_record_confirm",
+        "parent_individual_case_number",
+        "parent_syrian_national_number",
+        "individual_case_number_confirm",
+        "parent_national_number_confirm",
+        "syrian_national_number_confirm",
+        "main_caregiver_nationality_other",
+        "parent_sop_national_number_confirm",
+        "parent_individual_case_number_confirm",
+        "parent_syrian_national_number_confirm"
+      ]
+    },
+    "Final audit: one target row per identity and no unresolved source events for the tested entities": {
+      "result": "passed"
+    },
+    "Invalid ProgramStaff form creates neither a source row, outbox event nor target data": {
+      "result": "passed"
+    },
+    "Normal staff form preserves an exact 200-character Arabic name and an email longer than 100 characters": {
+      "result": "passed"
+    },
+    "A 201-character staff name is rejected before creating an event or truncating target data": {
+      "result": "passed"
+    },
+    "Changing the UNICEF ID keeps the same child BMA identity and existing photo": {
+      "result": "passed"
+    },
+    "Conflicting Student photo links block the complete event rather than copying another image": {
+      "result": "passed"
+    },
+    "Correcting the Student link retries the original event and reuses the same child with its correct image": {
+      "result": "passed"
+    }
+  },
+  "runs": {
+    "all_scoped": "51c7a8fc-91c6-4089-8fcd-c5d4dd5daa83",
+    "photo_batch_browser": "fd43a11a-5ac5-4556-b7d8-04142736a98f",
+    "photo_batch_repeat": "cf26fb42-10f4-4920-a3e2-84b7b59a0b91"
+  },
+  "findings": {
+    "automatic_attendance_boundary": {
+      "issue": "An automatic attendance save sends another partner registration; bulk checks did not protect automatic delivery.",
+      "event_id": "0bae6929-c451-4ce8-8f9d-ae6a34160800",
+      "status": "fixed and manually retested"
+    },
+    "automatic_registration_boundary": {
+      "issue": "An automatic registration save allows a different partner from its centre.",
+      "event_id": "d95c8756-3754-46f5-9f96-a684f6a8bf8c",
+      "status": "fixed and manually retested"
+    },
+    "nfe_staff_form": {
+      "issue": "Synced ProgramStaff cannot edit contact data because the old NFE form requires split names absent at source.",
+      "status": "fixed and manually retested; see teacher_portal_validation_2026-10-27.md"
+    }
+  },
+  "current_schema_exclusions": {
+    "round": [
+      "end_date",
+      "start_date"
+    ],
+    "center_a": [
+      "active_during_emergency",
+      "is_tarl",
+      "is_tls",
+      "provide_french_language"
+    ],
+    "registration": [
+      "child_is_idp",
+      "child_outreach",
+      "consent"
+    ],
+    "service": [
+      "ppl_sector"
+    ],
+    "grading": [
+      "mid_test"
+    ]
+  },
+  "automated_regression_tests": {
+    "compiler": 150,
+    "nfe": 188
+  }
+}

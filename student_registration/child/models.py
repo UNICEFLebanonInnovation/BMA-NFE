@@ -15,6 +15,8 @@ from student_registration.students.utils import generate_id, generate_one_unique
 
 
 class Child(TimeStampedModel):
+    bma_id = models.CharField(max_length=64, unique=True, blank=True, null=True,
+                              verbose_name=_('BMA child ID'))
 
     CURRENT_YEAR = datetime.datetime.now().year
     MONTHS = Choices(

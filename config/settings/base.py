@@ -99,6 +99,7 @@ LOCAL_APPS = [
     'student_registration.child',
     'student_registration.mscc',
     'student_registration.alp',
+    'student_registration.datasync',  # replication of MSCC data from the Compiler
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -262,7 +263,24 @@ STATICFILES_FINDERS = [
 # MEDIA CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-root
-MEDIA_ROOT = str(APPS_DIR('media'))
+# DEPLOYMENT: replace /mnt/nfe-media with the file-share mount on the provided VM,
+# or set NFE_FILE_SHARE_ROOT in the server environment. This is a placeholder.
+NFE_FILE_SHARE_ROOT = env('NFE_FILE_SHARE_ROOT', default='/mnt/nfe-media')
+MEDIA_ROOT = env('MEDIA_ROOT', default=NFE_FILE_SHARE_ROOT)
+# App Service supplies WEBSITE_SITE_NAME. Its NFE deployment uses Azure Blob;
+# MEHE's VM keeps the mounted file-share default. An explicit backend wins.
+_default_media_backend = (
+    'storages.backends.azure_storage.AzureStorage'
+    if env('WEBSITE_SITE_NAME', default='')
+    else 'student_registration.media_storage.VMFileShareStorage'
+)
+_media_backend = env('NFE_MEDIA_STORAGE_BACKEND',
+                     default=_default_media_backend)
+STORAGES = globals().get('STORAGES', {
+    'staticfiles': {'BACKEND': globals().get(
+        'STATICFILES_STORAGE', 'django.contrib.staticfiles.storage.StaticFilesStorage')},
+}).copy()
+STORAGES['default'] = {'BACKEND': _media_backend}
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = '/media/'
@@ -362,6 +380,36 @@ CELERY_TASK_ROUTES = {
 }
 ########## END CELERY
 
+########## DATA REPLICATION (Compiler -> BMA-NFE, inbound)
+# BMA-NFE is the read replica of the Compiler's MSCC module. The Compiler
+# pushes changes to /api/sync/events/; nothing is pulled from here.
+
+# Master switch. Turn off to make the endpoint answer 503 without losing the
+# producer's queue -- it keeps retrying and drains once this is back on.
+DATASYNC_INGEST_ENABLED = env.bool('DATASYNC_INGEST_ENABLED', default=True)
+DATASYNC_PHOTO_INGEST_ENABLED = DATASYNC_INGEST_ENABLED  # Compatibility alias
+DATASYNC_PHOTO_MAX_BYTES = env.int('DATASYNC_PHOTO_MAX_BYTES', default=5 * 1024 * 1024)
+DATASYNC_PHOTO_MAX_PIXELS = env.int('DATASYNC_PHOTO_MAX_PIXELS', default=20000000)
+
+# Producers allowed to push. The token account still has to be authorised.
+DATASYNC_ALLOWED_SOURCE_SYSTEMS = env.list(
+    'DATASYNC_ALLOWED_SOURCE_SYSTEMS', default=['compiler']
+)
+
+# Group a service account must belong to before it may push.
+DATASYNC_CLIENT_GROUP = env('DATASYNC_CLIENT_GROUP', default='DataSync')
+
+# Largest batch accepted in a single request.
+DATASYNC_MAX_BATCH_SIZE = env.int('DATASYNC_MAX_BATCH_SIZE', default=200)
+
+# Whether a natural key with no local match may create a placeholder row
+# (rounds, centres, partners and free-text lookups only -- never schools,
+# locations or controlled vocabularies).
+DATASYNC_CREATE_MISSING_REFERENCES = env.bool(
+    'DATASYNC_CREATE_MISSING_REFERENCES', default=True
+)
+########## END DATA REPLICATION
+
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'
 
@@ -396,7 +444,12 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS AS NEEDED
 }
 
+JAZZMIN_UI_TWEAKS = {
+    "sidebar_fixed": True,
+}
+
 JAZZMIN_SETTINGS = {
+    "custom_css": "css/admin-layout.css",
     "site_title": "BMA  Sector",
     "site_header": "BMA  Sector",
     "welcome_sign": "Welcome to BMA Admin",
@@ -464,8 +517,9 @@ INSTALLED_APPS += ['storages', ]
 AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
 AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
 AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
+AZURE_URL_EXPIRATION_SECS = env.int('AZURE_URL_EXPIRATION_SECS', default=3600)
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_blob.AzureBlobStorage' # Updated for newer django-storages
+DEFAULT_FILE_STORAGE = _media_backend  # Compatibility with older integrations.
 DEFAULT_FILE_FORMAT = 'xlsx'
 DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'

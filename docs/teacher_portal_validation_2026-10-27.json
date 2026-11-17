@@ -1,0 +1,170 @@
+{
+  "date": "2026-10-27",
+  "scenario_groups": 51,
+  "checks": {
+    "Browser: NFE contact save succeeds with a 200-character name, blank split names and no round": {
+      "result": "passed"
+    },
+    "Browser contact edit preserves BMA identity, source full name and programme data": {
+      "result": "passed"
+    },
+    "Browser: Compiler update overwrites the NFE phone/email edit on the same teacher and records the conflict": {
+      "result": "passed"
+    },
+    "NFE edit page loads without validation errors and shows the source name as read-only": {
+      "result": "passed"
+    },
+    "Forged disabled name and hidden identity fields cannot change the synced name or BMA identity": {
+      "result": "passed"
+    },
+    "Invalid form: invalid phone preserves the complete existing teacher": {
+      "result": "passed"
+    },
+    "Invalid form: invalid email preserves the complete existing teacher": {
+      "result": "passed"
+    },
+    "Invalid form: missing centre preserves the complete existing teacher": {
+      "result": "passed"
+    },
+    "NFE edit accepts empty optional email and zero hours while preserving source programme data": {
+      "result": "passed"
+    },
+    "Next Compiler form save restores authoritative values and audits local NFE contact changes": {
+      "result": "passed"
+    },
+    "Repeating ProgramStaff bulk sync preserves the target ID and produces no false conflict": {
+      "result": "passed",
+      "run": "775f88b8-dae6-4ae3-ab20-de0ff42f1021"
+    },
+    "NFE search: full-name prefix finds exactly the synced facilitator": {
+      "result": "passed"
+    },
+    "NFE search: case-insensitive prefix finds exactly the synced facilitator": {
+      "result": "passed"
+    },
+    "NFE search: Arabic text finds exactly the synced facilitator": {
+      "result": "passed"
+    },
+    "NFE search: entire 200-character name finds exactly the synced facilitator": {
+      "result": "passed"
+    },
+    "NFE search: no-match query returns an empty list": {
+      "result": "passed"
+    },
+    "NFE search safely handles quote and markup-like input without broadening results": {
+      "result": "passed"
+    },
+    "NFE name and centre search filters combine correctly": {
+      "result": "passed"
+    },
+    "Clearing the new name filter restores the regular teacher list": {
+      "result": "passed"
+    },
+    "centre: teacher list includes exactly the authorized records": {
+      "result": "passed"
+    },
+    "centre: direct own-teacher edit follows the same access scope": {
+      "result": "passed"
+    },
+    "centre: foreign edit/delete URLs return 404 and preserve the foreign record": {
+      "result": "passed"
+    },
+    "centre: forged foreign centre POST is rejected without changing the teacher": {
+      "result": "passed"
+    },
+    "centre: a valid own form cannot be submitted to a foreign teacher URL": {
+      "result": "passed"
+    },
+    "partner: teacher list includes exactly the authorized records": {
+      "result": "passed"
+    },
+    "partner: direct own-teacher edit follows the same access scope": {
+      "result": "passed"
+    },
+    "partner: foreign edit/delete URLs return 404 and preserve the foreign record": {
+      "result": "passed"
+    },
+    "partner: forged foreign centre POST is rejected without changing the teacher": {
+      "result": "passed"
+    },
+    "partner: a valid own form cannot be submitted to a foreign teacher URL": {
+      "result": "passed"
+    },
+    "unassigned: teacher list includes exactly the authorized records": {
+      "result": "passed"
+    },
+    "unassigned: direct own-teacher edit follows the same access scope": {
+      "result": "passed"
+    },
+    "unassigned: foreign edit/delete URLs return 404 and preserve the foreign record": {
+      "result": "passed"
+    },
+    "unicef: teacher list includes exactly the authorized records": {
+      "result": "passed"
+    },
+    "unicef: direct own-teacher edit follows the same access scope": {
+      "result": "passed"
+    },
+    "Local teacher creation still requires the original split-name and qualification fields": {
+      "result": "passed"
+    },
+    "An authenticated account without a Makani role cannot list or edit teachers": {
+      "result": "passed"
+    },
+    "A valid local teacher can still be created through the normal form with the original schema": {
+      "result": "passed"
+    },
+    "Normal local-teacher edits still work and retain a local identity": {
+      "result": "passed"
+    },
+    "Required local-teacher names remain required during edit": {
+      "result": "passed"
+    },
+    "The original first-name search still finds local teachers correctly": {
+      "result": "passed"
+    },
+    "An unauthenticated visitor is redirected to login before teacher details are read": {
+      "result": "passed"
+    },
+    "Teacher contact edits without a CSRF token are rejected": {
+      "result": "passed"
+    },
+    "Ten concurrent NFE form saves finish without errors, duplicate teachers or damaged source identity": {
+      "result": "passed"
+    },
+    "Compiler sync restores its current contact value after concurrent NFE edits": {
+      "result": "passed"
+    },
+    "Ten rapid concurrent Compiler form saves each produce a durable event and converge on the latest source data": {
+      "result": "passed"
+    },
+    "Repeat 200-photo integration run still sends 202 records, uploads zero image bytes and keeps 200 registrations": {
+      "result": "passed",
+      "run": "922ac0c5-ba31-4f26-9782-30ea4ff031c8"
+    },
+    "An already-open form cannot edit a teacher after the user is moved to another centre": {
+      "result": "passed"
+    },
+    "Imported-staff contact save preserves an absent NFE reference instead of generating an ID from missing names": {
+      "result": "passed"
+    },
+    "Imported-staff contact save preserves an existing NFE reference instead of generating an ID from missing names": {
+      "result": "passed"
+    },
+    "Filtered CSV export includes exactly one facilitator with its full Unicode name and restored contact data": {
+      "result": "passed"
+    },
+    "Final audit: correct mapped values, one teacher identity, no unresolved delivery and all five test accounts disabled": {
+      "result": "passed"
+    }
+  },
+  "regression_tests": {
+    "compiler_sync": 150,
+    "nfe_sync_and_mscc": 188
+  },
+  "source_teacher_id": 4,
+  "nfe_teacher_id": 14,
+  "temporary_accounts_disabled": true,
+  "remaining_local_issues": [],
+  "current_contract_exclusions": "11 fields remain excluded as confirmed by the user"
+}
