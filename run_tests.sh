@@ -1,3 +1,8 @@
-source env.example
-export DJANGO_SETTINGS_MODULE=config.settings.test
-python manage.py test student_registration.backends.tests
+#!/bin/sh
+set -eu
+
+export DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE:-config.settings.test}"
+
+coverage erase
+coverage run manage.py test --noinput "$@"
+coverage report --show-missing
